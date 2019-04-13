@@ -6,6 +6,12 @@ function(export_header unused)
 endfunction()
 function(export_lib unused)
 endfunction()
+
+# Hack to enable direct project loading (eg in CLion) of this projekt
+if (NOT DEFINED ${TOOLCHAIN_DIR})
+    set(TOOLCHAIN_DIR "../../../../toolchain")
+endif ()
+
 set(CMAKE_TOOLCHAIN_FILE "${TOOLCHAIN_DIR}/naoqi/cross-config.cmake")
 set(CMAKE_PREFIX_PATH "${TOOLCHAIN_DIR}/naoqi/libnaoqi")
 project(tuhhALModule)

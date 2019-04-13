@@ -1,9 +1,19 @@
 {
 	"idmap.nao": [
 		{
-			"bodyid": "####",
-			"headid": "####",
-			"name": "robotName"
+			"bodyid": "0964",
+			"headid": "3195",
+			"name": "Judy"
+		},
+		{
+			"bodyid": "0180",
+			"headid": "0206",
+			"name": "Ana"
+		},
+		{
+			"bodyid": "0214",
+			"headid": "222",
+			"name": "Luc"
 		}
 	]
 }
