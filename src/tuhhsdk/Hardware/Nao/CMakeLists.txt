@@ -8,7 +8,7 @@ function(export_lib unused)
 endfunction()
 
 # Hack to enable direct project loading (eg in CLion) of this projekt
-if (NOT SET ${TOOLCHAIN_DIR})
+if (NOT DEFINED ${TOOLCHAIN_DIR})
     set(TOOLCHAIN_DIR "../../../../toolchain")
 endif ()
 
