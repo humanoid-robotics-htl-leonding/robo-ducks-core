@@ -23,3 +23,5 @@ install_manifest.txt
 *.bt
 *.pyc
 .DS_Store
+
+cmake-build-*/
