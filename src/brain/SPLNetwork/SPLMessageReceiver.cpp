@@ -36,6 +36,7 @@ void SPLMessageReceiver::cycle()
   // integrate incoming messages
   for (auto& it : splNetworkData_->messages)
   {
+      std::cout << "received message" <<std::endl;
     const SPLStandardMessage& msg = it.first;
     // do not handle own messages and messages from penalized robots
     if (static_cast<unsigned int>(msg.playerNum) == playerConfiguration_->playerNumber)
