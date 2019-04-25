@@ -4,6 +4,7 @@
 #include "BHULKsHelper.hpp"
 #include "HULKsMessage.hpp"
 #include "SPLMessageReceiver.hpp"
+#include "print.h"
 
 SPLMessageReceiver::SPLMessageReceiver(const ModuleManagerInterface& manager)
   : Module(manager)
@@ -36,7 +37,6 @@ void SPLMessageReceiver::cycle()
   // integrate incoming messages
   for (auto& it : splNetworkData_->messages)
   {
-      std::cout << "received message" <<std::endl;
     const SPLStandardMessage& msg = it.first;
     // do not handle own messages and messages from penalized robots
     if (static_cast<unsigned int>(msg.playerNum) == playerConfiguration_->playerNumber)

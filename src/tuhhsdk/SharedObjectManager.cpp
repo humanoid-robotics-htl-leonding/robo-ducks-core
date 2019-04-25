@@ -73,11 +73,12 @@ void SharedObjectManager::start()
     tData.debug = &debug_;
     tData.configuration = &config_;
     tData.robotInterface = &robotInterface_;
-    Log(LogLevel::INFO) << "Loading sharedObject\"" << sharedObject << "\" ...";
+    Log(LogLevel::INFO) << "Loading sharedObject \"" << sharedObject << "\" ...";
 
     try
     {
-      loadedSharedObjects_.emplace_back(sharedObject, tData);
+      // Constructor von SharedObject vergleicht den string (1. Parameter) mit zeug und lädt des richtige Modul
+      loadedSharedObjects_.emplace_back(sharedObject, tData); // quasi lso_.push_back(new SharedObject(sharedObject, tData))
       Log(LogLevel::INFO) << "... Success";
     }
     catch (const std::exception& e)
