@@ -1,5 +1,5 @@
 {
-  "general.playerNumber": 4,
+  "general.playerNumber": 1,
   "general.teamNumber": 89,
   "general.port": 10089,
   "behavior.playerRole": "player",
