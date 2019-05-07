@@ -1,21 +1,21 @@
 {
     "field": {
-        "length": 5.24,
-        "width": 3.38,
-        "lineWidth": 0.06,
-        "penaltyMarkerSize": 0.06,
-        "penaltyMarkerDistance": 0.73,
-        "penaltyAreaLength": 0.39,
-        "penaltyAreaWidth": 1.0,
-        "centerCircleDiameter": 0.81,
-        "borderStripWidth": 0.28,
-        "throwInLineLength": 4.0,
-        "throwInLineSpacing": 0.26
+        "length": 9,
+        "width": 6,
+        "lineWidth": 0.05,
+        "penaltyMarkerSize": 0.1,
+        "penaltyMarkerDistance": 1.3,
+        "penaltyAreaLength": 0.6,
+        "penaltyAreaWidth": 2.2,
+        "centerCircleDiameter": 1.5,
+        "borderStripWidth": 0.7,
+        "throwInLineLength": 7.0,
+        "throwInLineSpacing": 0.4
     },
     "goal": {
         "postDiameter": 0.1,
         "height": 0.8,
-        "innerWidth": 1.45,
+        "innerWidth": 1.5,
         "depth": 0.5
     },
     "ball": {
