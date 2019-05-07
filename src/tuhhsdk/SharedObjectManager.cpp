@@ -41,6 +41,7 @@ void SharedObjectManager::start()
   // 1(  1 2)
   // 2(    3)
   // 3(     )
+  //todo optimice assignedChannel performance
   int assignedChannel = 0;
   for (size_t numFirst = 0; numFirst < numVertices; numFirst++)
   {
