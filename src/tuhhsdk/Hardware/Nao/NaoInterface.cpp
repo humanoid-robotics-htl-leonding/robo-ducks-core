@@ -354,6 +354,8 @@ void NaoInterface::initNaoInfo(Configuration& config)
   config.mount("NaoInterface.id_map", "id_map.json", ConfigurationType::HEAD);
   Uni::Value& val = config.get("NaoInterface.id_map", "idmap.nao");
 
+  print("BodyID: '"+bodyIDstr+"' HeadId: '"+headIDstr+"'",  LogLevel::INFO);
+
   try
   {
     for (auto it = val.listBegin(); it != val.listEnd(); it++)
