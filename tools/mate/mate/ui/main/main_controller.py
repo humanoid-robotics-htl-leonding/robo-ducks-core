@@ -76,15 +76,20 @@ class Main(qtc.QObject):
         self.restore()
 
     def restore(self):
+        print("Restoring session")
         if self.settings.value("cbxSelectLayout"):
+            print("Restoring layout")
             self.ui.cbxSelectLayout.setCurrentText(
                 self.settings.value("cbxSelectLayout"))
             self.load_layout()
         if self.settings.value("cbxSelectNao"):
+            print("Restoring nao connection")
             self.ui.cbxSelectNao.setCurrentText(
                 self.settings.value("cbxSelectNao"))
+        print("Session restored")
 
     def fill_layout_cbx(self):
+        print("Reading layouts")
         selected_layout = self.ui.cbxSelectLayout.currentText()
         self.ui.cbxSelectLayout.clear()
         os.makedirs(self.config_dir, exist_ok=True)
@@ -101,6 +106,7 @@ class Main(qtc.QObject):
             child.close()
 
     def load_layout(self):
+        print("Loading layout")
         if self.ui.cbxSelectLayout.currentText():
             layout_settings = qtc.QSettings(
                 self.config_dir + self.ui.cbxSelectLayout.currentText() +
@@ -134,14 +140,19 @@ class Main(qtc.QObject):
                             layout_settings.value("state").data())
                     self.ui.statusbar.showMessage("Load Layout from {}".format(
                         self.ui.cbxSelectLayout.currentText()))
+                    print("Layout loaded")
                 else:
                     self.ui.statusbar.showMessage("Loaded empty Layout!")
+                    print("Layout empty")
             else:
                 self.ui.statusbar.showMessage("Could not load layout file!")
+                print("Error while loading layout file")
         else:
+            print("Missing layout name")
             self.ui.statusbar.showMessage("Please specify a layout name!")
 
     def save_layout(self):
+        print("Saving layout")
         if self.ui.cbxSelectLayout.currentText():
             layout_settings = qtc.QSettings(
                 self.config_dir + self.ui.cbxSelectLayout.currentText() +
@@ -178,12 +189,15 @@ class Main(qtc.QObject):
             self.fill_layout_cbx()
             self.ui.statusbar.showMessage("Save layout to {}".format(
                 self.ui.cbxSelectLayout.currentText()))
+            print("Layout saved")
         else:
+            print("Layout name missing")
             self.ui.statusbar.showMessage("Please specify a layout name!")
 
     def newMapView(self,
                    map_model: mapmodel.MapModel = None,
                    object_name: str = None):
+        print("Creating new MapView")
         if map_model is None:
             map_model = mapmodel.MapModel()
         if object_name is None:
@@ -191,40 +205,48 @@ class Main(qtc.QObject):
         view = views.Map(self.nao, map_model)
         view.setObjectName(object_name)
         self.window.addDockWidget(qtc.Qt.BottomDockWidgetArea, view)
+        print("New MapView created")
 
     def newImageView(self,
                      subscribe_key: str = netutils.NO_SUBSCRIBE_KEY,
                      object_name: str = None):
+        print("Creating new ImageView")
         if object_name is None:
             object_name = str(uuid.uuid4())
         view = views.Image(self.nao, subscribe_key)
         view.setObjectName(object_name)
         self.window.addDockWidget(qtc.Qt.BottomDockWidgetArea, view)
         view.ui.cbxMount.setFocus()
+        print("New ImageView created")
 
     def newTextView(self,
                     subscribe_key: str = netutils.NO_SUBSCRIBE_KEY,
                     object_name: str = None):
+        print("Creating new TextView")
         if object_name is None:
             object_name = str(uuid.uuid4())
         view = views.Text(self.nao, subscribe_key)
         view.setObjectName(object_name)
         self.window.addDockWidget(qtc.Qt.BottomDockWidgetArea, view)
         view.ui.cbxMount.setFocus()
+        print("New TextView created")
 
     def newConfigView(self,
                       subscribe_key: str = netutils.NO_SUBSCRIBE_KEY,
                       object_name: str = None):
+        print("Creating new ConfigView")
         if object_name is None:
             object_name = str(uuid.uuid4())
         view = views.Config(self.nao, subscribe_key)
         view.setObjectName(object_name)
         self.window.addDockWidget(qtc.Qt.BottomDockWidgetArea, view)
         view.ui.cbxMount.setFocus()
+        print("New ConfigView created")
 
     def newPlotView(self,
                     model: plotmodel.PlotModel = None,
                     object_name: str = None):
+        print("Creating new PlotView")
         if model is None:
             model = plotmodel.PlotModel()
         if object_name is None:
@@ -232,19 +254,24 @@ class Main(qtc.QObject):
         view = views.Plot(self.nao, model)
         view.setObjectName(object_name)
         self.window.addDockWidget(qtc.Qt.BottomDockWidgetArea, view)
+        print("New PlotView created")
 
     def newCameraCalibView(self,
                            object_name: str = None):
+        print("Creating new CameraCalibView")
         if object_name is None:
             object_name = str(uuid.uuid4())
         view = views.CameraCalib(self.nao)
         view.setObjectName(object_name)
         self.window.addDockWidget(qtc.Qt.BottomDockWidgetArea, view)
+        print("New CameraCalibView created")
 
     def run(self):
+        print("Running window")
         self.window.show()
 
     def exit(self):
+        print("Exiting")
         self.disconnect()
 
         if (self.nao.debug_thread.is_alive()):
@@ -259,6 +286,7 @@ class Main(qtc.QObject):
         del self.settings
 
     def connect(self):
+        print("Connecting")
         selected_nao = self.ui.cbxSelectNao.currentText()
 
         self.ui.statusbar.showMessage(
@@ -267,6 +295,7 @@ class Main(qtc.QObject):
         self.nao.connect(selected_nao, post_hook=lambda: self.connection_established_signal.emit())
 
     def _on_connection_established(self):
+        print("Connection established")
         for child in self.window.findChildren(qtw.QDockWidget):
             child.connect(self.nao)
 
@@ -279,11 +308,13 @@ class Main(qtc.QObject):
             self.connection_lost)
 
     def connection_lost(self):
+        print("Connection lost")
         self.ui.statusbar.showMessage("Connection to {} lost!".format(
             self.nao.nao_address))
         self.ui_disconnect()
 
     def disconnect(self):
+        print("Disconnecting")
         if self.nao.is_connected():
             self.nao.disconnect()
             self.ui.statusbar.showMessage("Disconnected.")

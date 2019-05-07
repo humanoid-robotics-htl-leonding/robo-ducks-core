@@ -1,0 +1,12 @@
+name: MateEnv
+channels:
+  - conda-forge
+  - pypi
+  - pytorch
+dependencies:
+  - python=3.6
+  - setproctitle=1.1.10
+  - opencv=4.1.0
+  - transforms3d=0.3.1
+  - pyqtgraph=0.10.0
+  - scipy=1.2.1
