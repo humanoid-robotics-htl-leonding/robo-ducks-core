@@ -9,6 +9,13 @@ import PyQt5.QtCore as qtc
 from mate.app import App
 from mate.ui.main.main_controller import Main
 
+# Hacky Fix for XKB 
+# Added by Erik Mayrhofer.
+# Under Linux keyboard input does not work out of the box, because
+# xkb is not found.
+
+if "QT_XKB_CONFIG_ROOT" not in os.environ:
+    os.environ['QT_XKB_CONFIG_ROOT'] = '/usr/share/X11/xkb'
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
