@@ -13,7 +13,9 @@ from mate.ui.main.main_controller import Main
 # Added by Erik Mayrhofer.
 # Under Linux keyboard input does not work out of the box, because
 # xkb is not found.
-os.environ['QT_XKB_CONFIG_ROOT'] = '/usr/share/X11/xkb'
+
+if "QT_XKB_CONFIG_ROOT" not in os.environ:
+    os.environ['QT_XKB_CONFIG_ROOT'] = '/usr/share/X11/xkb'
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
