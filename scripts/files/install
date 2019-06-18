@@ -64,7 +64,7 @@ ln -sf net.lo /etc/init.d/net.eth0
 ln -sf net.lo /etc/init.d/net.wlan0
 
 # Copy network configuration
-install -m 644 "${BASEDIR}/hostname" /etc/hostname
+#install -m 644 "${BASEDIR}/hostname" /etc/hostname ### We do not want to rename the NAOs
 install -m 644 "${BASEDIR}/net" /etc/conf.d/net
 install -m 644 "${BASEDIR}/wpa_supplicant.conf.auto" /etc/wpa_supplicant/wpa_supplicant.conf.auto
 # wpa_supplicant.conf is created by the setNetwork script
