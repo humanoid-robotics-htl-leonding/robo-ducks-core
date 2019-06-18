@@ -67,6 +67,8 @@ class Main(qtc.QObject):
         self.ui.toolBar.addWidget(self.ui.cbxSelectLayout)
         self.ui.toolBar.addWidget(self.ui.btnLoad)
         self.ui.toolBar.addWidget(self.ui.btnSave)
+        self.ui.toolBar.addWidget(self.ui.notes_label)
+        self.ui.toolBar.addWidget(self.ui.txtNotes)
 
         self.ui.centralwidget.hide()
 
