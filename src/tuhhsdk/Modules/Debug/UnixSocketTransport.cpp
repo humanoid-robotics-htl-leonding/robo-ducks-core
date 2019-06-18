@@ -389,7 +389,7 @@ bool UnixSocketTransport::Session::transmitList()
 
     if (debugMap == nullptr)
     {
-      Log(LogLevel::INFO) << "Unable to compute the complete keylist, waiting for next cycle.";
+      Log(LogLevel::INFO) << "Unable to obtain the complete keymap for debugging transmission of '" << debugSource.first << "'";
       continue;
     }
 

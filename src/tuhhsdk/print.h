@@ -16,7 +16,7 @@
  * @namespace tuhhprint
  * @brief The tuhhprint namespace provides all the printing action functions.
  */
-namespace tuhhprint{
+namespace tuhhprint {
 
   extern LogLevel minll;
 
