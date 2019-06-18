@@ -373,6 +373,7 @@ void NaoInterface::initNaoInfo(Configuration& config)
         headname = (*it)["name"].asString();
       }
     }
+    print("Resolved Head- and BodyId: BodyName: '"+bodyname+"' HeadName: '"+headname+"'",  LogLevel::INFO);
   }
   catch (std::exception& err)
   {
