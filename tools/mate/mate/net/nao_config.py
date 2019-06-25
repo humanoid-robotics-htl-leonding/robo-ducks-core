@@ -21,6 +21,7 @@ class NaoConfigProtocol(NaoProtocol):
         self.receive_length = 8
 
     def data_received(self, data):
+        print("Received config data")
         length_to_parse = min(self.receive_length, len(data))
         if self.read_header:
             self.header_buffer = self.header_buffer + data[0:length_to_parse]
@@ -56,6 +57,7 @@ class NaoConfigProtocol(NaoProtocol):
             self.data_received(data)
 
     def handle_message(self, message):
+        print("Handling config message")
         if message.type == netutils.ConfigMsgType.send_mounts:
             data = json.loads(message.body)
             for d in data["keys"]:
