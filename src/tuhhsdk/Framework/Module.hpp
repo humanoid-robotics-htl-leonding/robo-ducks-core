@@ -364,7 +364,8 @@ public:
     if (callback_)
     {
       module.configuration_.registerCallback(module.mount_, key,
-                                             boost::bind(&Parameter<T>::onUpdate, this, _1));
+                                             boost::bind(&Parameter<T>::onUpdate, this, _1)
+                                             );
     }
   }
   /**

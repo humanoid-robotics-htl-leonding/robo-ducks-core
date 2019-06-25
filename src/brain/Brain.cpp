@@ -17,7 +17,7 @@
 
 
 Brain::Brain(const std::vector<Sender*>& senders, const std::vector<Receiver*>& receivers, Debug& d, Configuration& c, RobotInterface& ri)
-  : ModuleManagerInterface("Brain", ConfigurationType::HEAD, senders, receivers, d, c, ri)
+  : ModuleManagerInterface("Brain", ConfigurationType::HEAD, senders, receivers, d, c, ri) //senders und receivers (Jeweils 1 für alle anderen Threads)
 {
   try
   {
