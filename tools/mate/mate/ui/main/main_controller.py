@@ -2,6 +2,7 @@ import sys
 import uuid
 import signal
 import os
+import time
 
 import PyQt5.QtCore as qtc
 import PyQt5.QtWidgets as qtw
@@ -74,6 +75,11 @@ class Main(qtc.QObject):
 
         self.settings = qtc.QSettings(self.config_dir + "main.config",
                                       qtc.QSettings.NativeFormat)
+        self.timer = qtc.QTimer()
+        self.timer.timeout.connect(self.update_status_bar)
+        self.timer.start(100)
+        self.time = time.time()
+        self.status = ""
         self.fill_layout_cbx()
         self.restore()
 
@@ -140,18 +146,17 @@ class Main(qtc.QObject):
                     if layout_settings.value("state"):
                         self.window.restoreState(
                             layout_settings.value("state").data())
-                    self.ui.statusbar.showMessage("Load Layout from {}".format(
-                        self.ui.cbxSelectLayout.currentText()))
+                    self.status = "Load Layout from {}".format(self.ui.cbxSelectLayout.currentText())
                     print("Layout loaded")
                 else:
-                    self.ui.statusbar.showMessage("Loaded empty Layout!")
+                    self.status = "Loaded empty Layout!"
                     print("Layout empty")
             else:
-                self.ui.statusbar.showMessage("Could not load layout file!")
+                self.status = "Could not load layout file!"
                 print("Error while loading layout file")
         else:
             print("Missing layout name")
-            self.ui.statusbar.showMessage("Please specify a layout name!")
+            self.status = "Please specify a layout name!"
 
     def save_layout(self):
         print("Saving layout")
@@ -189,12 +194,11 @@ class Main(qtc.QObject):
             del layout_settings
 
             self.fill_layout_cbx()
-            self.ui.statusbar.showMessage("Save layout to {}".format(
-                self.ui.cbxSelectLayout.currentText()))
+            self.status = "Save layout to {}".format(self.ui.cbxSelectLayout.currentText())
             print("Layout saved")
         else:
             print("Layout name missing")
-            self.ui.statusbar.showMessage("Please specify a layout name!")
+            self.status = "Please specify a layout name!"
 
     def newMapView(self,
                    map_model: mapmodel.MapModel = None,
@@ -287,12 +291,31 @@ class Main(qtc.QObject):
                                self.ui.cbxSelectLayout.currentText())
         del self.settings
 
+    def subscribe(self):
+        if self.nao.is_connected():
+            print("Subscribing to updates")
+            self.nao.debug_protocol.unsubscribe_any_msg(self.identifier)
+            self.nao.debug_protocol.subscribe_any_msg(self.identifier, self.reset_time)
+            self.nao.config_protocol.unsubscribe_any_msg(self.identifier)
+            self.nao.config_protocol.subscribe_any_msg(self.identifier, self.reset_time)
+
+    def unsubscribe(self):
+        if self.nao.is_connected():
+            self.nao.debug_protocol.unsubscribe(self.currentDebugSubscribe,
+                                                self.identifier)
+            self.nao.config_protocol.unsubscribe(self.currentConfigSubscribe, self.identifier)
+
+    def reset_time(self):
+        self.time = time.time()
+
+    def update_status_bar(self):
+        self.ui.statusbar.showMessage("{}. Time since last update: {:.1f}s".format(self.status, time.time() - self.time))
+
     def connect(self):
         print("Connecting")
         selected_nao = self.ui.cbxSelectNao.currentText()
 
-        self.ui.statusbar.showMessage(
-            "Trying to connect {}".format(selected_nao))
+        self.status = "Trying to connect {}".format(selected_nao)
         # TODO: in nao.connect() an exception occurs when the connection could not be established. Has to be catched.
         self.nao.connect(selected_nao, post_hook=lambda: self.connection_established_signal.emit())
 
@@ -302,8 +325,9 @@ class Main(qtc.QObject):
             child.connect(self.nao)
 
         self.ui_connect()
+        self.subscribe()
 
-        self.ui.statusbar.showMessage("Connect to {}".format(self.nao.nao_address))
+        self.status = "Connected to {}".format(self.nao.nao_address)
 
         self.nao.debug_protocol.subscribe_status(
             netutils.ConnectionStatusType.connection_lost, self.identifier,
@@ -311,15 +335,14 @@ class Main(qtc.QObject):
 
     def connection_lost(self):
         print("Connection lost")
-        self.ui.statusbar.showMessage("Connection to {} lost!".format(
-            self.nao.nao_address))
+        self.status = "Connection to {} lost!".format(self.nao.nao_address)
         self.ui_disconnect()
 
     def disconnect(self):
         print("Disconnecting")
         if self.nao.is_connected():
             self.nao.disconnect()
-            self.ui.statusbar.showMessage("Disconnected.")
+            self.status = "Disconnected."
             self.ui_disconnect()
 
     def request_lists(self):
@@ -328,10 +351,9 @@ class Main(qtc.QObject):
                 netutils.DebugMsgType.request_list)
             self.nao.config_protocol.send_config_msg(
                 netutils.ConfigMsgType.get_mounts)
-            self.ui.statusbar.showMessage("Requested new lists")
+            self.status = "Requested new lists"
         else:
-            self.ui.statusbar.showMessage(
-                "Cannot request lists: not connected")
+            self.status = "Cannot request lists: not connected"
 
     def ui_connect(self):
         self.ui.cbxSelectNao.setEnabled(False)

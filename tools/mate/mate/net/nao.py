@@ -42,37 +42,42 @@ class Nao:
         self.config_thread.start()
 
     async def __connect_debug(self):
-        self.debug_loop = asyncio.get_event_loop()
-        if self.nao_address.startswith("/"):
-            self.debug_transport, self.debug_protocol = await self.debug_loop.create_unix_connection(
-                lambda: NaoDebugProtocol(self.debug_loop), self.nao_address + "/debug")
-        else:
-            self.debug_transport, self.debug_protocol = await self.debug_loop.create_connection(
-                lambda: NaoDebugProtocol(self.debug_loop), self.nao_address, self.debug_port)
-        await self.connection_established()
-
-        self.debug_protocol.subscribe_msg_type(
-            net_utils.DebugMsgType.list, self.identifier,
-            self.debug_protocol.subscribe_queued)
-
         try:
-            await self.debug_protocol.on_con_lost
-        finally:
-            self.debug_transport.close()
+            self.debug_loop = asyncio.get_event_loop()
+            if self.nao_address.startswith("/"):
+                self.debug_transport, self.debug_protocol = await self.debug_loop.create_unix_connection(
+                    lambda: NaoDebugProtocol(self.debug_loop), self.nao_address + "/debug")
+            else:
+                self.debug_transport, self.debug_protocol = await self.debug_loop.create_connection(
+                    lambda: NaoDebugProtocol(self.debug_loop), self.nao_address, self.debug_port)
+            await self.connection_established()
+
+            self.debug_protocol.subscribe_msg_type(
+                net_utils.DebugMsgType.list, self.identifier,
+                self.debug_protocol.subscribe_queued)
+            try:
+                await self.debug_protocol.on_con_lost
+            finally:
+                self.debug_transport.close()
+        except ConnectionRefusedError:
+            print("Debug connection to {} failed!".format(self.nao_address))
 
     async def __connect_config(self):
-        self.config_loop = asyncio.get_event_loop()
-        if self.nao_address.startswith("/"):
-            self.config_transport, self.config_protocol = await self.config_loop.create_unix_connection(
-                lambda: NaoConfigProtocol(self.config_loop), self.nao_address + "/config")
-        else:
-            self.config_transport, self.config_protocol = await self.config_loop.create_connection(
-                lambda: NaoConfigProtocol(self.config_loop), self.nao_address, self.config_port)
-        await self.connection_established()
         try:
-            await self.config_protocol.on_con_lost
-        finally:
-            self.config_transport.close()
+            self.config_loop = asyncio.get_event_loop()
+            if self.nao_address.startswith("/"):
+                self.config_transport, self.config_protocol = await self.config_loop.create_unix_connection(
+                    lambda: NaoConfigProtocol(self.config_loop), self.nao_address + "/config")
+            else:
+                self.config_transport, self.config_protocol = await self.config_loop.create_connection(
+                    lambda: NaoConfigProtocol(self.config_loop), self.nao_address, self.config_port)
+            await self.connection_established()
+            try:
+                await self.config_protocol.on_con_lost
+            finally:
+                self.config_transport.close()
+        except ConnectionRefusedError:
+            print("Config connection to {} failed!".format(self.nao_address))
 
     async def connection_established(self):
         if self.debug_protocol and self.config_protocol:
