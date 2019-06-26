@@ -13,7 +13,7 @@ BrainThread::BrainThread(ThreadData& data) :
   print("loglevel is set to: " + preString[(int)tData_.loglevel], LogLevel::INFO);
   /// init variables
   setLogLevel(tData_.loglevel);
-  LogTemplate<M_VISION>::setLogLevel(tData_.loglevel);
+  LogTemplate<M_VISION>::setLogLevel(tData_.loglevel); //TODO wtf?
   try
   {
     brain_ = std::make_shared<Brain>(tData_.senders, tData_.receivers, *tData_.debug, *tData_.configuration, *tData_.robotInterface);
@@ -34,7 +34,7 @@ BrainThread::BrainThread(ThreadData& data) :
 
 bool BrainThread::init()
 {
-  if (!brain_)
+  if (!brain_) //TODO Should never happen?
   {
     print("brain is NULL and cannot run.", LogLevel::ERROR);
     return false;

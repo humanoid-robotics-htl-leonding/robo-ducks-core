@@ -8,12 +8,12 @@
 #include "SharedObject.hpp"
 
 
-SharedObject::SharedObject(const std::string& name, ThreadData& tData)
+SharedObject::SharedObject(const std::string& name, ThreadData& tData) //tData contains Senders and Receivers and Information of JSON. Populated in SharedObjectManager
   : thread_()
   , threadDatum_(tData)
 {
   ThreadFactoryBase* factory;
-  for (factory = ThreadFactoryBase::begin; factory != nullptr; factory = factory->next)
+  for (factory = ThreadFactoryBase::begin; factory != nullptr; factory = factory->next) //Ich loope über alle Threads (Automatisch erstellt)
   {
     Log(LogLevel::DEBUG) << factory->getName();
     if (factory->getName() == name)

@@ -96,6 +96,7 @@ void CollisionDetector::updateOutput()
   collisionDetectorData_->duel =
       collisionDetectorData_->collisionLeft && collisionDetectorData_->collisionRight;
 
+  //TODO ?
   // set long term outputs
   // left
   collisionDetectorData_->collisionLeftRigid =

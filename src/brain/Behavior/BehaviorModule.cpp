@@ -72,7 +72,7 @@ void BehaviorModule::cycle()
   }
   else
   {
-    actionCommand_ = rootBehavior(dataSet_);
+    actionCommand_ = rootBehavior(dataSet_); //TODO Make RootBehaviour Configurable
     actionCommand_.toMotionRequest(*motionRequest_);
     actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
   }
