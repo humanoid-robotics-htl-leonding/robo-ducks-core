@@ -2,7 +2,9 @@
 
 #include "Behavior/HeadPositionProvider.hpp"
 #include "Data/EyeLEDRequest.hpp"
+#include "Data/AudioRequest.hpp"
 #include "Data/MotionRequest.hpp"
+#include "Data/AudioData.hpp"
 #include "Tools/Math/Eigen.hpp"
 #include "Tools/Math/Pose.hpp"
 
@@ -444,6 +446,27 @@ public:
     float b_ = 0.f;
     friend class ActionCommand;
   };
+
+  class Audio //44100 things per second, 512 Buffer Size per Frame
+  {
+
+      //C4 -> 261.626 Hz
+  public:
+    static Audio test(){
+      Audio a;
+      a.frequency = 0;
+      return a;
+    }
+    static Audio test2(){
+      Audio a;
+      a.frequency = 261.626;
+      return a;
+    }
+  private:
+      float frequency;
+    friend class ActionCommand;
+  };
+
   /**
    * @brief dead creates a dead action command
    * @return a dead action command
@@ -613,6 +636,16 @@ public:
     return *this;
   }
   /**
+   * @brief combineRightLED replaces the right LED part of an action command
+   * @param right_led the new right LED part of the action command
+   * @return reference to this
+   */
+  ActionCommand& combineAudio(const Audio& audio)
+  {
+    audio_ = audio;
+    return *this;
+  }
+  /**
    * @brief toMotionRequest converts the action command to a motion request
    * @param motion_request the motion request that is overwritten
    */
@@ -673,6 +706,21 @@ public:
     eyeLEDRequest.rightG = rightLed_.g_;
     eyeLEDRequest.rightB = rightLed_.b_;
   }
+
+  /**
+   * @author Erik Mayrhofer
+   * @brief toPlaybackData converts the action command to a PlayBackData
+   * @param eyeLEDRequest the eye LED request that is overwritten
+   */
+  //void toPlaybackData(PlaybackData& playbackData) const
+  //{
+  //  playbackData.samples.insert(playbackData.samples.end(), audio_.samples.begin(), audio_.samples.end());
+  //}
+  void toAudioRequest(AudioRequest& audioRequest) const
+  {
+    audioRequest.frequency = audio_.frequency;
+  }
+
   /**
    * @brief body returns the body part of the command
    * @return the body part of the command
@@ -754,4 +802,6 @@ private:
   LED leftLed_;
   /// the command for the right LED
   LED rightLed_;
+  ///
+  Audio audio_;
 };
