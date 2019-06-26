@@ -56,6 +56,8 @@ class NaoDebugProtocol(NaoProtocol):
         data = data[length_to_parse:]
         if len(data):
             self.data_received(data)
+        for callback in self.any_msg_subscribors.values():
+            callback()
 
     def handle_message(self, message: netutils.DebugMessage):
         print("Handling debug message")

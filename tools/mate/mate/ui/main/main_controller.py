@@ -22,8 +22,6 @@ class Main(qtc.QObject):
         super(Main, self).__init__()
         self.nao = nao.Nao()
         self.identifier = uuid.uuid4()
-        self.currentDebugSubscribe = netutils.NO_SUBSCRIBE_KEY
-        self.currentConfigSubscribe = netutils.NO_SUBSCRIBE_KEY
 
         self.config_dir = config
 
@@ -293,16 +291,13 @@ class Main(qtc.QObject):
                                self.ui.cbxSelectLayout.currentText())
         del self.settings
 
-    def subscribe(self, key):
+    def subscribe(self):
         if self.nao.is_connected():
-            self.nao.debug_protocol.unsubscribe(self.currentDebugSubscribe,
-                                                self.identifier)
-            self.nao.debug_protocol.subscribe(key, self.identifier, self.update_time)
-            self.currentDebugSubscribe = key
-            self.nao.config_protocol.unsubscribe(self.currentDebugSubscribe,
-                                                 self.identifier)
-            self.nao.config_protocol.subscribe(key, self.identifier, self.update_time)
-            self.currentConfigSubscribe = key
+            print("Subscribing to updates")
+            self.nao.debug_protocol.unsubscribe_any_msg(self.identifier)
+            self.nao.debug_protocol.subscribe_any_msg(self.identifier, self.reset_time)
+            self.nao.config_protocol.unsubscribe_any_msg(self.identifier)
+            self.nao.config_protocol.subscribe_any_msg(self.identifier, self.reset_time)
 
     def unsubscribe(self):
         if self.nao.is_connected():
@@ -310,7 +305,7 @@ class Main(qtc.QObject):
                                                 self.identifier)
             self.nao.config_protocol.unsubscribe(self.currentConfigSubscribe, self.identifier)
 
-    def update_time(self):
+    def reset_time(self):
         self.time = time.time()
 
     def update_status_bar(self):
