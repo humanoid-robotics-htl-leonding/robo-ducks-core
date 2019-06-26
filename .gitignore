@@ -2,6 +2,10 @@
 /.vs/*
 /cmake-build-*
 
+
+#Visual Studio Code
+.vscode/*
+
 CMakeLists.txt.user
 CMakeSettings.json
 settings.json
