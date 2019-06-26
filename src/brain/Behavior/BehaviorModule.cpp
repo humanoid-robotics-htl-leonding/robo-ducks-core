@@ -63,9 +63,12 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
 void BehaviorModule::cycle()
 {
   Chronometer time(debug(), mount_ + ".cycle_time");
-  if (gameControllerState_->gameState == GameState::PLAYING &&
-      gameControllerState_->penalty == Penalty::NONE && !bodyPose_->fallen &&
-      useRemoteMotionRequest_())
+  if (
+      useRemoteMotionRequest_() &&
+      gameControllerState_->gameState == GameState::PLAYING &&
+      gameControllerState_->penalty == Penalty::NONE && 
+      !bodyPose_->fallen
+      )
   {
     std::lock_guard<std::mutex> lg(actualRemoteMotionRequestLock_);
     *motionRequest_ = actualRemoteMotionRequest_;
