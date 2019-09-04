@@ -8,6 +8,9 @@
 
 #include <Brain.hpp>
 #include <Data/ButtonData.hpp>
+#include <Data/MotionRequest.hpp>
+#include <Data/HeadOffData.hpp>
+#include <Data/CycleInfo.hpp>
 
 class HeadOffModule : public Module<HeadOffModule, Brain> {
 public:
@@ -17,6 +20,11 @@ public:
 
 private:
     const Dependency<ButtonData> buttonData_;
+    const Dependency<CycleInfo> cycleInfo_;
+    Production<MotionRequest> motionRequest_;
+    Production<HeadOffData> headOffData_;
+
+    TimePoint pressStarted = 0;
 };
 
 
