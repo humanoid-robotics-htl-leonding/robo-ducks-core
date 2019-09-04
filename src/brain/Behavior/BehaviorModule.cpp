@@ -1,3 +1,4 @@
+#include <csignal>
 #include "Tools/Chronometer.hpp"
 
 #include "ActionCommand.hpp"
@@ -84,8 +85,5 @@ void BehaviorModule::cycle()
   float headFront = buttonData_->buttons[keys::sensor::SWITCH_HEAD_FRONT];
   float headBack = buttonData_->buttons[keys::sensor::SWITCH_HEAD_REAR];
 
-  if(headBack >= 1.0 && headFront >= 1.0 && headMiddle >= 1.0){
-    print("Shutting down...", LogLevel::INFO);
-    assert(false);
-  }
+  assert(!(headBack >= 1.0 && headFront >= 1.0 && headMiddle >= 1.0));
 }
