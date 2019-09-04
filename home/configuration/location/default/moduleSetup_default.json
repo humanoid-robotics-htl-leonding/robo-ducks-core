@@ -78,5 +78,6 @@
   "WalkingEngine" : false,
   "WhistleDetection" : true,
   "WhistleIntegration" : true,
-  "WorldStateProvider" : true
+  "WorldStateProvider" : true,
+  "HeadOffModule": true
 }
