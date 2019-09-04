@@ -5,6 +5,7 @@
 
 NaoAudio::NaoAudio()
 {
+  print("Initialize NaoAudio: ", LogLevel::DEBUG);
   PaError err;
   //Input
   PaStreamParameters inputParameters;
@@ -64,6 +65,7 @@ NaoAudio::NaoAudio()
 
   err = Pa_SetStreamFinishedCallback(outStream_, NaoAudio::playbackFinishedCallback);
   handlePaErrorCode(err);
+  print("Finished initialising NaoAudio", LogLevel::DEBUG);
 }
 
 void NaoAudio::startCapture()

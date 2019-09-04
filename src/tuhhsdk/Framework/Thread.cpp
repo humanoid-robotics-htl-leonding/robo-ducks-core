@@ -34,7 +34,7 @@ void ThreadBase::join()
 
 void ThreadBase::main()
 {
-  Log(LogLevel::INFO) << "Starting main thread!";
+  Log(LogLevel::INFO) << "Main thread started!";
   try
   {
     if (!init())
