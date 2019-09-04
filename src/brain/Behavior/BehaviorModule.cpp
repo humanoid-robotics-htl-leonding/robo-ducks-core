@@ -1,3 +1,4 @@
+#include <csignal>
 #include "Tools/Chronometer.hpp"
 
 #include "ActionCommand.hpp"
