@@ -79,4 +79,13 @@ void BehaviorModule::cycle()
     actionCommand_.toMotionRequest(*motionRequest_);
     actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
   }
+
+  float headMiddle = buttonData_->buttons[keys::sensor::SWITCH_HEAD_MIDDLE];
+  float headFront = buttonData_->buttons[keys::sensor::SWITCH_HEAD_FRONT];
+  float headBack = buttonData_->buttons[keys::sensor::SWITCH_HEAD_REAR];
+
+  if(headBack >= 1.0 && headFront >= 1.0 && headMiddle >= 1.0){
+    print("Shutting down...", LogLevel::INFO);
+    assert(false);
+  }
 }
