@@ -8,6 +8,7 @@
 
 #include <Brain.hpp>
 #include <Data/ButtonData.hpp>
+#include <Data/MotionRequest.hpp>
 
 class HeadOffModule : public Module<HeadOffModule, Brain> {
 public:
@@ -17,6 +18,7 @@ public:
 
 private:
     const Dependency<ButtonData> buttonData_;
+    Production<MotionRequest> motionRequest_;
 };
 
 
