@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mutex>
+#include <Data/HeadOffData.hpp>
 
 #include "Data/BallSearchPosition.hpp"
 #include "Data/BallState.hpp"
@@ -110,6 +111,8 @@ private:
   const Dependency<ButtonData> buttonData_;
   /// the world state
   const Dependency<WorldState> worldState_;
+  /// a very helpful comment
+  const Dependency<HeadOffData> headOffData_;
   /// the motion request
   Production<MotionRequest> motionRequest_;
   /// the eye LED request
