@@ -80,10 +80,4 @@ void BehaviorModule::cycle()
     actionCommand_.toMotionRequest(*motionRequest_);
     actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
   }
-
-  float headMiddle = buttonData_->buttons[keys::sensor::SWITCH_HEAD_MIDDLE];
-  float headFront = buttonData_->buttons[keys::sensor::SWITCH_HEAD_FRONT];
-  float headBack = buttonData_->buttons[keys::sensor::SWITCH_HEAD_REAR];
-
-  assert(!(headBack >= 1.0 && headFront >= 1.0 && headMiddle >= 1.0));
 }
