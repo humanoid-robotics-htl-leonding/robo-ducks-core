@@ -79,5 +79,5 @@
   "WhistleDetection" : true,
   "WhistleIntegration" : true,
   "WorldStateProvider" : true,
-  "HeadOffModule": true
+  "HeadOffModule": false
 }
