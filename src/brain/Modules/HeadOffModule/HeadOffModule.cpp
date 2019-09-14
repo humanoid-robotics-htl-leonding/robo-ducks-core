@@ -10,7 +10,6 @@ HeadOffModule::HeadOffModule(const ModuleManagerInterface &manager)
 : Module(manager),
 buttonData_(*this),
 cycleInfo_(*this),
-motionRequest_(*this),
 headOffData_(*this)
 {
 }

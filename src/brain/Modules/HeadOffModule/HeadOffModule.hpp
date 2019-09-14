@@ -21,7 +21,6 @@ public:
 private:
     const Dependency<ButtonData> buttonData_;
     const Dependency<CycleInfo> cycleInfo_;
-    Production<MotionRequest> motionRequest_;
     Production<HeadOffData> headOffData_;
 
     TimePoint pressStarted = 0;
