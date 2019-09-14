@@ -8,9 +8,6 @@
 #include "Tools/Time.hpp"
 
 
-//#warning BallData uses deprecated compiler functions. Please fix as fast as possible
-#pragma GCC diagnostic push //TODO Deprecated-Copy used
-#pragma GCC diagnostic ignored "-Wdeprecated-copy"
 
 class BallData : public DataType<BallData>
 {
@@ -48,4 +45,3 @@ public:
   }
 };
 
-#pragma GCC diagnostic pop

@@ -16,9 +16,6 @@
 #include "Tools/Math/Eigen.hpp"
 
 
-//#warning UniValue uses deprecated compiler functions. Please fix as fast as possible
-#pragma GCC diagnostic push //TODO Deprecated-Copy used
-#pragma GCC diagnostic ignored "-Wdeprecated-copy"
 
 namespace Uni
 {
@@ -188,7 +185,6 @@ inline void operator<<(Uni::Value& out, const std::string& in)
   out = Uni::Value(in);
 }
 
-#pragma GCC diagnostic pop
 
 #include "EigenStreaming.hpp"
 #include "UniValueStreaming.hpp"

@@ -1,8 +1,5 @@
 #pragma once
 
-//#warning Cameramatrix uses deprecated compiler functions. Please fix as fast as possible
-#pragma GCC diagnostic push //TODO Deprecated-Copy used
-#pragma GCC diagnostic ignored "-Wdeprecated-copy"
 
 #include "Framework/DataType.hpp"
 #include "Modules/NaoProvider.h"
@@ -261,4 +258,3 @@ public:
 };
 
 
-#pragma GCC diagnostic pop //TODO REMOVE

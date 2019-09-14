@@ -6,9 +6,6 @@
 #include "Modules/Configuration/Configuration.h"
 #include "Tools/Math/Eigen.hpp"
 
-//#warning HeadMatrixWithTimestamp uses deprecated compiler functions. Please fix as fast as possible
-#pragma GCC diagnostic push //TODO Deprecated-Copy used
-#pragma GCC diagnostic ignored "-Wdeprecated-copy"
 class FieldDimensions : public DataType<FieldDimensions>
 {
 public:
@@ -153,4 +150,3 @@ public:
 };
 
 
-#pragma GCC diagnostic pop

@@ -7,9 +7,6 @@
 #include "Tools/Time.hpp"
 
 
-//#warning HeadMatrixWithTimestamp uses deprecated compiler functions. Please fix as fast as possible
-#pragma GCC diagnostic push //TODO Deprecated-Copy used
-#pragma GCC diagnostic ignored "-Wdeprecated-copy"
 
 struct HeadMatrixWithTimestamp : public Uni::To, public Uni::From
 {
@@ -93,4 +90,3 @@ public:
   }
 };
 
-#pragma GCC diagnostic pop
