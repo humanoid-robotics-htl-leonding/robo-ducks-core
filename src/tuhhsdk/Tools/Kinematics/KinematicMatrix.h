@@ -5,7 +5,14 @@
 #include "Tools/Storage/UniValue/UniConvertible.hpp"
 #include <sstream>
 
+
+//#warning HeadMatrixWithTimestamp uses deprecated compiler functions. Please fix as fast as possible
+#pragma GCC diagnostic push //TODO Deprecated-Copy used
+#pragma GCC diagnostic ignored "-Wdeprecated-copy"
+
+
 /// Representation of Kinematic Information
+
 /**
  * This class represents a KinematicMatrix
  * A KinematicMatrix is represented by a 3x3 RotationMatrix (rotM) and a Vector3 (posV)\n
@@ -174,6 +181,14 @@ public:
     return (rotM.isApprox(other.rotM) && posV.isApprox(other.posV));
   }
 
+  // Functionality guessed by Obyoxar based on equality and *= operator to fix deprecation warning
+  KinematicMatrix& operator=(const KinematicMatrix& other)
+  {
+    this->posV = other.posV;
+    this->rotM = other.rotM;
+    return *this;
+  }
+
   /** comparison of another KinematicMatrix to this one
    * @param other KinematicMatrix
    * @return inequality
@@ -225,3 +240,4 @@ public:
     value.at(1) << posV;
   }
 };
+#pragma GCC diagnostic pop

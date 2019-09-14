@@ -58,4 +58,11 @@ public:
   Vector2<T> center;
   /// the radius of the circle
   T radius;
+
+  //Functionality guessed based on copy constructor by Obyoxar to fix deprecation warning
+  Circle& operator=(const Circle& other) {
+    this->center = other.center;
+    this->radius = other.radius;
+    return *this;
+  }
 };

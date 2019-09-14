@@ -9,7 +9,11 @@
 #include "ProjectionCamera.hpp"
 
 
+//#warning HeadMatrixWithTimestamp uses deprecated compiler functions. Please fix as fast as possible
+#pragma GCC diagnostic push //TODO Deprecated-Copy used
+#pragma GCC diagnostic ignored "-Wdeprecated-copy"
 class Brain;
+
 
 class Projection : public Module<Projection, Brain>
 {
@@ -52,3 +56,5 @@ private:
   /// a matrix that represents the transformations of the torso calibration
   KinematicMatrix torsoCalibrationMatrix_;
 };
+
+#pragma GCC diagnostic pop

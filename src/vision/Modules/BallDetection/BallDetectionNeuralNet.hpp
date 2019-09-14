@@ -17,7 +17,12 @@
 #include "Tools/Math/Circle.hpp"
 #include "Tools/Math/Eigen.hpp"
 
+
+//#warning HeadMatrixWithTimestamp uses deprecated compiler functions. Please fix as fast as possible
+#pragma GCC diagnostic push //TODO Deprecated-Copy used
+#pragma GCC diagnostic ignored "-Wdeprecated-copy"
 class Brain;
+
 
 class BallDetectionNeuralNet : public Module<BallDetectionNeuralNet, Brain>
 {
@@ -160,3 +165,5 @@ private:
   /// circles that should be drawn into the debug image
   std::vector<DebugCircle> debugCircles_;
 };
+
+#pragma GCC diagnostic pop
