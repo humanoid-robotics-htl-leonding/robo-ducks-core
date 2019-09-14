@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "Framework/DataType.hpp"
 #include "Modules/NaoProvider.h"
 
@@ -255,3 +256,5 @@ public:
     value["fov"] >> fov;
   }
 };
+
+

@@ -15,6 +15,8 @@
 
 #include "Tools/Math/Eigen.hpp"
 
+
+
 namespace Uni
 {
   enum class ValueType : uint8_t
@@ -45,6 +47,8 @@ namespace Uni
     explicit Value(const std::string&);
     explicit Value(const char*);
     Value(const To&);
+    //Existence guessed by Obyoxar to avoid deprecation-warning
+    Value(const Value&);
 
     Value& operator[](const char*);
     Value& operator[](const std::string&);
@@ -141,11 +145,11 @@ inline void operator<<(Uni::Value& out, const uint64_t in)
 {
   out = Uni::Value((int)in);
 }
+
 inline void operator>>(const Uni::Value& in, double& out)
 {
   out = in.asDouble();
 }
-
 inline void operator<<(Uni::Value& out, const double in)
 {
   out = Uni::Value(in);
@@ -180,6 +184,7 @@ inline void operator<<(Uni::Value& out, const std::string& in)
 {
   out = Uni::Value(in);
 }
+
 
 #include "EigenStreaming.hpp"
 #include "UniValueStreaming.hpp"

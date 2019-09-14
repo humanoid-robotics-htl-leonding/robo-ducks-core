@@ -11,6 +11,7 @@
 
 class Brain;
 
+
 class Projection : public Module<Projection, Brain>
 {
 public:
@@ -52,3 +53,4 @@ private:
   /// a matrix that represents the transformations of the torso calibration
   KinematicMatrix torsoCalibrationMatrix_;
 };
+
