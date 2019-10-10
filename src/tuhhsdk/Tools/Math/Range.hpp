@@ -1,8 +1,10 @@
 #pragma once
 
 #include <algorithm>
+#include <execinfo.h>
 
 #include "Tools/Storage/UniValue/UniConvertible.hpp"
+#include "print.h"
 
 template <typename T>
 class Range : public Uni::From, public Uni::To
@@ -30,7 +32,18 @@ public:
    */
   static T clipToGivenRange(const T& val, const T& min, const T& max)
   {
-    assert(max >= min);
+    if(min > max){
+      print("Oh No. I have got a Min: ", min, LogLevel::INFO);
+      print("Oh No. I have got a Max: ", max, LogLevel::INFO);
+
+      void *array[10];
+      size_t bt_size = backtrace(array, 10);
+      // print out all the frames to stderr
+      fprintf(stderr, "Error: signal:\n");
+      backtrace_symbols_fd(array, bt_size, STDERR_FILENO);
+
+      assert(max >= min);
+    }
     return val < min ? min : val > max ? max : val;
   }
 

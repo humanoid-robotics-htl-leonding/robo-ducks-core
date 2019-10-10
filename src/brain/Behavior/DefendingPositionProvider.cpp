@@ -1,3 +1,5 @@
+
+#include <cmath>
 #include "Tools/Chronometer.hpp"
 #include "Tools/Math/Angle.hpp"
 #include "Tools/Math/Eigen.hpp"
@@ -19,7 +21,7 @@ DefendingPositionProvider::DefendingPositionProvider(const ModuleManagerInterfac
   , worldState_(*this)
   , defendingPosition_(*this)
   , passiveDefenseLineX_(-fieldDimensions_->fieldLength / 2 +
-                         fieldDimensions_->fieldPenaltyMarkerDistance - 0.3f)
+                                 (float) std::fmax(fieldDimensions_->fieldPenaltyMarkerDistance - 0.3f, 0.5f)) // Little bit of a hacky solution to deal with small field sizes.
   , neutralDefenseLineX_(passiveDefenseLineX_ + 1.f)
   , aggressiveDefenseLineX_(neutralDefenseLineX_ + 1.f)
   , passiveDefenseLineY_(fieldDimensions_->fieldPenaltyAreaWidth / 2 + 0.4f)
@@ -88,6 +90,10 @@ void DefendingPositionProvider::calculateDefendingPosition()
       {
         defendingPosition_->position.y() =
           worldState_->ballInLeftHalf ? passiveDefenseLineY_ : -passiveDefenseLineY_;
+        print("Now I would have crashed if it wasn't for the nice Roboducks", LogLevel::INFO);
+        if(minPositionX == passiveDefenseLineX_){
+          print("PassiveDefenseRange has 0 go\n\n", LogLevel::INFO);
+        }
         defendingPosition_->position.x() =
           Range<float>::clipToGivenRange(ownGoalToBallLine.getX(defendingPosition_->position.y()),
             minPositionX, passiveDefenseLineX_);
@@ -149,6 +155,11 @@ void DefendingPositionProvider::calculateDefendingPosition()
             const float minPositionX = -fieldDimensions_->fieldLength / 2 + 0.5f;
             defendingPosition_->position.y() =
               worldState_->ballInLeftHalf ? passiveDefenseLineY_ : -passiveDefenseLineY_;
+
+            print("Now I would have crashed if it wasn't for the nice Roboducks", LogLevel::INFO);
+            if(minPositionX == passiveDefenseLineX_){
+              print("PassiveDefenseRange has 0 go\n\n", LogLevel::INFO);
+            }
             defendingPosition_->position.x() = Range<float>::clipToGivenRange(
               keeperSightLineTowardsBall.getX(defendingPosition_->position.y()), minPositionX,
               passiveDefenseLineX_);
