@@ -55,7 +55,7 @@
   "Projection" : true,
   "ReplacementKeeperActionProvider" : true,
   "ReplayDataProvider" : false,
-  "ReplayRecorder" : true,
+  "ReplayRecorder" : false,
   "RobotDetection" : true,
   "RobotProjectionProvider" : true,
   "SPLMessageReceiver" : true,
@@ -78,6 +78,5 @@
   "WalkingEngine" : false,
   "WhistleDetection" : true,
   "WhistleIntegration" : true,
-  "WorldStateProvider" : true,
-  "HeadOffModule": true
+  "WorldStateProvider" : true
 }

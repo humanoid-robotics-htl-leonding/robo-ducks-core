@@ -112,7 +112,7 @@ private:
   /// the world state
   const Dependency<WorldState> worldState_;
   /// a very helpful comment
-  const Dependency<HeadOffData> headOffData_;
+//  const Dependency<HeadOffData> headOffData_;
   /// the motion request
   Production<MotionRequest> motionRequest_;
   /// the eye LED request
