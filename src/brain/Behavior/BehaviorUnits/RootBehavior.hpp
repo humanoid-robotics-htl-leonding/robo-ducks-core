@@ -10,9 +10,9 @@ ActionCommand rootBehavior(const DataSet& d)
   const bool high = !d.bodyPose.footContact;
 
   if(high){
-    return ActionCommand::stand().combineAudio(ActionCommand::Audio::test());
+    return ActionCommand::dead().combineAudio(ActionCommand::Audio::test());
   }else{
-    return ActionCommand::stand().combineAudio(ActionCommand::Audio::test2());
+    return ActionCommand::dead().combineAudio(ActionCommand::Audio::test2());
   }
 
   if (d.gameControllerState.penalty == Penalty::NONE)

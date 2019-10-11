@@ -34,4 +34,7 @@ private:
   Dependency<PlaybackData> playbackData_;
   Dependency<AudioRequest> audioRequest_;
   Dependency<CycleInfo> cycleInfo_;
+
+  double endTime_ = 0;
+  double lastFrameWritten_ = -1.0;
 };

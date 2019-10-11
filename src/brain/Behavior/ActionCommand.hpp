@@ -459,7 +459,7 @@ public:
     }
     static Audio test2(){
       Audio a;
-      a.frequency = 261.626;
+      a.frequency = 440.0;
       return a;
     }
   private:
