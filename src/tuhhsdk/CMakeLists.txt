@@ -131,6 +131,7 @@ set(TUHHSDK_HEADERS
   Data/WalkingEngineStandOutput.hpp
   Data/WhistleData.hpp
   Data/WorldState.hpp
+#  Data/HeadOffData.hpp
   Definitions/BHULKsStandardMessage.h
   Definitions/keys.h
   Definitions/RoboCupGameControlData.h

@@ -79,6 +79,7 @@ set(HEADERS
   Modules/ReplayRecorder/ReplayRecorder.hpp
   Modules/OdometryOffsetProvider/OdometryOffsetProvider.hpp
   Modules/TeamPlayersAugmenter/TeamPlayersAugmenter.hpp
+#  Modules/HeadOffModule/HeadOffModule.hpp
   SPLNetwork/BHULKsHelper.hpp
   SPLNetwork/HULKsMessage.hpp
   SPLNetwork/SPLNetworkService.hpp
@@ -130,6 +131,7 @@ set(SOURCES
   Modules/ReplayRecorder/ReplayRecorder.cpp
   Modules/OdometryOffsetProvider/OdometryOffsetProvider.cpp
   Modules/TeamPlayersAugmenter/TeamPlayersAugmenter.cpp
+#  Modules/HeadOffModule/HeadOffModule.cpp
   SPLNetwork/HULKsMessage.cpp
   SPLNetwork/SPLNetworkService.cpp
   SPLNetwork/SPLMessageReceiver.cpp

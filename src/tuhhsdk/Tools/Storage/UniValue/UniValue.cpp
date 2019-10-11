@@ -74,6 +74,13 @@ namespace Uni
     }
   }
 
+  //Implementation guessed by obyoxar based on copy-assignment
+  Value::Value(const Value& other)
+  : value_(other.value_)
+  , type_(other.type_){
+    //TODO something should be done if other.type_ is NIL
+  }
+
   Value& Value::operator[](const char* key)
   {
     if (type_ == ValueType::NIL)

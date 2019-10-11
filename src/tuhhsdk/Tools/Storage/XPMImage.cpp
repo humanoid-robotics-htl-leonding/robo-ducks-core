@@ -1,6 +1,6 @@
 #include "Definitions/XPMImages.h"
 #include "Definitions/X11rgb.h"
-
+#include "../../print.h"
 #include "XPMImage.hpp"
 
 std::map<std::string, Color> XPMImage::x11Colors_;
@@ -80,6 +80,7 @@ XPMImage XPMImage::loadXPMImage(const char **rawXPM, const char* transparencyCha
 
 void XPMImage::init()
 {
+  print("Initialize XPM image", LogLevel::DEBUG);
   // load x11 colors
   std::regex colorX11RegEx{R"foo(\s*(\d{1,3})\s*(\d{1,3})\s*(\d{1,3})\s*((?:\w{0,} *)*))foo"};
   for (unsigned int i = 0; i < sizeof(x11RGB)/8; ++i)

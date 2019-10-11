@@ -18,6 +18,7 @@ class NaoProtocol(a.Protocol):
         self.subscribors_queue = {}
         self.msg_type_subscribors = {}
         self.status_subscribors = {}
+        self.any_msg_subscribors = {}
 
     def flush_all(self):
         self.flush_subscribors()
@@ -51,6 +52,9 @@ class NaoProtocol(a.Protocol):
                 callback()
         self.on_con_lost.set_result(True)
 
+    def subscribe_any_msg(self, subscribor: str, callback: ty.Callable[[], None]):
+        self.any_msg_subscribors[subscribor] = callback
+
     def subscribe(self, key: str, subscribor: str,
                   callback: ty.Callable[[Data], None]) -> bool:
         if key not in self.data:
@@ -75,6 +79,10 @@ class NaoProtocol(a.Protocol):
         if status_type not in self.status_subscribors:
             self.status_subscribors[status_type] = {}
         self.status_subscribors[status_type][subscribor] = callback
+
+    def unsubscribe_any_msg(self, subscribor: str):
+        if subscribor in self.any_msg_subscribors:
+            self.any_msg_subscribors.pop(subscribor)
 
     def unsubscribe(self, key: str, subscribor: str) -> bool:
         if key in self.subscribors_queue and subscribor in \

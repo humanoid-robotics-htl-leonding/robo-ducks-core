@@ -6,13 +6,14 @@
 #include "Tools/Time.hpp"
 #include "print.h"
 
-Configuration::Configuration(const std::string& fileRoot)
+Configuration::Configuration(const std::string& fileRoot) //example: home/
   : mountPts_()
   , basePath_(fileRoot + "configuration/")
   , naoHeadName_("default")
   , naoBodyName_("default")
   , locationName_("default")
 {
+  print("Loading configuration "+fileRoot, LogLevel::DEBUG);
 }
 
 Configuration::~Configuration()
@@ -26,11 +27,14 @@ Configuration::~Configuration()
 void Configuration::mount(const std::string& mount, const std::string& name, ConfigurationType type)
 {
   bool found = false;
+  print("Mounting name: " + name +" mount: " + mount, LogLevel::DEBUG);
+  print("Mounting nao configuration with nao head: " + naoHeadName_ + ", nao body: " + naoBodyName_ + "and locationname: "+locationName_, LogLevel::DEBUG);
   std::string headBodyDefaultPath =
       ((type == ConfigurationType::HEAD) ? "head/" : "body/") + std::string("default/");
   std::string headBodyPath =
       ((type == ConfigurationType::HEAD) ? ("head/" + naoHeadName_) : ("body/" + naoBodyName_)) +
       "/";
+
   // Try the most generic configuration first and the most specific configuration last since it will
   // overwrite the previous values.
   std::string path = basePath_ + "location/default/" + name;
@@ -78,6 +82,7 @@ void Configuration::mount(const std::string& mount, const std::string& name, Con
 
 bool Configuration::mountFile(const std::string& mount, const std::string& filename)
 {
+
   MountedConfiguration from;
 
   from.filename = filename;
@@ -88,6 +93,7 @@ bool Configuration::mountFile(const std::string& mount, const std::string& filen
   {
     return false;
   }
+  print("Trying to mount: " + filename, LogLevel::DEBUG);
   try
   {
     Json::Value tmp;

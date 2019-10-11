@@ -7,6 +7,8 @@
 #include "Tools/Math/Eigen.hpp"
 #include "Tools/Time.hpp"
 
+
+
 class BallData : public DataType<BallData>
 {
 public:
@@ -42,3 +44,4 @@ public:
     value["timestamp"] >> timestamp;
   }
 };
+

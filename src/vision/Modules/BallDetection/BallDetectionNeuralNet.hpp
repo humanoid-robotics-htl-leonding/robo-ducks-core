@@ -17,7 +17,9 @@
 #include "Tools/Math/Circle.hpp"
 #include "Tools/Math/Eigen.hpp"
 
+
 class Brain;
+
 
 class BallDetectionNeuralNet : public Module<BallDetectionNeuralNet, Brain>
 {
@@ -160,3 +162,4 @@ private:
   /// circles that should be drawn into the debug image
   std::vector<DebugCircle> debugCircles_;
 };
+

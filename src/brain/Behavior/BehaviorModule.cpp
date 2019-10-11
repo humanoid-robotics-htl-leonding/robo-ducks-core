@@ -1,3 +1,4 @@
+#include <csignal>
 #include "Tools/Chronometer.hpp"
 
 #include "ActionCommand.hpp"
@@ -39,6 +40,7 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   , replacementKeeperAction_(*this)
   , buttonData_(*this)
   , worldState_(*this)
+//  , headOffData_(*this)
   , motionRequest_(*this)
   , eyeLEDRequest_(*this)
   , audioRequest_(*this)
@@ -66,6 +68,7 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
 void BehaviorModule::cycle()
 {
   Chronometer time(debug(), mount_ + ".cycle_time");
+
   if (
       useRemoteMotionRequest_() &&
       gameControllerState_->gameState == GameState::PLAYING &&
@@ -78,7 +81,11 @@ void BehaviorModule::cycle()
   }
   else
   {
-    actionCommand_ = rootBehavior(dataSet_); //TODO Make RootBehaviour Configurable
+//    if(headOffData_->shouldDie){
+//      actionCommand_ = ActionCommand::dead();
+//    }else{
+      actionCommand_ = rootBehavior(dataSet_); //TODO Make RootBehaviour Configurable
+//    }
     actionCommand_.toMotionRequest(*motionRequest_);
     actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
     actionCommand_.toAudioRequest(*audioRequest_);

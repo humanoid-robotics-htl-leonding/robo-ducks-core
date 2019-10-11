@@ -38,7 +38,7 @@ TUHH::TUHH(RobotInterface& robotInterface)
   // set NAO version and name to enable configuration files to be loaded nao specific
   config_.setNaoHeadName(info.headName);
   config_.setNaoBodyName(info.bodyName);
-
+  
   tuhhprint::print("About to configure interface", LogLevel::FANCY);
   // At this point, all configuration specifiers (location, body name, head name) will be set
   // correctly.
@@ -52,10 +52,13 @@ TUHH::TUHH(RobotInterface& robotInterface)
   tuhhprint::print("The current loglevel is " + tuhhprint::preString[(int)ll], LogLevel::INFO);
   tuhhprint::setLogLevel(ll);
 
+  print("Setting up debug file transports", LogLevel::INFO);
   if (config_.get("tuhhSDK.base", "local.enableFileTransport").asBool())
   {
+    print("Adding 'FileTransport'", LogLevel::INFO);
     std::string fileTransportRoot = interface_.getDataRoot();
     debug_.addTransport(std::make_shared<FileTransport>(debug_, config_, fileTransportRoot));
+
   }
 
 #if !defined(SIMROBOT) || defined(WIN32)
@@ -69,9 +72,12 @@ TUHH::TUHH(RobotInterface& robotInterface)
 
   if (config_.get("tuhhSDK.base", "network.enableDebugTCPTransport").asBool())
   {
+    print("Adding 'TCPTransport'", LogLevel::INFO);
     debug_.addTransport(std::make_shared<TCPTransport>(basePort + 1, debug_));
   }
 #else
+  print("Adding 'UnixSocketTransport'", LogLevel::INFO);
+
   usc_ = std::make_unique<UnixSocketConfig>(
       config_.get("tuhhSDK.base", "local.unixSocketDirectory").asString() + info.headName +
           "/config",
@@ -83,7 +89,9 @@ TUHH::TUHH(RobotInterface& robotInterface)
       debug_));
 #endif
 
+  print("Starting sharedObjectManager", LogLevel::INFO);
   sharedObjectManager_.start();
+  print("Finished sharedObjectManager", LogLevel::INFO);
 
 #ifndef SIMROBOT
   if (config_.get("tuhhSDK.base", "network.enableAliveness").asBool())

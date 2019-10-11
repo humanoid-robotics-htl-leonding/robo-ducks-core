@@ -43,6 +43,7 @@ static const char* pidFilePath = "/tmp/tuhhNao.pid";
 void intHandler(int)
 {
   keepRunning = 0;
+    Log(LogLevel::DEBUG) << "Recieved SIGINT";
 }
 
 int main()
@@ -54,6 +55,7 @@ int main()
 
   PIDFile pidFile(pidFilePath);
 
+  Log(LogLevel::DEBUG) << "Registering signal handlers";
   struct sigaction sa;
   sa.sa_handler = &intHandler;
   sigemptyset(&sa.sa_mask);
