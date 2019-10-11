@@ -79,22 +79,45 @@ void FallManager::prepareFalling(const FallDirection fallDirection)
 
   // disable protection
   hot_ = false;
-
+    print("IM FREEEEEEEEEEEEE,FREEEEE FALLLLING",LogLevel::INFO);
+    print("CatchFrontDuration is "+ std::to_string(catchFrontDuration_()),LogLevel::INFO);
   // accomplish reaction move depenting on tendency of falling
+    std::vector<float> catchFallAngles = Poses::getPose(Poses::READY);
   if (fallDirection == FallDirection::FRONT)
   {
-    std::vector<float> catchFrontAngles = Poses::getPose(Poses::READY);
-    catchFrontAngles[JOINTS::HEAD_PITCH] = -38.5 * TO_RAD; // set the head pitch to the minimum
+      print("Falling Front",LogLevel::INFO);
+      catchFallAngles[JOINTS::HEAD_PITCH] = -38.5 * TO_RAD; // set the head pitch to the minimum
     // set hip pitches
-    catchFrontAngles[JOINTS::L_HIP_PITCH] = catchFrontHipPitch_();
-    catchFrontAngles[JOINTS::R_HIP_PITCH] = catchFrontHipPitch_();
-    catchFrontInterpolator_.reset(jointSensorData_->getBodyAngles(), catchFrontAngles,
+    catchFallAngles[JOINTS::L_HIP_PITCH] = catchFrontHipPitch_();
+      catchFallAngles[JOINTS::R_HIP_PITCH] = catchFrontHipPitch_();
+    catchFrontInterpolator_.reset(jointSensorData_->getBodyAngles(), catchFallAngles,
                                   catchFrontDuration_());
-    print("Catch Front!", LogLevel::DEBUG);
+    print("Catch Front!", LogLevel::INFO);
   }
-  else
-  {
-    print("Catch Back!", LogLevel::DEBUG);
-    timerClock_ = kneeDown_.play();
+  else if(fallDirection == FallDirection::BACK){
+      print("Falling Backwards",LogLevel::INFO);
+      catchFallAngles[JOINTS::HEAD_PITCH] = -38.5 * TO_RAD; // set the head pitch to the minimum
   }
+  else if(fallDirection == FallDirection::LEFT){
+      print("Falling to the left",LogLevel::INFO);
+      catchFallAngles[JOINTS::HEAD_PITCH] = -38.5 * TO_RAD; // set the head pitch to the minimum
+      catchFallAngles[JOINTS::L_KNEE_PITCH] =120* TO_RAD;
+      catchFallAngles[JOINTS::L_HIP_PITCH] = -88 * TO_RAD;
+/*
+      catchFallAngles[JOINTS::R_ELBOW_ROLL] = 0;
+      catchFallAngles[JOINTS::R_ELBOW_YAW] = 0;
+      catchFallAngles[JOINTS::R_SHOULDER_PITCH] = 0;
+      catchFallAngles[JOINTS::R_SHOULDER_ROLL]  =0;
+      catchFallAngles[JOINTS::R_WRIST_YAW] = 0;*/
+  }
+  else if(fallDirection == FallDirection::RIGHT){
+      print("Falling to the right",LogLevel::INFO);
+      catchFallAngles[JOINTS::HEAD_PITCH] = -38.5 * TO_RAD; // set the head pitch to the minimum
+      catchFallAngles[JOINTS::R_KNEE_PITCH] =120* TO_RAD;
+      catchFallAngles[JOINTS::R_HIP_PITCH] = -88*TO_RAD;
+  }
+    catchFrontInterpolator_.reset(jointSensorData_->getBodyAngles(), catchFallAngles,
+                                  fallPreparationMovementDuration_);
+
+        //TODO FOLLOW UP DISCUSSION IWTH EVERYONE ABOUT BEST FALLING POSITIONS
 }
