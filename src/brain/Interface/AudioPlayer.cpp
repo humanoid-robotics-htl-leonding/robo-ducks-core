@@ -24,6 +24,7 @@ AudioPlayer::~AudioPlayer()
 
 void AudioPlayer::cycle()
 {
+  std::cout << "Frequency: " << audioRequest_->frequency << std::endl;
   if (!playbackData_->samples.empty())
   {
     audioInterface_.playbackAudioData(playbackData_->samples);
@@ -35,7 +36,7 @@ void AudioPlayer::cycle()
 
     endTime_ = cycleStartTime + 0.1; //s
 
-    if(lastFrameWritten_ < 0.0){
+    if(lastFrameWritten_ < cycleStartTime){
       lastFrameWritten_ = cycleStartTime;
     }
 //    double timeToWrite = endTime_ - lastFrameWritten_;
@@ -45,7 +46,7 @@ void AudioPlayer::cycle()
       double timeIisPlayed = lastFrameWritten_ + 1/44100.f; //s
       double value = sin(timeIisPlayed*frequency*2*M_PI);
       samples.push_back(value);
-      std::cout << value << ";" << timeIisPlayed << std::endl;
+//      std::cout << value << ";" << timeIisPlayed << std::endl;
       lastFrameWritten_ = timeIisPlayed; //s
     }
     audioInterface_.playbackAudioData(samples);

@@ -449,21 +449,30 @@ public:
 
   class Audio //44100 things per second, 512 Buffer Size per Frame
   {
-
-      //C4 -> 261.626 Hz
   public:
-    static Audio test(){
-      Audio a;
-      a.frequency = 0;
-      return a;
+      Audio() {}
+
+      explicit Audio(float frequency) {
+        this->frequency = frequency;
+      }
+
+    static Audio audioC4(){
+      return Audio (261.63);
     }
-    static Audio test2(){
-      Audio a;
-      a.frequency = 440.0;
-      return a;
+    static Audio audioC3(){
+      return Audio (130.81);
+    }
+    static Audio audioC5(){
+      return Audio (523.25);
+    }
+    static Audio audioC6(){
+      return Audio (1064.5);
+    }
+    static Audio off(){
+      return Audio (0);
     }
   private:
-      float frequency;
+      float frequency = 0;
     friend class ActionCommand;
   };
 
