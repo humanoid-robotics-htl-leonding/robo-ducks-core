@@ -30,6 +30,7 @@
 #include "Data/TeamBallModel.hpp"
 #include "Data/TeamPlayers.hpp"
 #include "Data/WorldState.hpp"
+#include "Data/AudioData.hpp"
 #include "Framework/Module.hpp"
 
 #include "DataSet.hpp"
@@ -117,6 +118,9 @@ private:
   Production<MotionRequest> motionRequest_;
   /// the eye LED request
   Production<EyeLEDRequest> eyeLEDRequest_;
+  /// the audio request
+  Production<AudioRequest> audioRequest_;
+  Production<PlaybackData> playbackData_;
   /// the last action command that was computed by the behavior
   ActionCommand actionCommand_;
   /// the data set/bundle that is passed to the behavior

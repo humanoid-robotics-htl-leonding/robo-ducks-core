@@ -1,8 +1,10 @@
 #pragma once
 
 #include <Data/AudioData.hpp>
+#include <Data/AudioRequest.hpp>
 #include <Framework/Module.hpp>
 #include <Hardware/AudioInterface.hpp>
+#include <Data/CycleInfo.hpp>
 
 class Brain;
 
@@ -30,4 +32,9 @@ private:
   AudioInterface& audioInterface_;
   /// This data will be played back via the audioInterface_.
   Dependency<PlaybackData> playbackData_;
+  Dependency<AudioRequest> audioRequest_;
+  Dependency<CycleInfo> cycleInfo_;
+
+  double endTime_ = 0;
+  double lastFrameWritten_ = -1.0;
 };

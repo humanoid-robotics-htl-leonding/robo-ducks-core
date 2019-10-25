@@ -43,6 +43,8 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
 //  , headOffData_(*this)
   , motionRequest_(*this)
   , eyeLEDRequest_(*this)
+  , audioRequest_(*this)
+  , playbackData_(*this)
   , actionCommand_(ActionCommand::dead())
   , dataSet_(*this, *gameControllerState_, *ballState_, *robotPosition_, *bodyPose_,
              *playerConfiguration_, *playingRoles_, *motionState_, *headMotionOutput_,
@@ -60,6 +62,7 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
     actualRemoteMotionRequest_ = remoteMotionRequest_();
   }
   useRemoteMotionRequest_() = false;
+  print("Behaviour - Init", LogLevel::INFO);
 }
 
 void BehaviorModule::cycle()
@@ -85,5 +88,7 @@ void BehaviorModule::cycle()
 //    }
     actionCommand_.toMotionRequest(*motionRequest_);
     actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
+    actionCommand_.toAudioRequest(*audioRequest_);
+    //actionCommand_.toPlaybackData(*playbackData_);
   }
 }

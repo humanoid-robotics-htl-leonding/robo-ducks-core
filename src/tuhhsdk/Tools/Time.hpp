@@ -209,6 +209,21 @@ public:
   {
     return (creationTime_ != endPoint.creationTime_);
   }
+
+  /**
+   * Created by Erik Mayrhofer in an attempt to make TimePoint castable for easier arithmetics
+   * @return
+   */
+  explicit operator unsigned int() const {
+    return creationTime_;
+  }
+  /**
+   * Created by Erik Mayrhofer in an attempt to make TimePoint castable for easier arithmetics
+   * @return
+   */
+  explicit operator double() const {
+    return (double) creationTime_;
+  }
 private:
   /// The base time used for every TimePoint in ms
   static unsigned int baseTime_;

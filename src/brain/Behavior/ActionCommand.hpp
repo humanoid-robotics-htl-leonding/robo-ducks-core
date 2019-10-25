@@ -2,7 +2,9 @@
 
 #include "Behavior/HeadPositionProvider.hpp"
 #include "Data/EyeLEDRequest.hpp"
+#include "Data/AudioRequest.hpp"
 #include "Data/MotionRequest.hpp"
+#include "Data/AudioData.hpp"
 #include "Tools/Math/Eigen.hpp"
 #include "Tools/Math/Pose.hpp"
 
@@ -444,6 +446,36 @@ public:
     float b_ = 0.f;
     friend class ActionCommand;
   };
+
+  class Audio //44100 things per second, 512 Buffer Size per Frame
+  {
+  public:
+      Audio() {}
+
+      explicit Audio(float frequency) {
+        this->frequency = frequency;
+      }
+
+    static Audio audioC4(){
+      return Audio (261.63);
+    }
+    static Audio audioC3(){
+      return Audio (130.81);
+    }
+    static Audio audioC5(){
+      return Audio (523.25);
+    }
+    static Audio audioC6(){
+      return Audio (1064.5);
+    }
+    static Audio off(){
+      return Audio (0);
+    }
+  private:
+      float frequency = 0;
+    friend class ActionCommand;
+  };
+
   /**
    * @brief dead creates a dead action command
    * @return a dead action command
@@ -613,6 +645,16 @@ public:
     return *this;
   }
   /**
+   * @brief combineRightLED replaces the right LED part of an action command
+   * @param right_led the new right LED part of the action command
+   * @return reference to this
+   */
+  ActionCommand& combineAudio(const Audio& audio)
+  {
+    audio_ = audio;
+    return *this;
+  }
+  /**
    * @brief toMotionRequest converts the action command to a motion request
    * @param motion_request the motion request that is overwritten
    */
@@ -673,6 +715,21 @@ public:
     eyeLEDRequest.rightG = rightLed_.g_;
     eyeLEDRequest.rightB = rightLed_.b_;
   }
+
+  /**
+   * @author Erik Mayrhofer
+   * @brief toPlaybackData converts the action command to a PlayBackData
+   * @param eyeLEDRequest the eye LED request that is overwritten
+   */
+  //void toPlaybackData(PlaybackData& playbackData) const
+  //{
+  //  playbackData.samples.insert(playbackData.samples.end(), audio_.samples.begin(), audio_.samples.end());
+  //}
+  void toAudioRequest(AudioRequest& audioRequest) const
+  {
+    audioRequest.frequency = audio_.frequency;
+  }
+
   /**
    * @brief body returns the body part of the command
    * @return the body part of the command
@@ -754,4 +811,6 @@ private:
   LED leftLed_;
   /// the command for the right LED
   LED rightLed_;
+  ///
+  Audio audio_;
 };
