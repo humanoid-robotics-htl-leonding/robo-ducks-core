@@ -101,16 +101,17 @@ void FallManager::prepareFalling(const FallDirection fallDirection)
 
 
         //TODO KICK WITH NOT STANDING LEG
-        catchFallAngles[JOINTS::R_HIP_PITCH] = -60.0 * TO_RAD;
-        catchFallAngles[JOINTS::R_KNEE_PITCH] = -5.0 * TO_RAD;
+        catchFallAngles[JOINTS::L_HIP_PITCH] = -60.0*TO_RAD;
+        catchFallAngles[JOINTS::R_KNEE_PITCH] = -120.0 * TO_RAD;
         //TODO STANDING LEG NO KNEE STIFFNESS
-      std::vector<float> stiffnesses = fallManagerOutput_->stiffnesses;
-      stiffnesses[JOINTS::L_KNEE_PITCH]=0.1;
-      fallManagerOutput_->stiffnesses =stiffnesses;
       //TODO TURNING HIP INWARDS
       print("i survived entstiffen",LogLevel::INFO);
-
-      catchFallAngles[JOINTS::L_HIP_YAW_PITCH] = 40*TO_RAD;
+      catchFallAngles[JOINTS::R_HIP_YAW_PITCH] = -60*TO_RAD;
+        catchFallAngles[JOINTS::L_ELBOW_ROLL] = -85*TO_RAD;
+        catchFallAngles[JOINTS::L_SHOULDER_PITCH] = -115*TO_RAD;
+        catchFallAngles[JOINTS::L_ELBOW_YAW]= 0;    
+      //TODO Kopf einzeihen
+        catchFallAngles[JOINTS::HEAD_PITCH] = 30.0 * TO_RAD;
   }
   else if(fallDirection == FallDirection::RIGHT){
       print("Falling to the right",LogLevel::INFO);
@@ -118,5 +119,4 @@ void FallManager::prepareFalling(const FallDirection fallDirection)
     catchFrontInterpolator_.reset(jointSensorData_->getBodyAngles(), catchFallAngles,
                                   fallPreparationMovementDuration_);
 
-        //TODO FOLLOW UP DISCUSSION IWTH EVERYONE ABOUT BEST FALLING POSITIONS
 }

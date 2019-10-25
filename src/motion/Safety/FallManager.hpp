@@ -58,13 +58,10 @@ private:
   /// interpolator for catch front
   Interpolator catchFrontInterpolator_;
 
-
-  Interpolator catchBackInterpolator_;
-
   
   /// the catch front interpolation duration
   const Parameter<unsigned int> catchFrontDuration_;
-  const float fallPreparationMovementDuration_ = 50.0;
+  const float fallPreparationMovementDuration_ = 30.0;
   /// the catch front hip pitch
   Parameter<float> catchFrontHipPitch_;
   /// motion file for kneeing
