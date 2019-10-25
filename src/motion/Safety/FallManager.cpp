@@ -90,8 +90,6 @@ void FallManager::prepareFalling(const FallDirection fallDirection)
     // set hip pitches
     catchFallAngles[JOINTS::L_HIP_PITCH] = catchFrontHipPitch_();
       catchFallAngles[JOINTS::R_HIP_PITCH] = catchFrontHipPitch_();
-    catchFrontInterpolator_.reset(jointSensorData_->getBodyAngles(), catchFallAngles,
-                                  catchFrontDuration_());
     print("Catch Front!", LogLevel::INFO);
   }
   else if(fallDirection == FallDirection::BACK){
@@ -100,21 +98,22 @@ void FallManager::prepareFalling(const FallDirection fallDirection)
   }
   else if(fallDirection == FallDirection::LEFT){
       print("Falling to the left",LogLevel::INFO);
-      catchFallAngles[JOINTS::HEAD_PITCH] = -38.5 * TO_RAD; // set the head pitch to the minimum
-      catchFallAngles[JOINTS::L_KNEE_PITCH] =120* TO_RAD;
-      catchFallAngles[JOINTS::L_HIP_PITCH] = -88 * TO_RAD;
-/*
-      catchFallAngles[JOINTS::R_ELBOW_ROLL] = 0;
-      catchFallAngles[JOINTS::R_ELBOW_YAW] = 0;
-      catchFallAngles[JOINTS::R_SHOULDER_PITCH] = 0;
-      catchFallAngles[JOINTS::R_SHOULDER_ROLL]  =0;
-      catchFallAngles[JOINTS::R_WRIST_YAW] = 0;*/
+
+
+        //TODO KICK WITH NOT STANDING LEG
+        catchFallAngles[JOINTS::R_HIP_PITCH] = -60.0 * TO_RAD;
+        catchFallAngles[JOINTS::R_KNEE_PITCH] = -5.0 * TO_RAD;
+        //TODO STANDING LEG NO KNEE STIFFNESS
+      std::vector<float> stiffnesses = fallManagerOutput_->stiffnesses;
+      stiffnesses[JOINTS::L_KNEE_PITCH]=0.1;
+      fallManagerOutput_->stiffnesses =stiffnesses;
+      //TODO TURNING HIP INWARDS
+      print("i survived entstiffen",LogLevel::INFO);
+
+      catchFallAngles[JOINTS::L_HIP_YAW_PITCH] = 40*TO_RAD;
   }
   else if(fallDirection == FallDirection::RIGHT){
       print("Falling to the right",LogLevel::INFO);
-      catchFallAngles[JOINTS::HEAD_PITCH] = -38.5 * TO_RAD; // set the head pitch to the minimum
-      catchFallAngles[JOINTS::R_KNEE_PITCH] =120* TO_RAD;
-      catchFallAngles[JOINTS::R_HIP_PITCH] = -88*TO_RAD;
   }
     catchFrontInterpolator_.reset(jointSensorData_->getBodyAngles(), catchFallAngles,
                                   fallPreparationMovementDuration_);
