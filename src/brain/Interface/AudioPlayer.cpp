@@ -41,7 +41,7 @@ void AudioPlayer::cycle()
 
     std::vector<float> samples;
     for(int i = 0; lastFrameWritten_ < endTime_; i++){
-      double timeIisPlayed = lastFrameWritten_ + 1/44100.f; //s
+      double timeIisPlayed = lastFrameWritten_ + 1/SPEAKER_RESOLUTION; //s
       double value = sin(timeIisPlayed*frequency*2*M_PI);
       samples.push_back(value);
       lastFrameWritten_ = timeIisPlayed; //s
