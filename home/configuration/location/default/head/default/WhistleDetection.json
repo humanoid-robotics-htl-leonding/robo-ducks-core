@@ -1,6 +1,6 @@
 {
-  "minFrequency" : 2000,
-  "maxFrequency" : 4000,
+  "minFrequency" : 1000,
+  "maxFrequency" : 1500,
   "backgroundScaling" : 1.6,
   "whistleScaling" : 5.12,
   "numberOfBands" : 16,
