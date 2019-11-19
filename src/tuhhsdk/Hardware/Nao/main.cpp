@@ -88,6 +88,7 @@ int main()
     sigemptyset(&sa.sa_mask);
 //    sa.sa_flags = SA_STACK;
     sigaction(SIGSEGV, &sa, nullptr);
+    sigaction(SIGABRT, &sa, nullptr);
   }
 
   try
