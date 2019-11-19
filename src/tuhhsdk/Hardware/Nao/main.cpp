@@ -5,6 +5,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <execinfo.h>
+#include <stdlib.h>
+
+
 #include "print.h"
 #include "tuhh.hpp"
 
@@ -46,6 +50,19 @@ void intHandler(int)
     Log(LogLevel::DEBUG) << "Recieved SIGINT";
 }
 
+void segvHandler(int sig) {
+  void *array[10];
+  size_t size;
+
+  // get void*'s for all entries on the stack
+  size = backtrace(array, 10);
+
+  // print out all the frames to stderr
+  fprintf(stderr, "Error: signal %d:\n", sig);
+  backtrace_symbols_fd(array, size, STDERR_FILENO);
+  exit(1);
+}
+
 int main()
 {
   setvbuf(stderr, nullptr, _IONBF, 0);
@@ -56,12 +73,22 @@ int main()
   PIDFile pidFile(pidFilePath);
 
   Log(LogLevel::DEBUG) << "Registering signal handlers";
-  struct sigaction sa;
-  sa.sa_handler = &intHandler;
-  sigemptyset(&sa.sa_mask);
-  sa.sa_flags = SA_RESTART;
-  sigaction(SIGINT, &sa, nullptr);
-  sigaction(SIGTERM, &sa, nullptr);
+  { // SET SIGINT HANDLER
+    struct sigaction sa;
+    sa.sa_handler = &intHandler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART;
+    sigaction(SIGINT, &sa, nullptr);
+    sigaction(SIGTERM, &sa, nullptr);
+  }
+
+  { // SET SIGSEGV HANDLER
+    struct sigaction sa;
+    sa.sa_handler = &segvHandler;
+    sigemptyset(&sa.sa_mask);
+//    sa.sa_flags = SA_STACK;
+    sigaction(SIGSEGV, &sa, nullptr);
+  }
 
   try
   {
