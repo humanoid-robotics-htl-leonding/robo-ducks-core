@@ -37,7 +37,9 @@ void FallManager::cycle()
 
   if (bodyPose_->fallDirection != FallDirection::NOT_FALLING)
   {
-    prepareFalling(bodyPose_->fallDirection);
+      prepareFalling(bodyPose_->fallDirection);
+      currFall = bodyPose_->fallDirection;
+      lastCycle = cycleInfo_->startTime;
   }
   if (!catchFrontInterpolator_.finished())
   {
@@ -45,6 +47,7 @@ void FallManager::cycle()
     fallManagerOutput_->safeExit = false;
     fallManagerOutput_->angles = catchFrontInterpolator_.step(10);
     fallManagerOutput_->stiffnesses = std::vector<float>(JOINTS::JOINTS_MAX, 0.7);
+
   }
   else if (kneeDown_.isPlaying())
   {
@@ -79,44 +82,100 @@ void FallManager::prepareFalling(const FallDirection fallDirection)
 
   // disable protection
   hot_ = false;
-    print("IM FREEEEEEEEEEEEE,FREEEEE FALLLLING",LogLevel::INFO);
-    print("CatchFrontDuration is "+ std::to_string(catchFrontDuration_()),LogLevel::INFO);
   // accomplish reaction move depenting on tendency of falling
     std::vector<float> catchFallAngles = Poses::getPose(Poses::READY);
   if (fallDirection == FallDirection::FRONT)
   {
-      print("Falling Front",LogLevel::INFO);
       catchFallAngles[JOINTS::HEAD_PITCH] = -38.5 * TO_RAD; // set the head pitch to the minimum
     // set hip pitches
-    catchFallAngles[JOINTS::L_HIP_PITCH] = catchFrontHipPitch_();
+      catchFallAngles[JOINTS::L_HIP_PITCH] = catchFrontHipPitch_();
       catchFallAngles[JOINTS::R_HIP_PITCH] = catchFrontHipPitch_();
-    print("Catch Front!", LogLevel::INFO);
   }
   else if(fallDirection == FallDirection::BACK){
-      print("Falling Backwards",LogLevel::INFO);
-      catchFallAngles[JOINTS::HEAD_PITCH] = -38.5 * TO_RAD; // set the head pitch to the minimum
+      catchFallAngles[JOINTS::HEAD_PITCH] = 25 * TO_RAD; // set the head pitch to the minimum
   }
   else if(fallDirection == FallDirection::LEFT){
-      print("Falling to the left",LogLevel::INFO);
+      float elbowYaw = jointSensorData_->getBodyAngles()[JOINTS::L_ELBOW_YAW];
+      float elbowRoll = jointSensorData_->getBodyAngles()[JOINTS::L_ELBOW_ROLL];
+      if(elbowYaw >=1.3 &&elbowRoll <=- 1.4 ){
+          catchFallAngles[JOINTS::L_SHOULDER_PITCH] = 115*TO_RAD;
+          catchFallAngles[JOINTS::L_SHOULDER_ROLL]= 20*TO_RAD;
+          catchFallAngles[JOINTS::L_ELBOW_ROLL] =elbowRoll;
+
+          catchFallAngles[JOINTS::L_WRIST_YAW] = -90*TO_RAD;
+          catchFallAngles[JOINTS::L_ELBOW_YAW] = 115 * TO_RAD;
+
+          catchFallAngles[JOINTS::R_HIP_YAW_PITCH] = 35*TO_RAD;
 
 
-        //TODO KICK WITH NOT STANDING LEG
-        catchFallAngles[JOINTS::L_HIP_PITCH] = -60.0*TO_RAD;
-        catchFallAngles[JOINTS::R_KNEE_PITCH] = -120.0 * TO_RAD;
-        //TODO STANDING LEG NO KNEE STIFFNESS
-      //TODO TURNING HIP INWARDS
-      print("i survived entstiffen",LogLevel::INFO);
-      catchFallAngles[JOINTS::R_HIP_YAW_PITCH] = -60*TO_RAD;
-        catchFallAngles[JOINTS::L_ELBOW_ROLL] = -85*TO_RAD;
-        catchFallAngles[JOINTS::L_SHOULDER_PITCH] = -115*TO_RAD;
-        catchFallAngles[JOINTS::L_ELBOW_YAW]= 0;    
-      //TODO Kopf einzeihen
-        catchFallAngles[JOINTS::HEAD_PITCH] = 30.0 * TO_RAD;
+          catchFallAngles[JOINTS::L_HIP_PITCH] = -40.0 * TO_RAD;
+          catchFallAngles[JOINTS::L_KNEE_PITCH] = -5.0 * TO_RAD;
+
+          catchFallAngles[JOINTS::R_HIP_PITCH] = -20.0 * TO_RAD;
+          catchFallAngles[JOINTS::R_KNEE_PITCH] = -5 * TO_RAD;
+          catchFallAngles[JOINTS::R_HIP_ROLL] = 30*TO_RAD;
+
+          catchFallAngles[JOINTS::R_SHOULDER_ROLL]=-40*TO_RAD;
+
+      } else{
+          catchFallAngles[JOINTS::L_SHOULDER_PITCH] = 35*TO_RAD;
+          catchFallAngles[JOINTS::L_SHOULDER_ROLL]= 20*TO_RAD;
+          catchFallAngles[JOINTS::L_ELBOW_ROLL] =-30*TO_RAD;
+          catchFallAngles[JOINTS::L_WRIST_YAW] = -90*TO_RAD;
+          catchFallAngles[JOINTS::L_ELBOW_YAW] = 0 * TO_RAD;
+
+          catchFallAngles[JOINTS::L_HIP_PITCH] = -80.0 * TO_RAD;
+          catchFallAngles[JOINTS::L_KNEE_PITCH] = 110.0 * TO_RAD;
+
+          catchFallAngles[JOINTS::R_HIP_PITCH] = -20.0 * TO_RAD;
+          catchFallAngles[JOINTS::R_KNEE_PITCH] = -5 * TO_RAD;
+          catchFallAngles[JOINTS::R_HIP_ROLL] = -30*TO_RAD;
+
+      }
   }
   else if(fallDirection == FallDirection::RIGHT){
-      print("Falling to the right",LogLevel::INFO);
+
+
+      float elbowYaw = jointSensorData_->getBodyAngles()[JOINTS::R_ELBOW_YAW];
+      float elbowRoll = jointSensorData_->getBodyAngles()[JOINTS::R_ELBOW_ROLL];
+      if(elbowYaw <=-1.3 &&elbowRoll >= 1.4 ){
+          catchFallAngles[JOINTS::R_SHOULDER_PITCH] = 115*TO_RAD;
+          catchFallAngles[JOINTS::R_SHOULDER_ROLL]= -20*TO_RAD;
+          catchFallAngles[JOINTS::R_ELBOW_ROLL] =elbowRoll;
+
+          catchFallAngles[JOINTS::R_WRIST_YAW] = -90*TO_RAD;
+          catchFallAngles[JOINTS::R_ELBOW_YAW] = -115 * TO_RAD;
+
+          catchFallAngles[JOINTS::R_HIP_YAW_PITCH] = 35*TO_RAD;
+
+
+          catchFallAngles[JOINTS::R_HIP_PITCH] = -40.0 * TO_RAD;
+          catchFallAngles[JOINTS::R_KNEE_PITCH] = -5.0 * TO_RAD;
+
+          catchFallAngles[JOINTS::L_HIP_PITCH] = -20.0 * TO_RAD;
+          catchFallAngles[JOINTS::L_KNEE_PITCH] = -5 * TO_RAD;
+          catchFallAngles[JOINTS::L_HIP_ROLL] = 30*TO_RAD;
+
+          catchFallAngles[JOINTS::L_SHOULDER_ROLL]=40*TO_RAD;
+      } else{
+          catchFallAngles[JOINTS::R_SHOULDER_PITCH] = 35*TO_RAD;
+          catchFallAngles[JOINTS::R_SHOULDER_ROLL]= -20*TO_RAD;
+          catchFallAngles[JOINTS::R_ELBOW_ROLL] =30*TO_RAD;
+          catchFallAngles[JOINTS::R_WRIST_YAW] = -90*TO_RAD;
+          catchFallAngles[JOINTS::R_ELBOW_YAW] = 0 * TO_RAD;
+
+          catchFallAngles[JOINTS::R_HIP_PITCH] = -80.0 * TO_RAD;
+          catchFallAngles[JOINTS::R_KNEE_PITCH] = 110.0 * TO_RAD;
+
+          catchFallAngles[JOINTS::L_HIP_PITCH] = -20.0 * TO_RAD;
+          catchFallAngles[JOINTS::L_KNEE_PITCH] = -5 * TO_RAD;
+          catchFallAngles[JOINTS::L_HIP_ROLL] = 30*TO_RAD;
+
+      }
+
+
   }
+
     catchFrontInterpolator_.reset(jointSensorData_->getBodyAngles(), catchFallAngles,
                                   fallPreparationMovementDuration_);
-
 }

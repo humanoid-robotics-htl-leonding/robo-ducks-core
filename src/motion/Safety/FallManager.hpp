@@ -57,8 +57,8 @@ private:
   bool hot_;
   /// interpolator for catch front
   Interpolator catchFrontInterpolator_;
-
-  
+  FallDirection currFall;
+  TimePoint lastCycle;
   /// the catch front interpolation duration
   const Parameter<unsigned int> catchFrontDuration_;
   const float fallPreparationMovementDuration_ = 30.0;
