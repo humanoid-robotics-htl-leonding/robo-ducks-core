@@ -28,7 +28,7 @@
 namespace B_HULKs
 {
 #define BHULKS_STANDARD_MESSAGE_STRUCT_HEADER  "BHLK"
-#define BHULKS_STANDARD_MESSAGE_STRUCT_VERSION 9        //< this should be incremented with each change
+#define BHULKS_STANDARD_MESSAGE_STRUCT_VERSION 10        //< this should be incremented with each change
 #define BHULKS_STANDARD_MESSAGE_MAX_NUM_OF_PLAYERS 10   //< max teammembers for Mixed-Teams 2017
 #define BHULKS_STANDARD_MESSAGE_MAX_NUM_OF_OBSTACLES 7  //< max send obstacles per messages
 
@@ -226,7 +226,7 @@ namespace B_HULKs
     OwnTeamInfo();
 
     // timestamp when RoboCupGameControlData (RoboCup::) was reveived
-    uint32_t timestampWhenReceived; // [delta 0..-1.09 minutes (256ms)]
+      uint32_t timestampWhenReceived; // [delta 0..-1.09 minutes (256ms)]
 
 
     //values of RoboCup::RoboCupGameControlData
