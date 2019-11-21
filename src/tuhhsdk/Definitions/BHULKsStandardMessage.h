@@ -220,7 +220,7 @@ namespace B_HULKs
   */
   struct OwnTeamInfo
   {
-    static_assert(GAMECONTROLLER_STRUCT_VERSION == 11,
+    static_assert(GAMECONTROLLER_STRUCT_VERSION == 12,
       "Please adjust this struct to the newer game controller struct version");
 
     OwnTeamInfo();
@@ -228,13 +228,14 @@ namespace B_HULKs
     // timestamp when RoboCupGameControlData (RoboCup::) was reveived
     uint32_t timestampWhenReceived; // [delta 0..-1.09 minutes (256ms)]
 
+
     //values of RoboCup::RoboCupGameControlData
     uint8_t packetNumber;
 
     GameStateStruct state;
     uint8_t kickingTeam;
-    uint8_t dropInTeam;
-    uint16_t dropInTime;    // < [0..62 (2)]
+//    uint8_t dropInTeam;
+//    uint16_t dropInTime;    // < [0..62 (2)]
     uint16_t secsRemaining; // < [0..1023]
     uint16_t secondaryTime; // < [0..511]
 

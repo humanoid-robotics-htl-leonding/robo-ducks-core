@@ -52,8 +52,8 @@ void ReplayDataProvider::cycle()
   gameControllerState_->kickingTeam = true;
   gameControllerState_->kickingTeamNumber = 24;
   gameControllerState_->secondaryTime = 0.f;
-  gameControllerState_->dropInTeam = 0;
-  gameControllerState_->dropInTime = 0;
+//  gameControllerState_->dropInTeam = 0;
+//  gameControllerState_->dropInTime = 0;
   gameControllerState_->remainingTime = 0.f;
   gameControllerState_->teamColor = TeamColor::GRAY;
   gameControllerState_->score = 0;

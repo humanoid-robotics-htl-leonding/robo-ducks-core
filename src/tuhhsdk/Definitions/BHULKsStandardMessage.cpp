@@ -136,13 +136,13 @@ namespace B_HULKs
     writeVal<uint8_t>(data, packetNumber);
 
     state.write(data);
-    if (state.gameState == static_cast<uint16_t>(GameState::PLAYING) && state.setPlay != static_cast<uint16_t>(SetPlay::NONE)) {
-      writeVal<uint8_t>(data, dropInTeam);
-    } else {
+//    if (state.gameState == static_cast<uint16_t>(GameState::PLAYING) && state.setPlay != static_cast<uint16_t>(SetPlay::NONE)) {
+//      writeVal<uint8_t>(data, dropInTeam);
+//    } else {
       writeVal<uint8_t>(data, kickingTeam);
-    }
+//    }
 
-    writeVal<uint16_t>(data, static_cast<uint16_t>(std::min(63u, 1u + dropInTime) >> 1 << 11 | (secsRemaining & 0x3FF) << 1 | (secondaryTime >> 8 & 1)));
+//    writeVal<uint16_t>(data, static_cast<uint16_t>(std::min(63u, 1u + dropInTime) >> 1 << 11 | (secsRemaining & 0x3FF) << 1 | (secondaryTime >> 8 & 1)));
     writeVal<uint16_t>(data, static_cast<uint16_t>(secondaryTime));
 
     uint16_t scorePlusIsPenalized = score;
@@ -165,16 +165,16 @@ namespace B_HULKs
 
     state.read(data);
 
-    if (state.gameState == static_cast<uint16_t>(GameState::PLAYING) && state.setPlay != static_cast<uint16_t>(SetPlay::NONE)) {
-      dropInTeam = readVal<const int8_t>(data);
-    }
-    else
-    {
+//    if (state.gameState == static_cast<uint16_t>(GameState::PLAYING) && state.setPlay != static_cast<uint16_t>(SetPlay::NONE)) {
+//      dropInTeam = readVal<const int8_t>(data);
+//    }
+//    else
+//    {
       kickingTeam= readVal<const int8_t>(data);
-    }
+//    }
 
     const uint16_t timeStruct = readVal<const int16_t>(data);
-    dropInTime = static_cast<uint16_t>(timeStruct >> 11 << 1);
+//    dropInTime = static_cast<uint16_t>(timeStruct >> 11 << 1);
     secsRemaining = static_cast<uint16_t>((timeStruct >> 1) & 0x3FF);
     secondaryTime = readVal<uint16_t>(data);
 

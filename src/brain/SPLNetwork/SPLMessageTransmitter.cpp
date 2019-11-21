@@ -73,8 +73,8 @@ void SPLMessageTransmitter::cycle()
   ownTeamInfo.packetNumber = gameControllerState_->packetNumber;
   ownTeamInfo.state.fromGameControllerState(*gameControllerState_);
   ownTeamInfo.kickingTeam = gameControllerState_->kickingTeamNumber;
-  ownTeamInfo.dropInTeam = gameControllerState_->dropInTeam;
-  ownTeamInfo.dropInTime = gameControllerState_->dropInTime;
+//  ownTeamInfo.dropInTeam = gameControllerState_->dropInTeam;
+//  ownTeamInfo.dropInTime = gameControllerState_->dropInTime;
   ownTeamInfo.secsRemaining = gameControllerState_->remainingTime;
   ownTeamInfo.secondaryTime = gameControllerState_->secondaryTime;
   ownTeamInfo.score = gameControllerState_->score;
