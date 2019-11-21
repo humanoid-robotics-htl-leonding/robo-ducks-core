@@ -49,6 +49,7 @@ void WhistleDetection::cycle()
       // a whistle is reported if the whistle buffer contains at least a certain number of found whistles
       if (whistleCount >= minWhistleCount_())
       {
+        print("Whistle Heard!", LogLevel::INFO);
         lastTimeWhistleHeard_ = cycleInfo_->startTime;
       }
       fftBuffer_.clear();
@@ -61,7 +62,10 @@ void WhistleDetection::cycle()
 
 bool WhistleDetection::fftBufferContainsWhistle()
 {
-  // apply Hann window to reduce spectral leakage
+  if(fftBuffer_.empty())
+    return false;
+
+  // apply "Hann window" to reduce spectral leakage
   for (unsigned int i = 0; i < fftBufferSize_; i++)
   {
     fftBuffer_[i] *= std::pow(std::sin(static_cast<float>(M_PI) * static_cast<float>(i) / fftBufferSize_), 2.0f);
@@ -91,12 +95,15 @@ bool WhistleDetection::fftBufferContainsWhistle()
   // the spectrum is divided into several bands. for each band, the mean is compared to the background threshold to find the whistle band
   const float backgroundThreshold = mean + backgroundScaling_() * standardDeviation;
   const unsigned int bandSize = ceil((maxFreqIndex - minFreqIndex) / numberOfBands_());
-
+  if(bandSize == 0){
+    throw std::runtime_error("WhistleDetection: bandSize is zero. Probably the min and max index are too close together.");
+  }
   // find the start of the the whistle band
   for (unsigned int i = 0; i < numberOfBands_(); i++)
   {
     const std::vector<float>::const_iterator bandStart = absFreqData.begin() + minFreqIndex;
     const std::vector<float>::const_iterator bandEnd = absFreqData.begin() + minFreqIndex + bandSize;
+    assert(bandStart != bandEnd);
     const float bandMean = Statistics::mean(std::vector<float>(bandStart, bandEnd));
     if (bandMean < backgroundThreshold)
     {
@@ -113,6 +120,7 @@ bool WhistleDetection::fftBufferContainsWhistle()
   {
     const std::vector<float>::const_iterator bandStart = absFreqData.begin() + maxFreqIndex - bandSize;
     const std::vector<float>::const_iterator bandEnd = absFreqData.begin() + maxFreqIndex;
+    assert(bandStart != bandEnd);
     const float bandMean = Statistics::mean(std::vector<float>(bandStart, bandEnd));
     if (bandMean < backgroundThreshold)
     {
