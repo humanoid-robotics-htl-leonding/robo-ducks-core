@@ -26,7 +26,7 @@ void WhistleDetection::cycle()
   Chronometer time(debug(), mount_ + ".cycle_time");
   if (rawGameControllerState_->gameState != GameState::SET)
   {
-//    return; TODO UNCOMMENT PLSS!!!
+    return;
   }
   if (recordData_->samples.empty())
   {
@@ -47,7 +47,6 @@ void WhistleDetection::cycle()
         whistleCount += foundWhistlesBuffer_[i];
       }
       // a whistle is reported if the whistle buffer contains at least a certain number of found whistles
-      print("Whistle Count: ", whistleCount, LogLevel::INFO);
       if (whistleCount >= minWhistleCount_())
       {
         print("Whistle Heard!", LogLevel::INFO);
@@ -96,21 +95,15 @@ bool WhistleDetection::fftBufferContainsWhistle()
   // the spectrum is divided into several bands. for each band, the mean is compared to the background threshold to find the whistle band
   const float backgroundThreshold = mean + backgroundScaling_() * standardDeviation;
   const unsigned int bandSize = ceil((maxFreqIndex - minFreqIndex) / numberOfBands_());
-/*
-  //Just Debug
-  for(unsigned int i = 0; i < numberOfBands_(); i++){
-    const std::vector<float>::const_iterator bandStart = absFreqData.begin() + minFreqIndex + (i*bandSize);
-    const std::vector<float>::const_iterator bandEnd = absFreqData.begin() + minFreqIndex + ((i+1)*bandSize);
-    const float bandMean = Statistics::mean(std::vector<float>(bandStart, bandEnd));
-    std::cout << bandMean << "; ";
+  if(bandSize == 0){
+    throw std::runtime_error("WhistleDetection: bandSize is zero. Probably the min and max index are too close together.");
   }
-  std::cout << std::endl;
-*/
   // find the start of the the whistle band
   for (unsigned int i = 0; i < numberOfBands_(); i++)
   {
     const std::vector<float>::const_iterator bandStart = absFreqData.begin() + minFreqIndex;
     const std::vector<float>::const_iterator bandEnd = absFreqData.begin() + minFreqIndex + bandSize;
+    assert(bandStart != bandEnd);
     const float bandMean = Statistics::mean(std::vector<float>(bandStart, bandEnd));
     if (bandMean < backgroundThreshold)
     {
@@ -127,6 +120,7 @@ bool WhistleDetection::fftBufferContainsWhistle()
   {
     const std::vector<float>::const_iterator bandStart = absFreqData.begin() + maxFreqIndex - bandSize;
     const std::vector<float>::const_iterator bandEnd = absFreqData.begin() + maxFreqIndex;
+    assert(bandStart != bandEnd);
     const float bandMean = Statistics::mean(std::vector<float>(bandStart, bandEnd));
     if (bandMean < backgroundThreshold)
     {
