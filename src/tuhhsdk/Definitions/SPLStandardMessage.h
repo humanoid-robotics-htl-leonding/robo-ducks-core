@@ -42,7 +42,6 @@ struct SPLStandardMessage
   // +ve y-axis is 90 degrees counter clockwise from the +ve x-axis
   // angle in radians, 0 along the +x axis, increasing counter clockwise
   float pose[3];         // x,y,theta
-  //TODO 64 Bit?
 
   // ball information
   float ballAge;         // seconds since this robot last saw the ball. -1.f if we haven't seen it
