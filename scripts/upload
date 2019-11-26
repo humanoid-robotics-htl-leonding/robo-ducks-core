@@ -171,8 +171,9 @@ function run {
     download_logs "$BASEDIR" "$NAO" "$LOGDIR"
   fi
 
-  msg -n "Stopping ${NAO}."
-  naocmd "${BASEDIR}" "${NAO}" "sudo /etc/init.d/hulk stop; killall -SIGTERM tuhhNao 2>/dev/null; exit 0"
+  msg -n "Stopping ${NAO}. (Not stopping Hulks service)"
+#  naocmd "${BASEDIR}" "${NAO}" "sudo /etc/init.d/hulk stop; killall -SIGTERM tuhhNao 2>/dev/null; exit 0"
+  naocmd "${BASEDIR}" "${NAO}" "killall -SIGTERM tuhhNao 2>/dev/null; exit 0"
   if [ "$?" -ne 0 ]; then
     msg -e "Failed to stop ${NAO}!"
     return 1
