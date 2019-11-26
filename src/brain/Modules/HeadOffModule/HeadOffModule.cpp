@@ -15,10 +15,11 @@ headOffData_(*this)
 }
 
 void HeadOffModule::cycle() {
-
   float headMiddle = buttonData_->buttons[keys::sensor::SWITCH_HEAD_MIDDLE];
   float headFront = buttonData_->buttons[keys::sensor::SWITCH_HEAD_FRONT];
   float headBack = buttonData_->buttons[keys::sensor::SWITCH_HEAD_REAR];
+
+
 
   bool dying = (headBack >= 1.0 && headFront >= 1.0 && headMiddle >= 1.0);
 
@@ -35,4 +36,5 @@ void HeadOffModule::cycle() {
   }
 
   headOffData_->shouldDie = dying;
+
 }

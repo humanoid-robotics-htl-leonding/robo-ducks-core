@@ -40,7 +40,7 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   , replacementKeeperAction_(*this)
   , buttonData_(*this)
   , worldState_(*this)
-//  , headOffData_(*this)
+  , headOffData_(*this)
   , motionRequest_(*this)
   , eyeLEDRequest_(*this)
   , audioRequest_(*this)
@@ -81,11 +81,11 @@ void BehaviorModule::cycle()
   }
   else
   {
-//    if(headOffData_->shouldDie){
-//      actionCommand_ = ActionCommand::dead();
-//    }else{
+    if(headOffData_->shouldDie){
+      actionCommand_ = ActionCommand::dead();
+    }else{
       actionCommand_ = rootBehavior(dataSet_); //TODO Make RootBehaviour Configurable
-//    }
+    }
     actionCommand_.toMotionRequest(*motionRequest_);
     actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
     actionCommand_.toAudioRequest(*audioRequest_);
