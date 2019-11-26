@@ -170,25 +170,14 @@ void LEDHandler::setEarRightLEDs(const float* earSegmentBrightnesses)
 
 void LEDHandler::setEyeLeftRainbow()
 {
-  for (unsigned int i = 0; i < 8; i++)
-  {
-    const unsigned int rainbowCycleOffset = 1;
-    int l = (rainbowCycle_ + rainbowCycleOffset + i) % 8;
-    cmd_.at(CHEST_MAX + 2 * EAR_MAX + i) = rainbowLeft_[l];
-    cmd_.at(CHEST_MAX + 2 * EAR_MAX + i + 8) = rainbowLeft_[(l + 8)];
-    cmd_.at(CHEST_MAX + 2 * EAR_MAX + i + 16) = rainbowLeft_[(l + 16)];
-  }
+  cmd_.at(CHEST_MAX + 2 * EAR_MAX + rainbowCycle_ % 24) = 1.0;
+  cmd_.at(CHEST_MAX + 2 * EAR_MAX + (rainbowCycle_-8) % 24) = 0.0;
 }
 
 void LEDHandler::setEyeRightRainbow()
 {
-  for (unsigned int i = 0; i < 8; i++)
-  {
-    int r = (rainbowCycle_ - i) % 8;
-    cmd_.at(CHEST_MAX + 2 * EAR_MAX + EYE_MAX + i) = rainbowLeft_[r];
-    cmd_.at(CHEST_MAX + 2 * EAR_MAX + EYE_MAX + i + 8) = rainbowLeft_[r + 8];
-    cmd_.at(CHEST_MAX + 2 * EAR_MAX + EYE_MAX + i + 16) = rainbowLeft_[r + 16];
-  }
+  cmd_.at(CHEST_MAX + 2 * EAR_MAX + EYE_MAX + 24 - (rainbowCycle_ % 24)) = 1.0;
+  cmd_.at(CHEST_MAX + 2 * EAR_MAX + EYE_MAX + 24 - ((rainbowCycle_-8) % 24)) = 0.0;
 }
 
 void LEDHandler::showRobotStateOnChestLEDs()
