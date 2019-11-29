@@ -453,6 +453,7 @@ public:
    */
   class EarLED
   {
+  public:
     static EarLED off() {
       EarLED led;
       led.earMode_ = EarMode::OFF;
