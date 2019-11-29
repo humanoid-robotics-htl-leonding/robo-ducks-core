@@ -31,7 +31,11 @@ void HeadOffModule::cycle() {
     if (delta > 5000){
       assert(false);
     }
+    else if (delta >4000){
+        headOffData_->shouldDieSignal = true;
+    }
   }else{
+      headOffData_->shouldDieSignal = false;
     pressStarted = 0;
   }
 

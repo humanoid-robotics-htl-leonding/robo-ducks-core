@@ -83,7 +83,10 @@ void BehaviorModule::cycle()
   {
     if(headOffData_->shouldDie){
       actionCommand_ = ActionCommand::dead();
-    }else{
+    }else if(headOffData_->shouldDieSignal){
+        actionCommand_ = ActionCommand::dead().combineAudio(ActionCommand::Audio::audioC3());
+    }
+    else{
       actionCommand_ = rootBehavior(dataSet_); //TODO Make RootBehaviour Configurable
     }
     actionCommand_.toMotionRequest(*motionRequest_);
