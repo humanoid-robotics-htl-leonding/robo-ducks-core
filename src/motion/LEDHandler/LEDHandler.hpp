@@ -16,6 +16,7 @@
 
 #include "Data/CycleInfo.hpp"
 #include "Data/EyeLEDRequest.hpp"
+#include "Data/EarLEDRequest.hpp"
 #include "Data/GameControllerState.hpp"
 #include "Data/WhistleData.hpp"
 
@@ -137,6 +138,7 @@ private:
 
   const Dependency<CycleInfo> cycleInfo_;
   const Dependency<EyeLEDRequest> eyeLEDRequest_;
+  const Dependency<EarLEDRequest> earLEDRequest_;
   const Dependency<GameControllerState> gameControllerState_;
   const Dependency<WhistleData> whistleData_;
 
@@ -144,4 +146,12 @@ private:
   std::vector<float> cmd_;
   /// a cycle counter because LEDs are not sent every cycle
   unsigned int cycleCount_, rainbowCycle_;
+
+    void setRightEarBrightness(float d);
+
+    void setRightEarContinueLoading();
+
+    void setRightEarProgress(float right);
+
+    void setRightEarPulsating();
 };

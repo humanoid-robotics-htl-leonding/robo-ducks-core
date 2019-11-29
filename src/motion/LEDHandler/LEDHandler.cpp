@@ -16,6 +16,7 @@ LEDHandler::LEDHandler(const ModuleManagerInterface& manager)
   : Module(manager)
   , cycleInfo_(*this)
   , eyeLEDRequest_(*this)
+  , earLEDRequest_(*this)
   , gameControllerState_(*this)
   , whistleData_(*this)
   , cmd_(CHEST_MAX + 2 * EAR_MAX + 2 * EYE_MAX + HEAD_MAX + 2 * FOOT_MAX, 0.f)
@@ -58,10 +59,29 @@ void LEDHandler::cycle()
         setEyeRightRainbow();
         break;
     }
+      switch (earLEDRequest_->rightEarMode)
+      {
+          case EarMode ::OFF:
+              setRightEarBrightness(0.0f);
+              break;
+          case EarMode ::COLOR:
+              setRightEarBrightness(earLEDRequest_->brightnessRight);
+              break;
+          case EarMode ::LOADING:
+              setRightEarContinueLoading();
+              break;
+          case EarMode ::PROGRESS:
+                setRightEarProgress(earLEDRequest_->progressRight);
+          break;
+          case EarMode::PULSATE:
+                setRightEarPulsating();
+              break;
+      }
+
     showRobotStateOnChestLEDs();
     showTeamColorOnLeftFootLEDs();
     showKickOffTeamOnRightFootLEDs();
-    showWhistleStatusOnEarLEDs();
+    //showWhistleStatusOnEarLEDs();
     robotInterface().setLEDs(cmd_);
   }
   cycleCount_++;
@@ -310,4 +330,36 @@ void LEDHandler::showWhistleStatusOnEarLEDs()
     setEarRightLEDs(minEars);
     setEarLeftLEDs(minEars);
   }
+}
+
+void LEDHandler::setRightEarBrightness(float brightness) {
+    std::vector<float> rightEar = std::vector<float>(EAR_MAX,brightness);
+
+
+
+
+    setEarRightLEDs(rightEar.data());
+}
+
+void LEDHandler::setRightEarContinueLoading() {
+    std::vector<float> rightEar = std::vector<float>(EAR_MAX,0.0f);
+
+
+    setEarRightLEDs(rightEar.data());
+
+}
+
+void LEDHandler::setRightEarProgress(float progress) {
+    std::vector<float> rightEar = std::vector<float>(EAR_MAX,0.0f);
+    int fullyLoaded = progress/10;
+    float lastPercentage = (progress%10)/100.0f;
+
+    setEarRightLEDs(rightEar.data());
+}
+
+void LEDHandler::setRightEarPulsating() {
+    std::vector<float> rightEar = std::vector<float>(EAR_MAX,brightness);
+
+
+    setEarRightLEDs(rightEar.data());
 }
