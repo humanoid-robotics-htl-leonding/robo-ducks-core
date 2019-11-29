@@ -151,7 +151,10 @@ private:
 
     void setRightEarContinueLoading();
 
-    void setRightEarProgress(float right);
+    void setRightEarProgress(short right);
 
-    void setRightEarPulsating();
+    void setRightEarPulsating(u_int8_t rightSpeed);
+
+    uint8_t currentSpeedRight;
+    unsigned int lastStartTime;
 };

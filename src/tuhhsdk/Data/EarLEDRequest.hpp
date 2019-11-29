@@ -8,7 +8,7 @@
 enum class EarMode
 {
   OFF,
-  COLOR,
+  BRIGHTNESS,
   LOADING,
   PROGRESS,
   PULSATE
@@ -23,13 +23,13 @@ public:
   EarMode leftEarMode;
   /// the red value of the left LED
   short progressLeft;
-
+  uint8_t speedLeft; //in 100ms steps //period duration
   float brightnessLeft;
 
   EarMode rightEarMode;
   /// the red value of the right LED
   short progressRight;
-
+    uint8_t speedRight; //in 100ms steps //period duration
   float brightnessRight;
   /**
    * @brief reset does nothing

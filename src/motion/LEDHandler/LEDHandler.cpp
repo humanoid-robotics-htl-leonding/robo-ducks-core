@@ -64,7 +64,7 @@ void LEDHandler::cycle()
           case EarMode ::OFF:
               setRightEarBrightness(0.0f);
               break;
-          case EarMode ::COLOR:
+          case EarMode ::BRIGHTNESS:
               setRightEarBrightness(earLEDRequest_->brightnessRight);
               break;
           case EarMode ::LOADING:
@@ -74,7 +74,7 @@ void LEDHandler::cycle()
                 setRightEarProgress(earLEDRequest_->progressRight);
           break;
           case EarMode::PULSATE:
-                setRightEarPulsating();
+                setRightEarPulsating(earLEDRequest_->speedRight);
               break;
       }
 
@@ -334,10 +334,6 @@ void LEDHandler::showWhistleStatusOnEarLEDs()
 
 void LEDHandler::setRightEarBrightness(float brightness) {
     std::vector<float> rightEar = std::vector<float>(EAR_MAX,brightness);
-
-
-
-
     setEarRightLEDs(rightEar.data());
 }
 
@@ -349,17 +345,29 @@ void LEDHandler::setRightEarContinueLoading() {
 
 }
 
-void LEDHandler::setRightEarProgress(float progress) {
+void LEDHandler::setRightEarProgress(short progress) {
     std::vector<float> rightEar = std::vector<float>(EAR_MAX,0.0f);
     int fullyLoaded = progress/10;
     float lastPercentage = (progress%10)/100.0f;
+    rightEar.assign(fullyLoaded,1.0f);
+    rightEar[fullyLoaded] = lastPercentage;
 
     setEarRightLEDs(rightEar.data());
 }
 
-void LEDHandler::setRightEarPulsating() {
+void LEDHandler::setRightEarPulsating(uint8_t speedRight) {
+
+    if(speedRight != currentSpeedRight){
+        setRightEarPulsating(speedRight);
+    }
+    int cycleTime = speedRight
+    float halfCycleCompleteness =(unsigned int)( cycleInfo_->startTime)-lastStartTime
+
+    float brightness = 0.0f;
+
+
+
+
     std::vector<float> rightEar = std::vector<float>(EAR_MAX,brightness);
-
-
     setEarRightLEDs(rightEar.data());
 }
