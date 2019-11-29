@@ -45,6 +45,7 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   , eyeLEDRequest_(*this)
   , audioRequest_(*this)
   , playbackData_(*this)
+  , earLEDRequest_(*this)
   , actionCommand_(ActionCommand::dead())
   , dataSet_(*this, *gameControllerState_, *ballState_, *robotPosition_, *bodyPose_,
              *playerConfiguration_, *playingRoles_, *motionState_, *headMotionOutput_,
@@ -85,10 +86,12 @@ void BehaviorModule::cycle()
       actionCommand_ = ActionCommand::dead();
     }else{
       actionCommand_ = rootBehavior(dataSet_); //TODO Make RootBehaviour Configurable
+      actionCommand_.combineLeftEarLED(ActionCommand::EarLED::pulsate());
     }
     actionCommand_.toMotionRequest(*motionRequest_);
     actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
     actionCommand_.toAudioRequest(*audioRequest_);
+    actionCommand_.toEarLEDRequest(*earLEDRequest_);
     //actionCommand_.toPlaybackData(*playbackData_);
   }
 }

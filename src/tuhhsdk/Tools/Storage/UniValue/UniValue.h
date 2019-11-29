@@ -185,6 +185,5 @@ inline void operator<<(Uni::Value& out, const std::string& in)
   out = Uni::Value(in);
 }
 
-
 #include "EigenStreaming.hpp"
 #include "UniValueStreaming.hpp"

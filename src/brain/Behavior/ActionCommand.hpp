@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Data/EarLEDRequest.hpp>
 #include "Behavior/HeadPositionProvider.hpp"
 #include "Data/EyeLEDRequest.hpp"
 #include "Data/AudioRequest.hpp"
@@ -447,6 +448,53 @@ public:
     friend class ActionCommand;
   };
 
+  /**
+   * @author Erik Mayrhofer
+   */
+  class EarLED
+  {
+  public:
+    static EarLED off() {
+      EarLED led;
+      led.earMode_ = EarMode::OFF;
+      led.progress_ = 0;
+      led.brightness_ = 0.f;
+      return led;
+    }
+
+    static EarLED progress(short progress) {
+      EarLED led;
+      led.earMode_ = EarMode::PROGRESS;
+      led.progress_ = progress;
+      led.brightness_ = 0.f;
+      return led;
+    }
+
+    static EarLED pulsate() {
+      EarLED led;
+      led.earMode_ = EarMode::PULSATE;
+      led.progress_ = 0;
+      led.brightness_ = 0.f;
+      return led;
+    }
+
+    static EarLED brightness(float brightness) {
+      EarLED led;
+      led.earMode_ = EarMode::BRIGHTNESS;
+      led.progress_ = 0;
+      led.brightness_ = brightness;
+      return led;
+    }
+
+  private:
+    EarLED() = default;
+    EarMode earMode_ = EarMode::OFF;
+    short progress_ = 0;
+    float brightness_ = 0.f;
+
+    friend class ActionCommand;
+  };
+
   class Audio //44100 things per second, 512 Buffer Size per Frame
   {
   public:
@@ -644,6 +692,18 @@ public:
     rightLed_ = right_led;
     return *this;
   }
+
+  ActionCommand& combineRightEarLED(const EarLED& right_ear_led){
+    rightEarLed_ = right_ear_led;
+    return *this;
+  }
+
+
+  ActionCommand& combineLeftEarLED(const EarLED& left_ear_led){
+    leftEarLed_ = left_ear_led;
+    return *this;
+  }
+
   /**
    * @brief combineRightLED replaces the right LED part of an action command
    * @param right_led the new right LED part of the action command
@@ -716,6 +776,18 @@ public:
     eyeLEDRequest.rightB = rightLed_.b_;
   }
 
+  void toEarLEDRequest(EarLEDRequest& earLEDRequest) const
+  {
+    earLEDRequest.rightEarMode = rightEarLed_.earMode_;
+    earLEDRequest.leftEarMode = leftEarLed_.earMode_;
+
+    earLEDRequest.brightnessLeft = leftEarLed_.brightness_;
+    earLEDRequest.brightnessRight = rightEarLed_.brightness_;
+
+    earLEDRequest.progressLeft = leftEarLed_.progress_;
+    earLEDRequest.progressRight = rightEarLed_.progress_;
+  }
+
   /**
    * @author Erik Mayrhofer
    * @brief toPlaybackData converts the action command to a PlayBackData
@@ -779,6 +851,14 @@ public:
     return rightLed_;
   }
 
+  const EarLED &rightEarLed() const {
+    return rightEarLed_;
+  }
+
+  const EarLED &leftEarLed() const {
+    return leftEarLed_;
+  }
+
 private:
   /**
    * @brief ActionCommand creates an action command from commands for every part
@@ -811,6 +891,10 @@ private:
   LED leftLed_;
   /// the command for the right LED
   LED rightLed_;
-  ///
+
+  EarLED rightEarLed_;
+  EarLED leftEarLed_;
+
+
   Audio audio_;
 };
