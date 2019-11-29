@@ -44,6 +44,7 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   , motionRequest_(*this)
   , eyeLEDRequest_(*this)
   , audioRequest_(*this)
+  , earLEDRequest_(*this)
   , playbackData_(*this)
   , actionCommand_(ActionCommand::dead())
   , dataSet_(*this, *gameControllerState_, *ballState_, *robotPosition_, *bodyPose_,
@@ -89,6 +90,7 @@ void BehaviorModule::cycle()
     actionCommand_.toMotionRequest(*motionRequest_);
     actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
     actionCommand_.toAudioRequest(*audioRequest_);
+    actionCommand_.toEarLEDRequest(*earLEDRequest_);
     //actionCommand_.toPlaybackData(*playbackData_);
   }
 }
