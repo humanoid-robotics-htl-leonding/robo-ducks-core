@@ -43,6 +43,9 @@ public:
     rightEarMode = EarMode ::OFF;
     progressRight = 0.f;
     brightnessRight = 0.f;
+
+    speedLeft = 0;
+    speedRight = 0;
   }
 
   virtual void toValue(Uni::Value& value) const
@@ -50,16 +53,19 @@ public:
     value = Uni::Value(Uni::ValueType::OBJECT);
     value["progressLeft"] << progressLeft;
     value["brightnessLeft"] << brightnessLeft;
-
-      value["progressRight"] << progressRight;
-      value["brightnessRight"] << brightnessRight;
+    value["progressRight"] << progressRight;
+    value["brightnessRight"] << brightnessRight;
   }
 
   virtual void fromValue(const Uni::Value& value)
   {
-    value["progressLeft"] >> progressLeft;
+    int32_t pLeft, pRight;
+    value["progressLeft"] >> pLeft;
     value["brightnessLeft"] >> brightnessLeft;
-    value["progressRight"] >> progressRight;
+    value["progressRight"] >> pRight;
     value["brightnessRight"] >> brightnessRight;
+
+    progressLeft = pLeft;
+    progressRight = pRight;
   }
 };

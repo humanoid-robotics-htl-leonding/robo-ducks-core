@@ -479,7 +479,7 @@ public:
 
     static EarLED brightness(float brightness) {
       EarLED led;
-      led.earMode_ = EarMode::COLOR;
+      led.earMode_ = EarMode::BRIGHTNESS;
       led.progress_ = 0;
       led.brightness_ = brightness;
       return led;
@@ -694,9 +694,13 @@ public:
 
   ActionCommand& combineRightEarLED(const EarLED& right_ear_led){
     rightEarLed_ = right_ear_led;
+    return *this;
   }
+
+
   ActionCommand& combineLeftEarLED(const EarLED& left_ear_led){
     leftEarLed_ = left_ear_led;
+    return *this;
   }
 
   /**
