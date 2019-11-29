@@ -466,22 +466,19 @@ public:
       EarLED led;
       led.earMode_ = EarMode::PROGRESS;
       led.progress_ = progress;
-      led.brightness_ = 0.f;
       return led;
     }
 
-    static EarLED pulsate() {
+    static EarLED pulsate(uint8_t speed) {
       EarLED led;
       led.earMode_ = EarMode::PULSATE;
-      led.progress_ = 0;
-      led.brightness_ = 0.f;
+      led.speed_ = speed;
       return led;
     }
 
     static EarLED brightness(float brightness) {
       EarLED led;
       led.earMode_ = EarMode::BRIGHTNESS;
-      led.progress_ = 0;
       led.brightness_ = brightness;
       return led;
     }
@@ -491,6 +488,7 @@ public:
     EarMode earMode_ = EarMode::OFF;
     short progress_ = 0;
     float brightness_ = 0.f;
+    uint8_t speed_ = 0;
 
     friend class ActionCommand;
   };
@@ -786,6 +784,10 @@ public:
 
     earLEDRequest.progressLeft = leftEarLed_.progress_;
     earLEDRequest.progressRight = rightEarLed_.progress_;
+
+    earLEDRequest.speedLeft = leftEarLed_.speed_;
+    earLEDRequest.speedRight = rightEarLed_.speed_;
+
   }
 
   /**
