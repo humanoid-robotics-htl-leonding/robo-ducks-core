@@ -8,7 +8,7 @@
 enum class EarMode
 {
   OFF,
-  COLOR,
+  BRIGHTNESS,
   LOADING,
   PROGRESS,
   PULSATE

@@ -64,7 +64,7 @@ void LEDHandler::cycle()
           case EarMode ::OFF:
               setRightEarBrightness(0.0f);
               break;
-          case EarMode ::COLOR:
+          case EarMode ::BRIGHTNESS:
               setRightEarBrightness(earLEDRequest_->brightnessRight);
               break;
           case EarMode ::LOADING:
@@ -356,8 +356,18 @@ void LEDHandler::setRightEarProgress(short progress) {
 }
 
 void LEDHandler::setRightEarPulsating(uint8_t speedRight) {
-    std::vector<float> rightEar = std::vector<float>(EAR_MAX,0.0f);
+
+    if(speedRight != currentSpeedRight){
+        setRightEarPulsating(speedRight);
+    }
+    int cycleTime = speedRight
+    float halfCycleCompleteness =(unsigned int)( cycleInfo_->startTime)-lastStartTime
+
+    float brightness = 0.0f;
 
 
+
+
+    std::vector<float> rightEar = std::vector<float>(EAR_MAX,brightness);
     setEarRightLEDs(rightEar.data());
 }
