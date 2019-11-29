@@ -28,10 +28,12 @@ void HeadOffModule::cycle() {
       pressStarted = cycleInfo_->startTime;
     }
     int delta = cycleInfo_->startTime - pressStarted;
+    print("delta set: ", delta, LogLevel::INFO);
     if (delta > 5000){
       assert(false);
     }
     else if (delta >4000){
+        print("shouldDieSignal set ", LogLevel::INFO);
         headOffData_->shouldDieSignal = true;
     }
   }else{
