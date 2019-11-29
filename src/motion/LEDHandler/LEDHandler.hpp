@@ -34,6 +34,8 @@ public:
   LEDHandler(const ModuleManagerInterface& manager);
   void cycle();
 
+    void resetRightEarPulsating(uint8_t right);
+
 private:
   /**
    * @brief setChestLEDs method providing LED setting for the chest
@@ -153,8 +155,16 @@ private:
 
     void setRightEarProgress(short right);
 
-    void setRightEarPulsating(u_int8_t rightSpeed);
 
     uint8_t currentSpeedRight;
     unsigned int lastStartTime;
+
+    void setRightEarPulsating(uint8_t right);
+
+    bool isIncreasingHalfCycleRight;
+    uint8_t loaderLength;
+    uint8_t loadPosEnd;
+    unsigned int lastLoadTime;
+
+    std::vector<float> lastLoadingRightEar;
 };

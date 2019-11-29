@@ -483,6 +483,12 @@ public:
       return led;
     }
 
+    static EarLED loading(){
+        EarLED led;
+        led.earMode_ = EarMode::LOADING;
+        return led;
+    }
+
   private:
     EarLED() = default;
     EarMode earMode_ = EarMode::OFF;

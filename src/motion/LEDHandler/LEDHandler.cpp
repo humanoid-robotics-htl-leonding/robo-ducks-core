@@ -1,5 +1,6 @@
+#include <Modules/Log/Log.h>
 #include "Tools/Chronometer.hpp"
-
+#include "../print.hpp"
 #include "LEDHandler.hpp"
 
 using namespace keys::led;
@@ -23,6 +24,12 @@ LEDHandler::LEDHandler(const ModuleManagerInterface& manager)
   , cycleCount_(0)
   , rainbowCycle_(0)
 {
+    isIncreasingHalfCycleRight = true;
+    lastStartTime = 0;
+    currentSpeedRight = 0;
+    loaderLength = 4;
+    loadPosEnd = 0;
+    lastLoadTime = 0;
 }
 
 void LEDHandler::cycle()
@@ -338,36 +345,56 @@ void LEDHandler::setRightEarBrightness(float brightness) {
 }
 
 void LEDHandler::setRightEarContinueLoading() {
-    std::vector<float> rightEar = std::vector<float>(EAR_MAX,0.0f);
-
-
-    setEarRightLEDs(rightEar.data());
-
+    if((unsigned int)( cycleInfo_->startTime)-lastLoadTime >200){
+        lastLoadTime = (unsigned int)( cycleInfo_->startTime);
+        std::vector<float> rightEar = std::vector<float>(EAR_MAX,0.0f);
+        for(int i =0;i<loaderLength;i++){
+            rightEar[(loadPosEnd+i)%(EAR_MAX)] = 1.0f;
+        }
+        loadPosEnd=(loadPosEnd+1)%(EAR_MAX);
+        lastLoadingRightEar =  rightEar;
+        setEarRightLEDs(rightEar.data());
+    }
+    else {
+        setEarRightLEDs(lastLoadingRightEar.data());
+    }
 }
 
 void LEDHandler::setRightEarProgress(short progress) {
     std::vector<float> rightEar = std::vector<float>(EAR_MAX,0.0f);
     int fullyLoaded = progress/10;
-    float lastPercentage = (progress%10)/100.0f;
-    rightEar.assign(fullyLoaded,1.0f);
+    float lastPercentage = (progress%10)/10.0f;
+    for(int i = 0;i<fullyLoaded;i++){
+        rightEar[i] = 1.0f;
+    }
     rightEar[fullyLoaded] = lastPercentage;
-
     setEarRightLEDs(rightEar.data());
 }
 
 void LEDHandler::setRightEarPulsating(uint8_t speedRight) {
-
-    if(speedRight != currentSpeedRight){
-        setRightEarPulsating(speedRight);
-    }
-    int cycleTime = speedRight
-    float halfCycleCompleteness =(unsigned int)( cycleInfo_->startTime)-lastStartTime
-
     float brightness = 0.0f;
 
-
-
-
+    if(speedRight != currentSpeedRight){
+        resetRightEarPulsating(speedRight);
+    }
+    int halfcycleTime = speedRight *100/2;
+    float halfCycleCompleteness =((unsigned int)( cycleInfo_->startTime)-lastStartTime)/(float)halfcycleTime;
+    if(isIncreasingHalfCycleRight){
+        brightness = std::min(halfCycleCompleteness,1.0f);
+    }
+    else {
+        brightness = std::max(1.0f- halfCycleCompleteness,0.0f);
+    }
+    if(brightness == 1.0f || brightness == 0.0f){
+        lastStartTime = (unsigned int)cycleInfo_->startTime;
+        isIncreasingHalfCycleRight = !isIncreasingHalfCycleRight;
+    }
     std::vector<float> rightEar = std::vector<float>(EAR_MAX,brightness);
     setEarRightLEDs(rightEar.data());
+}
+
+void LEDHandler::resetRightEarPulsating(uint8_t right) {
+    lastStartTime = (unsigned int)cycleInfo_->startTime;
+    currentSpeedRight = right;
+    isIncreasingHalfCycleRight = true;
 }
