@@ -14,6 +14,13 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
+#include "DucksBehaviour/States/Started.hpp"
+#include "DucksBehaviour/States/Initial.hpp"
+#include "DucksBehaviour/States/Penalized.hpp"
+#include "DucksBehaviour/States/Playing.hpp"
+#include "DucksBehaviour/States/Ready.hpp"
+#include "DucksBehaviour/States/Set.hpp"
+#include "DucksBehaviour/States/State.hpp"
 #include "DucksBehaviour/RootBehaviour.hpp"
 
 #ifdef __clang__
