@@ -120,7 +120,7 @@ private:
   /// camera
   const Dependency<ImageData> imageData_;
 
-  const Dependency<ThoughtControlRequest> thoughtControlRequest_;
+  const Reference<ThoughtControlRequest> thoughtControlRequest_; //TODO Does this create a race condition?????
 
   /// the robot position that is estimated by this module
   // TODO: as soon as the particle filter is deprecated one can add the cov estimation and number of

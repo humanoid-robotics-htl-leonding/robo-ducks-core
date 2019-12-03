@@ -147,9 +147,9 @@ void UKFPositionKnowledge::updateState()
         });
       }
     }
-    else if ((gameControllerState_->gameState == GameState::INITIAL &&
-              lastState_ != GameState::INITIAL) ||
-//             (gameControllerState_->gameState == GameState::READY && lastState_ == GameState::INITIAL)
+    else if (
+//            (gameControllerState_->gameState == GameState::INITIAL && lastState_ != GameState::INITIAL) ||
+//               (gameControllerState_->gameState == GameState::READY && lastState_ == GameState::INITIAL)
              thoughtControlRequest_->isCommandSet(ThoughtCommand::RESET_COMPASS_DIRECTION)
              )
     {
