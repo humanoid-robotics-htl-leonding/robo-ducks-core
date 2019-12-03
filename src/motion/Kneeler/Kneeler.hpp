@@ -13,7 +13,7 @@
 
 class Motion;
 
-class Kneeler: public Module<Motion,Kneeler> {
+class Kneeler: public Module<Kneeler,Motion> {
 public:
     /// the name of this module
     ModuleName name = "Kneeler";

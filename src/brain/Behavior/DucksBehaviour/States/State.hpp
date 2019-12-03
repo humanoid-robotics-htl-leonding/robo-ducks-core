@@ -1,7 +1,6 @@
 #pragma once
 
 ActionCommand chooseState(const DataSet& d){
-  std::cout << "" << (int) d.gameControllerState.penalty << std::endl;
   if(d.gameControllerState.penalty != Penalty::NONE){
     return penalized(d);
   }
