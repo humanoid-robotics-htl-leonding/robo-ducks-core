@@ -8,6 +8,7 @@ JointCommandSender::JointCommandSender(const ModuleManagerInterface& manager)
   , motionRequest_(*this)
   , motionActivation_(*this)
   , fallManagerOutput_(*this)
+  , kneelerOutput_(*this)
   , headMotionOutput_(*this)
   , keeperOutput_(*this)
   , kickOutput_(*this)
@@ -80,9 +81,10 @@ void JointCommandSender::cycle()
           motionActivation_
                   ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::KICK)] *
               kickOutput_->angles[i] +
-          motionActivation_->activations[static_cast<unsigned int>(
-              MotionRequest::BodyMotion::FALL_MANAGER)] *
+          motionActivation_->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::FALL_MANAGER)] *
               fallManagerOutput_->angles[i] +
+                  motionActivation_->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::KNEEL)] *
+                  kneelerOutput_->angles[i] +
           motionActivation_
                   ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::STAND_UP)] *
               standUpOutput_->angles[i] +
