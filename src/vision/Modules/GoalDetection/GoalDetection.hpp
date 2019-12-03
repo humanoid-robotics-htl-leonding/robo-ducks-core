@@ -29,20 +29,38 @@ private:
    */
   void detectGoalPoints();
   /**
+   *
+   */
+  void bombermanMaxDistanceGrouping();
+  /**
+   *
+   */
+  void bombermanExplodeRecursive(VecVector2i::iterator column);
+
+  /**
 	 * @brief sendImagesForDebug send debug information
 	 */
 	void sendImagesForDebug();
-
+	/// the minimum number of points per goal post
+	const Parameter<unsigned int> minNumberOfPointsOnGoal_;
+	/// the maximum number of points per goal post
+	const Parameter<unsigned int> maxNumberOfPointsOnGoal_;
+	/// the minimum amount of pixels in a goal post segment
+	const Parameter<unsigned int> maxDistanceOfGroupPoints_;
   /// a reference to the image
 	const Dependency<ImageData> imageData_;
 	/// a reference to the camera matrix
 	const Dependency<CameraMatrix> cameraMatrix_;
   /// a reference to the filtered segments
-	const Dependency<FilteredSegments> filteredSegments_;
+	const Dependency<ImageSegments> imageSegments_;
 	/// the detected goal posts for other modules
   Production<GoalData> goalData_;
   /// goal points for debug purposes
 	VecVector2i debugGoalPoints_;
   /// candidate points on lines
 	VecVector2i goalPoints_;
+	/// goal post point groups
+	std::vector<VecVector2i> goalPostGroups_;
+	/// current goal post group
+	VecVector2i goalPostGroup_;
 };

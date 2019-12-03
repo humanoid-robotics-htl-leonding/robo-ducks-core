@@ -1,61 +1,84 @@
-#include "Tools/Chronometer.hpp"
-
 #include "GoalDetection.hpp"
+
+#include "Tools/Chronometer.hpp"
+#include "Tools/Math/Geometry.hpp"
+#include "Tools/Math/Random.hpp"
+
+#include "print.h"
 
 GoalDetection::GoalDetection(const ModuleManagerInterface& manager)
   : Module(manager)
+	, minNumberOfPointsOnGoal_(*this, "minNumberOfPointsOnGoal", [] {})
+	, maxNumberOfPointsOnGoal_(*this, "maxNumberOfPointsOnGoal", [] {})
+	, maxDistanceOfGroupPoints_(*this, "maxDistanceOfGroupPoints", [] {})
   , imageData_(*this)
   , cameraMatrix_(*this)
-  , filteredSegments_(*this)
+  , imageSegments_(*this)
   , goalData_(*this)
 {
-}
-
-Vector2f GoalDetection::getGradient(const Vector2i& p) const
-{
-		std::function<uint8_t(const YCbCr422&)> y1 = [](const YCbCr422& c) { return c.y1_; };
-		std::function<uint8_t(const YCbCr422&)> y2 = [](const YCbCr422& c) { return c.y2_; };
-		const uint8_t one = 1;
-		auto y = (p.x() & one) == 1 ? y2 : y1;
-		Vector2f gradient = Vector2f::Zero();
-		const Image422& im = imageData_->image422;
-		if (p.x() < 1 || p.y() < 1 || p.x() + 1 >= im.size.x() || p.y() + 1 >= im.size.y())
-		{
-				return gradient;
-		}
-		gradient.x() = y(im.at(p.y() + 1, p.x() - 1)) + 2 * y(im.at(p.y() + 1, p.x())) +
-									 y(im.at(p.y() + 1, p.x() + 1)) - y(im.at(p.y() - 1, p.x() - 1)) -
-									 2 * y(im.at(p.y() - 1, p.x())) - y(im.at(p.y() - 1, p.x() + 1));
-		gradient.y() = y(im.at(p.y() - 1, p.x() - 1)) + 2 * y(im.at(p.y(), p.x() - 1)) +
-									 y(im.at(p.y() + 1, p.x() - 1)) - y(im.at(p.y() - 1, p.x() + 1)) -
-									 2 * y(im.at(p.y(), p.x() + 1)) - y(im.at(p.y() + 1, p.x() + 1));
-		return gradient.normalized();
 }
 
 void GoalDetection::detectGoalPoints()
 {
 		goalPoints_.clear();
 		Vector2f g1, g2;
-		auto shift = [](int c) { return c >> 1; };
-		for (const auto& segment : filteredSegments_->horizontal)
+		for (const auto& scanLine : imageSegments_->verticalScanlines)
 		{
-				if (segment->startEdgeType != EdgeType::RISING || segment->endEdgeType != EdgeType::FALLING)
+				const auto& segment = &scanLine.segments[0];
+				if (segment->startEdgeType != EdgeType::BORDER || segment->endEdgeType != EdgeType::FALLING)
 				{
 						continue;
 				}
-				g1 = getGradient(segment->start);
-				g2 = getGradient(segment->end);
-				if (g1.dot(g2) > -0.95)
-				{
-						continue;
+				goalPoints_.push_back(segment->end);
+		}
+}
+
+void GoalDetection::bombermanMaxDistanceGrouping()
+{
+		std::cerr << "A" << std::endl;
+		goalPostGroups_.clear();
+		auto it = goalPoints_.begin();
+		std::cerr << "B" << std::endl;
+		for (; it != goalPoints_.end(); it++) {
+				std::cerr << "C" << std::endl;
+				bombermanExplodeRecursive(it);
+				std::cerr << "D" << std::endl;
+				if (goalPostGroup_.size() >= minNumberOfPointsOnGoal_() && goalPostGroup_.size() <= maxNumberOfPointsOnGoal_()) {
+						goalPostGroups_.emplace_back(goalPostGroup_);
 				}
-				goalPoints_.push_back((segment->start + segment->end).unaryExpr(shift));
+		}
+		std::cerr << goalPostGroups_.size() << std::endl;
+}
+
+void GoalDetection::bombermanExplodeRecursive(VecVector2i::iterator column) {
+		std::cerr << "E" << std::endl;
+		goalPostGroup_.emplace_back(*column);
+		std::cerr << "F" << std::endl;
+		if (column == goalPoints_.end()) {
+				std::cerr << "G" << std::endl;
+				return;
+		}
+		std::cerr << "H" << std::endl;
+		auto it = std::next(column);
+		for (; it != goalPoints_.end(); it++) {
+				std::cerr << "I" << std::endl;
+				float distance = ((*column) - (*it)).norm();
+				std::cerr << "J" << std::endl;
+				if (distance > maxDistanceOfGroupPoints_())
+				{
+						std::cerr << "K" << std::endl;
+						bombermanExplodeRecursive(it);
+						std::cerr << "L" << std::endl;
+						goalPoints_.erase(it);
+						std::cerr << "M" << std::endl;
+				}
+				std::cerr << "N" << std::endl;
 		}
 }
 
 void GoalDetection::cycle()
 {
-		if (!filteredSegments_->valid)
+		if (!imageSegments_->valid)
 		{
 				return;
 		}
@@ -63,7 +86,7 @@ void GoalDetection::cycle()
 				Chronometer time(debug(), mount_ + "." + imageData_->identification + "_cycle_time");
 				detectGoalPoints();
 				debugGoalPoints_ = goalPoints_;
-				//ransacHandler();
+				//bombermanMaxDistanceGrouping();
 				//createGoalData();
 		}
 		sendImagesForDebug();
