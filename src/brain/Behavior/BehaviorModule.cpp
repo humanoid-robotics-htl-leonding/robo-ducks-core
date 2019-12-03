@@ -86,7 +86,7 @@ void BehaviorModule::cycle()
       actionCommand_ = ActionCommand::dead();
     }else{
       actionCommand_ = rootBehavior(dataSet_); //TODO Make RootBehaviour Configurable
-      actionCommand_.combineRightEarLED(ActionCommand::EarLED::loading());
+      actionCommand_.combineLeftEarLED(ActionCommand::EarLED::loading());
     }
     actionCommand_.toMotionRequest(*motionRequest_);
     actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);

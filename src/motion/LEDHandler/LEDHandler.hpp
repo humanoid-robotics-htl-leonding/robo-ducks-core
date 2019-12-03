@@ -34,7 +34,6 @@ public:
   LEDHandler(const ModuleManagerInterface& manager);
   void cycle();
 
-    void resetRightEarPulsating(uint8_t right);
 
 private:
   /**
@@ -149,22 +148,46 @@ private:
   /// a cycle counter because LEDs are not sent every cycle
   unsigned int cycleCount_, rainbowCycle_;
 
-    void setRightEarBrightness(float d);
+    void setRightEarBrightness(float brightness);
 
     void setRightEarContinueLoading();
 
-    void setRightEarProgress(short right);
+    void setRightEarProgress(short progress);
+    void resetRightEarPulsating(uint8_t right);
 
 
     uint8_t currentSpeedRight;
-    unsigned int lastStartTime;
+    unsigned int lastStartTimeRight;
 
-    void setRightEarPulsating(uint8_t right);
+    void setRightEarPulsating(uint8_t speed);
 
     bool isIncreasingHalfCycleRight;
-    uint8_t loaderLength;
-    uint8_t loadPosEnd;
-    unsigned int lastLoadTime;
+    uint8_t loaderRightLength;
+    uint8_t loadPosRightEnd;
+    unsigned int lastLoadRightTime;
 
     std::vector<float> lastLoadingRightEar;
+
+
+
+    void setLeftEarBrightness(float brightness);
+
+    void setLeftEarContinueLoading();
+
+    void setLeftEarProgress(short progress);
+
+
+    uint8_t currentSpeedLeft;
+    unsigned int lastStartTimeLeft;
+
+    void setLeftEarPulsating(uint8_t speed);
+
+    bool isIncreasingHalfCycleLeft;
+    uint8_t loaderLeftLength;
+    uint8_t loadPosLeftEnd;
+    unsigned int lastLoadLeftTime;
+
+    std::vector<float> lastLoadingLeftEar;
+    void resetLeftEarPulsating(uint8_t right);
+
 };
