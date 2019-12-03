@@ -41,19 +41,19 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   , buttonData_(*this)
   , worldState_(*this)
   , headOffData_(*this)
-  , thoughtData_(*this)
   , motionRequest_(*this)
   , eyeLEDRequest_(*this)
   , audioRequest_(*this)
   , playbackData_(*this)
   , actionCommand_(ActionCommand::dead())
+  , thoughts_()
   , dataSet_(*this, *gameControllerState_, *ballState_, *robotPosition_, *bodyPose_,
              *playerConfiguration_, *playingRoles_, *motionState_, *headMotionOutput_,
              *teamBallModel_, *teamPlayers_, *fieldDimensions_, *strikerAction_,
              *penaltyStrikerAction_, *keeperAction_, *penaltyKeeperAction_, *cycleInfo_,
              *setPosition_, *defendingPosition_, *bishopPosition_, *supportingPosition_,
              *replacementKeeperAction_, *buttonData_, *worldState_, *kickConfigurationData_,
-             *ballSearchPosition_, *headPositionData_, *thoughtData_, actionCommand_)
+             *ballSearchPosition_, *headPositionData_, thoughts_, actionCommand_)
 {
 
   {
@@ -82,6 +82,8 @@ void BehaviorModule::cycle()
   }
   else
   {
+//    thoughts_->pushState(gameControllerState_->gameState)
+
     if(headOffData_->shouldDie){
       actionCommand_ = ActionCommand::dead();
     }else{

@@ -116,18 +116,19 @@ private:
   /// a very helpful comment
   const Dependency<HeadOffData> headOffData_;
 
-  Production<ThoughtData> thoughtData_;
-  /// the motion request
+    /// the motion request
   Production<MotionRequest> motionRequest_;
-  /// the eye LED request
+    /// the eye LED request
   Production<EyeLEDRequest> eyeLEDRequest_;
   /// the audio request
   Production<AudioRequest> audioRequest_;
   Production<PlaybackData> playbackData_;
-  /// the last action command that was computed by the behavior
+    /// the last action command that was computed by the behavior
   ActionCommand actionCommand_;
+  /// Thoughts
+  Thoughts thoughts_;
   /// the data set/bundle that is passed to the behavior
   DataSet dataSet_;
-  /// a thread-safe copy of the remote motion request
+    /// a thread-safe copy of the remote motion request
   MotionRequest actualRemoteMotionRequest_;
 };

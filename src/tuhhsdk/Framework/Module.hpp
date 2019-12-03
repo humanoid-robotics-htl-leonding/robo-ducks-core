@@ -3,6 +3,7 @@
 #include <string>
 #include <typeindex>
 #include <unordered_set>
+#include <Data/GameControllerState.hpp>
 
 #include "Hardware/RobotInterface.hpp"
 #include "Modules/Configuration/Configuration.h"

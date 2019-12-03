@@ -24,8 +24,8 @@
 #include "Data/TeamBallModel.hpp"
 #include "Data/TeamPlayers.hpp"
 #include "Data/WorldState.hpp"
-#include "Data/ThoughtData.hpp"
 #include "Framework/Module.hpp"
+#include "Thoughts.hpp"
 
 #include "ActionCommand.hpp"
 #include "BehaviorParameters.hpp"
@@ -72,7 +72,7 @@ struct DataSet
           const DefendingPosition& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
           const ReplacementKeeperAction& rk, const ButtonData& bd, const WorldState& ws,
           const KickConfigurationData& kcd, const BallSearchPosition& bsp, const HeadPositionData& hpd,
-          const ThoughtData& thdat,
+          const Thoughts& thdat,
 
           const ActionCommand& lac)
     : parameters(module)
@@ -103,7 +103,7 @@ struct DataSet
     , worldState(ws)
     , kickConfigurationData(kcd)
     , lastActionCommand(lac)
-    , thoughtData(thdat)
+    , thoughts(thdat)
   {
   }
   /// struct to hold parameters of the behavior
@@ -163,5 +163,5 @@ struct DataSet
   /// a reference to the last action command
   const ActionCommand& lastActionCommand;
 
-  const ThoughtData& thoughtData;
+  const Thoughts& thoughts;
 };
