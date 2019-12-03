@@ -41,6 +41,7 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   , buttonData_(*this)
   , worldState_(*this)
   , headOffData_(*this)
+  , thoughtData_(*this)
   , motionRequest_(*this)
   , eyeLEDRequest_(*this)
   , audioRequest_(*this)
@@ -52,7 +53,7 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
              *penaltyStrikerAction_, *keeperAction_, *penaltyKeeperAction_, *cycleInfo_,
              *setPosition_, *defendingPosition_, *bishopPosition_, *supportingPosition_,
              *replacementKeeperAction_, *buttonData_, *worldState_, *kickConfigurationData_,
-             *ballSearchPosition_, *headPositionData_, actionCommand_)
+             *ballSearchPosition_, *headPositionData_, *thoughtData_, actionCommand_)
 {
 
   {

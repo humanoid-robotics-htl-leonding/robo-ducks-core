@@ -31,6 +31,7 @@
 #include "Data/TeamPlayers.hpp"
 #include "Data/WorldState.hpp"
 #include "Data/AudioData.hpp"
+#include "Data/ThoughtData.hpp"
 #include "Framework/Module.hpp"
 
 #include "DataSet.hpp"
@@ -114,6 +115,8 @@ private:
   const Dependency<WorldState> worldState_;
   /// a very helpful comment
   const Dependency<HeadOffData> headOffData_;
+
+  Production<ThoughtData> thoughtData_;
   /// the motion request
   Production<MotionRequest> motionRequest_;
   /// the eye LED request
