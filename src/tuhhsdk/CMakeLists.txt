@@ -132,6 +132,7 @@ set(TUHHSDK_HEADERS
   Data/WhistleData.hpp
   Data/WorldState.hpp
   Data/HeadOffData.hpp
+  Data/ThoughtControlRequest.hpp
         Definitions/BHULKsStandardMessage.h
   Definitions/keys.h
   Definitions/RoboCupGameControlData.h

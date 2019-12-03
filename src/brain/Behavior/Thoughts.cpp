@@ -6,6 +6,7 @@
 
 Thoughts::Thoughts()
   : stateSince(0)
+  , isStateNew(false)
   , gameState(GameState::INITIAL)
 {
 
@@ -14,14 +15,15 @@ Thoughts::Thoughts()
 void Thoughts::update(DataSet& d) {
   if (gameState != d.gameControllerState.gameState) {
     stateSince = d.cycleInfo.startTime;
+    isStateNew = true;
     gameState = d.gameControllerState.gameState;
   }
 }
 
-//bool Thoughts::handleNewState() {
-//  if(isStateNew){
-//    isStateNew = false;
-//    return true;
-//  }
-//  return false;
-//}
+bool Thoughts::handleNewState() {
+  if(isStateNew){
+    isStateNew = false;
+    return true;
+  }
+  return false;
+}

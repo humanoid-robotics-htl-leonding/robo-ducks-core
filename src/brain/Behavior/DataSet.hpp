@@ -74,7 +74,7 @@ struct DataSet
           const DefendingPosition& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
           const ReplacementKeeperAction& rk, const ButtonData& bd, const WorldState& ws,
           const KickConfigurationData& kcd, const BallSearchPosition& bsp, const HeadPositionData& hpd,
-          const Thoughts& thdat,
+          Thoughts& thdat,
 
           const ActionCommand& lac)
     : parameters(module)
@@ -165,5 +165,5 @@ struct DataSet
   /// a reference to the last action command
   const ActionCommand& lastActionCommand;
 
-  const Thoughts& thoughts;
+  Thoughts& thoughts;
 };

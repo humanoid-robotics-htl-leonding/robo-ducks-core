@@ -43,6 +43,7 @@ UKFPositionKnowledge::UKFPositionKnowledge(const ModuleManagerInterface& manager
   , motionState_(*this)
   , jointSensorData_(*this)
   , imageData_(*this)
+  , thoughtControlRequest_(*this)
   , robotPosition_(*this)
   , lastPose_()
   , fieldInfo_(*playerConfiguration_, *fieldDimensions_)
@@ -148,12 +149,15 @@ void UKFPositionKnowledge::updateState()
     }
     else if ((gameControllerState_->gameState == GameState::INITIAL &&
               lastState_ != GameState::INITIAL) ||
-             (gameControllerState_->gameState == GameState::READY && lastState_ == GameState::INITIAL))
+//             (gameControllerState_->gameState == GameState::READY && lastState_ == GameState::INITIAL)
+             thoughtControlRequest_->isCommandSet(ThoughtCommand::RESET_COMPASS_DIRECTION)
+             )
     {
       // reset for the next set phase
       wasHighInSet_ = false;
       // start fom initial pose (somewhere at the side line in the own half)
       int intialNumberOfHypotheses = startAnywhereAtSidelines_() ? maxNumberOfHypotheses_() : 1;
+      std::cout << "PreparePostHypethoeses with Initial Stuff, yeet" << std::endl;
       preparePoseHypotheses(intialNumberOfHypotheses, sigmaInitial_(),
                             [this](unsigned int& clusterHint) -> Pose {
                               return positionProvider_.getInitial(clusterHint, false);

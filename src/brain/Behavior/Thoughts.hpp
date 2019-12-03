@@ -13,9 +13,11 @@ public:
     explicit Thoughts();
     void update(DataSet& d);
 
+    bool handleNewState();
 
     TimePoint stateSince;
 private:
+    bool isStateNew;
     GameState gameState;
 };
 

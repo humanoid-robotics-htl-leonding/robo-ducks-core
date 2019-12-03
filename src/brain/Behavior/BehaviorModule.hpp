@@ -31,6 +31,7 @@
 #include "Data/TeamPlayers.hpp"
 #include "Data/WorldState.hpp"
 #include "Data/AudioData.hpp"
+#include "Data/ThoughtControlRequest.hpp"
 #include "Framework/Module.hpp"
 #include "Thoughts.hpp"
 #include "DataSet.hpp"
@@ -113,6 +114,7 @@ private:
   /// a very helpful comment
   const Dependency<HeadOffData> headOffData_;
 
+
     /// the motion request
   Production<MotionRequest> motionRequest_;
     /// the eye LED request
@@ -120,6 +122,7 @@ private:
   /// the audio request
   Production<AudioRequest> audioRequest_;
   Production<PlaybackData> playbackData_;
+  Production<ThoughtControlRequest> thoughtControlRequest_;
     /// the last action command that was computed by the behavior
   ActionCommand actionCommand_;
   /// Thoughts
