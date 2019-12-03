@@ -31,13 +31,10 @@
 #include "Data/TeamPlayers.hpp"
 #include "Data/WorldState.hpp"
 #include "Data/AudioData.hpp"
-#include "Data/ThoughtData.hpp"
 #include "Framework/Module.hpp"
-
+#include "Thoughts.hpp"
 #include "DataSet.hpp"
 
-
-class Brain;
 
 class BehaviorModule : public Module<BehaviorModule, Brain>
 {

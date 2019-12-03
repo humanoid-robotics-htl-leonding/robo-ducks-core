@@ -24,12 +24,14 @@
 #include "Data/TeamBallModel.hpp"
 #include "Data/TeamPlayers.hpp"
 #include "Data/WorldState.hpp"
+#include "Data/PenaltyStrikerAction.hpp"
+#include "Data/PenaltyKeeperAction.hpp"
 #include "Framework/Module.hpp"
-#include "Thoughts.hpp"
 
 #include "ActionCommand.hpp"
 #include "BehaviorParameters.hpp"
 
+class Thoughts;
 
 struct DataSet
 {

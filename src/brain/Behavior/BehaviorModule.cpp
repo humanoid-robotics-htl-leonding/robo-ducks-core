@@ -84,6 +84,8 @@ void BehaviorModule::cycle()
   {
 //    thoughts_->pushState(gameControllerState_->gameState)
 
+    thoughts_.update(dataSet_);
+
     if(headOffData_->shouldDie){
       actionCommand_ = ActionCommand::dead();
     }else{
