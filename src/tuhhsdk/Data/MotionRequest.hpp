@@ -213,6 +213,8 @@ public:
     STAND_UP,
     /// the robot holds its angles at activation of the motion
     HOLD,
+
+    KNEEL,
     /// the number of motions
     NUM
   };
