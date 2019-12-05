@@ -1,5 +1,7 @@
 #pragma once
 
 ActionCommand roleStriker(const DataSet& d){
-  return ActionCommand::dead().combineRightLED(ActionCommand::EyeLED::colors(1.0, 0.0, 0.0));
+//    d.robotPosition.robotToField()
+    ActionCommand cmd = ActionCommand::walk(d.robotPosition.robotToField(Pose(0, 0, 45*TO_RAD)));
+    return cmd;
 }
