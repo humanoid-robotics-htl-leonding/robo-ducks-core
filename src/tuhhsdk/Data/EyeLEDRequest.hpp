@@ -2,6 +2,10 @@
 
 #include "Framework/DataType.hpp"
 
+#warning Using old EyeLEDRequest
+
+
+
 /**
  * @brief Modes that can be applied to single eyes.
  */
@@ -53,20 +57,20 @@ public:
   {
     value = Uni::Value(Uni::ValueType::OBJECT);
     value["leftR"] << leftR;
-    value["leftG"] << leftG;
-    value["leftB"] << leftB;
-    value["rightR"] << rightR;
-    value["rightG"] << rightG;
-    value["rightB"] << rightB;
+    value["leftEyeG"] << leftG;
+    value["leftEyeB"] << leftB;
+    value["rightEyeR"] << rightR;
+    value["rightEyeG"] << rightG;
+    value["rightEyeB"] << rightB;
   }
 
   virtual void fromValue(const Uni::Value& value)
   {
     value["leftR"] >> leftR;
-    value["leftG"] >> leftG;
-    value["leftB"] >> leftB;
-    value["rightR"] >> rightR;
-    value["rightG"] >> rightG;
-    value["rightB"] >> rightB;
+    value["leftEyeG"] >> leftG;
+    value["leftEyeB"] >> leftB;
+    value["rightEyeR"] >> rightR;
+    value["rightEyeG"] >> rightG;
+    value["rightEyeB"] >> rightB;
   }
 };

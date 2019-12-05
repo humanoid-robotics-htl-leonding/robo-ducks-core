@@ -2,6 +2,8 @@
 
 #include "Framework/DataType.hpp"
 
+#warning Using old EarLedRequest pls dont.
+
 /**
  * @brief Modes that can be applied to single eyes.
  */

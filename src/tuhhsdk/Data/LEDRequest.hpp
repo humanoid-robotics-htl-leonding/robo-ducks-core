@@ -16,62 +16,88 @@ enum class EyeMode
     RAINBOW
 };
 
+enum class EarMode
+{
+    OFF,
+    BRIGHTNESS,
+    LOADING,
+    PROGRESS,
+    PULSATE
+};
+
+enum class ChestMode
+{
+    OFF,
+    COLOR,
+    RAINBOW
+};
+
 class LEDRequest : public DataType<LEDRequest>
 {
 public:
-    /// the name of this DataType
     DataTypeName name = "LEDRequest";
-    /// The mode for the left eye EyeLED
-    EyeMode leftEyeMode;
-    /// the red value of the left EyeLED
-    float eyeLeftR;
-    /// the green value of the left EyeLED
-    float leftG;
-    /// the blue value of the left EyeLED
-    float leftB;
-    /// The mode for the right eye EyeLED
-    EyeMode rightEyeMode;
-    /// the red value of the right EyeLED
-    float rightR;
-    /// the green value of the right EyeLED
-    float rightG;
-    /// the blue value of the right EyeLED
-    float rightB;
-    /**
-     * @brief reset does nothing
-     */
-    void reset()
-    {
-        leftEyeMode = EyeMode::OFF;
-        eyeLeftR = 0.f;
-        leftG = 0.f;
-        leftB = 0.f;
 
-        rightEyeMode = EyeMode::OFF;
-        rightR = 0.f;
-        rightG = 0.f;
-        rightB = 0.f;
+    EyeMode leftEyeMode = EyeMode::OFF;
+    float leftEyeR = 0;
+    float leftEyeG = 0;
+    float leftEyeB = 0;
+
+    EyeMode rightEyeMode = EyeMode::OFF;
+    float rightEyeR = 0;
+    float rightEyeG = 0;
+    float rightEyeB = 0;
+
+    EarMode leftEarMode = EarMode::OFF;
+    uint8_t leftEarProgress = 0;
+    uint8_t leftEarPulseSpeed = 0; //in 100ms steps //period duration
+    float leftEarBrightness = 0;
+
+    EarMode rightEarMode = EarMode::OFF;
+    uint8_t rightEarProgress = 0;
+    uint8_t rightEarPulseSpeed = 0; //in 100ms steps //period duration
+    float rightEarBrightness = 0;
+
+    ChestMode chestMode = ChestMode::OFF;
+    float chestR = 0;
+    float chestG = 0;
+    float chestB = 0;
+
+    void reset() override
+    {
+      leftEyeMode = EyeMode::OFF;
+      leftEyeR = 0.f;
+      leftEyeG = 0.f;
+      leftEyeB = 0.f;
+
+      rightEyeMode = EyeMode::OFF;
+      rightEyeR = 0.f;
+      rightEyeG = 0.f;
+      rightEyeB = 0.f;
     }
 
-    virtual void toValue(Uni::Value& value) const
+    void toValue(Uni::Value& value) const override
     {
         value = Uni::Value(Uni::ValueType::OBJECT);
-        value["eyeLeftR"] << eyeLeftR;
-        value["leftG"] << leftG;
-        value["leftB"] << leftB;
-        value["rightR"] << rightR;
-        value["rightG"] << rightG;
-        value["rightB"] << rightB;
+        value["leftEyeMode"] << static_cast<int>(leftEyeMode);
+        value["leftEyeR"] << leftEyeR;
+        value["leftEyeG"] << leftEyeG;
+        value["leftEyeB"] << leftEyeB;
+        value["rightEyeMode"] << static_cast<int>(rightEyeMode);
+        value["rightEyeR"] << rightEyeR;
+        value["rightEyeG"] << rightEyeG;
+        value["rightEyeB"] << rightEyeB;
     }
 
-    virtual void fromValue(const Uni::Value& value)
+    void fromValue(const Uni::Value& value) override
     {
-        value["eyeLeftR"] >> eyeLeftR;
-        value["leftG"] >> leftG;
-        value["leftB"] >> leftB;
-        value["rightR"] >> rightR;
-        value["rightG"] >> rightG;
-        value["rightB"] >> rightB;
+        leftEyeMode = static_cast<EyeMode>(value["leftEyeMode"].asInt32()) ;
+        value["leftEyeR"] >> leftEyeR;
+        value["leftEyeG"] >> leftEyeG;
+        value["leftEyeB"] >> leftEyeB;
+        rightEyeMode = static_cast<EyeMode>(value["rightEyeMode"].asInt32()) ;
+        value["rightEyeR"] >> rightEyeR;
+        value["rightEyeG"] >> rightEyeG;
+        value["rightEyeB"] >> rightEyeB;
     }
 };
 

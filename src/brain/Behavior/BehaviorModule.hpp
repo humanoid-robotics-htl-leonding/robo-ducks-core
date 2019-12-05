@@ -33,6 +33,7 @@
 #include "Data/WorldState.hpp"
 #include "Data/AudioData.hpp"
 #include "Data/ThoughtControlRequest.hpp"
+#include "Data/LEDRequest.hpp"
 #include "Framework/Module.hpp"
 #include "Thoughts.hpp"
 #include "DataSet.hpp"
@@ -125,6 +126,8 @@ private:
   Production<PlaybackData> playbackData_;
   Production<EarLEDRequest> earLEDRequest_;
   Production<ChestLEDRequest> chestLEDRequest_;
+  Production<LEDRequest> ledRequest_;
+
   /// the last action command that was computed by the behavior
   Production<ThoughtControlRequest> thoughtControlRequest_;
     /// the last action command that was computed by the behavior
