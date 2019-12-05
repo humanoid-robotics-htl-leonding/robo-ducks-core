@@ -1,5 +1,5 @@
 #pragma once
 
 ActionCommand roleBishop(const DataSet& d){
-  return ActionCommand::dead();
+  return ActionCommand::kneel();
 }
