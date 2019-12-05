@@ -48,6 +48,14 @@ LEDHandler::LEDHandler(const ModuleManagerInterface& manager)
 
 
     lastStartTimeRightFoot = 0;
+    rightFootRainbowRed = 1.0f;
+    rightFootRainbowGreen = 1.0f;
+    rightFootRainbowBlue = 1.0f;
+
+    lastStartTimeLeftFoot = 0;
+    leftFootRainbowRed = 1.0f;
+    leftFootRainbowGreen = 1.0f;
+    leftFootRainbowBlue = 1.0f;
 }
 
 void LEDHandler::cycle()
@@ -138,7 +146,7 @@ void LEDHandler::cycle()
             setFootRightLEDs(0.0f,0.0f,0.0f);
             break;
         case FootMode ::COLOR:
-            setFootRightLEDs(ledRequest_->chestR,ledRequest_->chestG,ledRequest_->chestB);
+            setFootRightLEDs(ledRequest_->rightFootR,ledRequest_->rightFootG,ledRequest_->rightFootB);
             break;
         case FootMode ::RAINBOW:
             setFootRightRainbowColors();
@@ -150,7 +158,7 @@ void LEDHandler::cycle()
             setFootLeftLEDs(0.0f,0.0f,0.0f);
             break;
         case FootMode ::COLOR:
-            setFootLeftLEDs(ledRequest_->chestR,ledRequest_->chestG,ledRequest_->chestB);
+            setFootLeftLEDs(ledRequest_->leftFootR,ledRequest_->leftFootG,ledRequest_->leftFootB);
             break;
         case FootMode ::RAINBOW:
             setFootLeftRainbowColors();
