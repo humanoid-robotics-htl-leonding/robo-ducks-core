@@ -118,13 +118,13 @@ private:
 
     /// the motion request
   Production<MotionRequest> motionRequest_;
-    /// the eye LED request
+    /// the eye EyeLED request
   Production<EyeLEDRequest> eyeLEDRequest_;
   /// the audio request
   Production<AudioRequest> audioRequest_;
   Production<PlaybackData> playbackData_;
   Production<EarLEDRequest> earLEDRequest_;
-
+  Production<ChestLEDRequest> chestLEDRequest_;
   /// the last action command that was computed by the behavior
   Production<ThoughtControlRequest> thoughtControlRequest_;
     /// the last action command that was computed by the behavior

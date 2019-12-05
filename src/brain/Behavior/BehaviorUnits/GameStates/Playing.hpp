@@ -8,7 +8,7 @@ ActionCommand playSoccer(const DataSet& d)
     // Set a debug target pose which can be set by config/ofa.
     return ActionCommand::walk(d.parameters.debugTargetRelativePose())
         .combineHead(trackBall(d))
-        .combineRightLED(ActionCommand::LED::white());
+        .combineRightLED(ActionCommand::EyeLED::EyeLED());
   }
   if (d.gameControllerState.gamePhase == GamePhase::PENALTYSHOOT)
   {
@@ -17,7 +17,7 @@ ActionCommand playSoccer(const DataSet& d)
   if (d.playingRoles.role == PlayingRole::KEEPER)
   {
     // the keeper should always be a keeper
-    return keeper(d).combineRightLED(ActionCommand::LED::blue());
+    return keeper(d).combineRightLED(ActionCommand::EyeLED::EyeLED());
   }
   // Avoid illegal defender
   if (!d.worldState.ballIsFree)
@@ -40,7 +40,7 @@ ActionCommand playSoccer(const DataSet& d)
         const float relBallAngle = std::atan2(relBallPosition.y(), relBallPosition.x());
         return walkToPose(d, Pose(0, 0, relBallAngle), false)
             .combineHead(trackBall(d))
-            .combineRightLED(ActionCommand::LED::off());
+            .combineRightLED(ActionCommand::EyeLED::EyeLED());
       }
     }
   }
@@ -51,15 +51,15 @@ ActionCommand playSoccer(const DataSet& d)
     switch (d.playingRoles.role)
     {
       case PlayingRole::STRIKER:
-        return striker(d).combineRightLED(ActionCommand::LED::red());
+        return striker(d).combineRightLED(ActionCommand::EyeLED::EyeLED());
       case PlayingRole::DEFENDER:
-        return defender(d).combineRightLED(ActionCommand::LED::green());
+        return defender(d).combineRightLED(ActionCommand::EyeLED::EyeLED());
       case PlayingRole::BISHOP:
-        return bishop(d).combineRightLED(ActionCommand::LED::yellow());
+        return bishop(d).combineRightLED(ActionCommand::EyeLED::EyeLED());
       case PlayingRole::SUPPORT_STRIKER:
-        return support(d).combineRightLED(ActionCommand::LED::pink());
+        return support(d).combineRightLED(ActionCommand::EyeLED::EyeLED());
       case PlayingRole::REPLACEMENT_KEEPER:
-        return replacementKeeper(d).combineRightLED(ActionCommand::LED::lightblue());
+        return replacementKeeper(d).combineRightLED(ActionCommand::EyeLED::EyeLED());
       default:
         assert(false);
         return defender(d);
@@ -67,7 +67,7 @@ ActionCommand playSoccer(const DataSet& d)
   }
   else
   {
-    return searchForBall(d).combineRightLED(ActionCommand::LED::blue());
+    return searchForBall(d).combineRightLED(ActionCommand::EyeLED::EyeLED());
   }
 }
 
