@@ -32,12 +32,11 @@
 #include "Data/TeamPlayers.hpp"
 #include "Data/WorldState.hpp"
 #include "Data/AudioData.hpp"
+#include "Data/ThoughtControlRequest.hpp"
 #include "Framework/Module.hpp"
-
+#include "Thoughts.hpp"
 #include "DataSet.hpp"
 
-
-class Brain;
 
 class BehaviorModule : public Module<BehaviorModule, Brain>
 {
@@ -115,9 +114,11 @@ private:
   const Dependency<WorldState> worldState_;
   /// a very helpful comment
   const Dependency<HeadOffData> headOffData_;
-  /// the motion request
+
+
+    /// the motion request
   Production<MotionRequest> motionRequest_;
-  /// the eye LED request
+    /// the eye LED request
   Production<EyeLEDRequest> eyeLEDRequest_;
   /// the audio request
   Production<AudioRequest> audioRequest_;
@@ -125,9 +126,13 @@ private:
   Production<EarLEDRequest> earLEDRequest_;
 
   /// the last action command that was computed by the behavior
+  Production<ThoughtControlRequest> thoughtControlRequest_;
+    /// the last action command that was computed by the behavior
   ActionCommand actionCommand_;
+  /// Thoughts
+  Thoughts thoughts_;
   /// the data set/bundle that is passed to the behavior
   DataSet dataSet_;
-  /// a thread-safe copy of the remote motion request
+    /// a thread-safe copy of the remote motion request
   MotionRequest actualRemoteMotionRequest_;
 };

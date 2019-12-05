@@ -53,6 +53,7 @@ set(HEADERS
   Behavior/BehaviorUnits/Skills/WalkBehindBallAndDribble.hpp
   Behavior/BehaviorUnits/Skills/WalkToPose.hpp
   Behavior/WorldStateProvider.hpp
+        Behavior/Thoughts.hpp
   Interface/AudioReceiver.hpp
   Interface/AudioPlayer.hpp
   GameController/GameController.hpp
@@ -106,6 +107,7 @@ set(SOURCES
   Behavior/SupportingPositionProvider.cpp
   Behavior/TimeToReachBallProvider.cpp
   Behavior/WorldStateProvider.cpp
+        Behavior/Thoughts.cpp
   Interface/AudioReceiver.cpp
   Interface/AudioPlayer.cpp
   GameController/GameController.cpp

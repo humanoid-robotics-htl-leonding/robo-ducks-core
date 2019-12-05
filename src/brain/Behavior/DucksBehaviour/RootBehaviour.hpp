@@ -4,5 +4,6 @@
 #pragma once
 
 ActionCommand rootBehavior(const DataSet& d) {
-  return chooseState(d);
+  ActionCommand state = chooseState(d);
+  return state;
 }

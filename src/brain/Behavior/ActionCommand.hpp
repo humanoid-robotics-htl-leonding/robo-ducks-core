@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Data/EarLEDRequest.hpp>
+#include <Data/ThoughtControlRequest.hpp>
 #include "Behavior/HeadPositionProvider.hpp"
 #include "Data/EyeLEDRequest.hpp"
 #include "Data/AudioRequest.hpp"
@@ -507,6 +508,17 @@ public:
     friend class ActionCommand;
   };
 
+//  class ThoughtControl
+//  {
+//    static ThoughtControl set(ThoughtCommand command){
+//      ThoughtControl control;
+//      control.command_ = command;
+//      return control;
+//    }
+//  private:
+//      ThoughtCommand command_;
+//  };
+
   class Audio //44100 things per second, 512 Buffer Size per Frame
   {
   public:
@@ -731,6 +743,11 @@ public:
     audio_ = audio;
     return *this;
   }
+
+  ActionCommand& combineThoughtCommand(ThoughtCommand command, bool value = true){
+    thoughtCommands_[static_cast<unsigned int>(command)] = value;
+    return *this;
+  }
   /**
    * @brief toMotionRequest converts the action command to a motion request
    * @param motion_request the motion request that is overwritten
@@ -821,6 +838,11 @@ public:
   void toAudioRequest(AudioRequest& audioRequest) const
   {
     audioRequest.frequency = audio_.frequency;
+  }
+
+  void toThoughtControlRequest(ThoughtControlRequest& thoughtControlRequest) const
+  {
+    thoughtControlRequest.apply(thoughtCommands_);
   }
 
   /**
@@ -918,4 +940,6 @@ private:
 
 
   Audio audio_;
+  ///
+  std::array<bool, (int) ThoughtCommand::MAX> thoughtCommands_{};
 };

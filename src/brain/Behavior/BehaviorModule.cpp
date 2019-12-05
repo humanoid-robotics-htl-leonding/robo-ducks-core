@@ -46,14 +46,16 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   , audioRequest_(*this)
   , playbackData_(*this)
   , earLEDRequest_(*this)
+  , thoughtControlRequest_(*this)
   , actionCommand_(ActionCommand::dead())
+  , thoughts_()
   , dataSet_(*this, *gameControllerState_, *ballState_, *robotPosition_, *bodyPose_,
              *playerConfiguration_, *playingRoles_, *motionState_, *headMotionOutput_,
              *teamBallModel_, *teamPlayers_, *fieldDimensions_, *strikerAction_,
              *penaltyStrikerAction_, *keeperAction_, *penaltyKeeperAction_, *cycleInfo_,
              *setPosition_, *defendingPosition_, *bishopPosition_, *supportingPosition_,
              *replacementKeeperAction_, *buttonData_, *worldState_, *kickConfigurationData_,
-             *ballSearchPosition_, *headPositionData_, actionCommand_)
+             *ballSearchPosition_, *headPositionData_, thoughts_, actionCommand_)
 {
 
   {
@@ -82,6 +84,10 @@ void BehaviorModule::cycle()
   }
   else
   {
+//    thoughts_->pushState(gameControllerState_->gameState)
+
+    thoughts_.update(dataSet_);
+
     if(headOffData_->shouldDie){
       actionCommand_ = ActionCommand::dead();
     }else{
@@ -96,6 +102,7 @@ void BehaviorModule::cycle()
     actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
     actionCommand_.toAudioRequest(*audioRequest_);
     actionCommand_.toEarLEDRequest(*earLEDRequest_);
+    actionCommand_.toThoughtControlRequest(*thoughtControlRequest_);
     //actionCommand_.toPlaybackData(*playbackData_);
   }
 }
