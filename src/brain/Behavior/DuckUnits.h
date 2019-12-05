@@ -14,6 +14,13 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
+#include "DucksBehaviour/Roles/None.hpp"
+#include "DucksBehaviour/Roles/Striker.hpp"
+#include "DucksBehaviour/Roles/Keeper.hpp"
+#include "DucksBehaviour/Roles/Defender.hpp"
+#include "DucksBehaviour/Roles/Bishop.hpp"
+#include "DucksBehaviour/Roles/SupportStriker.hpp"
+#include "DucksBehaviour/Roles/Roles.hpp"
 #include "DucksBehaviour/States/Started.hpp"
 #include "DucksBehaviour/States/Initial.hpp"
 #include "DucksBehaviour/States/Penalized.hpp"

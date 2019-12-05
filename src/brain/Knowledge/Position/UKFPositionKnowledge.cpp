@@ -157,7 +157,6 @@ void UKFPositionKnowledge::updateState()
       wasHighInSet_ = false;
       // start fom initial pose (somewhere at the side line in the own half)
       int intialNumberOfHypotheses = startAnywhereAtSidelines_() ? maxNumberOfHypotheses_() : 1;
-      std::cout << "PreparePostHypethoeses with Initial Stuff, yeet" << std::endl;
       preparePoseHypotheses(intialNumberOfHypotheses, sigmaInitial_(),
                             [this](unsigned int& clusterHint) -> Pose {
                               return positionProvider_.getInitial(clusterHint, false);
