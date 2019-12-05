@@ -124,6 +124,14 @@ public:
       body.type_ = MotionRequest::BodyMotion::HOLD;
       return body;
     }
+
+    static Body kneel()
+    {
+      Body body;
+      body.type_ = MotionRequest::BodyMotion::KNEEL;
+      return body;
+    }
+
     /**
      * @brief type returns the type of the command
      * @return the type of the command
@@ -636,6 +644,11 @@ public:
     return ActionCommand(Body::hold(), Arm::body(), Arm::body(), Head::body(), LED::colors(),
                          LED::colors());
   }
+
+  static ActionCommand kneel() {
+    return ActionCommand(Body::kneel(), Arm::body(), Arm::body(), Head::body(), LED::colors(), LED::colors());
+  }
+
   /**
    * @brief combineBody replaces the body part of an action command
    * @param body the new body part of the action command
