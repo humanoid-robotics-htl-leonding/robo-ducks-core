@@ -328,10 +328,10 @@ void LEDHandler::setLeftEarContinueLoading() {
         lastLoadLeftTime = (unsigned int)( cycleInfo_->startTime);
         std::vector<float> leftEar = std::vector<float>(EAR_MAX, 0.0f);
         for(int i =0; i < loaderLeftLength; i++){
-            int index = (loadPosLeftEnd -i >0)?loadPosLeftEnd-i:10+(loadPosLeftEnd-i);
+            int index = (loadPosLeftEnd -i >=0)?loadPosLeftEnd-i:10+(loadPosLeftEnd-i);
             leftEar[index] = 1.0f;
         }
-        loadPosLeftEnd= (loadPosLeftEnd -1 >0)?loadPosLeftEnd-1:10-(loadPosLeftEnd-1);
+        loadPosLeftEnd= (loadPosLeftEnd -1 >=0)?loadPosLeftEnd-1:10+(loadPosLeftEnd-1);
         lastLoadingLeftEar =  leftEar;
         setEarLeftLEDs(leftEar.data());
     }
