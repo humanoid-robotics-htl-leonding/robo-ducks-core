@@ -23,7 +23,7 @@ class Main(qtc.QObject):
     def __init__(self, config: str):
         super(Main, self).__init__()
 
-        qtw.qApp.setStyleSheet(qdarkstyle.load_stylesheet_pyside())
+        qtw.qApp.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
 
         self.nao = nao.Nao()
         self.identifier = uuid.uuid4()
