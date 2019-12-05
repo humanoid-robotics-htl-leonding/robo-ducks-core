@@ -37,6 +37,13 @@ LEDHandler::LEDHandler(const ModuleManagerInterface& manager)
     loaderLeftLength = 4;
     loadPosLeftEnd = EAR_MAX-1;
     lastLoadLeftTime = 0;
+
+
+
+    lastStartTimeChest = 0;
+    rainbowRed = 1.0f;
+    rainbowGreen = 1.0f;
+    rainbowBlue = 1.0f;
 }
 
 void LEDHandler::cycle()
@@ -108,6 +115,18 @@ void LEDHandler::cycle()
               break;
           case EarMode::PULSATE:
               setLeftEarPulsating(earLEDRequest_->speedLeft);
+              break;
+      }
+      switch (chestLEDRequest_->chestMode)
+      {
+          case ChestMode ::OFF:
+              setChestLEDs(0.0f,0.0f,0.0f);
+              break;
+          case ChestMode ::COLOR:
+              setChestLEDs(chestLEDRequest_->red,chestLEDRequest_->green,chestLEDRequest_->blue);
+              break;
+          case ChestMode ::RAINBOW:
+              setChestRainbowColors();
               break;
       }
 
@@ -479,6 +498,17 @@ void LEDHandler::setLeftEarPulsating(uint8_t speed) {
     }
     std::vector<float> leftEar = std::vector<float>(EAR_MAX,brightness);
     setEarLeftLEDs(leftEar.data());
+}
+
+void LEDHandler::setChestRainbowColors() {
+    if((unsigned int)( cycleInfo_->startTime) - lastStartTimeChest > 100){
+        lastStartTimeChest = (unsigned int)( cycleInfo_->startTime);
+
+        rainbowRed += diff *(rand() % 2)*2 - 1;
+        rainbowGreen += diff *(rand() % 2)*2 - 1;
+        rainbowBlue += diff *(rand() % 2)*2 - 1;
+    }
+    setChestLEDs(rainbowRed,rainbowGreen,rainbowBlue);
 }
 
 
