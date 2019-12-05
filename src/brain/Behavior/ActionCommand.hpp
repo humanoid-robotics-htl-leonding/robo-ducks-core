@@ -12,9 +12,6 @@
 #include "Tools/Math/Pose.hpp"
 
 
-/**
- * @class ActionCommand represents the desired state of the robot
- */
 class ActionCommand
 {
 public:
