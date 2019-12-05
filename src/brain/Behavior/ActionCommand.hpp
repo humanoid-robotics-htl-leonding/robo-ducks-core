@@ -1,11 +1,8 @@
 #pragma once
 
-//#include <Data/EarLEDRequest.hpp>
 #include <Data/ThoughtControlRequest.hpp>
 #include <Data/LEDRequest.hpp>
-//#include <Data/ChestLEDRequest.hpp>
-#include "Behavior/HeadPositionProvider.hpp"
-//#include "Data/EyeLEDRequest.hpp"
+#include <Data/HeadPositionData.hpp>
 #include "Data/AudioRequest.hpp"
 #include "Data/MotionRequest.hpp"
 #include "Data/AudioData.hpp"
@@ -16,26 +13,16 @@
 class ActionCommand
 {
 public:
-  /**
-   * @class Body contains the command for the body
-   */
+
   class Body
   {
   public:
-    /**
-     * @brief dead creates a dead action command for the body
-     * @return a dead action command for the body
-     */
     static Body dead()
     {
       Body body;
       body.type_ = MotionRequest::BodyMotion::DEAD;
       return body;
     }
-    /**
-     * @brief stand creates a stand action command for the body
-     * @return a stand action command for the body
-     */
     static Body stand()
     {
       Body body;
@@ -132,10 +119,6 @@ public:
       return body;
     }
 
-    /**
-     * @brief type returns the type of the command
-     * @return the type of the command
-     */
     MotionRequest::BodyMotion type() const
     {
       return type_;
@@ -168,9 +151,7 @@ public:
     MotionKeeper keeperType_;
     friend class ActionCommand;
   };
-  /**
-   * @class Arm contains the command for an arm
-   */
+
   class Arm
   {
   public:
@@ -216,9 +197,7 @@ public:
     Vector3f target_;
     friend class ActionCommand;
   };
-  /**
-   * @class Head contains the command for the head
-   */
+
   class Head
   {
   public:
@@ -344,9 +323,7 @@ public:
     float pitchVelocity_;
     friend class ActionCommand;
   };
-  /**
-   * @class EyeLED contains the command for an EyeLED
-   */
+
   class EyeLED
   {
   public:
@@ -456,9 +433,6 @@ public:
     friend class ActionCommand;
   };
 
-  /**
-   * @author Erik Mayrhofer
-   */
   class EarLED
   {
   public:
@@ -507,9 +481,6 @@ public:
     friend class ActionCommand;
   };
 
-  /**
-   * @author Erik Mayrhofer
-   */
   class ChestLED
   {
   public:
@@ -572,7 +543,7 @@ public:
       friend class ActionCommand;
   };
 
-    class FootLED
+  class FootLED
     {
     public:
         static FootLED colors(const float r = 0, const float g = 0, const float b = 0)
@@ -634,8 +605,7 @@ public:
         friend class ActionCommand;
     };
 
-  class Audio //44100 things per second, 512 Buffer Size per Frame
-  {
+  class Audio { //44100 things per second, 512 Buffer Size per Frame
   public:
       Audio() {}
 
@@ -663,23 +633,12 @@ public:
     friend class ActionCommand;
   };
 
-  /**
-   * @brief dead creates a dead action command
-   * @return a dead action command
-   */
-  static ActionCommand dead()
-  {
-    return ActionCommand(Body::dead(), Arm::body(), Arm::body(), Head::body(), EyeLED::colors(),
-                         EyeLED::colors());
+  static ActionCommand dead() {
+    return ActionCommand(Body::dead(), Arm::body(), Arm::body(), Head::body(), EyeLED::colors(),EyeLED::colors());
   }
-  /**
-   * @brief stand creates a stand action command
-   * @return a stand action command
-   */
-  static ActionCommand stand()
-  {
-    return ActionCommand(Body::stand(), Arm::body(), Arm::body(), Head::angles(), EyeLED::colors(),
-                         EyeLED::colors());
+
+  static ActionCommand stand() {
+    return ActionCommand(Body::stand(), Arm::body(), Arm::body(), Head::angles(), EyeLED::colors(),EyeLED::colors());
   }
   /**
    * @brief walk creates a walk action command
@@ -1062,28 +1021,18 @@ private:
     , rightLed_(right_led)
   {
   }
-  /// the command for the body
-  Body body_;
-  /// the command for the left arm
-  Arm leftArm_;
-  /// the command for the right arm
-  Arm rightArm_;
-  /// the command for the head
-  Head head_;
-  /// the command for the left EyeLED
-  EyeLED leftLed_;
-  /// the command for the right EyeLED
-  EyeLED rightLed_;
 
+  Body body_;
+  Arm leftArm_;
+  Arm rightArm_;
+  Head head_;
+  EyeLED leftLed_;
+  EyeLED rightLed_;
   EarLED rightEarLed_;
   EarLED leftEarLed_;
-
   FootLED rightFootLed_;
   FootLED leftFootLed_;
   ChestLED chestLed_;
-
-
   Audio audio_;
-  ///
   std::array<bool, (int) ThoughtCommand::MAX> thoughtCommands_{};
 };
