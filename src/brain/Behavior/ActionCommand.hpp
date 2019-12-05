@@ -572,6 +572,68 @@ public:
       friend class ActionCommand;
   };
 
+    class FootLED
+    {
+    public:
+        static FootLED colors(const float r = 0, const float g = 0, const float b = 0)
+        {
+          FootLED led;
+          led.footMode_ = FootMode::COLOR;
+          led.r_ = r;
+          led.g_ = g;
+          led.b_ = b;
+          return led;
+        }
+        static FootLED off()
+        {
+          FootLED led;
+          led.footMode_ = FootMode::OFF;
+          return led;
+        }
+        static FootLED white()
+        {
+          return colors(1, 1, 1);
+        }
+        static FootLED green()
+        {
+          return colors(0, 1, 0);
+        }
+        static FootLED yellow()
+        {
+          return colors(1, 1, 0);
+        }
+        static FootLED red()
+        {
+          return colors(1, 0, 0);
+        }
+        static FootLED blue()
+        {
+          return colors(0, 0, 1);
+        }
+        static FootLED lightblue()
+        {
+          return colors(0, 1, 1);
+        }
+        static FootLED pink()
+        {
+          return colors(1, 0.07f, 0.58f);
+        }
+        static FootLED rainbow()
+        {
+          FootLED led;
+          led.footMode_ = FootMode::RAINBOW;
+          return led;
+        }
+
+    private:
+        FootLED() = default;
+        FootMode footMode_ = FootMode::OFF;
+        float r_ = 0.f;
+        float g_ = 0.f;
+        float b_ = 0.f;
+        friend class ActionCommand;
+    };
+
   class Audio //44100 things per second, 512 Buffer Size per Frame
   {
   public:
@@ -775,6 +837,18 @@ public:
     return *this;
   }
 
+  ActionCommand& combineLeftFootLED(const FootLED& foot_led)
+  {
+    leftFootLed_ = foot_led;
+    return *this;
+  }
+
+  ActionCommand& combineRightFootLED(const FootLED& foot_led)
+  {
+    rightFootLed_ = foot_led;
+    return *this;
+  }
+
   ActionCommand& combineRightEarLED(const EarLED& right_ear_led){
     rightEarLed_ = right_ear_led;
     return *this;
@@ -853,42 +927,6 @@ public:
     }
   }
 
-//  void toEyeLEDRequest(EyeLEDRequest& eyeLEDRequest) const
-//  {
-//    eyeLEDRequest.leftEyeMode = leftLed_.eyeMode_;
-//    eyeLEDRequest.leftR = leftLed_.r_;
-//    eyeLEDRequest.leftG = leftLed_.g_;
-//    eyeLEDRequest.leftB = leftLed_.b_;
-//    eyeLEDRequest.rightEyeMode = rightLed_.eyeMode_;
-//    eyeLEDRequest.rightR = rightLed_.r_;
-//    eyeLEDRequest.rightG = rightLed_.g_;
-//    eyeLEDRequest.rightB = rightLed_.b_;
-//  }
-//
-//  void toEarLEDRequest(EarLEDRequest& earLEDRequest) const
-//  {
-//    earLEDRequest.rightEarMode = rightEarLed_.earMode_;
-//    earLEDRequest.leftEarMode = leftEarLed_.earMode_;
-//
-//    earLEDRequest.brightnessLeft = leftEarLed_.brightness_;
-//    earLEDRequest.brightnessRight = rightEarLed_.brightness_;
-//
-//    earLEDRequest.progressLeft = leftEarLed_.progress_;
-//    earLEDRequest.progressRight = rightEarLed_.progress_;
-//
-//    earLEDRequest.speedLeft = leftEarLed_.speed_;
-//    earLEDRequest.speedRight = rightEarLed_.speed_;
-//
-//  }
-//
-//  void toChestLEDRequest(ChestLEDRequest& chestLEDRequest) const
-//  {
-//    chestLEDRequest.green = chestLed_.g_;
-//    chestLEDRequest.red = chestLed_.r_;
-//    chestLEDRequest.blue = chestLed_.b_;
-//    chestLEDRequest.chestMode = chestLed_.chestMode_;
-//  }
-
     void toLEDRequest(LEDRequest& ledRequest) const
     {
       ledRequest.leftEyeMode = leftLed_.eyeMode_;
@@ -916,6 +954,15 @@ public:
       ledRequest.leftEarProgress = leftEarLed_.progress_;
       ledRequest.leftEarPulseSpeed = leftEarLed_.speed_;
 
+      ledRequest.rightFootMode = rightFootLed_.footMode_;
+      ledRequest.rightFootB = rightFootLed_.b_;
+      ledRequest.rightFootG = rightFootLed_.g_;
+      ledRequest.rightFootR = rightFootLed_.r_;
+      
+      ledRequest.leftFootMode = leftFootLed_.footMode_;
+      ledRequest.leftFootB = leftFootLed_.b_;
+      ledRequest.leftFootG = leftFootLed_.g_;
+      ledRequest.leftFootR = leftFootLed_.r_;
     }
 
   /**
@@ -1031,6 +1078,8 @@ private:
   EarLED rightEarLed_;
   EarLED leftEarLed_;
 
+  FootLED rightFootLed_;
+  FootLED leftFootLed_;
   ChestLED chestLed_;
 
 
