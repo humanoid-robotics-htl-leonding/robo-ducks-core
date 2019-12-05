@@ -64,11 +64,11 @@ set(TUHHSDK_HEADERS
   Data/BallSearchPosition.hpp
   Data/ButtonData.hpp
   Data/CameraMatrix.hpp
-        Data/ChestLEDRequest.hpp
+ #       Data/ChestLEDRequest.hpp
   Data/CircleData.hpp
   Data/CycleInfo.hpp
   Data/DefendingPosition.hpp
-  Data/EyeLEDRequest.hpp
+ # Data/EyeLEDRequest.hpp
   Data/FallManagerOutput.hpp
   Data/FieldBorder.hpp
   Data/FieldColor.hpp
