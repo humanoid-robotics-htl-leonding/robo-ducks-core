@@ -42,12 +42,9 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   , worldState_(*this)
   , headOffData_(*this)
   , motionRequest_(*this)
-//  , eyeLEDRequest_(*this)
   , audioRequest_(*this)
   , playbackData_(*this)
   , ledRequest_(*this)
-//  , earLEDRequest_(*this)
-//  , chestLEDRequest_(*this)
   , thoughtControlRequest_(*this)
   , actionCommand_(ActionCommand::dead())
   , thoughts_()
@@ -70,35 +67,31 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   print("Behaviour - Init", LogLevel::INFO);
 }
 
-void BehaviorModule::cycle()
-{
+void BehaviorModule::cycle() {
   Chronometer time(debug(), mount_ + ".cycle_time");
 
   if (
-      useRemoteMotionRequest_() &&
-      gameControllerState_->gameState == GameState::PLAYING &&
-      gameControllerState_->penalty == Penalty::NONE && 
-      !bodyPose_->fallen
-      )
-  {
+          useRemoteMotionRequest_() &&
+          gameControllerState_->gameState == GameState::PLAYING &&
+          gameControllerState_->penalty == Penalty::NONE &&
+          !bodyPose_->fallen
+          ) {
     std::lock_guard<std::mutex> lg(actualRemoteMotionRequestLock_);
     *motionRequest_ = actualRemoteMotionRequest_;
-  }
-  else
-  {
+  } else {
 //    thoughts_->pushState(gameControllerState_->gameState)
 
     thoughts_.update(dataSet_);
 
-    if(headOffData_->shouldDie){
+    if (headOffData_->shouldDie) {
       actionCommand_ = ActionCommand::dead();
-    }else{
+    } else {
       actionCommand_ = rootBehavior(dataSet_); //TODO Make RootBehaviour Configurable
       actionCommand_.combineLeftEarLED(ActionCommand::EarLED::loading());
     }
-    if(headOffData_->shouldDieSignal){
-        print("I am in the should Die Signal", LogLevel::INFO);
-        actionCommand_ = ActionCommand::dead().combineAudio(ActionCommand::Audio::audioC5());
+    if (headOffData_->shouldDieSignal) {
+      print("I am in the should Die Signal", LogLevel::INFO);
+      actionCommand_ = ActionCommand::dead().combineAudio(ActionCommand::Audio::audioC5());
     }
     actionCommand_.toMotionRequest(*motionRequest_);
 //    actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
