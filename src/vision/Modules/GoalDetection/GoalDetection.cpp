@@ -8,101 +8,122 @@
 
 GoalDetection::GoalDetection(const ModuleManagerInterface& manager)
   : Module(manager)
-	, minNumberOfPointsOnGoal_(*this, "minNumberOfPointsOnGoal", [] {})
-	, maxNumberOfPointsOnGoal_(*this, "maxNumberOfPointsOnGoal", [] {})
-	, maxDistanceOfGroupPoints_(*this, "maxDistanceOfGroupPoints", [] {})
+  	, maxDistanceOfNeighbors_(*this, "maxDistanceOfNeighbors", [] {})
+  	, minPointsInGroup_(*this, "minPointsInGroup", [] {})
+	, minSegmentLength_(*this, "minSegmentLength", [] {})
+	, maxSegmentLength_(*this, "maxSegmentLength", [] {})
   , imageData_(*this)
   , cameraMatrix_(*this)
-  , imageSegments_(*this)
+  , filteredSegments_(*this)
   , goalData_(*this)
 {
 }
 
 void GoalDetection::detectGoalPoints()
 {
-		goalPoints_.clear();
-		Vector2f g1, g2;
-		for (const auto& scanLine : imageSegments_->verticalScanlines)
+	goalPoints_.clear();
+	auto shift = [](int c) { return c >> 1; };
+	for (const auto& segment : filteredSegments_->horizontal)
+	{
+		if (static_cast<unsigned int>(segment->scanPoints) <  minSegmentLength_ () ||
+		static_cast<unsigned int>(segment->scanPoints) >  maxSegmentLength_ () ||
+		segment->startEdgeType != EdgeType::RISING || segment->endEdgeType != EdgeType::FALLING)
 		{
-				const auto& segment = &scanLine.segments[0];
-				if (segment->startEdgeType != EdgeType::BORDER || segment->endEdgeType != EdgeType::FALLING)
-				{
-						continue;
-				}
-				goalPoints_.push_back(segment->end);
+			continue;
 		}
+		goalPoints_.push_back((segment->start + segment->end).unaryExpr(shift));
+	}
 }
 
-void GoalDetection::bombermanMaxDistanceGrouping()
-{
-		std::cerr << "A" << std::endl;
-		goalPostGroups_.clear();
-		auto it = goalPoints_.begin();
-		std::cerr << "B" << std::endl;
-		for (; it != goalPoints_.end(); it++) {
-				std::cerr << "C" << std::endl;
-				bombermanExplodeRecursive(it);
-				std::cerr << "D" << std::endl;
-				if (goalPostGroup_.size() >= minNumberOfPointsOnGoal_() && goalPostGroup_.size() <= maxNumberOfPointsOnGoal_()) {
-						goalPostGroups_.emplace_back(goalPostGroup_);
-				}
+void GoalDetection::bombermanMaxDistanceGrouping() {
+	goalPostGroups_.clear();
+	auto it = goalPoints_.begin();
+	for (; it != goalPoints_.end(); it++) {
+		goalPostGroup_.clear();
+		goalPostGroup_.push_back(*it);
+		Vector2i point = *it;
+		it--;
+		goalPoints_.erase(std::next(it));
+		bombermanExplodeRecursive(point);
+		if (goalPostGroup_.size() >= minPointsInGroup_()) {
+			goalPostGroups_.push_back(goalPostGroup_);
 		}
-		std::cerr << goalPostGroups_.size() << std::endl;
+		if (goalPoints_.size() == 0) {
+			break;
+		}
+	}
 }
 
-void GoalDetection::bombermanExplodeRecursive(VecVector2i::iterator column) {
-		std::cerr << "E" << std::endl;
-		goalPostGroup_.emplace_back(*column);
-		std::cerr << "F" << std::endl;
-		if (column == goalPoints_.end()) {
-				std::cerr << "G" << std::endl;
-				return;
+void GoalDetection::bombermanExplodeRecursive(Vector2i point) {
+	if (goalPoints_.size() == 0) {
+		return;
+	}
+	auto it = goalPoints_.begin();
+	for (; it != goalPoints_.end(); it++) {
+		float distance = ((*it) - (point)).norm();
+		if (distance <= maxDistanceOfNeighbors_()) {
+			goalPostGroup_.push_back(*it);
+			Vector2i next = *it;
+			it--;
+			goalPoints_.erase(std::next(it));
+			bombermanExplodeRecursive(next);
+			if (goalPoints_.size() == 0) {
+				break;
+			}
 		}
-		std::cerr << "H" << std::endl;
-		auto it = std::next(column);
-		for (; it != goalPoints_.end(); it++) {
-				std::cerr << "I" << std::endl;
-				float distance = ((*column) - (*it)).norm();
-				std::cerr << "J" << std::endl;
-				if (distance > maxDistanceOfGroupPoints_())
-				{
-						std::cerr << "K" << std::endl;
-						bombermanExplodeRecursive(it);
-						std::cerr << "L" << std::endl;
-						goalPoints_.erase(it);
-						std::cerr << "M" << std::endl;
-				}
-				std::cerr << "N" << std::endl;
+	}
+}
+
+void GoalDetection::createGoalData() {
+	debugGoalPoints_.clear();
+	for (const auto& group : goalPostGroups_) {
+		Vector2i bestFit = group.front();
+		Vector2f goalPoint;
+		for (const auto& point : group) {
+			if (point.y() > bestFit.y()) {
+				bestFit = point;
+			}
 		}
+		if (cameraMatrix_->pixelToRobot(bestFit, goalPoint)) {
+			goalData_->posts.push_back(goalPoint);
+			debugGoalPoints_.push_back(bestFit);
+		}
+	}
+	goalData_->timestamp = imageData_->timestamp;
+	goalData_->valid = true;
 }
 
 void GoalDetection::cycle()
 {
-		if (!imageSegments_->valid)
-		{
-				return;
-		}
-		{
-				Chronometer time(debug(), mount_ + "." + imageData_->identification + "_cycle_time");
-				detectGoalPoints();
-				debugGoalPoints_ = goalPoints_;
-				//bombermanMaxDistanceGrouping();
-				//createGoalData();
-		}
-		sendImagesForDebug();
-		goalData_->valid = false;
+	if (!filteredSegments_->valid)
+	{
+		return;
+	}
+	{
+		Chronometer time(debug(), mount_ + "." + imageData_->identification + "_cycle_time");
+		detectGoalPoints();
+		bombermanMaxDistanceGrouping();
+		debugGoalPostGroups_ = goalPostGroups_;
+		createGoalData();
+	}
+	sendImagesForDebug();
 }
 
 void GoalDetection::sendImagesForDebug()
 {
-		auto mount = mount_ + "." + imageData_->identification + "_image_goals";
-		if (debug().isSubscribed(mount))
+	auto mount = mount_ + "." + imageData_->identification + "_image_goals";
+	if (debug().isSubscribed(mount))
+	{
+		Image image(imageData_->image422.to444Image());
+		for (const auto& group : debugGoalPostGroups_)
 		{
-				Image image(imageData_->image422.to444Image());
-				for (const auto& point : debugGoalPoints_)
-				{
-						image.circle(Image422::get444From422Vector(point), 2, Color::RED);
-				}
-				debug().sendImage(mount_ + "." + imageData_->identification + "_image_goals", image);
+			for (const auto& point : group) {
+				image.circle(Image422::get444From422Vector(point), 2, Color::RED);
+			}
 		}
+		for (const auto& point : debugGoalPoints_) {
+			image.cross(Image422::get444From422Vector(point), 3, Color::BLUE);
+		}
+		debug().sendImage(mount_ + "." + imageData_->identification + "_image_goals", image);
+	}
 }

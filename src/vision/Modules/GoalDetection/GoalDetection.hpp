@@ -23,41 +23,49 @@ private:
  	 * @return the gradient
  	 */
 	Vector2f getGradient(const Vector2i& p) const;
-  /**
-   * @brief detectGoalPoints uses the scanline segments and detects points which could belong to a
-   * goal post
-   */
-  void detectGoalPoints();
-  /**
-   *
-   */
-  void bombermanMaxDistanceGrouping();
-  /**
-   *
-   */
-  void bombermanExplodeRecursive(VecVector2i::iterator column);
+  	/**
+  	 * @brief detectGoalPoints uses the scanline segments and detects points which could belong to a
+  	 * goal post
+  	 */
+  	void detectGoalPoints();
+  	/**
+   	 *
+   	 */
+   	void bombermanMaxDistanceGrouping();
+  	/**
+  	 *
+  	 */
+  	void bombermanExplodeRecursive(Vector2i point);
+  	/**
+  	 *
+  	 */
+  	void createGoalData();
 
-  /**
+  	/**
 	 * @brief sendImagesForDebug send debug information
 	 */
 	void sendImagesForDebug();
-	/// the minimum number of points per goal post
-	const Parameter<unsigned int> minNumberOfPointsOnGoal_;
-	/// the maximum number of points per goal post
-	const Parameter<unsigned int> maxNumberOfPointsOnGoal_;
-	/// the minimum amount of pixels in a goal post segment
-	const Parameter<unsigned int> maxDistanceOfGroupPoints_;
-  /// a reference to the image
+	/// the maximum distance between two neighbors
+	const Parameter<unsigned int> maxDistanceOfNeighbors_;
+	/// the minimum number of points in a grouü
+	const Parameter<unsigned int> minPointsInGroup_;
+	/// the minimum number of points in a goal post segment
+	const Parameter<unsigned int> minSegmentLength_;
+	/// the maximum number of points in a goal post segment
+	const Parameter<unsigned int> maxSegmentLength_;
+  	/// a reference to the image
 	const Dependency<ImageData> imageData_;
 	/// a reference to the camera matrix
 	const Dependency<CameraMatrix> cameraMatrix_;
-  /// a reference to the filtered segments
-	const Dependency<ImageSegments> imageSegments_;
+  	/// a reference to the filtered segments
+	const Dependency<FilteredSegments> filteredSegments_;
 	/// the detected goal posts for other modules
-  Production<GoalData> goalData_;
-  /// goal points for debug purposes
+  	Production<GoalData> goalData_;
+  	/// goal point groups for debug purposes
+	std::vector<VecVector2i> debugGoalPostGroups_;
+	/// goal post points for debug purposes
 	VecVector2i debugGoalPoints_;
-  /// candidate points on lines
+  	/// candidate points
 	VecVector2i goalPoints_;
 	/// goal post point groups
 	std::vector<VecVector2i> goalPostGroups_;

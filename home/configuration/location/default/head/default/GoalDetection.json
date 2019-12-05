@@ -1,5 +1,6 @@
 {
-  "minNumberOfPointsOnGoal": 3,
-  "maxNumberOfPointsOnGoal": 10,
-  "maxDistanceOfGroupPoints": 5
+  "maxDistanceOfNeighbors": 2,
+  "minPointsInGroup": 5,
+  "minSegmentLength": 3,
+  "maxSegmentLength": 10
 }
