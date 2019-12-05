@@ -92,6 +92,7 @@ set(TUHHSDK_HEADERS
   Data/KickOutput.hpp
         Data/KneelerOutput.hpp
   Data/LandmarkModel.hpp
+        Data/LEDRequest.hpp
   Data/LineData.hpp
   Data/MirrorableMotionOutput.hpp
   Data/MotionActivation.hpp
