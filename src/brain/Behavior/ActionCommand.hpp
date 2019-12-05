@@ -924,15 +924,6 @@ public:
       ledRequest.leftFootR = leftFootLed_.r_;
     }
 
-  /**
-   * @author Erik Mayrhofer
-   * @brief toPlaybackData converts the action command to a PlayBackData
-   * @param eyeLEDRequest the eye EyeLED request that is overwritten
-   */
-  //void toPlaybackData(PlaybackData& playbackData) const
-  //{
-  //  playbackData.samples.insert(playbackData.samples.end(), audio_.samples.begin(), audio_.samples.end());
-  //}
   void toAudioRequest(AudioRequest& audioRequest) const
   {
     audioRequest.frequency = audio_.frequency;
