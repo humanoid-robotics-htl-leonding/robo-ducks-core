@@ -886,6 +886,14 @@ public:
 
   }
 
+  void toChestLEDRequest(ChestLEDRequest& chestLEDRequest) const
+  {
+    chestLEDRequest.green = chestLed_.g_;
+    chestLEDRequest.red = chestLed_.r_;
+    chestLEDRequest.blue = chestLed_.b_;
+    chestLEDRequest.chestMode = chestLed_.chestMode_;
+  }
+
   /**
    * @author Erik Mayrhofer
    * @brief toPlaybackData converts the action command to a PlayBackData
