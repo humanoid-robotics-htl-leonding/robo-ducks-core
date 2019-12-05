@@ -42,11 +42,12 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   , worldState_(*this)
   , headOffData_(*this)
   , motionRequest_(*this)
-  , eyeLEDRequest_(*this)
+//  , eyeLEDRequest_(*this)
   , audioRequest_(*this)
   , playbackData_(*this)
-  , earLEDRequest_(*this)
-  , chestLEDRequest_(*this)
+  , ledRequest_(*this)
+//  , earLEDRequest_(*this)
+//  , chestLEDRequest_(*this)
   , thoughtControlRequest_(*this)
   , actionCommand_(ActionCommand::dead())
   , thoughts_()
@@ -100,11 +101,12 @@ void BehaviorModule::cycle()
         actionCommand_ = ActionCommand::dead().combineAudio(ActionCommand::Audio::audioC5());
     }
     actionCommand_.toMotionRequest(*motionRequest_);
-    actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
+//    actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
     actionCommand_.toAudioRequest(*audioRequest_);
-    actionCommand_.toEarLEDRequest(*earLEDRequest_);
+//    actionCommand_.toEarLEDRequest(*earLEDRequest_);
     actionCommand_.toThoughtControlRequest(*thoughtControlRequest_);
-    actionCommand_.toChestLEDRequest(*chestLEDRequest_);
+//    actionCommand_.toChestLEDRequest(*chestLEDRequest_);
+    actionCommand_.toLEDRequest(*ledRequest_);
     //actionCommand_.toPlaybackData(*playbackData_);
   }
 }

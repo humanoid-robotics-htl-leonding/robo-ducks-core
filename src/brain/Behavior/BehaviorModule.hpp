@@ -2,7 +2,7 @@
 
 #include <mutex>
 #include <Data/HeadOffData.hpp>
-#include <Data/EarLEDRequest.hpp>
+//#include <Data/EarLEDRequest.hpp>
 
 #include "Data/BallSearchPosition.hpp"
 #include "Data/BallState.hpp"
@@ -11,7 +11,7 @@
 #include "Data/ButtonData.hpp"
 #include "Data/CycleInfo.hpp"
 #include "Data/DefendingPosition.hpp"
-#include "Data/EyeLEDRequest.hpp"
+//#include "Data/EyeLEDRequest.hpp"
 #include "Data/FieldDimensions.hpp"
 #include "Data/GameControllerState.hpp"
 #include "Data/HeadMotionOutput.hpp"
@@ -120,12 +120,12 @@ private:
     /// the motion request
   Production<MotionRequest> motionRequest_;
     /// the eye EyeLED request
-  Production<EyeLEDRequest> eyeLEDRequest_;
+//  Production<EyeLEDRequest> eyeLEDRequest_;
   /// the audio request
   Production<AudioRequest> audioRequest_;
   Production<PlaybackData> playbackData_;
-  Production<EarLEDRequest> earLEDRequest_;
-  Production<ChestLEDRequest> chestLEDRequest_;
+//  Production<EarLEDRequest> earLEDRequest_;
+//  Production<ChestLEDRequest> chestLEDRequest_;
   Production<LEDRequest> ledRequest_;
 
   /// the last action command that was computed by the behavior
