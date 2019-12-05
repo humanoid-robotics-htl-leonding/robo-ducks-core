@@ -43,6 +43,7 @@ UKFPositionKnowledge::UKFPositionKnowledge(const ModuleManagerInterface& manager
   , motionState_(*this)
   , jointSensorData_(*this)
   , imageData_(*this)
+  , thoughtControlRequest_(*this)
   , robotPosition_(*this)
   , lastPose_()
   , fieldInfo_(*playerConfiguration_, *fieldDimensions_)
@@ -102,7 +103,8 @@ void UKFPositionKnowledge::updateState()
       // if we are penalty taker and in general PSO-Competition-Mode (5 different PSO positions
       // around the penalty spot, we need 5 hypotheses)
       if (gameControllerState_->kickingTeam &&
-          (gameControllerState_->type == CompetitionType::GENERAL_PENALTY_KICK ||
+//          (gameControllerState_->type == CompetitionType::GENERAL_PENALTY_KICK ||
+            (false || //TODO LEGACY CODE
            alwaysUseMultiplePenaltyShootoutPositions_()))
       {
         // if we are the kicking team and in general PSO mode, there are 5 positions where we can be
@@ -145,9 +147,11 @@ void UKFPositionKnowledge::updateState()
         });
       }
     }
-    else if ((gameControllerState_->gameState == GameState::INITIAL &&
-              lastState_ != GameState::INITIAL) ||
-             (gameControllerState_->gameState == GameState::READY && lastState_ == GameState::INITIAL))
+    else if (
+//            (gameControllerState_->gameState == GameState::INITIAL && lastState_ != GameState::INITIAL) ||
+//               (gameControllerState_->gameState == GameState::READY && lastState_ == GameState::INITIAL)
+             thoughtControlRequest_->isCommandSet(ThoughtCommand::RESET_COMPASS_DIRECTION)
+             )
     {
       // reset for the next set phase
       wasHighInSet_ = false;
@@ -204,7 +208,7 @@ void UKFPositionKnowledge::updateState()
                                    motionState_->bodyMotion == MotionRequest::BodyMotion::STAND) &&
                                   IMUSensorData_->gyroscope.norm() < maxGyroNormWhenMeasuring_();
 
-  const bool inMultiPSOMode = gameControllerState_->type == CompetitionType::GENERAL_PENALTY_KICK ||
+  const bool inMultiPSOMode = /*gameControllerState_->type == CompetitionType::GENERAL_PENALTY_KICK*/ false || //TODO LEGACY CODE
                               alwaysUseMultiplePenaltyShootoutPositions_();
   const bool localizeInPenaltyShootout =
       gameControllerState_->kickingTeam && (strikerLocalizeInPSO_() || inMultiPSOMode);

@@ -115,7 +115,7 @@ void ParticlePositionKnowledge::updateState()
       // we are in multi PSO mode if required by the gamecontroller or configured
       const bool inMultiPSOMode =
           alwaysUseMultiplePenaltyShootoutPositions_() ||
-          gameControllerState_->type == CompetitionType::GENERAL_PENALTY_KICK;
+          /*gameControllerState_->type == CompetitionType::GENERAL_PENALTY_KICK*/ false; //TODO LEGACY
       // All particles are replaced with particles that correspond to the positions according to the
       // rules.
       for (auto& particle : particles_)
@@ -250,7 +250,7 @@ void ParticlePositionKnowledge::updateState()
                                    motionState_->bodyMotion == MotionRequest::BodyMotion::STAND) &&
                                   imuSensorData_->gyroscope.norm() < maxGyroNormWhenMeasuring_();
 
-  const bool inMultiPSOMode = gameControllerState_->type == CompetitionType::GENERAL_PENALTY_KICK ||
+  const bool inMultiPSOMode = /*gameControllerState_->type == CompetitionType::GENERAL_PENALTY_KICK*/ false || //TODO LEGACY CODE
                               alwaysUseMultiplePenaltyShootoutPositions_();
 
   const bool localizeInPenaltyShootout =

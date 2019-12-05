@@ -17,7 +17,7 @@ enum class CompetitionType
 {
   NORMAL = COMPETITION_TYPE_NORMAL,
   MIXED_TEAM = COMPETITION_TYPE_MIXEDTEAM,
-  GENERAL_PENALTY_KICK = COMPETITION_TYPE_GENERAL_PENALTY_KICK
+//  GENERAL_PENALTY_KICK = COMPETITION_TYPE_GENERAL_PENALTY_KICK
 };
 
 enum class SetPlay
@@ -131,10 +131,10 @@ public:
   /// number of seconds shown as secondary time (remaining ready, until free ball, etc)
   float secondaryTime = 0.f;
   /// the number of the team that caused the last drop in
-  unsigned int dropInTeam = 0;
-  /// time (seconds) since the last drop in
-  float dropInTime = 0.f;
-  /// time (seconds) until the end of the current half
+//  unsigned int dropInTeam = 0;
+//  /// time (seconds) since the last drop in
+//  float dropInTime = 0.f;
+//  /// time (seconds) until the end of the current half
   float remainingTime = 10.f * 60.f;
   /// the jersey color of the team the robot is in
   TeamColor teamColor = TeamColor::GRAY;
@@ -176,8 +176,8 @@ public:
     value["kickingTeam"] << kickingTeam;
     value["kickingTeamNumber"] << kickingTeamNumber;
     value["secondaryTime"] << secondaryTime;
-    value["dropInTeam"] << dropInTeam;
-    value["dropInTime"] << dropInTime;
+//    value["dropInTeam"] << dropInTeam;
+//    value["dropInTime"] << dropInTime;
     value["remainingTime"] << remainingTime;
     value["teamColor"] << static_cast<int>(teamColor);
     value["score"] << score;
@@ -212,8 +212,8 @@ public:
     value["kickingTeamNumber"] >> numberRead;
     kickingTeamNumber = static_cast<uint8_t>(numberRead);
     value["secondaryTime"] >> secondaryTime;
-    value["dropInTeam"] >> dropInTeam;
-    value["dropInTime"] >> dropInTime;
+//    value["dropInTeam"] >> dropInTeam;
+//    value["dropInTime"] >> dropInTime;
     value["remainingTime"] >> remainingTime;
     value["teamColor"] >> numberRead;
     teamColor = static_cast<TeamColor>(numberRead);

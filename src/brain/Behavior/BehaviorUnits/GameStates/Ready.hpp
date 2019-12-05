@@ -17,8 +17,8 @@ ActionCommand ready(const DataSet& d)
   // other robots should have orientation zero.
   const float orientation =
       iAmKickOffStriker ? std::atan2(-d.setPosition.position.y(), -d.setPosition.position.x()) : 0;
-  const ActionCommand::LED ledCommand =
-      d.setPosition.isKickoffPosition ? ActionCommand::LED::red() : ActionCommand::LED::blue();
+  const ActionCommand::EyeLED ledCommand =
+          d.setPosition.isKickoffPosition ? ActionCommand::EyeLED::EyeLED() : ActionCommand::EyeLED::EyeLED();
   return walkToPose(d, Pose(d.setPosition.position, orientation), true, WalkMode::PATH, Velocity(),
                     3.f)
       .combineHead(lookAround(d, 40.f * TO_RAD))

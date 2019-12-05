@@ -15,10 +15,11 @@ headOffData_(*this)
 }
 
 void HeadOffModule::cycle() {
-
   float headMiddle = buttonData_->buttons[keys::sensor::SWITCH_HEAD_MIDDLE];
   float headFront = buttonData_->buttons[keys::sensor::SWITCH_HEAD_FRONT];
   float headBack = buttonData_->buttons[keys::sensor::SWITCH_HEAD_REAR];
+
+
 
   bool dying = (headBack >= 1.0 && headFront >= 1.0 && headMiddle >= 1.0);
 
@@ -27,12 +28,19 @@ void HeadOffModule::cycle() {
       pressStarted = cycleInfo_->startTime;
     }
     int delta = cycleInfo_->startTime - pressStarted;
+    print("delta set: ", delta, LogLevel::INFO);
     if (delta > 5000){
       assert(false);
     }
+    else if (delta >4000){
+        print("shouldDieSignal set ", LogLevel::INFO);
+        headOffData_->shouldDieSignal = true;
+    }
   }else{
+      headOffData_->shouldDieSignal = false;
     pressStarted = 0;
   }
 
   headOffData_->shouldDie = dying;
+
 }

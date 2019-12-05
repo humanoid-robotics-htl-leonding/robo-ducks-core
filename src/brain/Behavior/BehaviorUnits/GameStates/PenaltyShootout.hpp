@@ -10,7 +10,7 @@ ActionCommand penaltyShootoutStriker(const DataSet& d)
                              d.penaltyStrikerAction.target, false, Velocity(0.5f, 0.5f, true),
                              d.penaltyStrikerAction.kickType)
         .combineHead(trackBall(d))
-        .combineLeftLED(ActionCommand::LED::red());
+        .combineLeftLED(ActionCommand::EyeLED::EyeLED());
   }
   else
   {
@@ -27,26 +27,26 @@ ActionCommand penaltyKeeper(const DataSet& d)
   switch (d.penaltyKeeperAction.type)
   {
     case PenaltyKeeperAction::Type::GENUFLECT:
-      return ActionCommand::keeper(MK_TAKE_FRONT).combineLeftLED(ActionCommand::LED::green());
+      return ActionCommand::keeper(MK_TAKE_FRONT).combineLeftLED(ActionCommand::EyeLED::EyeLED());
     case PenaltyKeeperAction::Type::JUMP_LEFT:
-      return ActionCommand::keeper(MK_JUMP_LEFT).combineLeftLED(ActionCommand::LED::red());
+      return ActionCommand::keeper(MK_JUMP_LEFT).combineLeftLED(ActionCommand::EyeLED::EyeLED());
     case PenaltyKeeperAction::Type::JUMP_RIGHT:
-      return ActionCommand::keeper(MK_JUMP_RIGHT).combineLeftLED(ActionCommand::LED::yellow());
+      return ActionCommand::keeper(MK_JUMP_RIGHT).combineLeftLED(ActionCommand::EyeLED::EyeLED());
     case PenaltyKeeperAction::Type::WAIT:
     default:
-      return ActionCommand::stand().combineLeftLED(ActionCommand::LED::lightblue());
+      return ActionCommand::stand().combineLeftLED(ActionCommand::EyeLED::EyeLED());
   }
-  return ActionCommand::stand().combineLeftLED(ActionCommand::LED::lightblue());
+  return ActionCommand::stand().combineLeftLED(ActionCommand::EyeLED::EyeLED());
 }
 
 ActionCommand penaltyShootoutPlaying(const DataSet& d)
 {
   if (d.gameControllerState.kickingTeam)
   {
-    return penaltyShootoutStriker(d).combineRightLED(ActionCommand::LED::red());
+    return penaltyShootoutStriker(d).combineRightLED(ActionCommand::EyeLED::EyeLED());
   }
   else
   {
-    return penaltyKeeper(d).combineRightLED(ActionCommand::LED::blue());
+    return penaltyKeeper(d).combineRightLED(ActionCommand::EyeLED::EyeLED());
   }
 }

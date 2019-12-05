@@ -12,6 +12,7 @@ public:
     DataTypeName name = "HeadOffData";
 
     bool shouldDie = false;
+    bool shouldDieSignal = false;
 
 
     void reset() {

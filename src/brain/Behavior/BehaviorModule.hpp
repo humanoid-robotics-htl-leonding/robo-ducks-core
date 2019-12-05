@@ -2,6 +2,7 @@
 
 #include <mutex>
 #include <Data/HeadOffData.hpp>
+//#include <Data/EarLEDRequest.hpp>
 
 #include "Data/BallSearchPosition.hpp"
 #include "Data/BallState.hpp"
@@ -10,7 +11,7 @@
 #include "Data/ButtonData.hpp"
 #include "Data/CycleInfo.hpp"
 #include "Data/DefendingPosition.hpp"
-#include "Data/EyeLEDRequest.hpp"
+//#include "Data/EyeLEDRequest.hpp"
 #include "Data/FieldDimensions.hpp"
 #include "Data/GameControllerState.hpp"
 #include "Data/HeadMotionOutput.hpp"
@@ -31,100 +32,79 @@
 #include "Data/TeamPlayers.hpp"
 #include "Data/WorldState.hpp"
 #include "Data/AudioData.hpp"
+#include "Data/ThoughtControlRequest.hpp"
+#include "Data/LEDRequest.hpp"
 #include "Framework/Module.hpp"
-
+#include "Thoughts.hpp"
 #include "DataSet.hpp"
 
 
-class Brain;
-
-class BehaviorModule : public Module<BehaviorModule, Brain>
-{
+class BehaviorModule : public Module<BehaviorModule, Brain> {
 public:
-  /// the name of this module
-  ModuleName name = "BehaviorModule";
-  /**
-   * @brief BehaviorModule initializes members
-   * @param manager a reference to brain
-   */
-  BehaviorModule(const ModuleManagerInterface& manager);
-  /**
-   * @brief cycle executes the behavior
-   */
-  void cycle();
+    /// the name of this module
+    ModuleName name = "BehaviorModule";
+
+    /**
+     * @brief BehaviorModule initializes members
+     * @param manager a reference to brain
+     */
+    explicit BehaviorModule(const ModuleManagerInterface &manager);
+
+    /**
+     * @brief cycle executes the behavior
+     */
+    void cycle() override;
 
 private:
-  /// mutex that locks the actual remote motion request
-  std::mutex actualRemoteMotionRequestLock_;
-  /// the remote motion request (may be changed by other threads)
-  Parameter<MotionRequest> remoteMotionRequest_;
-  /// whether the remote motion request shall be used (can only be activated in INITIAL)
-  Parameter<bool> useRemoteMotionRequest_;
-  /// the game controller state
-  const Dependency<GameControllerState> gameControllerState_;
-  /// the ball state
-  const Dependency<BallState> ballState_;
-  /// the robot position
-  const Dependency<RobotPosition> robotPosition_;
-  /// the body pose
-  const Dependency<BodyPose> bodyPose_;
-  /// the player configuration
-  const Dependency<PlayerConfiguration> playerConfiguration_;
-  /// the player roles
-  const Dependency<PlayingRoles> playingRoles_;
-  /// the motion state
-  const Dependency<MotionState> motionState_;
-  /// the head command data
-  const Dependency<HeadPositionData> headPositionData_;
-  /// the head motion output
-  const Dependency<HeadMotionOutput> headMotionOutput_;
-  /// the team ball model
-  const Dependency<TeamBallModel> teamBallModel_;
-  /// my homies
-  const Dependency<TeamPlayers> teamPlayers_;
-  /// the ball search position
-  const Dependency<BallSearchPosition> ballSearchPosition_;
-  /// the field dimensions
-  const Dependency<FieldDimensions> fieldDimensions_;
-  /// the striker action
-  const Dependency<StrikerAction> strikerAction_;
-  /// the penalty striker action
-  const Dependency<PenaltyStrikerAction> penaltyStrikerAction_;
-  /// the kick configuration
-  const Dependency<KickConfigurationData> kickConfigurationData_;
-  /// the keeper action
-  const Dependency<KeeperAction> keeperAction_;
-  /// the penalty keeper action
-  const Dependency<PenaltyKeeperAction> penaltyKeeperAction_;
-  /// the cycle info
-  const Dependency<CycleInfo> cycleInfo_;
-  /// the set position
-  const Dependency<SetPosition> setPosition_;
-  /// the defending position
-  const Dependency<DefendingPosition> defendingPosition_;
-  /// the bishop position
-  const Dependency<BishopPosition> bishopPosition_;
-  /// the supporting position
-  const Dependency<SupportingPosition> supportingPosition_;
-  /// the replacement keeper action
-  const Dependency<ReplacementKeeperAction> replacementKeeperAction_;
-  /// the button data
-  const Dependency<ButtonData> buttonData_;
-  /// the world state
-  const Dependency<WorldState> worldState_;
-  /// a very helpful comment
-//  const Dependency<HeadOffData> headOffData_;
-  /// the motion request
-  Production<MotionRequest> motionRequest_;
-  /// the eye LED request
-  Production<EyeLEDRequest> eyeLEDRequest_;
-  /// the audio request
-  Production<AudioRequest> audioRequest_;
-  Production<PlaybackData> playbackData_;
-  /// the last action command that was computed by the behavior
-  ActionCommand actionCommand_;
-  /// the data set/bundle that is passed to the behavior
-  DataSet dataSet_;
-  /// a thread-safe copy of the remote motion request
-  MotionRequest actualRemoteMotionRequest_;
+    /// mutex that locks the actual remote motion request
+    std::mutex actualRemoteMotionRequestLock_;
+    /// the remote motion request (may be changed by other threads)
+    Parameter<MotionRequest> remoteMotionRequest_;
+    /// whether the remote motion request shall be used (can only be activated in INITIAL)
+    Parameter<bool> useRemoteMotionRequest_;
+
+    const Dependency<GameControllerState> gameControllerState_;
+    const Dependency<BallState> ballState_;
+    const Dependency<RobotPosition> robotPosition_;
+    const Dependency<BodyPose> bodyPose_;
+    const Dependency<PlayerConfiguration> playerConfiguration_;
+    const Dependency<PlayingRoles> playingRoles_;
+    const Dependency<MotionState> motionState_;
+    const Dependency<HeadPositionData> headPositionData_;
+    const Dependency<HeadMotionOutput> headMotionOutput_;
+    const Dependency<TeamBallModel> teamBallModel_;
+    const Dependency<TeamPlayers> teamPlayers_;
+    const Dependency<BallSearchPosition> ballSearchPosition_;
+    const Dependency<FieldDimensions> fieldDimensions_;
+    const Dependency<StrikerAction> strikerAction_;
+    const Dependency<PenaltyStrikerAction> penaltyStrikerAction_;
+    const Dependency<KickConfigurationData> kickConfigurationData_;
+    const Dependency<KeeperAction> keeperAction_;
+    const Dependency<PenaltyKeeperAction> penaltyKeeperAction_;
+    const Dependency<CycleInfo> cycleInfo_;
+    const Dependency<SetPosition> setPosition_;
+    const Dependency<DefendingPosition> defendingPosition_;
+    const Dependency<BishopPosition> bishopPosition_;
+    const Dependency<SupportingPosition> supportingPosition_;
+    const Dependency<ReplacementKeeperAction> replacementKeeperAction_;
+    const Dependency<ButtonData> buttonData_;
+    const Dependency<WorldState> worldState_;
+    const Dependency<HeadOffData> headOffData_;
+
+
+    Production<MotionRequest> motionRequest_;
+    Production<AudioRequest> audioRequest_;
+    Production<PlaybackData> playbackData_;
+
+    Production<LEDRequest> ledRequest_;
+
+    Production<ThoughtControlRequest> thoughtControlRequest_;
+    /// the last action command that was computed by the behavior
+    ActionCommand actionCommand_;
+    /// Thoughts
+    Thoughts thoughts_;
+    /// the data set/bundle that is passed to the behavior
+    DataSet dataSet_;
+    /// a thread-safe copy of the remote motion request
+    MotionRequest actualRemoteMotionRequest_;
 };

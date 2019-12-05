@@ -64,10 +64,11 @@ set(TUHHSDK_HEADERS
   Data/BallSearchPosition.hpp
   Data/ButtonData.hpp
   Data/CameraMatrix.hpp
+ #       Data/ChestLEDRequest.hpp
   Data/CircleData.hpp
   Data/CycleInfo.hpp
   Data/DefendingPosition.hpp
-  Data/EyeLEDRequest.hpp
+ # Data/EyeLEDRequest.hpp
   Data/FallManagerOutput.hpp
   Data/FieldBorder.hpp
   Data/FieldColor.hpp
@@ -89,7 +90,9 @@ set(TUHHSDK_HEADERS
   Data/KeeperOutput.hpp
   Data/KickConfigurationData.hpp
   Data/KickOutput.hpp
+        Data/KneelerOutput.hpp
   Data/LandmarkModel.hpp
+        Data/LEDRequest.hpp
   Data/LineData.hpp
   Data/MirrorableMotionOutput.hpp
   Data/MotionActivation.hpp
@@ -131,8 +134,9 @@ set(TUHHSDK_HEADERS
   Data/WalkingEngineStandOutput.hpp
   Data/WhistleData.hpp
   Data/WorldState.hpp
-#  Data/HeadOffData.hpp
-  Definitions/BHULKsStandardMessage.h
+  Data/HeadOffData.hpp
+  Data/ThoughtControlRequest.hpp
+        Definitions/BHULKsStandardMessage.h
   Definitions/keys.h
   Definitions/RoboCupGameControlData.h
   Definitions/SPLStandardMessage.h

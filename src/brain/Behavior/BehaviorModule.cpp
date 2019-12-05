@@ -3,7 +3,7 @@
 
 #include "ActionCommand.hpp"
 #include "BehaviorModule.hpp"
-#include "Units.hpp"
+#include "DuckUnits.h"
 
 
 BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
@@ -40,19 +40,21 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   , replacementKeeperAction_(*this)
   , buttonData_(*this)
   , worldState_(*this)
-//  , headOffData_(*this)
+  , headOffData_(*this)
   , motionRequest_(*this)
-  , eyeLEDRequest_(*this)
   , audioRequest_(*this)
   , playbackData_(*this)
+  , ledRequest_(*this)
+  , thoughtControlRequest_(*this)
   , actionCommand_(ActionCommand::dead())
+  , thoughts_()
   , dataSet_(*this, *gameControllerState_, *ballState_, *robotPosition_, *bodyPose_,
              *playerConfiguration_, *playingRoles_, *motionState_, *headMotionOutput_,
              *teamBallModel_, *teamPlayers_, *fieldDimensions_, *strikerAction_,
              *penaltyStrikerAction_, *keeperAction_, *penaltyKeeperAction_, *cycleInfo_,
              *setPosition_, *defendingPosition_, *bishopPosition_, *supportingPosition_,
              *replacementKeeperAction_, *buttonData_, *worldState_, *kickConfigurationData_,
-             *ballSearchPosition_, *headPositionData_, actionCommand_)
+             *ballSearchPosition_, *headPositionData_, thoughts_, actionCommand_)
 {
 
   {
@@ -65,30 +67,39 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   print("Behaviour - Init", LogLevel::INFO);
 }
 
-void BehaviorModule::cycle()
-{
+void BehaviorModule::cycle() {
   Chronometer time(debug(), mount_ + ".cycle_time");
 
   if (
-      useRemoteMotionRequest_() &&
-      gameControllerState_->gameState == GameState::PLAYING &&
-      gameControllerState_->penalty == Penalty::NONE && 
-      !bodyPose_->fallen
-      )
-  {
+          useRemoteMotionRequest_() &&
+          gameControllerState_->gameState == GameState::PLAYING &&
+          gameControllerState_->penalty == Penalty::NONE &&
+          !bodyPose_->fallen
+          ) {
     std::lock_guard<std::mutex> lg(actualRemoteMotionRequestLock_);
     *motionRequest_ = actualRemoteMotionRequest_;
-  }
-  else
-  {
-//    if(headOffData_->shouldDie){
-//      actionCommand_ = ActionCommand::dead();
-//    }else{
+  } else {
+//    thoughts_->pushState(gameControllerState_->gameState)
+
+    thoughts_.update(dataSet_);
+
+    if (headOffData_->shouldDie) {
+      actionCommand_ = ActionCommand::dead();
+    } else {
       actionCommand_ = rootBehavior(dataSet_); //TODO Make RootBehaviour Configurable
-//    }
+      actionCommand_.combineLeftEarLED(ActionCommand::EarLED::loading());
+    }
+    if (headOffData_->shouldDieSignal) {
+      print("I am in the should Die Signal", LogLevel::INFO);
+      actionCommand_ = ActionCommand::dead().combineAudio(ActionCommand::Audio::audioC5());
+    }
     actionCommand_.toMotionRequest(*motionRequest_);
-    actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
+//    actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
     actionCommand_.toAudioRequest(*audioRequest_);
+//    actionCommand_.toEarLEDRequest(*earLEDRequest_);
+    actionCommand_.toThoughtControlRequest(*thoughtControlRequest_);
+//    actionCommand_.toChestLEDRequest(*chestLEDRequest_);
+    actionCommand_.toLEDRequest(*ledRequest_);
     //actionCommand_.toPlaybackData(*playbackData_);
   }
 }

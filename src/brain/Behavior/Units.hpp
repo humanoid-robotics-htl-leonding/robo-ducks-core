@@ -1,5 +1,7 @@
 #pragma once
 
+#warning Using Hulks Behaviour is deprecated
+
 #include "Modules/NaoProvider.h"
 
 #include "ActionCommand.hpp"

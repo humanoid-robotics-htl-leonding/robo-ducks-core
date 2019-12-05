@@ -26,6 +26,7 @@ function helpMenu {
   echo " -j, --jobs                        the amount of processes used for compilation"
   echo " -l, --logdir LOGDIR               the directory to which the logs from the NAO are downloaded"
   echo " -h, --help                        show this help"
+  echo " -e, --execute                     execute ~/naoqi/bin/tuhhNao after uploading"
   echo ""
   echo "Nao"
   echo " either hostname, IP or number of the NAO"
@@ -46,6 +47,8 @@ function run {
   RESTART_NAOQI=false
   # set default job number to cores + 1
   JOBS=$(njobs)
+  # do not execute binary by default
+  EXECUTE=false
   # read the build type from a file
   if [ -f "${BASEDIR}/.current.bt" ]; then
     BUILD_TYPE=`cat "${BASEDIR}/.current.bt"`
@@ -121,6 +124,9 @@ function run {
         helpMenu
         return 0
         ;;
+      "-e" | "--execute")
+        EXECUTE=true
+        ;;
       *)
         msg -e "Failed to parse \"$1\"!"
         helpMenu
@@ -165,8 +171,9 @@ function run {
     download_logs "$BASEDIR" "$NAO" "$LOGDIR"
   fi
 
-  msg -n "Stopping ${NAO}."
-  naocmd "${BASEDIR}" "${NAO}" "sudo /etc/init.d/hulk stop; killall -SIGTERM tuhhNao 2>/dev/null; exit 0"
+  msg -n "Stopping ${NAO}. (Not stopping Hulks service)"
+#  naocmd "${BASEDIR}" "${NAO}" "sudo /etc/init.d/hulk stop; killall -SIGTERM tuhhNao 2>/dev/null; exit 0"
+  naocmd "${BASEDIR}" "${NAO}" "killall -SIGTERM tuhhNao 2>/dev/null; exit 0"
   if [ "$?" -ne 0 ]; then
     msg -e "Failed to stop ${NAO}!"
     return 1
@@ -201,6 +208,12 @@ function run {
     fi
     msg -s "Successfully restarted the hulk service on ${NAO}!"
   fi
+
+  if ${EXECUTE}; then
+    msg -n "Executing tuhhNao on ${NAO}."
+    naocmd "${BASEDIR}" "${NAO}" "/home/nao/naoqi/bin/tuhhNao"
+  fi
+
   return 0
 }
 
