@@ -1,4 +1,6 @@
 #include <Modules/Log/Log.h>
+
+#include <cmath>
 #include "Tools/Chronometer.hpp"
 #include "../print.hpp"
 #include "LEDHandler.hpp"
@@ -131,7 +133,7 @@ void LEDHandler::cycle()
               break;
       }
 
-    showRobotStateOnChestLEDs();
+    //showRobotStateOnChestLEDs();
     showTeamColorOnLeftFootLEDs();
     showKickOffTeamOnRightFootLEDs();
     //showWhistleStatusOnEarLEDs();
@@ -505,9 +507,15 @@ void LEDHandler::setChestRainbowColors() {
     if((unsigned int)( cycleInfo_->startTime) - lastStartTimeChest > 100){
         lastStartTimeChest = (unsigned int)( cycleInfo_->startTime);
 
-        rainbowRed += diff *(rand() % 2)*2 - 1;
-        rainbowGreen += diff *(rand() % 2)*2 - 1;
-        rainbowBlue += diff *(rand() % 2)*2 - 1;
+        rainbowRed += diff *(float)((rand() % 2)*2 - 1);
+        rainbowRed = std::fmin(1.0f,rainbowRed);
+        rainbowRed = std::fmax(0.0f,rainbowRed);
+        rainbowGreen +=  diff *(float)((rand() % 2)*2 - 1);
+        rainbowGreen = std::fmin(1.0f,rainbowGreen);
+        rainbowGreen = std::fmax(0.0f,rainbowGreen);
+        rainbowBlue +=  diff *(float)((rand() % 2)*2 - 1);
+        rainbowBlue = std::fmin(1.0f,rainbowBlue);
+        rainbowBlue = std::fmax(0.0f,rainbowBlue);
     }
     setChestLEDs(rainbowRed,rainbowGreen,rainbowBlue);
 }

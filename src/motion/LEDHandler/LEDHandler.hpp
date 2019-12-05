@@ -194,7 +194,7 @@ private:
 
     void setChestRainbowColors();
     unsigned int lastStartTimeChest;
-    const float diff = 0.1;
+    const float diff = 0.1f;
     float rainbowRed;
     float rainbowGreen;
     float rainbowBlue;
