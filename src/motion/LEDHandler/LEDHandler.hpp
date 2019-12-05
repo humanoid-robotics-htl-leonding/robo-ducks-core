@@ -17,6 +17,7 @@
 #include "Data/CycleInfo.hpp"
 #include "Data/EyeLEDRequest.hpp"
 #include "Data/EarLEDRequest.hpp"
+#include "Data/ChestLEDRequest.hpp"
 #include "Data/GameControllerState.hpp"
 #include "Data/WhistleData.hpp"
 
@@ -140,6 +141,7 @@ private:
   const Dependency<CycleInfo> cycleInfo_;
   const Dependency<EyeLEDRequest> eyeLEDRequest_;
   const Dependency<EarLEDRequest> earLEDRequest_;
+  const Dependency<ChestLEDRequest> chestLEDRequest_;
   const Dependency<GameControllerState> gameControllerState_;
   const Dependency<WhistleData> whistleData_;
 
@@ -189,5 +191,12 @@ private:
 
     std::vector<float> lastLoadingLeftEar;
     void resetLeftEarPulsating(uint8_t right);
+
+    void setChestRainbowColors();
+    unsigned int lastStartTimeChest;
+    const float diff = 0.1f;
+    float rainbowRed;
+    float rainbowGreen;
+    float rainbowBlue;
 
 };

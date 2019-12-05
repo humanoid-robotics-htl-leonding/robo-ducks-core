@@ -5,25 +5,21 @@
 class AudioRequest : public DataType<AudioRequest>
 {
 public:
-  /// the name of this DataType
   DataTypeName name = "AudioRequest";
-  /// The mode for the left eye LED
-  float frequency;
-  /**
-   * @brief reset does nothing
-   */
-  void reset()
+  float frequency = 0;
+
+  void reset() override
   {
     frequency = 0;
   }
 
-  virtual void toValue(Uni::Value& value) const
+  void toValue(Uni::Value& value) const override
   {
     value = Uni::Value(Uni::ValueType::OBJECT);
     value["frequency"] << frequency;
   }
 
-  virtual void fromValue(const Uni::Value& value)
+  void fromValue(const Uni::Value& value) override
   {
     value["frequency"] >> frequency;
   }

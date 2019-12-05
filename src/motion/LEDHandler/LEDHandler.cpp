@@ -1,4 +1,6 @@
 #include <Modules/Log/Log.h>
+
+#include <cmath>
 #include "Tools/Chronometer.hpp"
 #include "../print.hpp"
 #include "LEDHandler.hpp"
@@ -18,6 +20,7 @@ LEDHandler::LEDHandler(const ModuleManagerInterface& manager)
   , cycleInfo_(*this)
   , eyeLEDRequest_(*this)
   , earLEDRequest_(*this)
+  , chestLEDRequest_(*this)
   , gameControllerState_(*this)
   , whistleData_(*this)
   , cmd_(CHEST_MAX + 2 * EAR_MAX + 2 * EYE_MAX + HEAD_MAX + 2 * FOOT_MAX, 0.f)
@@ -37,6 +40,13 @@ LEDHandler::LEDHandler(const ModuleManagerInterface& manager)
     loaderLeftLength = 4;
     loadPosLeftEnd = EAR_MAX-1;
     lastLoadLeftTime = 0;
+
+
+
+    lastStartTimeChest = 0;
+    rainbowRed = 1.0f;
+    rainbowGreen = 1.0f;
+    rainbowBlue = 1.0f;
 }
 
 void LEDHandler::cycle()
@@ -110,8 +120,20 @@ void LEDHandler::cycle()
               setLeftEarPulsating(earLEDRequest_->speedLeft);
               break;
       }
+      switch (chestLEDRequest_->chestMode)
+      {
+          case ChestMode ::OFF:
+              setChestLEDs(0.0f,0.0f,0.0f);
+              break;
+          case ChestMode ::COLOR:
+              setChestLEDs(chestLEDRequest_->red,chestLEDRequest_->green,chestLEDRequest_->blue);
+              break;
+          case ChestMode ::RAINBOW:
+              setChestRainbowColors();
+              break;
+      }
 
-    showRobotStateOnChestLEDs();
+    //showRobotStateOnChestLEDs();
     showTeamColorOnLeftFootLEDs();
     showKickOffTeamOnRightFootLEDs();
     //showWhistleStatusOnEarLEDs();
@@ -479,6 +501,23 @@ void LEDHandler::setLeftEarPulsating(uint8_t speed) {
     }
     std::vector<float> leftEar = std::vector<float>(EAR_MAX,brightness);
     setEarLeftLEDs(leftEar.data());
+}
+
+void LEDHandler::setChestRainbowColors() {
+    if((unsigned int)( cycleInfo_->startTime) - lastStartTimeChest > 100){
+        lastStartTimeChest = (unsigned int)( cycleInfo_->startTime);
+
+        rainbowRed += diff *(float)((rand() % 2)*2 - 1);
+        rainbowRed = std::fmin(1.0f,rainbowRed);
+        rainbowRed = std::fmax(0.0f,rainbowRed);
+        rainbowGreen +=  diff *(float)((rand() % 2)*2 - 1);
+        rainbowGreen = std::fmin(1.0f,rainbowGreen);
+        rainbowGreen = std::fmax(0.0f,rainbowGreen);
+        rainbowBlue +=  diff *(float)((rand() % 2)*2 - 1);
+        rainbowBlue = std::fmin(1.0f,rainbowBlue);
+        rainbowBlue = std::fmax(0.0f,rainbowBlue);
+    }
+    setChestLEDs(rainbowRed,rainbowGreen,rainbowBlue);
 }
 
 

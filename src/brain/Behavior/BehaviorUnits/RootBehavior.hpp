@@ -9,10 +9,10 @@ ActionCommand rootBehavior(const DataSet& d)
 
   if (d.gameControllerState.penalty == Penalty::NONE)
   {
-    return high ? notPenalized(d).combineLeftLED(ActionCommand::LED::pink()) : notPenalized(d);
+    return high ? notPenalized(d).combineLeftLED(ActionCommand::EyeLED::EyeLED()) : notPenalized(d);
   }
   else
   {
-    return high ? ActionCommand::penalized().combineLeftLED(ActionCommand::LED::pink()) : ActionCommand::penalized();
+    return high ? ActionCommand::penalized().combineLeftLED(ActionCommand::EyeLED::EyeLED()) : ActionCommand::penalized();
   }
 }
