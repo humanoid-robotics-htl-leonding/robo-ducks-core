@@ -24,7 +24,7 @@ void SensorFusion::update(const Vector3f& extGyro, const Vector3f& extAccel)
 {
   Vector3d eigenExtGyro(extGyro.x(), extGyro.y(), -extGyro.z());
   Vector3d eigenExtAccel(-extAccel.x(), +extAccel.y(), -extAccel.z());
-
+//pseudo fix, only gets called on startup
   if (!initialized_ && eigenExtAccel.norm() >= 8.0f)
   {
     calculateOrientation(eigenExtGyro, eigenExtAccel);
