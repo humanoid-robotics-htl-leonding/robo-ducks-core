@@ -7,6 +7,8 @@ import time
 import PyQt5.QtCore as qtc
 import PyQt5.QtWidgets as qtw
 
+import qdarkstyle
+
 import mate.net.utils as netutils
 import mate.ui.views as views
 import mate.net.nao as nao
@@ -20,6 +22,9 @@ class Main(qtc.QObject):
 
     def __init__(self, config: str):
         super(Main, self).__init__()
+
+        qtw.qApp.setStyleSheet(qdarkstyle.load_stylesheet_pyside())
+
         self.nao = nao.Nao()
         self.identifier = uuid.uuid4()
 
