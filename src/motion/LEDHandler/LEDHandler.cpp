@@ -42,9 +42,20 @@ LEDHandler::LEDHandler(const ModuleManagerInterface& manager)
 
 
     lastStartTimeChest = 0;
-    rainbowRed = 1.0f;
-    rainbowGreen = 1.0f;
-    rainbowBlue = 1.0f;
+    chestRainbowRed = 1.0f;
+    chestRainbowGreen = 1.0f;
+    chestRainbowBlue = 1.0f;
+
+
+    lastStartTimeRightFoot = 0;
+    rightFootRainbowRed = 1.0f;
+    rightFootRainbowGreen = 1.0f;
+    rightFootRainbowBlue = 1.0f;
+
+    lastStartTimeLeftFoot = 0;
+    leftFootRainbowRed = 1.0f;
+    leftFootRainbowGreen = 1.0f;
+    leftFootRainbowBlue = 1.0f;
 }
 
 void LEDHandler::cycle()
@@ -129,11 +140,30 @@ void LEDHandler::cycle()
             setChestRainbowColors();
             break;
     }
-
-    //showRobotStateOnChestLEDs();
-    //showTeamColorOnLeftFootLEDs();
-    //showKickOffTeamOnRightFootLEDs();
-    //showWhistleStatusOnEarLEDs();
+    switch (ledRequest_->rightFootMode)
+    {
+        case FootMode ::OFF:
+            setFootRightLEDs(0.0f,0.0f,0.0f);
+            break;
+        case FootMode ::COLOR:
+            setFootRightLEDs(ledRequest_->rightFootR,ledRequest_->rightFootG,ledRequest_->rightFootB);
+            break;
+        case FootMode ::RAINBOW:
+            setFootRightRainbowColors();
+            break;
+    }
+    switch (ledRequest_->leftFootMode)
+    {
+        case FootMode ::OFF:
+            setFootLeftLEDs(0.0f,0.0f,0.0f);
+            break;
+        case FootMode ::COLOR:
+            setFootLeftLEDs(ledRequest_->leftFootR,ledRequest_->leftFootG,ledRequest_->leftFootB);
+            break;
+        case FootMode ::RAINBOW:
+            setFootLeftRainbowColors();
+            break;
+    }
     robotInterface().setLEDs(cmd_);
 
   cycleCount_++;
@@ -356,19 +386,57 @@ void LEDHandler::setLeftEarPulsating(uint8_t speed) {
 //region chest
 
 void LEDHandler::setChestRainbowColors() {
-    if((unsigned int)( cycleInfo_->startTime) - lastStartTimeChest > 50){
-        lastStartTimeChest = (unsigned int)( cycleInfo_->startTime);
+    if ((unsigned int) (cycleInfo_->startTime) - lastStartTimeChest > 50) {
+        lastStartTimeChest = (unsigned int) (cycleInfo_->startTime);
 
-        rainbowRed += diff *(float)((rand() % 2)*2 - 1);
-        rainbowRed = std::fmin(1.0f,rainbowRed);
-        rainbowRed = std::fmax(0.0f,rainbowRed);
-        rainbowGreen +=  diff *(float)((rand() % 2)*2 - 1);
-        rainbowGreen = std::fmin(1.0f,rainbowGreen);
-        rainbowGreen = std::fmax(0.0f,rainbowGreen);
-        rainbowBlue +=  diff *(float)((rand() % 2)*2 - 1);
-        rainbowBlue = std::fmin(1.0f,rainbowBlue);
-        rainbowBlue = std::fmax(0.0f,rainbowBlue);
+        chestRainbowRed += diff * (float) ((rand() % 2) * 2 - 1);
+        chestRainbowRed = std::fmin(1.0f, chestRainbowRed);
+        chestRainbowRed = std::fmax(0.0f, chestRainbowRed);
+        chestRainbowGreen += diff * (float) ((rand() % 2) * 2 - 1);
+        chestRainbowGreen = std::fmin(1.0f, chestRainbowGreen);
+        chestRainbowGreen = std::fmax(0.0f, chestRainbowGreen);
+        chestRainbowBlue += diff * (float) ((rand() % 2) * 2 - 1);
+        chestRainbowBlue = std::fmin(1.0f, chestRainbowBlue);
+        chestRainbowBlue = std::fmax(0.0f, chestRainbowBlue);
     }
-    setChestLEDs(rainbowRed,rainbowGreen,rainbowBlue);
+    setChestLEDs(chestRainbowRed, chestRainbowGreen, chestRainbowBlue);
+}
+
+
+//endregion
+//region feet
+
+void LEDHandler::setFootRightRainbowColors() {
+    if ((unsigned int) (cycleInfo_->startTime) - lastStartTimeRightFoot > 50) {
+        lastStartTimeRightFoot = (unsigned int) (cycleInfo_->startTime);
+
+        rightFootRainbowRed += diff * (float) ((rand() % 2) * 2 - 1);
+        rightFootRainbowRed = std::fmin(1.0f, rightFootRainbowRed);
+        rightFootRainbowRed = std::fmax(0.0f, rightFootRainbowRed);
+        rightFootRainbowGreen += diff * (float) ((rand() % 2) * 2 - 1);
+        rightFootRainbowGreen = std::fmin(1.0f, rightFootRainbowGreen);
+        rightFootRainbowGreen = std::fmax(0.0f, rightFootRainbowGreen);
+        rightFootRainbowBlue += diff * (float) ((rand() % 2) * 2 - 1);
+        rightFootRainbowBlue = std::fmin(1.0f, rightFootRainbowBlue);
+        rightFootRainbowBlue = std::fmax(0.0f, rightFootRainbowBlue);
+    }
+    setFootRightLEDs(rightFootRainbowRed, rightFootRainbowGreen, rightFootRainbowBlue);
+}
+
+void LEDHandler::setFootLeftRainbowColors() {
+    if ((unsigned int) (cycleInfo_->startTime) - lastStartTimeLeftFoot > 50) {
+        lastStartTimeLeftFoot = (unsigned int) (cycleInfo_->startTime);
+
+        leftFootRainbowRed += diff * (float) ((rand() % 2) * 2 - 1);
+        leftFootRainbowRed = std::fmin(1.0f, leftFootRainbowRed);
+        leftFootRainbowRed = std::fmax(0.0f, leftFootRainbowRed);
+        leftFootRainbowGreen += diff * (float) ((rand() % 2) * 2 - 1);
+        leftFootRainbowGreen = std::fmin(1.0f, leftFootRainbowGreen);
+        leftFootRainbowGreen = std::fmax(0.0f, leftFootRainbowGreen);
+        leftFootRainbowBlue += diff * (float) ((rand() % 2) * 2 - 1);
+        leftFootRainbowBlue = std::fmin(1.0f, leftFootRainbowBlue);
+        leftFootRainbowBlue = std::fmax(0.0f, leftFootRainbowBlue);
+    }
+    setFootLeftLEDs(leftFootRainbowRed, leftFootRainbowGreen, leftFootRainbowBlue);
 }
 //endregion

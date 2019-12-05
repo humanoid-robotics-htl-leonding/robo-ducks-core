@@ -100,9 +100,21 @@ private:
   std::vector<float> lastLoadingLeftEar;
   unsigned int lastStartTimeChest;
   const float diff = 0.1f;
-  float rainbowRed;
-  float rainbowGreen;
-  float rainbowBlue;
+  float chestRainbowRed;
+  float chestRainbowGreen;
+  float chestRainbowBlue;
+  unsigned int lastStartTimeRightFoot;
 
 
+    void setFootRightRainbowColors();
+
+    void setFootLeftRainbowColors();
+
+    float rightFootRainbowRed;
+    float rightFootRainbowGreen;
+    float rightFootRainbowBlue;
+    unsigned int lastStartTimeLeftFoot;
+    float leftFootRainbowRed;
+    float leftFootRainbowGreen;
+    double leftFootRainbowBlue;
 };
