@@ -1,6 +1,8 @@
 //
 // Created by max on 12/3/19.
 //
+#pragma once
+
 
 #include <Data/MotionActivation.hpp>
 #include <Data/BodyPose.hpp>
@@ -8,6 +10,7 @@
 #include <Data/CycleInfo.hpp>
 #include <Utils/Interpolator/Interpolator.hpp>
 #include <Data/JointSensorData.hpp>
+#include <Data/MotionState.hpp>
 #include "Framework/Module.hpp"
 
 
@@ -33,6 +36,7 @@ private:
     const Dependency<BodyPose> bodyPose_;
     const Dependency<CycleInfo> cycleInfo_;
     const Dependency<JointSensorData> jointSensorData_;
+    const Reference<MotionState> motionState_;
     Production<KneelerOutput> kneelerOutput_;
     Interpolator kneelInterpolator;
 

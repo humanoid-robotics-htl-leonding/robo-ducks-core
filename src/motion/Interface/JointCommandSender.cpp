@@ -64,8 +64,10 @@ void JointCommandSender::cycle()
         motionActivation_
             ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::KEEPER)] +
         motionActivation_->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::KICK)] +
-        motionActivation_
-            ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::FALL_MANAGER)] +
+                motionActivation_
+                        ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::FALL_MANAGER)] +
+                        motionActivation_
+                ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::KNEEL)] +
         motionActivation_
             ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::STAND_UP)] +
         motionActivation_
@@ -119,6 +121,12 @@ void JointCommandSender::cycle()
       {
         stiffness = fallManagerOutput_->stiffnesses[i];
       }
+        if (motionActivation_->activations[static_cast<unsigned int>(
+                MotionRequest::BodyMotion::KNEEL)] > 0 &&
+            kneelerOutput_->stiffnesses[i] > stiffness)
+        {
+            stiffness = kneelerOutput_->stiffnesses[i];
+        }
       if (motionActivation_
                   ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::STAND_UP)] >
               0 &&
