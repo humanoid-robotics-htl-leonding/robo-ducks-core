@@ -46,6 +46,7 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   , audioRequest_(*this)
   , playbackData_(*this)
   , earLEDRequest_(*this)
+  , chestLEDREquest_(*this)
   , thoughtControlRequest_(*this)
   , actionCommand_(ActionCommand::dead())
   , thoughts_()
@@ -103,6 +104,7 @@ void BehaviorModule::cycle()
     actionCommand_.toAudioRequest(*audioRequest_);
     actionCommand_.toEarLEDRequest(*earLEDRequest_);
     actionCommand_.toThoughtControlRequest(*thoughtControlRequest_);
+    actionCommand_.toChestLEDRequest(*chestLEDRequest_);
     //actionCommand_.toPlaybackData(*playbackData_);
   }
 }

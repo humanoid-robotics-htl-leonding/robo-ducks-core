@@ -803,6 +803,11 @@ public:
     thoughtCommands_[static_cast<unsigned int>(command)] = value;
     return *this;
   }
+
+  ActionCommand combineChestLED(const ChestLED& led) {
+    chestLed_ = led;
+    return * this;
+  }
   /**
    * @brief toMotionRequest converts the action command to a motion request
    * @param motion_request the motion request that is overwritten
@@ -957,6 +962,7 @@ public:
     return leftEarLed_;
   }
 
+
 private:
   /**
    * @brief ActionCommand creates an action command from commands for every part
@@ -992,6 +998,8 @@ private:
 
   EarLED rightEarLed_;
   EarLED leftEarLed_;
+
+  ChestLED chestLed_;
 
 
   Audio audio_;
