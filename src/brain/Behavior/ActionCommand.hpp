@@ -1,10 +1,11 @@
 #pragma once
 
-#include <Data/EarLEDRequest.hpp>
+//#include <Data/EarLEDRequest.hpp>
 #include <Data/ThoughtControlRequest.hpp>
-#include <Data/ChestLEDRequest.hpp>
+#include <Data/LEDRequest.hpp>
+//#include <Data/ChestLEDRequest.hpp>
 #include "Behavior/HeadPositionProvider.hpp"
-#include "Data/EyeLEDRequest.hpp"
+//#include "Data/EyeLEDRequest.hpp"
 #include "Data/AudioRequest.hpp"
 #include "Data/MotionRequest.hpp"
 #include "Data/AudioData.hpp"
@@ -12,9 +13,6 @@
 #include "Tools/Math/Pose.hpp"
 
 
-/**
- * @class ActionCommand represents the desired state of the robot
- */
 class ActionCommand
 {
 public:
@@ -854,45 +852,71 @@ public:
       motion_request.headMotion = MotionRequest::HeadMotion::BODY;
     }
   }
-  /**
-   * @brief toEyeLEDRequest converts the action command to an eye EyeLED request
-   * @param eyeLEDRequest the eye EyeLED request that is overwritten
-   */
-  void toEyeLEDRequest(EyeLEDRequest& eyeLEDRequest) const
-  {
-    eyeLEDRequest.leftEyeMode = leftLed_.eyeMode_;
-    eyeLEDRequest.leftR = leftLed_.r_;
-    eyeLEDRequest.leftG = leftLed_.g_;
-    eyeLEDRequest.leftB = leftLed_.b_;
-    eyeLEDRequest.rightEyeMode = rightLed_.eyeMode_;
-    eyeLEDRequest.rightR = rightLed_.r_;
-    eyeLEDRequest.rightG = rightLed_.g_;
-    eyeLEDRequest.rightB = rightLed_.b_;
-  }
 
-  void toEarLEDRequest(EarLEDRequest& earLEDRequest) const
-  {
-    earLEDRequest.rightEarMode = rightEarLed_.earMode_;
-    earLEDRequest.leftEarMode = leftEarLed_.earMode_;
+//  void toEyeLEDRequest(EyeLEDRequest& eyeLEDRequest) const
+//  {
+//    eyeLEDRequest.leftEyeMode = leftLed_.eyeMode_;
+//    eyeLEDRequest.leftR = leftLed_.r_;
+//    eyeLEDRequest.leftG = leftLed_.g_;
+//    eyeLEDRequest.leftB = leftLed_.b_;
+//    eyeLEDRequest.rightEyeMode = rightLed_.eyeMode_;
+//    eyeLEDRequest.rightR = rightLed_.r_;
+//    eyeLEDRequest.rightG = rightLed_.g_;
+//    eyeLEDRequest.rightB = rightLed_.b_;
+//  }
+//
+//  void toEarLEDRequest(EarLEDRequest& earLEDRequest) const
+//  {
+//    earLEDRequest.rightEarMode = rightEarLed_.earMode_;
+//    earLEDRequest.leftEarMode = leftEarLed_.earMode_;
+//
+//    earLEDRequest.brightnessLeft = leftEarLed_.brightness_;
+//    earLEDRequest.brightnessRight = rightEarLed_.brightness_;
+//
+//    earLEDRequest.progressLeft = leftEarLed_.progress_;
+//    earLEDRequest.progressRight = rightEarLed_.progress_;
+//
+//    earLEDRequest.speedLeft = leftEarLed_.speed_;
+//    earLEDRequest.speedRight = rightEarLed_.speed_;
+//
+//  }
+//
+//  void toChestLEDRequest(ChestLEDRequest& chestLEDRequest) const
+//  {
+//    chestLEDRequest.green = chestLed_.g_;
+//    chestLEDRequest.red = chestLed_.r_;
+//    chestLEDRequest.blue = chestLed_.b_;
+//    chestLEDRequest.chestMode = chestLed_.chestMode_;
+//  }
 
-    earLEDRequest.brightnessLeft = leftEarLed_.brightness_;
-    earLEDRequest.brightnessRight = rightEarLed_.brightness_;
+    void toLEDRequest(LEDRequest& ledRequest) const
+    {
+      ledRequest.leftEyeMode = leftLed_.eyeMode_;
+      ledRequest.leftEyeB = leftLed_.b_;
+      ledRequest.leftEyeR = leftLed_.r_;
+      ledRequest.leftEyeG = leftLed_.g_;
 
-    earLEDRequest.progressLeft = leftEarLed_.progress_;
-    earLEDRequest.progressRight = rightEarLed_.progress_;
+      ledRequest.rightEyeMode = rightLed_.eyeMode_;
+      ledRequest.rightEyeB = rightLed_.b_;
+      ledRequest.rightEyeR = rightLed_.r_;
+      ledRequest.rightEyeG = rightLed_.g_;
 
-    earLEDRequest.speedLeft = leftEarLed_.speed_;
-    earLEDRequest.speedRight = rightEarLed_.speed_;
+      ledRequest.chestMode = chestLed_.chestMode_;
+      ledRequest.chestG = chestLed_.g_;
+      ledRequest.chestR = chestLed_.r_;
+      ledRequest.chestB = chestLed_.b_;
 
-  }
+      ledRequest.rightEarMode = rightEarLed_.earMode_;
+      ledRequest.rightEarBrightness = rightEarLed_.brightness_;
+      ledRequest.rightEarProgress = rightEarLed_.progress_;
+      ledRequest.rightEarPulseSpeed = rightEarLed_.speed_;
 
-  void toChestLEDRequest(ChestLEDRequest& chestLEDRequest) const
-  {
-    chestLEDRequest.green = chestLed_.g_;
-    chestLEDRequest.red = chestLed_.r_;
-    chestLEDRequest.blue = chestLed_.b_;
-    chestLEDRequest.chestMode = chestLed_.chestMode_;
-  }
+      ledRequest.leftEarMode = leftEarLed_.earMode_;
+      ledRequest.leftEarBrightness = leftEarLed_.brightness_;
+      ledRequest.leftEarProgress = leftEarLed_.progress_;
+      ledRequest.leftEarPulseSpeed = leftEarLed_.speed_;
+
+    }
 
   /**
    * @author Erik Mayrhofer

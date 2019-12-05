@@ -18,9 +18,7 @@ std::array<float, EYE_MAX> LEDHandler::rainbowRight_ = {
 LEDHandler::LEDHandler(const ModuleManagerInterface& manager)
   : Module(manager)
   , cycleInfo_(*this)
-  , eyeLEDRequest_(*this)
-  , earLEDRequest_(*this)
-  , chestLEDRequest_(*this)
+  , ledRequest_(*this)
   , gameControllerState_(*this)
   , whistleData_(*this)
   , cmd_(CHEST_MAX + 2 * EAR_MAX + 2 * EYE_MAX + HEAD_MAX + 2 * FOOT_MAX, 0.f)
@@ -56,91 +54,92 @@ void LEDHandler::cycle()
   if ((cycleCount_ % 20) == 0)
   {
     rainbowCycle_++;
-    setEarLeftLEDsCharge(1.f, 1.f);
-    setEarRightLEDsCharge(1.f, 1.f);
-    switch (eyeLEDRequest_->leftEyeMode)
+    switch (ledRequest_->leftEyeMode)
     {
       case EyeMode::OFF:
         setEyeLeftLEDsColor(0, 0, 0);
         break;
       case EyeMode::COLOR:
-        setEyeLeftLEDsColor(eyeLEDRequest_->leftR, eyeLEDRequest_->leftG, eyeLEDRequest_->leftB);
+        setEyeLeftLEDsColor(ledRequest_->leftEyeR, ledRequest_->leftEyeG, ledRequest_->leftEyeB);
         break;
       case EyeMode::RAINBOW:
         setEyeLeftRainbow();
         break;
     }
-    switch (eyeLEDRequest_->rightEyeMode)
+    switch (ledRequest_->rightEyeMode)
     {
       case EyeMode::OFF:
         setEyeRightLEDsColor(0, 0, 0);
         break;
       case EyeMode::COLOR:
-        setEyeRightLEDsColor(eyeLEDRequest_->rightR, eyeLEDRequest_->rightG,
-                             eyeLEDRequest_->rightB);
+        setEyeRightLEDsColor(ledRequest_->rightEyeR, ledRequest_->rightEyeG,
+                             ledRequest_->rightEyeB);
         break;
       case EyeMode::RAINBOW:
         setEyeRightRainbow();
         break;
     }
+  }
 
-    switch (earLEDRequest_->rightEarMode)
+    switch (ledRequest_->rightEarMode)
     {
         case EarMode ::OFF:
             setRightEarBrightness(0.0f);
             break;
-            case EarMode ::BRIGHTNESS:
-              setRightEarBrightness(earLEDRequest_->brightnessRight);
-              break;
-          case EarMode ::LOADING:
-              setRightEarContinueLoading();
-              break;
-          case EarMode ::PROGRESS:
-                setRightEarProgress(earLEDRequest_->progressRight);
-          break;
-          case EarMode::PULSATE:
-                setRightEarPulsating(earLEDRequest_->speedRight);
-              break;
-      }
-      switch (earLEDRequest_->leftEarMode)
-      {
-          case EarMode ::OFF:
-              setLeftEarBrightness(0.0f);
-              break;
-          case EarMode ::BRIGHTNESS:
-              setLeftEarBrightness(earLEDRequest_->brightnessLeft);
-              break;
-          case EarMode ::LOADING:
-              setLeftEarContinueLoading();
-              break;
-          case EarMode ::PROGRESS:
-              setLeftEarProgress(earLEDRequest_->progressLeft);
-              break;
-          case EarMode::PULSATE:
-              setLeftEarPulsating(earLEDRequest_->speedLeft);
-              break;
-      }
-      switch (chestLEDRequest_->chestMode)
-      {
-          case ChestMode ::OFF:
-              setChestLEDs(0.0f,0.0f,0.0f);
-              break;
-          case ChestMode ::COLOR:
-              setChestLEDs(chestLEDRequest_->red,chestLEDRequest_->green,chestLEDRequest_->blue);
-              break;
-          case ChestMode ::RAINBOW:
-              setChestRainbowColors();
-              break;
-      }
+        case EarMode ::BRIGHTNESS:
+            setRightEarBrightness(ledRequest_->rightEarBrightness);
+            break;
+        case EarMode ::LOADING:
+            setRightEarContinueLoading();
+            break;
+        case EarMode ::PROGRESS:
+            setRightEarProgress(ledRequest_->rightEarProgress);
+            break;
+        case EarMode::PULSATE:
+            setRightEarPulsating(ledRequest_->rightEarPulseSpeed);
+            break;
+    }
+    switch (ledRequest_->leftEarMode)
+    {
+        case EarMode ::OFF:
+            setLeftEarBrightness(0.0f);
+            break;
+        case EarMode ::BRIGHTNESS:
+            setLeftEarBrightness(ledRequest_->leftEarBrightness);
+            break;
+        case EarMode ::LOADING:
+            setLeftEarContinueLoading();
+            break;
+        case EarMode ::PROGRESS:
+            setLeftEarProgress(ledRequest_->leftEarProgress);
+            break;
+        case EarMode::PULSATE:
+            setLeftEarPulsating(ledRequest_->leftEarPulseSpeed);
+            break;
+    }
+    switch (ledRequest_->chestMode)
+    {
+        case ChestMode ::OFF:
+            setChestLEDs(0.0f,0.0f,0.0f);
+            break;
+        case ChestMode ::COLOR:
+            setChestLEDs(ledRequest_->chestR,ledRequest_->chestG,ledRequest_->chestB);
+            break;
+        case ChestMode ::RAINBOW:
+            setChestRainbowColors();
+            break;
+    }
 
     //showRobotStateOnChestLEDs();
-    showTeamColorOnLeftFootLEDs();
-    showKickOffTeamOnRightFootLEDs();
+    //showTeamColorOnLeftFootLEDs();
+    //showKickOffTeamOnRightFootLEDs();
     //showWhistleStatusOnEarLEDs();
     robotInterface().setLEDs(cmd_);
-  }
+
   cycleCount_++;
 }
+
+//region basefunctions
 
 void LEDHandler::setChestLEDs(const float red, const float green, const float blue)
 {
@@ -149,39 +148,7 @@ void LEDHandler::setChestLEDs(const float red, const float green, const float bl
   cmd_[2] = red;
 }
 
-void LEDHandler::setEarLeftLEDsCharge(const float charge, const float value)
-{
-  const unsigned int base = CHEST_MAX;
-  const unsigned int ledCount = EAR_MAX * charge;
-  for (unsigned int i = 0; i < EAR_MAX; i++)
-  {
-    if (i < ledCount)
-    {
-      cmd_[base + i] = value;
-    }
-    else
-    {
-      cmd_[base + i] = 0.0f;
-    }
-  }
-}
 
-void LEDHandler::setEarRightLEDsCharge(const float charge, const float value)
-{
-  const unsigned int base = CHEST_MAX + EAR_MAX;
-  const unsigned int ledCount = EAR_MAX * charge;
-  for (unsigned int i = 0; i < EAR_MAX; i++)
-  {
-    if (i < ledCount)
-    {
-      cmd_[base + i] = value;
-    }
-    else
-    {
-      cmd_[base + i] = 0.0f;
-    }
-  }
-}
 
 void LEDHandler::setEyeLeftLEDsColor(const float red, const float green, const float blue)
 {
@@ -242,6 +209,8 @@ void LEDHandler::setEarRightLEDs(const float* earSegmentBrightnesses)
     cmd_[base + ledIndex] = earSegmentBrightnesses[ledIndex];
   }
 }
+//endregion
+//region eyeRainbows
 
 void LEDHandler::setEyeLeftRainbow()
 {
@@ -254,129 +223,7 @@ void LEDHandler::setEyeRightRainbow()
   cmd_.at(CHEST_MAX + 2 * EAR_MAX + EYE_MAX + 24 - (rainbowCycle_ % 24)) = 1.0;
   cmd_.at(CHEST_MAX + 2 * EAR_MAX + EYE_MAX + 24 - ((rainbowCycle_-8) % 24)) = 0.0;
 }
-
-void LEDHandler::showRobotStateOnChestLEDs()
-{
-  float redValue = 0.0f;
-  float greenValue = 0.0f;
-  float blueValue = 0.0f;
-
-  // See rules section 3.2
-  if (gameControllerState_->penalty != Penalty::NONE)
-  {
-    // Red.
-    redValue = 1.0f;
-  }
-  else
-  {
-    switch (gameControllerState_->gameState)
-    {
-      case GameState::INITIAL:
-        // Off.
-        break;
-      case GameState::READY:
-        // Blue.
-        blueValue = 1.0f;
-        break;
-      case GameState::SET:
-        // Yellow.
-        redValue = 1.0f;
-        greenValue = 0.6f;
-        break;
-      case GameState::PLAYING:
-        // Green.
-        greenValue = 1.0f;
-        break;
-      case GameState::FINISHED:
-      default:
-        // Off.
-        break;
-    }
-  }
-  setChestLEDs(redValue, greenValue, blueValue);
-}
-
-void LEDHandler::showTeamColorOnLeftFootLEDs()
-{
-  float redValue = 0.0f, blueValue = 0.0f, greenValue = 0.0f;
-
-  switch (gameControllerState_->teamColor)
-  {
-    case TeamColor::BLUE:
-      blueValue = 1.0f;
-      break;
-    case TeamColor::RED:
-      redValue = 1.0f;
-      break;
-    case TeamColor::YELLOW:
-      redValue = 1.0f;
-      greenValue = 0.6f;
-      break;
-    case TeamColor::BLACK:
-      break;
-    case TeamColor::WHITE:
-      redValue = blueValue = greenValue = 1.0f;
-      break;
-    case TeamColor::GREEN:
-      greenValue = 1.0f;
-      break;
-    case TeamColor::ORANGE:
-      redValue = 1.0f;
-      greenValue = 0.65f;
-      break;
-    case TeamColor::PURPLE:
-      redValue = 0.5f;
-      blueValue = 1.0f;
-      break;
-    case TeamColor::BROWN:
-      redValue = greenValue = 0.15f;
-      blueValue = 0.65f;
-      break;
-    case TeamColor::GRAY:
-      redValue = blueValue = greenValue = 0.5f;
-      break;
-    default:
-      break;
-  }
-
-  setFootLeftLEDs(redValue, greenValue, blueValue);
-}
-
-void LEDHandler::showKickOffTeamOnRightFootLEDs()
-{
-  const GameState state = gameControllerState_->gameState;
-  const bool stateThatRequiresDisplay =
-      GameState::INITIAL == state || GameState::READY == state || GameState::SET == state;
-  const float value = (gameControllerState_->kickingTeam && stateThatRequiresDisplay) ? 1.0f : 0.0f;
-
-  setFootRightLEDs(value, value, value);
-}
-
-void LEDHandler::showWhistleStatusOnEarLEDs()
-{
-  // Check for whistle heard in the last second and turn half of the ear LEDs on.
-  if (cycleInfo_->getTimeDiff(whistleData_->lastTimeWhistleHeard) < 1.f)
-  {
-    const float halfEars[] = {1.f, 1.f, 1.f, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, 0.f};
-    setEarRightLEDs(halfEars);
-    setEarLeftLEDs(halfEars);
-  }
-  // Check if we are in the playing state and turn all ear LEDs on.
-  else if (gameControllerState_->gameState == GameState::PLAYING)
-  {
-    const float fullEars[] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f};
-    setEarRightLEDs(fullEars);
-    setEarLeftLEDs(fullEars);
-  }
-  else
-  {
-    const float minEars[] = {1.f, 1.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
-    setEarRightLEDs(minEars);
-    setEarLeftLEDs(minEars);
-  }
-}
-
-
+//endregion
 //region rightEar
 
 void LEDHandler::setRightEarBrightness(float brightness) {
@@ -439,9 +286,8 @@ void LEDHandler::resetRightEarPulsating(uint8_t right) {
     isIncreasingHalfCycleRight = true;
 }
 //endregion
-
-
 //region leftEar
+
 void LEDHandler::setLeftEarBrightness(float brightness) {
     std::vector<float> leftEar = std::vector<float>(EAR_MAX,brightness);
     setEarLeftLEDs(leftEar.data());
@@ -503,8 +349,14 @@ void LEDHandler::setLeftEarPulsating(uint8_t speed) {
     setEarLeftLEDs(leftEar.data());
 }
 
+
+
+
+//endregion
+//region chest
+
 void LEDHandler::setChestRainbowColors() {
-    if((unsigned int)( cycleInfo_->startTime) - lastStartTimeChest > 100){
+    if((unsigned int)( cycleInfo_->startTime) - lastStartTimeChest > 50){
         lastStartTimeChest = (unsigned int)( cycleInfo_->startTime);
 
         rainbowRed += diff *(float)((rand() % 2)*2 - 1);
@@ -519,6 +371,4 @@ void LEDHandler::setChestRainbowColors() {
     }
     setChestLEDs(rainbowRed,rainbowGreen,rainbowBlue);
 }
-
-
 //endregion
