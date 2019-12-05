@@ -32,6 +32,13 @@ enum class ChestMode
     RAINBOW
 };
 
+enum class FootMode
+{
+    OFF,
+    COLOR,
+    RAINBOW
+};
+
 class LEDRequest : public DataType<LEDRequest>
 {
 public:
@@ -62,6 +69,17 @@ public:
     float chestG = 0;
     float chestB = 0;
 
+
+    FootMode leftFootMode = FootMode::OFF;
+    float leftFootR = 0;
+    float leftFootG = 0;
+    float leftFootB = 0;
+
+    FootMode rightFootMode = FootMode::OFF;
+    float rightFootR = 0;
+    float rightFootG = 0;
+    float rightFootB = 0;
+
     void reset() override
     {
       leftEyeMode = EyeMode::OFF;
@@ -90,6 +108,17 @@ public:
       chestR = 0;
       chestG = 0;
       chestB = 0;
+
+
+      leftFootMode = FootMode ::OFF;
+      leftFootR = 0;
+      leftFootG = 0;
+      leftFootB = 0;
+
+      rightFootMode = FootMode ::OFF;
+      rightFootR = 0;
+      rightFootG = 0;
+      rightFootB = 0;
     }
 
     void toValue(Uni::Value& value) const override
@@ -121,6 +150,17 @@ public:
         value["chestR"] << chestR;
         value["chestG"] << chestG;
         value["chestB"] << chestB;
+
+
+        value["leftFootMode"] << static_cast<int>(leftFootMode);
+        value["leftFootR"] << leftFootR;
+        value["leftFootG"] << leftFootG;
+        value["leftFootB"] << leftFootB;
+
+        value["rightFootMode"] << static_cast<int>(rightFootMode);
+        value["rightFootR"] << rightFootR;
+        value["rightFootG"] << rightFootG;
+        value["rightFootB"] << rightFootB;
     }
 
     void fromValue(const Uni::Value& value) override
@@ -151,6 +191,17 @@ public:
         value["chestR"] >> chestR;
         value["chestG"] >> chestG;
         value["chestB"] >> chestB;
+
+
+        leftFootMode = static_cast<FootMode >(value["leftFootMode"].asInt32());
+        value["leftFootR"] >> leftFootR;
+        value["leftFootG"] >> leftFootG;
+        value["leftFootB"] >> leftFootB;
+
+        rightFootMode = static_cast<FootMode >(value["rightFootMode"].asInt32());
+        value["rightFootR"] >> rightFootR;
+        value["rightFootG"] >> rightFootG;
+        value["rightFootB"] >> rightFootB;
     }
 };
 
