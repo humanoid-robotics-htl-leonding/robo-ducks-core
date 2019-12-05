@@ -16,6 +16,7 @@
 
 #include "Data/CycleInfo.hpp"
 #include "Data/EyeLEDRequest.hpp"
+#include "Data/EarLEDRequest.hpp"
 #include "Data/GameControllerState.hpp"
 #include "Data/WhistleData.hpp"
 
@@ -32,6 +33,7 @@ public:
   ModuleName name = "LEDHandler";
   LEDHandler(const ModuleManagerInterface& manager);
   void cycle();
+
 
 private:
   /**
@@ -137,6 +139,7 @@ private:
 
   const Dependency<CycleInfo> cycleInfo_;
   const Dependency<EyeLEDRequest> eyeLEDRequest_;
+  const Dependency<EarLEDRequest> earLEDRequest_;
   const Dependency<GameControllerState> gameControllerState_;
   const Dependency<WhistleData> whistleData_;
 
@@ -144,4 +147,47 @@ private:
   std::vector<float> cmd_;
   /// a cycle counter because LEDs are not sent every cycle
   unsigned int cycleCount_, rainbowCycle_;
+
+    void setRightEarBrightness(float brightness);
+
+    void setRightEarContinueLoading();
+
+    void setRightEarProgress(short progress);
+    void resetRightEarPulsating(uint8_t right);
+
+
+    uint8_t currentSpeedRight;
+    unsigned int lastStartTimeRight;
+
+    void setRightEarPulsating(uint8_t speed);
+
+    bool isIncreasingHalfCycleRight;
+    uint8_t loaderRightLength;
+    uint8_t loadPosRightEnd;
+    unsigned int lastLoadRightTime;
+
+    std::vector<float> lastLoadingRightEar;
+
+
+
+    void setLeftEarBrightness(float brightness);
+
+    void setLeftEarContinueLoading();
+
+    void setLeftEarProgress(short progress);
+
+
+    uint8_t currentSpeedLeft;
+    unsigned int lastStartTimeLeft;
+
+    void setLeftEarPulsating(uint8_t speed);
+
+    bool isIncreasingHalfCycleLeft;
+    uint8_t loaderLeftLength;
+    uint8_t loadPosLeftEnd;
+    unsigned int lastLoadLeftTime;
+
+    std::vector<float> lastLoadingLeftEar;
+    void resetLeftEarPulsating(uint8_t right);
+
 };

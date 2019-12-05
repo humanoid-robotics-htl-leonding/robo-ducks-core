@@ -36,6 +36,7 @@
   "KeeperActionProvider" : true,
   "Kick" : true,
   "KickConfigurationProvider" : true,
+  "Kneeler" : true,
   "LEDHandler" : true,
   "LabelProvider" : false,
   "LandmarkFilter" : true,

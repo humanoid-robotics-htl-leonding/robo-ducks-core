@@ -45,6 +45,7 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   , eyeLEDRequest_(*this)
   , audioRequest_(*this)
   , playbackData_(*this)
+  , earLEDRequest_(*this)
   , thoughtControlRequest_(*this)
   , actionCommand_(ActionCommand::dead())
   , thoughts_()
@@ -91,10 +92,16 @@ void BehaviorModule::cycle()
       actionCommand_ = ActionCommand::dead();
     }else{
       actionCommand_ = rootBehavior(dataSet_); //TODO Make RootBehaviour Configurable
+      actionCommand_.combineLeftEarLED(ActionCommand::EarLED::loading());
+    }
+    if(headOffData_->shouldDieSignal){
+        print("I am in the should Die Signal", LogLevel::INFO);
+        actionCommand_ = ActionCommand::dead().combineAudio(ActionCommand::Audio::audioC5());
     }
     actionCommand_.toMotionRequest(*motionRequest_);
     actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
     actionCommand_.toAudioRequest(*audioRequest_);
+    actionCommand_.toEarLEDRequest(*earLEDRequest_);
     actionCommand_.toThoughtControlRequest(*thoughtControlRequest_);
     //actionCommand_.toPlaybackData(*playbackData_);
   }

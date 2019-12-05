@@ -38,8 +38,6 @@ void FallManager::cycle()
   if (bodyPose_->fallDirection != FallDirection::NOT_FALLING)
   {
       prepareFalling(bodyPose_->fallDirection);
-      currFall = bodyPose_->fallDirection;
-      lastCycle = cycleInfo_->startTime;
   }
   if (!catchFrontInterpolator_.finished())
   {
@@ -151,7 +149,6 @@ void FallManager::prepareFalling(const FallDirection fallDirection)
 
           catchFallAngles[JOINTS::R_HIP_PITCH] = -40.0 * TO_RAD;
           catchFallAngles[JOINTS::R_KNEE_PITCH] = -5.0 * TO_RAD;
-
           catchFallAngles[JOINTS::L_HIP_PITCH] = -20.0 * TO_RAD;
           catchFallAngles[JOINTS::L_KNEE_PITCH] = -5 * TO_RAD;
           catchFallAngles[JOINTS::L_HIP_ROLL] = 30*TO_RAD;
