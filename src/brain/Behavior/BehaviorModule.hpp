@@ -118,7 +118,7 @@ private:
 
     /// the motion request
   Production<MotionRequest> motionRequest_;
-    /// the eye LED request
+    /// the eye EyeLED request
   Production<EyeLEDRequest> eyeLEDRequest_;
   /// the audio request
   Production<AudioRequest> audioRequest_;

@@ -17,21 +17,21 @@ class EyeLEDRequest : public DataType<EyeLEDRequest>
 public:
   /// the name of this DataType
   DataTypeName name = "EyeLEDRequest";
-  /// The mode for the left eye LED
+  /// The mode for the left eye EyeLED
   EyeMode leftEyeMode;
-  /// the red value of the left LED
+  /// the red value of the left EyeLED
   float leftR;
-  /// the green value of the left LED
+  /// the green value of the left EyeLED
   float leftG;
-  /// the blue value of the left LED
+  /// the blue value of the left EyeLED
   float leftB;
-  /// The mode for the right eye LED
+  /// The mode for the right eye EyeLED
   EyeMode rightEyeMode;
-  /// the red value of the right LED
+  /// the red value of the right EyeLED
   float rightR;
-  /// the green value of the right LED
+  /// the green value of the right EyeLED
   float rightG;
-  /// the blue value of the right LED
+  /// the blue value of the right EyeLED
   float rightB;
   /**
    * @brief reset does nothing

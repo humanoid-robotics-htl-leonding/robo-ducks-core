@@ -2,6 +2,7 @@
 
 #include <Data/EarLEDRequest.hpp>
 #include <Data/ThoughtControlRequest.hpp>
+#include <Data/ChestLEDRequest.hpp>
 #include "Behavior/HeadPositionProvider.hpp"
 #include "Data/EyeLEDRequest.hpp"
 #include "Data/AudioRequest.hpp"
@@ -346,21 +347,21 @@ public:
     friend class ActionCommand;
   };
   /**
-   * @class LED contains the command for an LED
+   * @class EyeLED contains the command for an EyeLED
    */
-  class LED
+  class EyeLED
   {
   public:
     /**
-     * @brief colors creates a colors action command for an LED
+     * @brief colors creates a colors action command for an EyeLED
      * @param r the red intensity in [0,1]
      * @param g the green intensity in [0,1]
      * @param b the blue intensity in [0,1]
-     * @return a colors action command for an LED
+     * @return a colors action command for an EyeLED
      */
-    static LED colors(const float r = 0, const float g = 0, const float b = 0)
+    static EyeLED colors(const float r = 0, const float g = 0, const float b = 0)
     {
-      LED led;
+      EyeLED led;
       led.eyeMode_ = EyeMode::COLOR;
       led.r_ = r;
       led.g_ = g;
@@ -368,84 +369,84 @@ public:
       return led;
     }
     /**
-     * @brief off creates an off action command for an LED
-     * @return an off action command for an LED
+     * @brief off creates an off action command for an EyeLED
+     * @return an off action command for an EyeLED
      */
-    static LED off()
+    static EyeLED off()
     {
-      LED led;
+      EyeLED led;
       led.eyeMode_ = EyeMode::OFF;
       return led;
     }
     /**
-     * @brief white creates a white action command for an LED
-     * @return a white action command for an LED
+     * @brief white creates a white action command for an EyeLED
+     * @return a white action command for an EyeLED
      */
-    static LED white()
+    static EyeLED white()
     {
       return colors(1, 1, 1);
     }
     /**
-     * @brief green creates a green action command for an LED
-     * @return a green action command for an LED
+     * @brief green creates a green action command for an EyeLED
+     * @return a green action command for an EyeLED
      */
-    static LED green()
+    static EyeLED green()
     {
       return colors(0, 1, 0);
     }
     /**
-     * @brief yellow creates a yellow action command for an LED
-     * @return a yellow action command for an LED
+     * @brief yellow creates a yellow action command for an EyeLED
+     * @return a yellow action command for an EyeLED
      */
-    static LED yellow()
+    static EyeLED yellow()
     {
       return colors(1, 1, 0);
     }
     /**
-     * @brief red creates a red action command for an LED
-     * @return a red action command for an LED
+     * @brief red creates a red action command for an EyeLED
+     * @return a red action command for an EyeLED
      */
-    static LED red()
+    static EyeLED red()
     {
       return colors(1, 0, 0);
     }
     /**
-     * @brief blue creates a blue action command for an LED
-     * @return a blue action command for an LED
+     * @brief blue creates a blue action command for an EyeLED
+     * @return a blue action command for an EyeLED
      */
-    static LED blue()
+    static EyeLED blue()
     {
       return colors(0, 0, 1);
     }
     /**
-     * @brief lightblue creates a lightblue action command for an LED
-     * @return a lightblue action command for an LED
+     * @brief lightblue creates a lightblue action command for an EyeLED
+     * @return a lightblue action command for an EyeLED
      */
-    static LED lightblue()
+    static EyeLED lightblue()
     {
       return colors(0, 1, 1);
     }
     /**
-     * @brief pink creates a pink action command for an LED
-     * @return a pink action command for an LED
+     * @brief pink creates a pink action command for an EyeLED
+     * @return a pink action command for an EyeLED
      */
-    static LED pink()
+    static EyeLED pink()
     {
       return colors(1, 0.07f, 0.58f);
     }
 
-    static LED rainbow()
+    static EyeLED rainbow()
     {
-      LED led;
+      EyeLED led;
       led.eyeMode_ = EyeMode::RAINBOW;
       return led;
     }
 
   private:
     /**
-     * @brief LED creates an undefined LED action command
+     * @brief EyeLED creates an undefined EyeLED action command
      */
-    LED() = default;
+    EyeLED() = default;
     /// The eye mode
     EyeMode eyeMode_ = EyeMode::OFF;
     /// the red intensity in [0,1]
@@ -508,16 +509,70 @@ public:
     friend class ActionCommand;
   };
 
-//  class ThoughtControl
-//  {
-//    static ThoughtControl set(ThoughtCommand command){
-//      ThoughtControl control;
-//      control.command_ = command;
-//      return control;
-//    }
-//  private:
-//      ThoughtCommand command_;
-//  };
+  /**
+   * @author Erik Mayrhofer
+   */
+  class ChestLED
+  {
+  public:
+      static ChestLED colors(const float r = 0, const float g = 0, const float b = 0)
+      {
+        ChestLED led;
+        led.chestMode_ = ChestMode::COLOR;
+        led.r_ = r;
+        led.g_ = g;
+        led.b_ = b;
+        return led;
+      }
+      static ChestLED off()
+      {
+        ChestLED led;
+        led.chestMode_ = ChestMode::OFF;
+        return led;
+      }
+      static ChestLED white()
+      {
+        return colors(1, 1, 1);
+      }
+      static ChestLED green()
+      {
+        return colors(0, 1, 0);
+      }
+      static ChestLED yellow()
+      {
+        return colors(1, 1, 0);
+      }
+      static ChestLED red()
+      {
+        return colors(1, 0, 0);
+      }
+      static ChestLED blue()
+      {
+        return colors(0, 0, 1);
+      }
+      static ChestLED lightblue()
+      {
+        return colors(0, 1, 1);
+      }
+      static ChestLED pink()
+      {
+        return colors(1, 0.07f, 0.58f);
+      }
+      static ChestLED rainbow()
+      {
+        ChestLED led;
+        led.chestMode_ = ChestMode::RAINBOW;
+        return led;
+      }
+
+  private:
+      ChestLED() = default;
+      ChestMode chestMode_ = ChestMode::OFF;
+      float r_ = 0.f;
+      float g_ = 0.f;
+      float b_ = 0.f;
+      friend class ActionCommand;
+  };
 
   class Audio //44100 things per second, 512 Buffer Size per Frame
   {
@@ -554,8 +609,8 @@ public:
    */
   static ActionCommand dead()
   {
-    return ActionCommand(Body::dead(), Arm::body(), Arm::body(), Head::body(), LED::colors(),
-                         LED::colors());
+    return ActionCommand(Body::dead(), Arm::body(), Arm::body(), Head::body(), EyeLED::colors(),
+                         EyeLED::colors());
   }
   /**
    * @brief stand creates a stand action command
@@ -563,8 +618,8 @@ public:
    */
   static ActionCommand stand()
   {
-    return ActionCommand(Body::stand(), Arm::body(), Arm::body(), Head::angles(), LED::colors(),
-                         LED::colors());
+    return ActionCommand(Body::stand(), Arm::body(), Arm::body(), Head::angles(), EyeLED::colors(),
+                         EyeLED::colors());
   }
   /**
    * @brief walk creates a walk action command
@@ -587,7 +642,7 @@ public:
     assert(!std::isnan(target.orientation) && "Target pose.orientation is nan!");
 
     return ActionCommand(Body::walk(target, walkingMode, velocity, inWalkKickType, kickFoot),
-                         Arm::body(), Arm::body(), Head::angles(), LED::colors(), LED::colors());
+                         Arm::body(), Arm::body(), Head::angles(), EyeLED::colors(), EyeLED::colors());
   }
   /**
    * @brief walkVelocity creates an action command for walking according to the specified velocity,
@@ -604,7 +659,7 @@ public:
   {
     // Use an empty pose for the target because it will be ignored in velocity mode
     return ActionCommand(Body::walk(Pose(), WalkMode::VELOCITY, velocity, inWalkKickType, kickFoot),
-                         Arm::body(), Arm::body(), Head::angles(), LED::colors(), LED::colors());
+                         Arm::body(), Arm::body(), Head::angles(), EyeLED::colors(), EyeLED::colors());
   }
   /**
    * @brief kick creates a kick action command
@@ -617,7 +672,7 @@ public:
                             const KickType kickType)
   {
     return ActionCommand(Body::kick(ball_position, ball_target, kickType), Arm::body(), Arm::body(),
-                         Head::body(), LED::colors(), LED::colors());
+                         Head::body(), EyeLED::colors(), EyeLED::colors());
   }
   /**
    * @brief penalized creates a penalized action command
@@ -625,8 +680,8 @@ public:
    */
   static ActionCommand penalized()
   {
-    return ActionCommand(Body::penalized(), Arm::body(), Arm::body(), Head::body(), LED::colors(),
-                         LED::colors());
+    return ActionCommand(Body::penalized(), Arm::body(), Arm::body(), Head::body(), EyeLED::colors(),
+                         EyeLED::colors());
   }
   /**
    * @brief keeper creates a keeper action command
@@ -636,7 +691,7 @@ public:
   static ActionCommand keeper(const MotionKeeper keeper_type)
   {
     return ActionCommand(Body::keeper(keeper_type), Arm::body(), Arm::body(), Head::body(),
-                         LED::colors(), LED::colors());
+                         EyeLED::colors(), EyeLED::colors());
   }
   /**
    * @brief standUp creates a stand up action command
@@ -644,8 +699,8 @@ public:
    */
   static ActionCommand standUp()
   {
-    return ActionCommand(Body::standUp(), Arm::body(), Arm::body(), Head::body(), LED::colors(),
-                         LED::colors());
+    return ActionCommand(Body::standUp(), Arm::body(), Arm::body(), Head::body(), EyeLED::colors(),
+                         EyeLED::colors());
   }
   /**
    * @brief hold creates a hold action command
@@ -653,12 +708,12 @@ public:
    */
   static ActionCommand hold()
   {
-    return ActionCommand(Body::hold(), Arm::body(), Arm::body(), Head::body(), LED::colors(),
-                         LED::colors());
+    return ActionCommand(Body::hold(), Arm::body(), Arm::body(), Head::body(), EyeLED::colors(),
+                         EyeLED::colors());
   }
 
   static ActionCommand kneel() {
-    return ActionCommand(Body::kneel(), Arm::body(), Arm::body(), Head::body(), LED::colors(), LED::colors());
+    return ActionCommand(Body::kneel(), Arm::body(), Arm::body(), Head::body(), EyeLED::colors(), EyeLED::colors());
   }
 
   /**
@@ -702,21 +757,21 @@ public:
     return *this;
   }
   /**
-   * @brief combineLeftLED replaces the left LED part of an action command
-   * @param left_led the new left LED part of the action command
+   * @brief combineLeftLED replaces the left EyeLED part of an action command
+   * @param left_led the new left EyeLED part of the action command
    * @return reference to this
    */
-  ActionCommand& combineLeftLED(const LED& left_led)
+  ActionCommand& combineLeftLED(const EyeLED& left_led)
   {
     leftLed_ = left_led;
     return *this;
   }
   /**
-   * @brief combineRightLED replaces the right LED part of an action command
-   * @param right_led the new right LED part of the action command
+   * @brief combineRightLED replaces the right EyeLED part of an action command
+   * @param right_led the new right EyeLED part of the action command
    * @return reference to this
    */
-  ActionCommand& combineRightLED(const LED& right_led)
+  ActionCommand& combineRightLED(const EyeLED& right_led)
   {
     rightLed_ = right_led;
     return *this;
@@ -734,8 +789,8 @@ public:
   }
 
   /**
-   * @brief combineRightLED replaces the right LED part of an action command
-   * @param right_led the new right LED part of the action command
+   * @brief combineRightLED replaces the right EyeLED part of an action command
+   * @param right_led the new right EyeLED part of the action command
    * @return reference to this
    */
   ActionCommand& combineAudio(const Audio& audio)
@@ -795,8 +850,8 @@ public:
     }
   }
   /**
-   * @brief toEyeLEDRequest converts the action command to an eye LED request
-   * @param eyeLEDRequest the eye LED request that is overwritten
+   * @brief toEyeLEDRequest converts the action command to an eye EyeLED request
+   * @param eyeLEDRequest the eye EyeLED request that is overwritten
    */
   void toEyeLEDRequest(EyeLEDRequest& eyeLEDRequest) const
   {
@@ -829,7 +884,7 @@ public:
   /**
    * @author Erik Mayrhofer
    * @brief toPlaybackData converts the action command to a PlayBackData
-   * @param eyeLEDRequest the eye LED request that is overwritten
+   * @param eyeLEDRequest the eye EyeLED request that is overwritten
    */
   //void toPlaybackData(PlaybackData& playbackData) const
   //{
@@ -878,18 +933,18 @@ public:
     return head_;
   }
   /**
-   * @brief leftLED returns the left LED part of the command
-   * @return the left LED part of the command
+   * @brief leftLED returns the left EyeLED part of the command
+   * @return the left EyeLED part of the command
    */
-  const LED& leftLED() const
+  const EyeLED& leftLED() const
   {
     return leftLed_;
   }
   /**
-   * @brief rightLED returns the right LED part of the command
-   * @return the right LED part of the command
+   * @brief rightLED returns the right EyeLED part of the command
+   * @return the right EyeLED part of the command
    */
-  const LED& rightLED() const
+  const EyeLED& rightLED() const
   {
     return rightLed_;
   }
@@ -909,11 +964,11 @@ private:
    * @param left_arm the command for the left arm
    * @param right_arm the command for the right arm
    * @param head the command for the head
-   * @param left_led the command for the left LED
-   * @param right_led the command for the right LED
+   * @param left_led the command for the left EyeLED
+   * @param right_led the command for the right EyeLED
    */
   ActionCommand(const Body& body, const Arm& left_arm, const Arm& right_arm, const Head& head,
-                const LED& left_led, const LED& right_led)
+                const EyeLED& left_led, const EyeLED& right_led)
     : body_(body)
     , leftArm_(left_arm)
     , rightArm_(right_arm)
@@ -930,10 +985,10 @@ private:
   Arm rightArm_;
   /// the command for the head
   Head head_;
-  /// the command for the left LED
-  LED leftLed_;
-  /// the command for the right LED
-  LED rightLed_;
+  /// the command for the left EyeLED
+  EyeLED leftLed_;
+  /// the command for the right EyeLED
+  EyeLED rightLed_;
 
   EarLED rightEarLed_;
   EarLED leftEarLed_;
