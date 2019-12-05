@@ -22,5 +22,6 @@ ActionCommand chooseState(const DataSet& d){
     case GameState::SET: return set(d).combineLeftLED(ActionCommand::EyeLED::yellow());
     case GameState::PLAYING: return playing(d).combineChestLED(ActionCommand::ChestLED::green());
     case GameState::FINISHED: return started(d).combineChestLED(ActionCommand::ChestLED::white());
+    default: return ActionCommand::dead();
   }
 }
