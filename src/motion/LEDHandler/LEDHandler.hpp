@@ -109,4 +109,6 @@ private:
   float leftFootRainbowRed;
   float leftFootRainbowGreen;
   double leftFootRainbowBlue;
+    static std::array<float, keys::led::EYE_MAX> rainbowLeft_;
+    static std::array<float, keys::led::EYE_MAX> rainbowRight_;
 };
