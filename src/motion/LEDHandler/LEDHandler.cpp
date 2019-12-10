@@ -7,23 +7,15 @@
 
 using namespace keys::led;
 
-std::array<float, EYE_MAX> LEDHandler::rainbowLeft_ = {
-    {0.7f, 0.0f, 0.0f, 0.0f, 0.3f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.7f, 1.0f,
-     1.0f, 1.0f, 0.3f, 0.0f, 1.0f, 1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.5f}};
-
-std::array<float, EYE_MAX> LEDHandler::rainbowRight_ = {
-    {0.7f, 1.0f, 1.0f, 1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.3f, 1.0f,
-     1.0f, 1.0f, 0.7f, 0.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.5f, 1.0f, 1.0f}};
-
 LEDHandler::LEDHandler(const ModuleManagerInterface& manager)
   : Module(manager)
   , cycleInfo_(*this)
   , ledRequest_(*this)
-  , gameControllerState_(*this)
-  , whistleData_(*this)
   , cmd_(CHEST_MAX + 2 * EAR_MAX + 2 * EYE_MAX + HEAD_MAX + 2 * FOOT_MAX, 0.f)
   , cycleCount_(0)
   , rainbowCycle_(0)
+  , lastLoadingRightEar(EAR_MAX,0.0f)
+  , lastLoadingLeftEar(EAR_MAX,0.0f)
 {
     isIncreasingHalfCycleRight = true;
     lastStartTimeRight = 0;
