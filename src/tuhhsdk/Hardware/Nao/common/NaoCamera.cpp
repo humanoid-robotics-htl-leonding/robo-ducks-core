@@ -131,6 +131,7 @@ bool NaoCamera::waitForCameras(std::array<NaoCamera*, 2> cameras, int timeout)
             cameras[i]->currentBuffer_.timestamp.tv_usec + i * 1000;
         // This fix is needed as the first image that we get on the v6 hardware has a timestamp
         // that does not make any sense (to @rkost, @nagua).
+//        Log(LogLevel::INFO) << "Camera Timetamp " << (int) cameras[i]->timestamp << "BaseTime: " << (int) TimePoint::getBaseTime();
         cameras[i]->imageValid = cameras[i]->timestamp >= TimePoint::getBaseTime();
         if (!cameras[i]->imageValid)
         {

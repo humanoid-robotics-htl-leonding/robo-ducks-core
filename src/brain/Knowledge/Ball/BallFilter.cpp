@@ -92,7 +92,7 @@ void BallFilter::cycle()
     ballState_->moved = false;
     ballState_->confident = false;
     ballState_->timeWhenBallLost = timeWhenBallLost_;
-    ballState_->timeWhenLastSeen = 0;
+    ballState_->timeWhenLastSeen = TimePoint();
   }
   else
   {
