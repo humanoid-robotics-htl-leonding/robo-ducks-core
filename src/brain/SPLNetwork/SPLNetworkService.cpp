@@ -162,7 +162,8 @@ void SPLNetworkService::sendMessage(const SPLStandardMessage& message)
       foreignEndpoint_, [msg](const boost::system::error_code& error, std::size_t) {
         if (error)
         {
-          print("Error sending team message", LogLevel::ERROR);
+          print("Error sending team message: ", LogLevel::ERROR);
+          print(error.message(), LogLevel::ERROR);
         }
       });
 }
