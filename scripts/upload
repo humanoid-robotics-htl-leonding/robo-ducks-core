@@ -127,6 +127,10 @@ function run {
       "-e" | "--execute")
         EXECUTE=true
         ;;
+      "-t" | "--target")
+        shift
+        TARGET="$1"
+        ;;
       *)
         msg -e "Failed to parse \"$1\"!"
         helpMenu

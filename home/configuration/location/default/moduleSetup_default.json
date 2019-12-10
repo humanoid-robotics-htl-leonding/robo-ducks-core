@@ -1,5 +1,5 @@
 {
-  "AudioPlayer" : true,
+  "AudioPlayer" : false,
   "AudioReceiver" : true,
   "BallDetectionNeuralNet" : true,
   "BallFilter" : true,
