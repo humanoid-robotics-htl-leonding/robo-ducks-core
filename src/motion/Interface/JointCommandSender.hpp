@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Data/KneelerOutput.hpp>
 #include "Data/BodyDamageData.hpp"
 #include "Data/FallManagerOutput.hpp"
 #include "Data/HeadMotionOutput.hpp"
@@ -42,8 +41,6 @@ private:
   const Dependency<MotionActivation> motionActivation_;
   /// a reference to the fall manager output
   const Dependency<FallManagerOutput> fallManagerOutput_;
-    const Dependency<KneelerOutput> kneelerOutput_;
-
     /// a reference to the head motion output
   const Dependency<HeadMotionOutput> headMotionOutput_;
   /// a reference to the keeper output
