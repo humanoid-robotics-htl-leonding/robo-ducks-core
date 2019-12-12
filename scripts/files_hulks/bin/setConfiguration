@@ -74,8 +74,11 @@ FACTORY_BOOT_SERVICES=("bootprogress_25" "mtab" "connman" "bootprogress_50" "las
 FACTORY_DEFAULT_SERVICES=("avahi-daemon" "crash-report-uploader" "firewall_mode" "lircd"
   "naoqi" "naopathe" "netmount" "nginx" "ofono" "qimessaging-json"
   "vsftpd" "bootprogress_100" "proxydaemon")
+
 SOCCER_BOOT_SERVICES=("net.eth0" "net.wlan0")
 SOCCER_DEFAULT_SERVICES=("naoqi" "hulk")
+
+AUTOLOAD_INI_PATH=/home/nao/naoqi/preferences
 
 if ${FACTORY}; then
   for SERVICE in ${SOCCER_BOOT_SERVICES[@]}; do
@@ -90,12 +93,12 @@ if ${FACTORY}; then
       rc-service "${SERVICE}" stop
     fi
   done
-  cp /etc/naoqi/autoload.ini.factory /etc/naoqi/autoload.ini
+  cp ${AUTOLOAD_INI_PATH}/autoload.ini.factory ${AUTOLOAD_INI_PATH}/autoload.ini
   # It is not good when both our code and Aldebaran code e.g. try to access the camera.
   # Thus the user autoload.ini is removed.
-  if [ -f /home/nao/naoqi/preferences/autoload.ini ]; then
-    mv /home/nao/naoqi/preferences/autoload.ini /home/nao/naoqi/preferences/autoload.ini.bak
-  fi
+#  if [ -f /home/nao/naoqi/preferences/autoload.ini ]; then
+#    mv /home/nao/naoqi/preferences/autoload.ini /home/nao/naoqi/preferences/autoload.ini.bak
+#  fi
   for SERVICE in ${FACTORY_BOOT_SERVICES[@]}; do
     rc-update add "${SERVICE}" boot
     if ! ${CONFIG}; then
@@ -121,10 +124,10 @@ elif ${SOCCER}; then
       rc-service "${SERVICE}" stop
     fi
   done
-  cp /etc/naoqi/autoload.ini.soccer /etc/naoqi/autoload.ini
-  if [ -f /home/nao/naoqi/preferences/autoload.ini.bak ]; then
-    mv /home/nao/naoqi/preferences/autoload.ini.bak /home/nao/naoqi/preferences/autoload.ini
-  fi
+  cp ${AUTOLOAD_INI_PATH}/autoload.ini.soccer ${AUTOLOAD_INI_PATH}/autoload.ini
+#  if [ -f /home/nao/naoqi/preferences/autoload.ini.bak ]; then
+#    mv /home/nao/naoqi/preferences/autoload.ini.bak /home/nao/naoqi/preferences/autoload.ini
+#  fi
   for SERVICE in ${SOCCER_BOOT_SERVICES[@]}; do
     rc-update add "${SERVICE}" boot
     if ! ${CONFIG}; then

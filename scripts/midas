@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+import argparse
+import logging
+import sys
+
+from midaslib.commands.compile import CompileCommand
+from midaslib.commands.run import RunCommand
+from midaslib.commands.touch import TouchCommand
+
+commands = [TouchCommand, CompileCommand, RunCommand]
+
+
+class MidasParser(argparse.ArgumentParser):
+    def error(self, message):
+        sys.stderr.write('error: %s\n' % message)
+        self.print_help()
+        sys.exit(2)
+
+
+def main():
+    parser = MidasParser()
+    parser.add_argument('--verbose', '-v', action='count', default=0)
+    sub_parsers = parser.add_subparsers(title="Command", description="Which command to execute")
+
+    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+
+    for command_class in commands:
+        inst = command_class()
+        cmd_parser = sub_parsers.add_parser(inst.name, aliases=inst.aliases)
+        inst.parser(cmd_parser)
+
+    args = parser.parse_args()
+    if "command" not in args:
+        parser.print_help()
+        exit(1)
+    args.command.handle(args)
+
+    log_dict = {
+        0: logging.INFO,
+        1: logging.DEBUG
+    }
+
+    logging.basicConfig(format='%(levelname)s:%(message)s', level=log_dict[args.verbose])
+
+if __name__ == '__main__':
+    main()
