@@ -7,23 +7,25 @@
 
 using namespace keys::led;
 
+
 std::array<float, EYE_MAX> LEDHandler::rainbowLeft_ = {
-    {0.7f, 0.0f, 0.0f, 0.0f, 0.3f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.7f, 1.0f,
-     1.0f, 1.0f, 0.3f, 0.0f, 1.0f, 1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.5f}};
+        {0.7f, 0.0f, 0.0f, 0.0f, 0.3f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.7f, 1.0f,
+                1.0f, 1.0f, 0.3f, 0.0f, 1.0f, 1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.5f}};
 
 std::array<float, EYE_MAX> LEDHandler::rainbowRight_ = {
-    {0.7f, 1.0f, 1.0f, 1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.3f, 1.0f,
-     1.0f, 1.0f, 0.7f, 0.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.5f, 1.0f, 1.0f}};
+        {0.7f, 1.0f, 1.0f, 1.0f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.3f, 1.0f,
+                1.0f, 1.0f, 0.7f, 0.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.5f, 1.0f, 1.0f}};
+
 
 LEDHandler::LEDHandler(const ModuleManagerInterface& manager)
   : Module(manager)
   , cycleInfo_(*this)
   , ledRequest_(*this)
-  , gameControllerState_(*this)
-  , whistleData_(*this)
   , cmd_(CHEST_MAX + 2 * EAR_MAX + 2 * EYE_MAX + HEAD_MAX + 2 * FOOT_MAX, 0.f)
   , cycleCount_(0)
   , rainbowCycle_(0)
+  , lastLoadingRightEar(EAR_MAX,0.0f)
+  , lastLoadingLeftEar(EAR_MAX,0.0f)
 {
     isIncreasingHalfCycleRight = true;
     lastStartTimeRight = 0;
@@ -244,14 +246,25 @@ void LEDHandler::setEarRightLEDs(const float* earSegmentBrightnesses)
 
 void LEDHandler::setEyeLeftRainbow()
 {
-  cmd_.at(CHEST_MAX + 2 * EAR_MAX + rainbowCycle_ % 24) = 1.0;
-  cmd_.at(CHEST_MAX + 2 * EAR_MAX + (rainbowCycle_-8) % 24) = 0.0;
+    for (unsigned int i = 0; i < 8; i++)
+    {
+        const unsigned int rainbowCycleOffset = 1;
+        int l = (rainbowCycle_ + rainbowCycleOffset + i) % 8;
+        cmd_.at(CHEST_MAX + 2 * EAR_MAX + i) = rainbowLeft_[l];
+        cmd_.at(CHEST_MAX + 2 * EAR_MAX + i + 8) = rainbowLeft_[(l + 8)];
+        cmd_.at(CHEST_MAX + 2 * EAR_MAX + i + 16) = rainbowLeft_[(l + 16)];
+    }
 }
 
 void LEDHandler::setEyeRightRainbow()
 {
-  cmd_.at(CHEST_MAX + 2 * EAR_MAX + EYE_MAX + 24 - (rainbowCycle_ % 24)) = 1.0;
-  cmd_.at(CHEST_MAX + 2 * EAR_MAX + EYE_MAX + 24 - ((rainbowCycle_-8) % 24)) = 0.0;
+    for (unsigned int i = 0; i < 8; i++)
+    {
+        int r = (rainbowCycle_ - i) % 8;
+        cmd_.at(CHEST_MAX + 2 * EAR_MAX + EYE_MAX + i) = rainbowRight_[r];
+        cmd_.at(CHEST_MAX + 2 * EAR_MAX + EYE_MAX + i + 8) = rainbowRight_[r + 8];
+        cmd_.at(CHEST_MAX + 2 * EAR_MAX + EYE_MAX + i + 16) = rainbowRight_[r + 16];
+    }
 }
 //endregion
 //region rightEar
@@ -328,10 +341,10 @@ void LEDHandler::setLeftEarContinueLoading() {
         lastLoadLeftTime = (unsigned int)( cycleInfo_->startTime);
         std::vector<float> leftEar = std::vector<float>(EAR_MAX, 0.0f);
         for(int i =0; i < loaderLeftLength; i++){
-            int index = (loadPosLeftEnd -i >0)?loadPosLeftEnd-i:10+(loadPosLeftEnd-i);
+            int index = (loadPosLeftEnd -i >=0)?loadPosLeftEnd-i:10+(loadPosLeftEnd-i);
             leftEar[index] = 1.0f;
         }
-        loadPosLeftEnd= (loadPosLeftEnd -1 >0)?loadPosLeftEnd-1:10-(loadPosLeftEnd-1);
+        loadPosLeftEnd= (loadPosLeftEnd -1 >=0)?loadPosLeftEnd-1:10+(loadPosLeftEnd-1);
         lastLoadingLeftEar =  leftEar;
         setEarLeftLEDs(leftEar.data());
     }

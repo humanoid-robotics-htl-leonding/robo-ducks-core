@@ -7,6 +7,8 @@ import time
 import PyQt5.QtCore as qtc
 import PyQt5.QtWidgets as qtw
 
+import qdarkstyle
+
 import mate.net.utils as netutils
 import mate.ui.views as views
 import mate.net.nao as nao
@@ -20,6 +22,9 @@ class Main(qtc.QObject):
 
     def __init__(self, config: str):
         super(Main, self).__init__()
+
+        qtw.qApp.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+
         self.nao = nao.Nao()
         self.identifier = uuid.uuid4()
 
@@ -118,8 +123,7 @@ class Main(qtc.QObject):
         if self.ui.cbxSelectLayout.currentText():
             layout_settings = qtc.QSettings(
                 self.config_dir + self.ui.cbxSelectLayout.currentText() +
-                ".config", qtc.QSettings.NativeFormat)
-
+                ".config", qtc.QSettings.IniFormat)
             if layout_settings.value("geometry"):
                 if layout_settings.value("docked_widgets"):
                     for child in self.window.findChildren(qtw.QDockWidget):
@@ -366,3 +370,10 @@ class Main(qtc.QObject):
         self.ui.btnConnectNao.setEnabled(True)
         self.ui.btnDisconnectNao.setEnabled(False)
         self.ui.menuConnection.setEnabled(False)
+
+    def toggleDarkMode(self):
+        if self.ui.actionToggleDarkMode.isChecked():
+            qtw.qApp.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+        else:
+            qtw.qApp.setStyleSheet("")
+

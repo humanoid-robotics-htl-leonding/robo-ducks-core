@@ -16,8 +16,6 @@
 #include <Data/LEDRequest.hpp>
 
 #include "Data/CycleInfo.hpp"
-#include "Data/GameControllerState.hpp"
-#include "Data/WhistleData.hpp"
 
 #include "Definitions/keys.h"
 #include "Framework/Module.hpp"
@@ -76,12 +74,12 @@ private:
 
   void setFootRightLEDs(float red, float green, float blue);
 
-  static std::array<float, keys::led::EYE_MAX> rainbowLeft_;
-  static std::array<float, keys::led::EYE_MAX> rainbowRight_;
+  void setFootRightRainbowColors();
+
+  void setFootLeftRainbowColors();
+
   const Dependency<CycleInfo> cycleInfo_;
   const Dependency<LEDRequest> ledRequest_;
-  const Dependency<GameControllerState> gameControllerState_;
-  const Dependency<WhistleData> whistleData_;
   std::vector<float> cmd_;
   unsigned int cycleCount_, rainbowCycle_;
   uint8_t currentSpeedRight;
@@ -104,17 +102,13 @@ private:
   float chestRainbowGreen;
   float chestRainbowBlue;
   unsigned int lastStartTimeRightFoot;
-
-
-    void setFootRightRainbowColors();
-
-    void setFootLeftRainbowColors();
-
-    float rightFootRainbowRed;
-    float rightFootRainbowGreen;
-    float rightFootRainbowBlue;
-    unsigned int lastStartTimeLeftFoot;
-    float leftFootRainbowRed;
-    float leftFootRainbowGreen;
-    double leftFootRainbowBlue;
+  float rightFootRainbowRed;
+  float rightFootRainbowGreen;
+  float rightFootRainbowBlue;
+  unsigned int lastStartTimeLeftFoot;
+  float leftFootRainbowRed;
+  float leftFootRainbowGreen;
+  double leftFootRainbowBlue;
+    static std::array<float, keys::led::EYE_MAX> rainbowLeft_;
+    static std::array<float, keys::led::EYE_MAX> rainbowRight_;
 };
