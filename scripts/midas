@@ -23,7 +23,7 @@ def main():
     parser.add_argument('--verbose', '-v', action='count', default=0)
     sub_parsers = parser.add_subparsers(title="Command", description="Which command to execute")
 
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+    logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.INFO)
 
     for command_class in commands:
         inst = command_class()
