@@ -6,9 +6,16 @@ import sys
 from midaslib.commands.compile import CompileCommand
 from midaslib.commands.copy import CopyCommand
 from midaslib.commands.run import RunCommand
+from midaslib.commands.setup import SetupCommand
 from midaslib.commands.touch import TouchCommand
 
-commands = [TouchCommand, CompileCommand, RunCommand, CopyCommand]
+commands = [
+    TouchCommand,
+    CompileCommand,
+    RunCommand,
+    CopyCommand,
+    SetupCommand
+]
 
 
 class MidasParser(argparse.ArgumentParser):
