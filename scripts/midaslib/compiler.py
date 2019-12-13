@@ -23,6 +23,8 @@ class Nao5CompileTarget(CompileTarget):
     name = "Nao V5"
     id = "nao5"
     foldername = "nao5"
+    # -DNAO_V5=ON -DNAOLIB=ON -DTOOLCHAIN_DIR="${TOOLCHAIN_DIR}"
+    setup_args = ["-DNAO_V5=ON", "-DNAOLIB=ON", f"-DTOOLCHAIN_DIR='{project_root_dir}/toolchain'"]
 
     def check_toolchain_installed(self):
         hulks_toolchain = os.path.join(project_root_dir, "toolchain", "hulks-v5")
@@ -41,6 +43,7 @@ class Nao6CompileTarget(CompileTarget):
     name = "Nao V6"
     id = "nao6"
     foldername = "nao6"
+    setup_args = ["-DNAO_V6=ON",  f"-DTOOLCHAIN_DIR='{project_root_dir}/toolchain'"]
 
     def check_toolchain_installed(self):
         hulks_toolchain = os.path.join(project_root_dir, "toolchain", "hulks-v5")
@@ -54,6 +57,7 @@ class SimrobotCompileTarget(CompileTarget):
     name = "Simrobot"
     id = "simrobot"
     foldername = "simrobot"
+    setup_args = ["-DREPLAY=ON"]
 
 
 class BuildType:
@@ -96,6 +100,7 @@ BuildTypes: Dict[str, Type[BuildType]] = {
 def get_build_dir(target: CompileTarget, build: BuildType):
     return os.path.join(project_root_dir, "build", target.foldername, build.foldername)
 
+
 class Compiler:
     def __init__(self, target: CompileTarget, build: BuildType = None):
         if build is not None:
@@ -122,9 +127,14 @@ class Compiler:
             logging.info(f"Setting up '{build_type.name}' for {self.target.name}")
             build_dir = get_build_dir(self.target, build_type())
 
-            shutil.rmtree(build_dir)
-            os.mkdir(build_dir)
+            if os.path.exists(build_dir):
+                shutil.rmtree(build_dir)
+            os.makedirs(build_dir)
 
             # cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" "$@" "${BASEDIR}"
 
-            subprocess.run(["cmake", f"-DCMAKE_BUILD_TYPE={build_type.name}", project_root_dir], cwd=build_dir)
+            other_args = self.target.setup_args
+
+            #"-G Unix Makefiles",
+
+            subprocess.run(["cmake", f"-DCMAKE_BUILD_TYPE={build_type.name}", *other_args, project_root_dir], cwd=build_dir)
