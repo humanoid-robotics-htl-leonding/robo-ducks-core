@@ -23,7 +23,7 @@ class NaoVersion(Enum):
     V6 = 1
 
 
-base_dir = os.path.dirname(os.path.abspath(__file__).join(".."))
+base_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 ssh_standard_args = [
     "-o", "UserKnownHostsFile=/dev/null",
     "-o", "StrictHostKeyChecking=no",
@@ -34,7 +34,7 @@ ssh_standard_args = [
 
 
 def subprocess_run(command):
-    logging.debug(command)
+    logging.info(" ".join(command))
     return subprocess.run(command).returncode
 
 
@@ -57,11 +57,12 @@ def scp(sources, destination):
     return subprocess_run(scp_command)
 
 
+@exit_on_failure
 def ssh_command(address, user, command):
     command = [
         "ssh", *ssh_standard_args, "-l", user, address, command
     ]
-    return subprocess.run(command).returncode
+    return subprocess_run(command)
 
 
 class Nao:
@@ -70,10 +71,13 @@ class Nao:
         self.user = "nao"
 
     def execute(self, command):
-        return ssh_command(self.address, command, self.user)
+        return ssh_command(self.address, self.user, command)
 
     def upload(self, source, destination):
         return scp(source, f"{self.user}@{self.address}:{destination}")
 
     def reboot(self):
         self.execute("systemctl reboot")
+
+    def copy_ssh_key(self):
+        return copy_ssh_id("nao", self.user, self.address)

@@ -4,10 +4,11 @@ import logging
 import sys
 
 from midaslib.commands.compile import CompileCommand
+from midaslib.commands.copy import CopyCommand
 from midaslib.commands.run import RunCommand
 from midaslib.commands.touch import TouchCommand
 
-commands = [TouchCommand, CompileCommand, RunCommand]
+commands = [TouchCommand, CompileCommand, RunCommand, CopyCommand]
 
 
 class MidasParser(argparse.ArgumentParser):
@@ -30,17 +31,21 @@ def main():
         inst.parser(cmd_parser)
 
     args = parser.parse_args()
+
+    # Set Logging Level
+    log_dict = {
+        0: logging.INFO,
+        1: logging.DEBUG
+    }
+    level = log_dict[args.verbose] if args.verbose in log_dict else log_dict[1]
+    logging.basicConfig(format='%(levelname)s:%(message)s', level=level)
+
+    # Execute Command
     if "command" not in args:
         parser.print_help()
         exit(1)
     args.command.handle(args)
 
-    log_dict = {
-        0: logging.INFO,
-        1: logging.DEBUG
-    }
-
-    logging.basicConfig(format='%(levelname)s:%(message)s', level=log_dict[args.verbose])
 
 if __name__ == '__main__':
     main()

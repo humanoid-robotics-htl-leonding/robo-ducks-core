@@ -1,4 +1,5 @@
 import abc
+import functools
 import logging
 from argparse import ArgumentParser
 
@@ -8,25 +9,34 @@ from midaslib.commonparsers import parse_address
 import midaslib.naocom as nc
 
 
-class TouchStep:
-    @abc.abstractmethod
-    def run(self):
-        pass
-
-    def mayrun(self, args) -> bool:
-        return True
+def touch_step(name):
+    def touch_decoration(func):
+        @functools.wraps(func)
+        def touch_wrapper(self):
+            logging.info(f" => Step: {name}")
+            func(self)
+        return touch_wrapper
+    return touch_decoration
 
 
 @command("touch", "t")
 class TouchCommand(Command):
+    nao: nc.Nao = None
+    args = None
+
     @parse_address
     def define_parser(self, parser: ArgumentParser):
         pass
 
+    @touch_step("SSH-Key")
+    def upload_ssh_key(self):
+        self.nao.copy_ssh_key()
+
     def execute(self, args):
-        nao = nc.Nao(args.address)
+        self.args = args
+        self.nao = nc.Nao(args.address)
 
-
+        self.upload_ssh_key()
 
         #
         #
