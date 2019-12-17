@@ -275,7 +275,7 @@ public:
     return bodyMotion == BodyMotion::DEAD || bodyMotion == BodyMotion::WALK ||
            bodyMotion == BodyMotion::KICK || bodyMotion == BodyMotion::PENALIZED ||
            bodyMotion == BodyMotion::KEEPER || bodyMotion == BodyMotion::STAND_UP ||
-           bodyMotion == BodyMotion::HOLD;
+           bodyMotion == BodyMotion::HOLD || bodyMotion == BodyMotion ::KNEEL;
   }
   /**
    * @brief usesHead indicates whether the body motion uses the head in a way that it can't be used
@@ -286,7 +286,8 @@ public:
   {
     return bodyMotion == BodyMotion::DEAD || bodyMotion == BodyMotion::KICK ||
            bodyMotion == BodyMotion::PENALIZED || bodyMotion == BodyMotion::KEEPER ||
-           bodyMotion == BodyMotion::STAND_UP || bodyMotion == BodyMotion::HOLD;
+           bodyMotion == BodyMotion::STAND_UP || bodyMotion == BodyMotion::HOLD
+           || bodyMotion == BodyMotion ::KNEEL;
   }
 
   virtual void toValue(Uni::Value& value) const

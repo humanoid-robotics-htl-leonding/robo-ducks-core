@@ -1,5 +1,6 @@
+#include <Modules/Log/Log.h>
 #include "Modules/NaoProvider.h"
-
+#include "../print.hpp"
 #include "JointCommandSender.hpp"
 #include "Modules/Poses.h"
 
@@ -69,6 +70,9 @@ void JointCommandSender::cycle() {
                     motionActivation_
                             ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::KEEPER)] *
                     keeperOutput_->angles[i] +
+                        motionActivation_
+                            ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::KNEEL)] *
+                            poserOutput_->angles[i] +
                     motionActivation_
                             ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::KICK)] *
                     kickOutput_->angles[i] +
@@ -80,6 +84,7 @@ void JointCommandSender::cycle() {
                     motionActivation_
                             ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::PENALIZED)] *
                     poserOutput_->angles[i] +
+
                     motionActivation_
                             ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::WALK)] *
                     walkingEngineWalkOutput_->angles[i] +
@@ -104,16 +109,20 @@ void JointCommandSender::cycle() {
                     MotionRequest::BodyMotion::FALL_MANAGER)] > 0 &&
                 fallManagerOutput_->stiffnesses[i] > stiffness) {
                 stiffness = fallManagerOutput_->stiffnesses[i];
+            }
                 if (motionActivation_
                             ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::STAND_UP)] >
                     0 &&
                     standUpOutput_->stiffnesses[i] > stiffness) {
                     stiffness = standUpOutput_->stiffnesses[i];
                 }
-                if (motionActivation_
+                if ((motionActivation_
                             ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::PENALIZED)] >
-                    0 &&
-                    poserOutput_->stiffnesses[i] > stiffness) {
+                    0 ||motionActivation_
+                    ->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::KNEEL)] >
+                    0 )&&
+                    poserOutput_->stiffnesses[i] > stiffness)
+                {
                     stiffness = poserOutput_->stiffnesses[i];
                 }
                 if (motionActivation_
@@ -132,7 +141,7 @@ void JointCommandSender::cycle() {
             motionState_->leftArmMotion = MotionRequest::ArmMotion::BODY;
             motionState_->rightArmMotion = MotionRequest::ArmMotion::BODY;
             motionState_->headMotion = MotionRequest::HeadMotion::BODY;
-        }
+
         // The head motion can be trusted that it only wants to send when it is allowed to.
         if (motionActivation_->headMotionActivation > 0.f) {
             for (unsigned int i = 0; i < JOINTS_HEAD::HEAD_MAX; i++) {
