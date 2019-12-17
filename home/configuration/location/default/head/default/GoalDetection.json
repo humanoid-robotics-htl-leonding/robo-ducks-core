@@ -2,5 +2,6 @@
   "maxDistanceOfNeighbors": 2,
   "minPointsInGroup": 5,
   "minSegmentLength": 3,
-  "maxSegmentLength": 10
+  "maxSegmentLength": 15,
+  "maxTilt": 0.364
 }

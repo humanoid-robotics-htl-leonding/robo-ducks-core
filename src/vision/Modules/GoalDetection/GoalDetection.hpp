@@ -5,6 +5,7 @@
 #include "Data/CameraMatrix.hpp"
 #include "Data/FilteredSegments.hpp"
 #include "Data/ImageData.hpp"
+#include "Data/FieldDimensions.hpp"
 #include "Data/GoalData.hpp"
 
 class Brain;
@@ -28,6 +29,10 @@ private:
   	 * goal post
   	 */
   	void detectGoalPoints();
+  	/**
+  	 *
+  	 */
+  	bool checkGroup(VecVector2i& group);
   	/**
    	 *
    	 */
@@ -53,12 +58,16 @@ private:
 	const Parameter<unsigned int> minSegmentLength_;
 	/// the maximum number of points in a goal post segment
 	const Parameter<unsigned int> maxSegmentLength_;
+	/// the maximum tilt from of a goal post group in x / y
+	const Parameter<float> maxTilt_;
   	/// a reference to the image
 	const Dependency<ImageData> imageData_;
 	/// a reference to the camera matrix
 	const Dependency<CameraMatrix> cameraMatrix_;
   	/// a reference to the filtered segments
 	const Dependency<FilteredSegments> filteredSegments_;
+  	/// a reference to the field dimensions
+	const Dependency<FieldDimensions> fieldDimensions_;
 	/// the detected goal posts for other modules
   	Production<GoalData> goalData_;
   	/// goal point groups for debug purposes
