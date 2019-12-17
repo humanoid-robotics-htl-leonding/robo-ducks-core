@@ -13,7 +13,6 @@ set(HEADERS
   Keeper/Keeper.hpp
   Kick/Kick.hpp
   KickConfigurationProvider/KickConfigurationProvider.hpp
-        Kneeler/Kneeler.hpp
   LEDHandler/LEDHandler.hpp
   Motion.hpp
   MotionThread.hpp
@@ -52,7 +51,6 @@ set(SOURCES
   Keeper/Keeper.cpp
   Kick/Kick.cpp
   KickConfigurationProvider/KickConfigurationProvider.cpp
-        Kneeler/Kneeler.cpp
   LEDHandler/LEDHandler.cpp
   Motion.cpp
   MotionThread.cpp

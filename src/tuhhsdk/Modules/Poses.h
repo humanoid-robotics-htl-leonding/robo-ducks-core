@@ -18,6 +18,7 @@ public:
     ARMBACKSTAGE1,
     ARMBACKSTAGE2,
     HOME,
+    KNEEL,
     PENALIZED,
     READY,
     TAKEAWAY,

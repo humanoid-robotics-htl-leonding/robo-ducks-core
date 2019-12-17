@@ -84,13 +84,12 @@ void BehaviorModule::cycle() {
     thoughts_.update(dataSet_);
 
     if (headOffData_->shouldDie) {
-      actionCommand_ = ActionCommand::dead();
+        actionCommand_ = ActionCommand::dead();
     } else {
-      actionCommand_ = rootBehavior(dataSet_); //TODO Make RootBehaviour Configurable
+        actionCommand_ = rootBehavior(dataSet_); //TODO Make RootBehaviour Configurable
       actionCommand_.combineLeftEarLED(ActionCommand::EarLED::loading());
     }
     if (headOffData_->shouldDieSignal) {
-      print("I am in the should Die Signal", LogLevel::INFO);
       actionCommand_ = ActionCommand::dead().combineAudio(ActionCommand::Audio::audioC5());
     }
     actionCommand_.toMotionRequest(*motionRequest_);

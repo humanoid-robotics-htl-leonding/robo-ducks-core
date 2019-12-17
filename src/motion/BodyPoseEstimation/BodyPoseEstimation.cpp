@@ -110,8 +110,8 @@ void BodyPoseEstimation::detectFalling()
 void BodyPoseEstimation::determineFootContact()
 {
   const auto& bodyMotionState = motionState_->bodyMotion;
-  if ((bodyMotionState == BodyMotion::STAND || bodyMotionState == BodyMotion::PENALIZED) &&
-      !(lastBodyMotionState_ == BodyMotion::STAND || lastBodyMotionState_ == BodyMotion::PENALIZED))
+  if ((bodyMotionState == BodyMotion::STAND || bodyMotionState == BodyMotion::PENALIZED || bodyMotionState == BodyMotion::KNEEL) &&
+      !(lastBodyMotionState_ == BodyMotion::STAND || lastBodyMotionState_ == BodyMotion::PENALIZED || lastBodyMotionState_ == BodyMotion::KNEEL))
   {
     // reset filter as soon as nao is standing or penalized
     filteredGyroNorm_ = 0.f;
@@ -122,7 +122,7 @@ void BodyPoseEstimation::determineFootContact()
   lastBodyMotionState_ = bodyMotionState;
   if (classifyHighByGyro_())
   {
-    if (bodyMotionState == BodyMotion::STAND || bodyMotionState == BodyMotion::PENALIZED)
+    if (bodyMotionState == BodyMotion::STAND || bodyMotionState == BodyMotion::PENALIZED || bodyMotionState == BodyMotion::KNEEL)
     {
       // when standing or penalized the filtered gyro norm is expected to be low
       if (filteredGyroNorm_ > movingGyroNormThreshold_())
