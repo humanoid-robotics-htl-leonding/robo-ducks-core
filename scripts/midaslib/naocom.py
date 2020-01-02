@@ -98,16 +98,31 @@ class Nao:
         self.user = "nao"
 
     def execute(self, command):
+        """
+        Executes an ssh-command remotely
+        """
         return ssh_command(self.address, self.user, command)
 
     def upload(self, source, destination):
+        """
+        Uploads a single file via scp
+        """
         return scp(source, f"{self.user}@{self.address}:{destination}")
 
     def reboot(self):
+        """
+        Reboots the nao
+        """
         self.execute("systemctl reboot")
 
     def copy_ssh_key(self):
+        """
+        Copies the local ssh key in scripts/files/ssh_key.pub to the nao. Useful for login without password
+        """
         return copy_ssh_id("nao", self.user, self.address)
 
     def rsync(self, source, delete):
+        """
+        Uploads a file or a folder via rsync
+        """
         return rsync(source, f"{self.user}@{self.address}:", delete)

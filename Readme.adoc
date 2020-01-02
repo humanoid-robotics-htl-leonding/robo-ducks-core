@@ -34,6 +34,9 @@ WARNING: If you experience a *very* slow performance (in Mate or even on the fie
 upload times due to file sizes (e.G 100MB) you are probably compiling for debug. Don't do this if
 you don't have to.
 
+NOTE: If you are annoyed by having to type in your *password* every time, simply upload the ssh-key
+with the `midas touch` script.
+
 NOTE: If you have any questions regarding midas or think that the tool is not documented enough,
 please consult Erik Mayrhofer.
 
