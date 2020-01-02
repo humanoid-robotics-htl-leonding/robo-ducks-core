@@ -1,5 +1,6 @@
 import logging
 import os
+import signal
 import subprocess
 from enum import Enum
 
@@ -35,8 +36,23 @@ ssh_standard_args = [
 
 
 def subprocess_run(command):
-    logging.info(" ".join(command))
-    return subprocess.run(command).returncode
+    # logging.info(" ".join(command))
+    # return subprocess.run(command, shell=False).returncode
+    popen = subprocess.Popen(command)
+
+    def signal_handler(sign, frame):
+        popen.send_signal(sign)
+        print(f"Signal {sign} was sent to running process.")
+
+    signal.signal(signal.SIGINT, signal_handler)
+
+    popen.communicate()
+
+    return_code = popen.returncode
+
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+    return return_code
 
 
 @exit_on_failure
