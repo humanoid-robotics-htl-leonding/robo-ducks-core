@@ -24,6 +24,7 @@ class NaoVersion(Enum):
 
 
 base_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+project_base_dir = os.path.abspath(os.path.join(base_dir, ".."))
 ssh_standard_args = [
     "-o", "UserKnownHostsFile=/dev/null",
     "-o", "StrictHostKeyChecking=no",
@@ -62,11 +63,13 @@ def rsync(source, destination, delete=False):
     delete = [
         "--delete", "--delete-excluded"
     ] if delete else []
-    SSH_CMD = f"ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l nao -i \"{base_dir + '/files/ssh_key'}\""
+    SSH_CMD = f"ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l nao -i {base_dir + '/files/ssh_key'}"
     command = [
         "rsync", "-trzKLP", "--exclude=*webots*", "--exclude=*.gitkeep", "--exclude=*.touch",
-        *delete, f"-rsh='{SSH_CMD}'", source, destination
+        *delete, f"--rsh={SSH_CMD}", source, destination
     ]
+    print(" ".join(command))
+    return subprocess_run(command)
 
 #  local SSH_CMD="ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l ${SSH_USERNAME} -i \"${SSH_KEY}\""
 #--exclude=*webots* --exclude=*.gitkeep --exclude=*.touch

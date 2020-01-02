@@ -7,12 +7,17 @@ from midaslib.command import command, Command
 from midaslib.commonparsers import parse_address
 from midaslib.compiler import Targets, Compiler, BuildTypes, Nao6CompileTarget
 
-from midaslib.naocom import base_dir
+from midaslib.naocom import project_base_dir as base_dir
 
 import midaslib.naocom as nc
 
+
 def create_build_link(from_path_parts, to_path_parts):
-    return os.symlink(os.path.join(from_path_parts), os.path.join(to_path_parts), True)
+    from_path = os.path.join(*from_path_parts)
+    to_path = os.path.join(*to_path_parts)
+    if not os.path.exists(from_path):
+        raise FileNotFoundError(f"Tried to create link to missing file {from_path}")
+    return os.symlink(from_path, to_path, True)
 
 
 @command("upload", "u")
@@ -36,18 +41,19 @@ class UploadCommand(Command):
         os.makedirs(os.path.join(temp_dir.name, "naoqi", "bin"))
         os.makedirs(os.path.join(temp_dir.name, "naoqi", "filetransport_ball_candidates"))
 
-        os.symlink(os.path.join(base_dir, "home", "preferences"), os.path.join(temp_dir.name, "naoqi", "preferences"), True)
-        os.symlink(os.path.join(base_dir, "home", "configuration"), os.path.join(temp_dir.name, "naoqi", "configuration"), True)
+        if args.config:
+            create_build_link([base_dir, "home", "preferences"], [temp_dir.name, "naoqi", "preferences"])
+            create_build_link([base_dir, "home", "configuration"], [temp_dir.name, "naoqi", "configuration"])
 
-        os.symlink(os.path.join(base_dir, "home", "motions"), os.path.join(temp_dir.name, "naoqi", "motions"), True)
-        os.symlink(os.path.join(base_dir, "home", "poses"), os.path.join(temp_dir.name, "naoqi", "poses"), True)
+        create_build_link([base_dir, "home", "motions"], [temp_dir.name, "naoqi", "motions"])
+        create_build_link([base_dir, "home", "poses"], [temp_dir.name, "naoqi", "poses"])
 
         build_dir = os.path.join(base_dir, "build", target.foldername, build_type.foldername)
         if target != Nao6CompileTarget:
-            os.symlink(os.path.join(build_dir, "src", "tuhhsdk", "libtuhhALModule.so"),
-                   os.path.join(temp_dir.name, "naoqi", "lib", "libtuhhALModule.so"), True)
+            create_build_link([build_dir, "src", "tuhhsdk", "libtuhhALModule.so"],
+                              [temp_dir.name, "naoqi", "lib", "libtuhhALModule.so"])
 
-        os.symlink(os.path.join(build_dir, "src", "tuhhsdk", "tuhhNao"), os.path.join(temp_dir.name, "naoqi", "bin", "tuhhNao"), True)
+        create_build_link([build_dir, "src", "tuhhsdk", "tuhhNao"], [temp_dir.name, "naoqi", "bin", "tuhhNao"])
 
         nao = nc.Nao(args.address)
 
