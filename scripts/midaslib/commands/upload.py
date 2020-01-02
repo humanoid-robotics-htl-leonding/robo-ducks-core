@@ -22,6 +22,7 @@ class UploadCommand(Command):
         parser.add_argument("build", choices=BuildTypes.keys(), help="Build type")
         parser.add_argument("target", choices=Targets.keys(), help="Compile target")
         parser.add_argument("--config", "-c", action="store_true", help="Upload Config")
+        parser.add_argument("--execute", "-e", action="store_true", help="Start after upload")
         parser.add_argument("--no-compile", "-n", action="store_true", help="Don't recompile, just upload.")
 
     def execute(self, args):
@@ -35,3 +36,7 @@ class UploadCommand(Command):
 
         upl = Uploader(args.config, args.address, target, build_type)
         upl.upload()
+
+        if args.execute:
+            nao = nc.Nao(args.address)
+            nao.execute("/home/nao/naoqi/bin/tuhhNao")
