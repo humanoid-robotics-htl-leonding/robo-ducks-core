@@ -162,7 +162,7 @@ void GoalDetection::sendImagesForDebug()
 			}
 		}
 		for (const auto& point : debugGoalPoints_) {
-			image.cross(Image422::get444From422Vector(point), 3, Color::BLUE);
+			image.cross(Image422::get444From422Vector(point), 5, Color::BLUE);
 		}
 		debug().sendImage(mount_ + "." + imageData_->identification + "_image_goals", image);
 	}
