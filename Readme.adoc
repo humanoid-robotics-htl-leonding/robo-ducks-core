@@ -1,0 +1,38 @@
+= RoboDucks
+
+== Usage of `M̀idas`
+The central tool when developing RoboDucks-Code is the midas-script.
+
+``` bash
+scripts/midas -h
+```
+
+=== Compile and Upload
+There are several "targets", each describing a possible device which we can build the code for.
+
+.Targets
+. SimRobot " `simrobot` "
+. Nao V5 " `nao5` "
+. Nao V6 " `nao6` "
+
+There are several "build types", each describing a set of configs and variables set in the
+environment.
+
+.Targets
+. `debug`: Include debug symbols. Only for use with `gdb` or radare2.
+. `develop`: Don't include debug symbols, but include certain Prints and Debug-Code. For use with Mate
+. `release`: Fastest. Don't use any debug stuff.
+
+WARNING: If you experience a *very* slow performance (in Mate or even on the field) or tremendous
+upload times due to file sizes (e.G 100MB) you are probably compiling for debug. Don't do this if
+you don't have to.
+
+NOTE: If you have any questions regarding midas or think that the tool is not documented enough,
+please consult Erik Mayrhofer.
+
+== Hulks
+We build on top of code from the hulks-team.
+
+- [HULKs Website](https://hulks.de)
+- [Team Research Report 2018](https://www.hulks.de/_files/TRR_2018.pdf)
+- [Robotic Hamburg Open Workshop](https://www.rohow.de/)
