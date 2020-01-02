@@ -18,7 +18,6 @@ class CompileCommand(Command):
     def execute(self, args):
         build_type = BuildTypes[args.build]
         target = Targets[args.target]
-        logging.info(f"Compiling '{build_type.name}' for '{target.name}'")
         compiler = Compiler(target, build_type)
         compiler.compile()
 

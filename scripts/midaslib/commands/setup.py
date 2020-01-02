@@ -10,6 +10,7 @@ from midaslib.naocom import Nao
 @command("setup", "s")
 class SetupCommand(Command):
     help = "Setup for compilation."
+
     def define_parser(self, parser: ArgumentParser):
         parser.add_argument("target", choices=Targets.keys(), help="Compile target")
 
