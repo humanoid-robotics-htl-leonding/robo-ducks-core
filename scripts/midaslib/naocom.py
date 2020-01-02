@@ -5,20 +5,6 @@ import subprocess
 from enum import Enum
 
 
-def exit_on_failure(func):
-    def wrapper(*args, **kwargs):
-        return_code = func(*args, **kwargs)
-        if return_code:
-            logging.error("Error: " + func.__name__ + " " + str(args) + " " +
-                          str(kwargs) + " exited with return code " +
-                          str(return_code))
-            cont = input("Continue (y/N)? ")
-            if cont != 'y':
-                exit(1)
-
-    return wrapper
-
-
 class NaoVersion(Enum):
     V5 = 0
     V6 = 1
@@ -55,7 +41,6 @@ def subprocess_run(command):
     return return_code
 
 
-@exit_on_failure
 def copy_ssh_id(password, user, address):
     ssh_copy_id_command = [
         "sshpass", "-p", password, "ssh-copy-id", *ssh_standard_args, user + "@" + address
@@ -63,7 +48,6 @@ def copy_ssh_id(password, user, address):
     return subprocess_run(ssh_copy_id_command)
 
 
-@exit_on_failure
 def scp(sources, destination):
     if type(sources) != list:
         sources = [sources]
@@ -74,7 +58,6 @@ def scp(sources, destination):
     return subprocess_run(scp_command)
 
 
-@exit_on_failure
 def rsync(source, destination, delete=False):
     delete = [
         "--delete", "--delete-excluded"
@@ -94,14 +77,14 @@ def rsync(source, destination, delete=False):
     return subprocess_run(command)
 
 #  local SSH_CMD="ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l ${SSH_USERNAME} -i \"${SSH_KEY}\""
-#--exclude=*webots* --exclude=*.gitkeep --exclude=*.touch
+# 
+# --exclude=*webots* --exclude=*.gitkeep --exclude=*.touch
 # local RSYNC_PARAMETERS="-trzKLP ${RSYNC_EXCLUDE}"
 # if ${DELETE_FILES}; then
 #   RSYNC_PARAMETERS+=" --delete --delete-excluded"
 # rsync ${RSYNC_PARAMETERS} --rsh="${SSH_CMD}" "${TMP_DIR}/naoqi" "${RSYNC_TARGET}:"
 
 
-@exit_on_failure
 def ssh_command(address, user, command):
     command = [
         "ssh", *ssh_standard_args, "-l", user, address, command
