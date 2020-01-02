@@ -1,6 +1,8 @@
 import abc
 import functools
 import logging
+import os
+import stat
 from argparse import ArgumentParser
 
 from midaslib.command import Command, command
@@ -37,6 +39,7 @@ class TouchCommand(Command):
         self.args = args
         self.nao = nc.Nao(args.address)
 
+        os.chmod(os.path.join(nc.base_dir, "files", "ssh_key"), stat.S_IRUSR)
         self.upload_ssh_key()
 
         #

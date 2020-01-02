@@ -79,10 +79,16 @@ def rsync(source, destination, delete=False):
     delete = [
         "--delete", "--delete-excluded"
     ] if delete else []
-    SSH_CMD = f"ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l nao -i {base_dir + '/files/ssh_key'}"
+    ssh_cmd = " ".join(ssh_standard_args)
     command = [
-        "rsync", "-trzKLP", "--exclude=*webots*", "--exclude=*.gitkeep", "--exclude=*.touch",
-        *delete, f"--rsh={SSH_CMD}", source, destination
+        "rsync", "-trzKLP",
+        "--exclude=*webots*",
+        "--exclude=*.gitkeep",
+        "--exclude=*.touch",
+        *delete,
+        "-e", f"ssh {ssh_cmd}",
+        source,
+        destination
     ]
     print(" ".join(command))
     return subprocess_run(command)
@@ -121,4 +127,4 @@ class Nao:
         return copy_ssh_id("nao", self.user, self.address)
 
     def rsync(self, source, delete):
-        return rsync(source, f"{self.address}:", delete)
+        return rsync(source, f"{self.user}@{self.address}:", delete)

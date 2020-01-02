@@ -7,6 +7,13 @@ The central tool when developing RoboDucks-Code is the midas-script.
 scripts/midas -h
 ```
 
+A usual upload will look something like this
+
+```bash
+scripts/midas upload -e develop nao6 <1>
+```
+(1) `-e` means: Execute when uploaded completely.
+
 === Compile and Upload
 There are several "targets", each describing a possible device which we can build the code for.
 
