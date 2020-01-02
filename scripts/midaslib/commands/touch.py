@@ -25,7 +25,7 @@ class TouchCommand(Command):
     args = None
     help = "(Former Gammaray) Setup NAO for usage with RoboDucks Code."
 
-    @parse_address
+    @parse_address()
     def define_parser(self, parser: ArgumentParser):
         pass
 

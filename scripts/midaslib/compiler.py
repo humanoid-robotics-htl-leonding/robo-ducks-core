@@ -102,7 +102,7 @@ def get_build_dir(target: CompileTarget, build: BuildType):
 
 
 class Compiler:
-    def __init__(self, target: CompileTarget, build: BuildType = None):
+    def __init__(self, target: Type[CompileTarget], build: Type[BuildType] = None):
         if build is not None:
             self.build_type = build()
         else:
@@ -110,6 +110,7 @@ class Compiler:
         self.target = target()
 
     def compile(self):
+        logging.info(f"Compiling '{self.build_type.name}' for '{self.target.name}'")
         build_dir = os.path.join(project_root_dir, "build", self.target.foldername, self.build_type.foldername)
         cmake_cache_path = os.path.join(build_dir, "CMakeCache.txt")
         if not os.path.exists(cmake_cache_path):
