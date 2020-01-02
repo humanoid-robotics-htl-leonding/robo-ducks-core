@@ -60,7 +60,7 @@ function upload {
   fi
 
   # run rsync with prepared parameters
-  rsync ${RSYNC_PARAMETERS} --rsh="${SSH_CMD}" "${TMP_DIR}/naoqi" "${RSYNC_TARGET}:"
+  echo rsync ${RSYNC_PARAMETERS} --rsh="${SSH_CMD}" "${TMP_DIR}/naoqi" "${RSYNC_TARGET}:"
   local RSYNC_RESULT=$?
 
   # clean temp directory
