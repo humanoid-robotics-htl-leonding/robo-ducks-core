@@ -9,6 +9,8 @@ from midaslib.compiler import Targets, BuildTypes, Compiler
 
 @command("compile", "c")
 class CompileCommand(Command):
+    help = "Compile the code. (Run setup first)"
+
     def define_parser(self, parser: ArgumentParser):
         parser.add_argument("build", choices=BuildTypes.keys(), help="Build type")
         parser.add_argument("target", choices=Targets.keys(), help="Compile target")

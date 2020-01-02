@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 
 
 class Command(abc.ABC):
+    help = "Description and Help: TODO"
     def __init__(self):
         self.name = None
         pass

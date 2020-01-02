@@ -10,6 +10,7 @@ from midaslib.commands.setup import SetupCommand
 from midaslib.commands.touch import TouchCommand
 from midaslib.commands.upload import UploadCommand
 
+
 commands = [
     TouchCommand,
     CompileCommand,
@@ -30,13 +31,14 @@ class MidasParser(argparse.ArgumentParser):
 def main():
     parser = MidasParser()
     parser.add_argument('--verbose', '-v', action='count', default=0)
-    sub_parsers = parser.add_subparsers(title="Command", description="Which command to execute")
+    sub_parsers = parser.add_subparsers(title="Command", description="Which command to execute",
+                                        help="See individual helps (midas [command] -h) for more details")
 
     logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.INFO)
 
     for command_class in commands:
         inst = command_class()
-        cmd_parser = sub_parsers.add_parser(inst.name, aliases=inst.aliases)
+        cmd_parser = sub_parsers.add_parser(inst.name, aliases=inst.aliases, help=inst.help)
         inst.parser(cmd_parser)
 
     args = parser.parse_args()

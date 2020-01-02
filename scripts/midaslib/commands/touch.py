@@ -23,6 +23,7 @@ def touch_step(name):
 class TouchCommand(Command):
     nao: nc.Nao = None
     args = None
+    help = "(Former Gammaray) Setup NAO for usage with RoboDucks Code."
 
     @parse_address
     def define_parser(self, parser: ArgumentParser):

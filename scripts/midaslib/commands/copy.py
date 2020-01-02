@@ -7,6 +7,7 @@ from midaslib.naocom import Nao
 
 @command("copy", "cp")
 class CopyCommand(Command):
+    help = "Copy singular file."
     @parse_address
     def define_parser(self, parser: ArgumentParser):
         parser.add_argument("source", help="Local file")

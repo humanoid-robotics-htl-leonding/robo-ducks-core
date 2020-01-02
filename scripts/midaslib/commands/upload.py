@@ -22,6 +22,7 @@ def create_build_link(from_path_parts, to_path_parts):
 
 @command("upload", "u")
 class UploadCommand(Command):
+    help = "Upload code to nao."
 
     @parse_address
     def define_parser(self, parser: ArgumentParser):
@@ -43,7 +44,7 @@ class UploadCommand(Command):
 
         if args.config:
             create_build_link([base_dir, "home", "preferences"], [temp_dir.name, "naoqi", "preferences"])
-            create_build_link([base_dir, "home", "configuration"], [temp_dir.name, "naoqi", "configuration"])
+        create_build_link([base_dir, "home", "configuration"], [temp_dir.name, "naoqi", "configuration"])
 
         create_build_link([base_dir, "home", "motions"], [temp_dir.name, "naoqi", "motions"])
         create_build_link([base_dir, "home", "poses"], [temp_dir.name, "naoqi", "poses"])
