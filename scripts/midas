@@ -8,13 +8,15 @@ from midaslib.commands.copy import CopyCommand
 from midaslib.commands.run import RunCommand
 from midaslib.commands.setup import SetupCommand
 from midaslib.commands.touch import TouchCommand
+from midaslib.commands.upload import UploadCommand
 
 commands = [
     TouchCommand,
     CompileCommand,
     RunCommand,
     CopyCommand,
-    SetupCommand
+    SetupCommand,
+    UploadCommand
 ]
 
 

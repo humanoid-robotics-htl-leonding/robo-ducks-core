@@ -131,10 +131,8 @@ class Compiler:
                 shutil.rmtree(build_dir)
             os.makedirs(build_dir)
 
-            # cmake -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" "$@" "${BASEDIR}"
-
             other_args = self.target.setup_args
 
-            #"-G Unix Makefiles",
+            #TODO "-G Unix Makefiles",
 
             subprocess.run(["cmake", f"-DCMAKE_BUILD_TYPE={build_type.name}", *other_args, project_root_dir], cwd=build_dir)

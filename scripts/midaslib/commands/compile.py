@@ -12,7 +12,6 @@ class CompileCommand(Command):
     def define_parser(self, parser: ArgumentParser):
         parser.add_argument("build", choices=BuildTypes.keys(), help="Build type")
         parser.add_argument("target", choices=Targets.keys(), help="Compile target")
-        pass
 
     def execute(self, args):
         build_type = BuildTypes[args.build]
