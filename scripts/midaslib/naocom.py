@@ -27,12 +27,17 @@ def subprocess_run(command):
     popen = subprocess.Popen(command)
 
     def signal_handler(sign, frame):
-        popen.send_signal(sign)
+        popen.send_signal(signal.SIGINT)
         print(f"Signal {sign} was sent to running process.")
+        try: # TODO Not communicating here
+            popen.wait(2)
+        except subprocess.TimeoutExpired:
+            popen.send_signal(signal.SIGTERM)
 
     signal.signal(signal.SIGINT, signal_handler)
 
     popen.communicate()
+
 
     return_code = popen.returncode
 

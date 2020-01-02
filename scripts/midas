@@ -8,6 +8,7 @@ from midaslib.commands.copy import CopyCommand
 from midaslib.commands.kill import KillCommand
 from midaslib.commands.run import RunCommand
 from midaslib.commands.setup import SetupCommand
+from midaslib.commands.start import StartCommand
 from midaslib.commands.touch import TouchCommand
 from midaslib.commands.upload import UploadCommand
 
@@ -30,7 +31,8 @@ commands = [
     CopyCommand,
     SetupCommand,
     UploadCommand,
-    KillCommand
+    KillCommand,
+    StartCommand
 ]
 
 
