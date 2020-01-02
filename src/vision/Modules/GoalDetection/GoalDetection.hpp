@@ -30,19 +30,24 @@ private:
   	 */
   	void detectGoalPoints();
   	/**
-  	 *
+  	 * @brief checkGroup returns true if the points match the minimum requited amount and if the points form a vertical
+  	 * line that is tilted less than maxTilt
   	 */
   	bool checkGroup(VecVector2i& group);
   	/**
+   	 * @brief bombermanMaxDistanceGrouping is a grouping algorithm that groups points that are close to any existing
+   	 * member of a group.
    	 *
+   	 * See www.github.com/humanoid-robotics-htl-leonding/robo-ducks-documentation/blob/master/docs/bombermanGrouping.md
+   	 * for a more detailed description.
    	 */
    	void bombermanMaxDistanceGrouping();
   	/**
-  	 *
+  	 * @brief the recursive part of the bomberman max distance grouping
   	 */
   	void bombermanExplodeRecursive(Vector2i point);
   	/**
-  	 *
+  	 * @brief takes the two best matching goal post candidates and converts them to points in robot coordinates
   	 */
   	void createGoalData();
 
@@ -52,7 +57,7 @@ private:
 	void sendImagesForDebug();
 	/// the maximum distance between two neighbors
 	const Parameter<unsigned int> maxDistanceOfNeighbors_;
-	/// the minimum number of points in a grouü
+	/// the minimum number of points in a group
 	const Parameter<unsigned int> minPointsInGroup_;
 	/// the minimum number of points in a goal post segment
 	const Parameter<unsigned int> minSegmentLength_;
