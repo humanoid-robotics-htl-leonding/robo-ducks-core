@@ -7,6 +7,17 @@ The central tool when developing RoboDucks-Code is the midas-script.
 scripts/midas -h
 ```
 
+A usual upload will look something like this
+
+```bash
+scripts/midas upload -e develop nao6 <1>
+```
+(1) `-e` means: Execute when uploaded completely.
+
+.Useful things
+. If you get an error that the PID is locked (aka the program is already running), then you can use `midas kill`
+. If you just want to start the program use `midas start`
+
 === Compile and Upload
 There are several "targets", each describing a possible device which we can build the code for.
 
@@ -18,14 +29,25 @@ There are several "targets", each describing a possible device which we can buil
 There are several "build types", each describing a set of configs and variables set in the
 environment.
 
-.Targets
+.Build Types
 . `debug`: Include debug symbols. Only for use with `gdb` or radare2.
 . `develop`: Don't include debug symbols, but include certain Prints and Debug-Code. For use with Mate
 . `release`: Fastest. Don't use any debug stuff.
 
+```bash
+scripts/midas upload -e [build type] [target] [address]
+```
+.Useful things
+. `-c` Uploads with config
+. `-n` Uploads without compiling
+. `-e` Executes the code after uploading
+
 WARNING: If you experience a *very* slow performance (in Mate or even on the field) or tremendous
 upload times due to file sizes (e.G 100MB) you are probably compiling for debug. Don't do this if
 you don't have to.
+
+NOTE: If you are annoyed by having to type in your *password* every time, simply upload the ssh-key
+with the `midas touch` script.
 
 NOTE: If you have any questions regarding midas or think that the tool is not documented enough,
 please consult Erik Mayrhofer.

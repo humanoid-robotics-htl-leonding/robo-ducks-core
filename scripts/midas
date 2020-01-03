@@ -5,11 +5,24 @@ import sys
 
 from midaslib.commands.compile import CompileCommand
 from midaslib.commands.copy import CopyCommand
+from midaslib.commands.kill import KillCommand
 from midaslib.commands.run import RunCommand
 from midaslib.commands.setup import SetupCommand
+from midaslib.commands.start import StartCommand
 from midaslib.commands.touch import TouchCommand
 from midaslib.commands.upload import UploadCommand
 
+"""
+So I see you are interested in the midas sources. 
+Welcome. 
+
+This file is the central executable and does nothing else than defining all the ArgParsers.
+There is a central ArgParser which has subparsers for each command. All commands are registered in the 
+"commands"-list below.
+
+If you simply want to create a new command, then just copy a simple Command file (e.g commands/run.py) and
+then register it in the list below. Everything will be handled automatically.
+"""
 
 commands = [
     TouchCommand,
@@ -17,7 +30,9 @@ commands = [
     RunCommand,
     CopyCommand,
     SetupCommand,
-    UploadCommand
+    UploadCommand,
+    KillCommand,
+    StartCommand
 ]
 
 
@@ -36,6 +51,11 @@ def main():
 
     logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.INFO)
 
+    # Here all commands are registered. Every command derives from the `Command` class.
+    # Through this derivation some fields are added.
+    #  * name: The name of the Parser
+    #  * aliases: The aliases of the Parser (this deserves some more attention, because it is added through a decorator)
+    #             Look at command.py for more details.
     for command_class in commands:
         inst = command_class()
         cmd_parser = sub_parsers.add_parser(inst.name, aliases=inst.aliases, help=inst.help)
