@@ -15,4 +15,4 @@ class KillCommand(Command):
 
     def execute(self, args):
         nao = Nao(args.address)
-        nao.execute("killall tuhhNao")
+        nao.execute(["killall", "tuhhNao"])

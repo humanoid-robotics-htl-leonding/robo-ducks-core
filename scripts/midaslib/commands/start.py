@@ -15,4 +15,4 @@ class StartCommand(Command):
 
     def execute(self, args):
         nao = Nao(args.address)
-        nao.execute("/home/nao/naoqi/bin/tuhhNao")
+        nao.execute(["/home/nao/naoqi/bin/tuhhNao"])

@@ -2,7 +2,13 @@ import logging
 import os
 import signal
 import subprocess
+import sys
+import time
 from enum import Enum
+from typing import List
+
+import paramiko
+import spur
 
 
 class NaoVersion(Enum):
@@ -27,20 +33,18 @@ def subprocess_run(command):
     popen = subprocess.Popen(command)
 
     def signal_handler(sign, frame):
-        popen.send_signal(signal.SIGINT)
         print(f"Signal {sign} was sent to running process.")
-        try: # TODO Not communicating here
-            popen.wait(2)
+        popen.send_signal(sign)
+        try:  # TODO Not communicating here
+            popen.communicate(timeout=2)
+            pass
         except subprocess.TimeoutExpired:
             popen.send_signal(signal.SIGTERM)
+            pass
 
     signal.signal(signal.SIGINT, signal_handler)
-
     popen.communicate()
-
-
     return_code = popen.returncode
-
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     return return_code
@@ -81,20 +85,44 @@ def rsync(source, destination, delete=False):
     print(" ".join(command))
     return subprocess_run(command)
 
-#  local SSH_CMD="ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l ${SSH_USERNAME} -i \"${SSH_KEY}\""
-# 
-# --exclude=*webots* --exclude=*.gitkeep --exclude=*.touch
-# local RSYNC_PARAMETERS="-trzKLP ${RSYNC_EXCLUDE}"
-# if ${DELETE_FILES}; then
-#   RSYNC_PARAMETERS+=" --delete --delete-excluded"
-# rsync ${RSYNC_PARAMETERS} --rsh="${SSH_CMD}" "${TMP_DIR}/naoqi" "${RSYNC_TARGET}:"
 
-
-def ssh_command(address, user, command):
+def ssh_command_old(address, user, command):
     command = [
         "ssh", *ssh_standard_args, "-l", user, address, command
     ]
     return subprocess_run(command)
+
+
+def ssh_command(address, user, command: List[str]):
+    ssh = spur.SshShell(
+        hostname=address,
+        username=user,
+        private_key_file=os.path.join(base_dir, 'files', 'ssh_key')
+    )
+
+    obj = ssh.spawn(command, store_pid=True, stdout=sys.stdout, stderr=sys.stderr, encoding='ASCII')
+
+    was_signal_sent = 0
+
+    def signal_handler(sign, frame):
+        print(f"Interrupt was caught. Stopping Process.")
+        if was_signal_sent == 0:
+            print("Sending Interrupt.")
+            obj.send_signal(signal.SIGINT)
+        elif was_signal_sent == 1:
+            print("Sending Terminate.")
+            obj.send_signal(signal.SIGTERM)
+        else:
+            print("Sending Kill Signal.")
+            obj.send_signal(signal.SIGKILL)
+
+    signal.signal(signal.SIGINT, signal_handler)
+
+    result = obj.wait_for_result()
+
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+    return result.return_code
 
 
 class Nao:
@@ -102,7 +130,7 @@ class Nao:
         self.address = address
         self.user = "nao"
 
-    def execute(self, command):
+    def execute(self, command: List[str]):
         """
         Executes an ssh-command remotely
         """
@@ -118,7 +146,7 @@ class Nao:
         """
         Reboots the nao
         """
-        self.execute("systemctl reboot")
+        self.execute(["systemctl", "reboot"])
 
     def copy_ssh_key(self):
         """
