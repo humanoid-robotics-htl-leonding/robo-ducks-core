@@ -1,5 +1,17 @@
 #pragma once
 
+
+/**
+ * Finished: White (Game has ended)
+ * Playing: Green
+ * Set: Yellow (Donn)
+ * Ready: Blue (Go to your place)
+ * Initial: Pink (Chestbutton was pressed. Waiting for Set)
+ * Started: Rainbow
+ * Penalized: Red
+ * @param d
+ * @return
+ */
 ActionCommand chooseState(const DataSet& d){
   if(d.gameControllerState.penalty != Penalty::NONE){
     return penalized(d).combineChestLED(ActionCommand::ChestLED::red());
@@ -18,8 +30,8 @@ ActionCommand chooseState(const DataSet& d){
             .combineLeftEarLED(ActionCommand::EarLED::loading())
             .combineRightEarLED(ActionCommand::EarLED::loading());
       }
-    case GameState::READY: return ready(d).combineLeftLED(ActionCommand::EyeLED::blue());
-    case GameState::SET: return set(d).combineLeftLED(ActionCommand::EyeLED::yellow());
+    case GameState::READY: return ready(d).combineChestLED(ActionCommand::ChestLED::blue());
+    case GameState::SET: return set(d).combineChestLED(ActionCommand::ChestLED::yellow());
     case GameState::PLAYING: return playing(d).combineChestLED(ActionCommand::ChestLED::green());
     case GameState::FINISHED: return started(d).combineChestLED(ActionCommand::ChestLED::white());
     default: return ActionCommand::dead();
