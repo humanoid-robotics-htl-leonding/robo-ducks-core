@@ -23,7 +23,7 @@ private:
     const Dependency<CycleInfo> cycleInfo_;
     Production<HeadOffData> headOffData_;
 
-    TimePoint pressStarted = 0;
+    TimePoint pressStarted = TimePoint();
 };
 
 

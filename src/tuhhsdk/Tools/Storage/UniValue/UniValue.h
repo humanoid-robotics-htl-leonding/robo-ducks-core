@@ -38,6 +38,7 @@ namespace Uni
   public:
     typedef std::map<std::string, Value> valuesMap_t;
     typedef std::vector<Value> valuesList_t;
+    using valuesVector_t = valuesList_t;
 
     Value(ValueType = ValueType::NIL);
     Value(int32_t);
@@ -78,12 +79,18 @@ namespace Uni
     valuesMap_t::iterator objectEnd();
     valuesList_t::iterator listBegin();
     valuesList_t::iterator listEnd();
+    valuesVector_t::iterator vectorBegin();
+    valuesVector_t::iterator vectorEnd();
 
-    // const versions
+      // const versions
     valuesMap_t::const_iterator objectBegin() const;
     valuesMap_t::const_iterator objectEnd() const;
     valuesList_t::const_iterator listBegin() const;
     valuesList_t::const_iterator listEnd() const;
+    valuesVector_t::const_iterator vectorBegin() const;
+    valuesVector_t::const_iterator vectorEnd() const;
+
+
 
     valuesList_t::size_type size() const;
     void reserve(valuesList_t::size_type size);

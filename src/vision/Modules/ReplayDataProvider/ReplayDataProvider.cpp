@@ -39,15 +39,15 @@ void ReplayDataProvider::cycle()
     restoreHeadMatrixBuffer();
   }
   gameControllerState_->packetNumber = gameControllerState_->packetNumber++;
-  gameControllerState_->timestampOfLastMessage = 0;
+  gameControllerState_->timestampOfLastMessage = TimePoint();
   gameControllerState_->playersPerTeam = 1;
   gameControllerState_->type = CompetitionType::NORMAL;
   gameControllerState_->competitionPhase = CompetitionPhase::ROUNDROBIN;
   gameControllerState_->gameState = GameState::PLAYING;
-  gameControllerState_->gameStateChanged = 0;
+  gameControllerState_->gameStateChanged = TimePoint();
   gameControllerState_->gamePhase = GamePhase::NORMAL;
   gameControllerState_->setPlay = SetPlay::NONE;
-  gameControllerState_->setPlayChanged = 0;
+  gameControllerState_->setPlayChanged = TimePoint();
   gameControllerState_->firstHalf = true;
   gameControllerState_->kickingTeam = true;
   gameControllerState_->kickingTeamNumber = 24;

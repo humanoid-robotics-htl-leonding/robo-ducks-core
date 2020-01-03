@@ -220,24 +220,53 @@ set(TUHHSDK_HEADERS
 )
 
 set(NAO_SOURCES
-  Hardware/Nao/main.cpp
-  Hardware/Nao/NaoAudio.cpp
-  Hardware/Nao/NaoCamera.cpp
-  Hardware/Nao/NaoFakeData.cpp
-  Hardware/Nao/NaoInterface.cpp
-  Hardware/Nao/SMO.cpp
+  Hardware/Nao/common/main.cpp
+  Hardware/Nao/common/NaoAudio.cpp
+  Hardware/Nao/common/NaoCamera.cpp
+  Hardware/Nao/common/NaoFakeData.cpp
+  Hardware/Nao/common/BatteryDisplay.cpp
+  Hardware/Nao/common/SMO.cpp
+  Hardware/Nao/common/NaoCamera.cpp
+  Hardware/Nao/common/NaoAudio.cpp
   ${TUHHSDK_SOURCES}
 )
 
 set(NAO_HEADERS
-  Hardware/Nao/NaoAudio.hpp
-  Hardware/Nao/NaoCamera.hpp
-  Hardware/Nao/NaoCameraCommon.hpp
-  Hardware/Nao/NaoFakeData.hpp
-  Hardware/Nao/NaoInterface.hpp
-  Hardware/Nao/SMO.h
+  Hardware/Nao/common/NaoAudio.hpp
+  Hardware/Nao/common/NaoCamera.hpp
+  Hardware/Nao/common/NaoCameraCommon.hpp
+  Hardware/Nao/common/NaoFakeData.hpp
+  Hardware/Nao/v6/Nao6Interface.hpp
+  Hardware/Nao/common/SMO.h
+  Hardware/Nao/common/NaoCamera.hpp
+  Hardware/Nao/common/NaoAudio.hpp
   ${TUHHSDK_HEADERS}
 )
+
+
+set(NAO5_SOURCES
+  Hardware/Nao/v5/NaoInterface.cpp
+  Hardware/Nao/v5/Nao5Camera.cpp
+  ${NAO_SOURCES}
+  )
+
+set(NAO5_HEADERS
+  Hardware/Nao/v5/NaoInterface.hpp
+  Hardware/Nao/v5/Nao5Camera.hpp
+  ${NAO_HEADERS}
+  )
+
+set(NAO6_SOURCES
+  Hardware/Nao/v6/Nao6Interface.cpp
+  Hardware/Nao/v6/Nao6Camera.cpp
+  ${NAO_SOURCES}
+  )
+
+set(NAO6_HEADERS
+  Hardware/Nao/v6/Nao6Interface.hpp
+  Hardware/Nao/v6/Nao6Camera.hpp
+  ${NAO_HEADERS}
+  )
 
 set(QT_WEBSOCKET_SOURCES
   Hardware/QtWebsocket/main.cpp
@@ -306,34 +335,50 @@ endif(NOT NAO)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 if(NAO)
-  add_executable(${PROJECT_NAME}Nao ${NAO_SOURCES} ${NAO_HEADERS} $<TARGET_OBJECTS:Brain> $<TARGET_OBJECTS:Vision> $<TARGET_OBJECTS:Motion>)
+
+  if(NAO_V5)
+    add_executable(${PROJECT_NAME}Nao ${NAO5_SOURCES} ${NAO5_HEADERS} $<TARGET_OBJECTS:Brain> $<TARGET_OBJECTS:Vision> $<TARGET_OBJECTS:Motion>)
+  elseif(NAO_V6)
+    add_executable(${PROJECT_NAME}Nao ${NAO6_SOURCES} ${NAO6_HEADERS} $<TARGET_OBJECTS:Brain> $<TARGET_OBJECTS:Vision> $<TARGET_OBJECTS:Motion>)
+  else()
+    message(FATAL_ERROR "Neither V5 nor V6 were specified")
+  endif(NAO_V5)
+
+
+#  add_executable(${PROJECT_NAME}Nao ${NAO_SOURCES} ${NAO_HEADERS} $<TARGET_OBJECTS:Brain> $<TARGET_OBJECTS:Vision> $<TARGET_OBJECTS:Motion>)
   target_include_directories(${PROJECT_NAME}Nao SYSTEM PUBLIC ${TUHH_DEPS_INCLUDE_DIRECTORIES})
   target_link_libraries(${PROJECT_NAME}Nao ${TUHH_DEPS_LIBRARIES})
 
-  if(NAOLIB)
+  if(NAOLIB AND NAO_V5)
     # subtarget for tuhhALModule as external project because it needs a
     # different toolchain
     include(ExternalProject)
     ExternalProject_Add(${PROJECT_NAME}ALModule
-      SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Hardware/Nao
-      DOWNLOAD_COMMAND ""
-      UPDATE_COMMAND ""
-      CMAKE_ARGS
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-        -DOPTIMIZE_FOR_TARGET=ATOM
-        -DTOOLCHAIN_DIR=${TOOLCHAIN_DIR}
-      BUILD_ALWAYS 1
-      INSTALL_COMMAND
-        ${CMAKE_COMMAND} -E copy lib${PROJECT_NAME}ALModule.so ${CMAKE_CURRENT_BINARY_DIR})
+            SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Hardware/Nao/v5
+            DOWNLOAD_COMMAND ""
+            UPDATE_COMMAND ""
+            CMAKE_ARGS
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DOPTIMIZE_FOR_TARGET=ATOM
+            -DTOOLCHAIN_DIR=${TOOLCHAIN_DIR}
+            BUILD_ALWAYS 1
+            INSTALL_COMMAND
+            ${CMAKE_COMMAND} -E copy lib${PROJECT_NAME}ALModule.so ${CMAKE_CURRENT_BINARY_DIR})
     add_dependencies(${PROJECT_NAME}Nao ${PROJECT_NAME}ALModule)
-  endif(NAOLIB)
+  endif(NAOLIB AND NAO_V5)
 
   assign_source_group(${NAO_SOURCES} ${NAO_HEADERS})
 
   if(NOT WIN32)
-    add_custom_target(postBuildHook ALL
-      COMMAND ../../../../../scripts/linkBuild -t nao -b ${CMAKE_BUILD_TYPE}
-      DEPENDS ${PROJECT_NAME}Nao)
+    if(NAO_V5)
+      add_custom_target(postBuildHook ALL
+              COMMAND ../../../../../scripts/linkBuild -t nao5 -b ${CMAKE_BUILD_TYPE}
+              DEPENDS ${PROJECT_NAME}Nao)
+    elseif(NAO_V6)
+      add_custom_target(postBuildHook ALL
+              COMMAND ../../../../../scripts/linkBuild -t nao6 -b ${CMAKE_BUILD_TYPE}
+              DEPENDS ${PROJECT_NAME}Nao)
+    endif(NAO_V5)
   endif(NOT WIN32)
 endif(NAO)
 
