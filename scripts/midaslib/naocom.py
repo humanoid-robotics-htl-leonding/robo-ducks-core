@@ -105,6 +105,8 @@ def ssh_command(address, user, command: List[str]):
     was_signal_sent = 0
 
     def signal_handler(sign, frame):
+        nonlocal was_signal_sent
+
         print(f"Interrupt was caught. Stopping Process.")
         if was_signal_sent == 0:
             print("Sending Interrupt.")
@@ -115,6 +117,7 @@ def ssh_command(address, user, command: List[str]):
         else:
             print("Sending Kill Signal.")
             obj.send_signal(signal.SIGKILL)
+        was_signal_sent += 1
 
     signal.signal(signal.SIGINT, signal_handler)
 
