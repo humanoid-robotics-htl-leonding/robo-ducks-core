@@ -39,4 +39,4 @@ class UploadCommand(Command):
 
         if args.execute:
             nao = nc.Nao(args.address)
-            nao.execute("/home/nao/naoqi/bin/tuhhNao")
+            nao.execute(["/home/nao/naoqi/bin/tuhhNao"])
