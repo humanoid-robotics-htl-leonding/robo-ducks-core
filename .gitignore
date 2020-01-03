@@ -29,3 +29,7 @@ install_manifest.txt
 .DS_Store
 
 cmake-build-*/
+
+toolchain/hulks*
+toolchain/naoqi*
+.idea
