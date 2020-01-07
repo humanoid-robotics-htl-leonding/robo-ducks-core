@@ -14,6 +14,7 @@ class CompileTarget(ABC):
     name = None
     id = None
     foldername = None
+    setup_args = []
 
     def check_toolchain_installed(self):
         pass
@@ -57,7 +58,7 @@ class SimrobotCompileTarget(CompileTarget):
     name = "Simrobot"
     id = "simrobot"
     foldername = "simrobot"
-    setup_args = ["-DREPLAY=ON"]
+    setup_args = ["-DSIMROBOT=ON"]
 
 
 class BuildType:
@@ -134,6 +135,9 @@ class Compiler:
 
             other_args = self.target.setup_args
 
-            #TODO "-G Unix Makefiles",
+            if self.target == SimrobotCompileTarget:
+                simrobot_build_dir = os.path.join(project_root_dir, "tools", "simrobot", "build", "libtuhhSimRobot.so")
+                os.symlink(simrobot_build_dir, os.path.join(project_root_dir, "build", "simrobot", "current", "src", "tuhhsdk", "libtuhhSimRobot.so"))
 
             subprocess.run(["cmake", f"-DCMAKE_BUILD_TYPE={build_type.name}", *other_args, project_root_dir], cwd=build_dir)
+
