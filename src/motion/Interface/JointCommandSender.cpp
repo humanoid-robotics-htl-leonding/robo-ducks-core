@@ -141,7 +141,7 @@ void JointCommandSender::cycle() {
             motionState_->leftArmMotion = MotionRequest::ArmMotion::BODY;
             motionState_->rightArmMotion = MotionRequest::ArmMotion::BODY;
             motionState_->headMotion = MotionRequest::HeadMotion::BODY;
-
+		}
         // The head motion can be trusted that it only wants to send when it is allowed to.
         if (motionActivation_->headMotionActivation > 0.f) {
             for (unsigned int i = 0; i < JOINTS_HEAD::HEAD_MAX; i++) {
@@ -203,5 +203,5 @@ void JointCommandSender::cycle() {
 #endif
         robotInterface().setJointAngles(calibratedAngles_);
         robotInterface().setJointStiffnesses(stiffnesses_);
-    }
+
 }
