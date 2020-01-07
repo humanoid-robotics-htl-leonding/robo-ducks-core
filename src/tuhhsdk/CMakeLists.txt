@@ -110,7 +110,7 @@ set(TUHHSDK_HEADERS
   Data/PlayingRoles.hpp
   Data/PointOutput.hpp
   Data/RawTeamPlayers.hpp
-  Data/ReplayData.hpp
+#  Data/ReplayData.hpp
   Data/PoserOutput.hpp
   Data/RobotData.hpp
   Data/RobotKinematics.hpp
@@ -281,29 +281,30 @@ set(QT_WEBSOCKET_HEADERS
   ${TUHHSDK_HEADERS}
 )
 
-set(REPLAY_SOURCES
-  Hardware/Replay/lodepng.cpp
-  Hardware/Replay/main.cpp
-  Hardware/Replay/ReplayAudio.cpp
-  Hardware/Replay/ReplayCamera.cpp
-  Hardware/Replay/ReplayFakeData.cpp
-  Hardware/Replay/ReplayInterface.cpp
-  ${TUHHSDK_SOURCES}
-)
-
-set(REPLAY_HEADERS
-  Hardware/Replay/lodepng.h
-  Hardware/Replay/ReplayAudio.hpp
-  Hardware/Replay/ReplayCamera.hpp
-  Hardware/Replay/ReplayFakeData.hpp
-  Hardware/Replay/ReplayInterface.hpp
-  ${TUHHSDK_HEADERS}
-)
+#set(REPLAY_SOURCES
+#  Hardware/Replay/lodepng.cpp
+#  Hardware/Replay/main.cpp
+#  Hardware/Replay/ReplayAudio.cpp
+#  Hardware/Replay/ReplayCamera.cpp
+#  Hardware/Replay/ReplayFakeData.cpp
+#  Hardware/Replay/ReplayInterface.cpp
+#  ${TUHHSDK_SOURCES}
+#)
+#
+#set(REPLAY_HEADERS
+#  Hardware/Replay/lodepng.h
+#  Hardware/Replay/ReplayAudio.hpp
+#  Hardware/Replay/ReplayCamera.hpp
+#  Hardware/Replay/ReplayFakeData.hpp
+#  Hardware/Replay/ReplayInterface.hpp
+#  ${TUHHSDK_HEADERS}
+#)
 
 set(SIMROBOT_SOURCES
   Hardware/SimRobot/HULKsMenu.cpp
   Hardware/SimRobot/main.cpp
-  Hardware/SimRobot/SimRobotAudio.cpp
+  Hardware/SimRobot/SimRobotPortAudio.cpp # TODO Support SimRobotNoAudio.cpp
+  Hardware/SimRobot/SimRobotNoAudio.cpp # TODO Support SimRobotNoAudio.cpp
   Hardware/SimRobot/SimRobotAdapter.cpp
   Hardware/SimRobot/SimRobotAdapterAdapter.cpp
   Hardware/SimRobot/SimRobotCamera.cpp
@@ -314,7 +315,8 @@ set(SIMROBOT_SOURCES
 
 set(SIMROBOT_HEADERS
   Hardware/SimRobot/HULKsMenu.hpp
-  Hardware/SimRobot/SimRobotAudio.hpp
+  Hardware/SimRobot/SimRobotPortAudio.hpp  # TODO Support SimRobotNoAudio.cpp
+  Hardware/SimRobot/SimRobotNoAudio.hpp  # TODO Support SimRobotNoAudio.cpp
   Hardware/SimRobot/SimRobotAdapter.hpp
   Hardware/SimRobot/SimRobotAdapterAdapter.hpp
   Hardware/SimRobot/SimRobotCamera.hpp
@@ -437,10 +439,10 @@ if(SIMROBOT)
 
 endif(SIMROBOT)
 
-if(REPLAY)
-  add_executable(${PROJECT_NAME}Replay ${REPLAY_SOURCES} ${REPLAY_HEADERS} $<TARGET_OBJECTS:Brain> $<TARGET_OBJECTS:Vision> $<TARGET_OBJECTS:Motion>)
-  target_include_directories(${PROJECT_NAME}Replay SYSTEM PUBLIC ${TUHH_DEPS_INCLUDE_DIRECTORIES})
-  target_link_libraries(${PROJECT_NAME}Replay ${TUHH_DEPS_LIBRARIES})
-
-  assign_source_group(${REPLAY_SOURCES} ${REPLAY_HEADERS})
-endif(REPLAY)
+#if(REPLAY)
+#  add_executable(${PROJECT_NAME}Replay ${REPLAY_SOURCES} ${REPLAY_HEADERS} $<TARGET_OBJECTS:Brain> $<TARGET_OBJECTS:Vision> $<TARGET_OBJECTS:Motion>)
+#  target_include_directories(${PROJECT_NAME}Replay SYSTEM PUBLIC ${TUHH_DEPS_INCLUDE_DIRECTORIES})
+#  target_link_libraries(${PROJECT_NAME}Replay ${TUHH_DEPS_LIBRARIES})
+#
+#  assign_source_group(${REPLAY_SOURCES} ${REPLAY_HEADERS})
+#endif(REPLAY)

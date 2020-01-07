@@ -1,10 +1,11 @@
 import argparse
 import logging
+import os
 from argparse import ArgumentParser
 
 from midaslib.command import Command, command
 from midaslib.commonparsers import parse_address
-from midaslib.compiler import Targets, BuildTypes, Compiler
+from midaslib.compiler import Targets, BuildTypes, Compiler, project_root_dir
 
 
 @command("compile", "c")
@@ -20,6 +21,10 @@ class CompileCommand(Command):
         target = Targets[args.target]
         compiler = Compiler(target, build_type)
         compiler.compile()
+
+        there = os.path.join(project_root_dir, "build", "simrobot", "current")
+        if not os.path.exists(there):
+            os.symlink(os.path.join(project_root_dir, "build", "simrobot", build_type.foldername), there)
 
 
 if __name__ == '__main__':
