@@ -40,7 +40,7 @@ public:
     /// don't kick
     NONE
   };
-  /// true iff this struct is valid
+  /// true if this struct is valid
   bool valid = false;
   /// the type of the action
   Type type = Type::DRIBBLE;

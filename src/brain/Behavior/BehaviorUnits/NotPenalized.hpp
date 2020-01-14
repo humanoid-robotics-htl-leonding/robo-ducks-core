@@ -10,8 +10,8 @@ ActionCommand notPenalized(const DataSet& d)
   if (d.gameControllerState.gameState == GameState::INITIAL)
   {
     return initial(d)
-        .combineLeftLED(ActionCommand::EyeLED::EyeLED())
-        .combineRightLED(ActionCommand::EyeLED::EyeLED());
+        .combineLeftLED(ActionCommand::EyeLED::off())
+        .combineRightLED(ActionCommand::EyeLED::off());
   }
   else if (d.gameControllerState.gameState == GameState::FINISHED)
   {
@@ -24,22 +24,22 @@ ActionCommand notPenalized(const DataSet& d)
   else
   {
     const float ballAge = d.cycleInfo.getTimeDiff(d.ballState.timeWhenLastSeen);
-    ActionCommand::EyeLED ballLED = ActionCommand::EyeLED::EyeLED();
+    ActionCommand::EyeLED ballLED = ActionCommand::EyeLED::off();
     if (ballAge < 0.3)
     {
-      ballLED = ActionCommand::EyeLED::EyeLED();
+      ballLED = ActionCommand::EyeLED::off();
     }
     else if (ballAge < 1.f)
     {
-      ballLED = ActionCommand::EyeLED::EyeLED();
+      ballLED = ActionCommand::EyeLED::off();
     }
     else if (ballAge < 2.5f)
     {
-      ballLED = ActionCommand::EyeLED::EyeLED();
+      ballLED = ActionCommand::EyeLED::off();
     }
     else if (ballAge < 5.f)
     {
-      ballLED = ActionCommand::EyeLED::EyeLED();
+      ballLED = ActionCommand::EyeLED::off();
     }
     if (d.gameControllerState.gameState == GameState::READY)
     {

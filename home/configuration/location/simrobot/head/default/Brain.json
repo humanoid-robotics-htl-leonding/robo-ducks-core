@@ -1,3 +1,4 @@
 {
-    "headMovement.headPitch": 15
+    "headMovement.headPitch": 15,
+    "behavior.playerRole": "player"
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 ActionCommand initial(const DataSet& d){
-  auto command = ActionCommand::stand().combineLeftLED(ActionCommand::EyeLED::colors(1.0, 0.0, 1.0));
+  auto command = ActionCommand::stand();
 
   if(d.thoughts.handleNewState()){
     command.combineThoughtCommand(ThoughtCommand::RESET_COMPASS_DIRECTION);

@@ -14,6 +14,9 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
+namespace ducks
+{
+#include "Behavior/DucksBehaviour/Utils/WalkTo.hpp"
 #include "DucksBehaviour/Roles/None.hpp"
 #include "DucksBehaviour/Roles/Striker.hpp"
 #include "DucksBehaviour/Roles/Keeper.hpp"
@@ -29,6 +32,7 @@
 #include "DucksBehaviour/States/Set.hpp"
 #include "DucksBehaviour/States/State.hpp"
 #include "DucksBehaviour/RootBehaviour.hpp"
+}
 
 #ifdef __clang__
 #pragma clang diagnostic pop
