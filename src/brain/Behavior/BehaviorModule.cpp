@@ -4,10 +4,7 @@
 #include "ActionCommand.hpp"
 #include "BehaviorModule.hpp"
 #include "DuckUnits.h"
-
-namespace hulks {
 #include "Units.hpp"
-}
 
 BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   : Module(manager)
@@ -97,7 +94,7 @@ void BehaviorModule::cycle() {
     	if(useHulksBehaviour_){
     		actionCommand_ = hulks::rootBehavior(dataSet_);
     	}else{
-			actionCommand_ = rootBehavior(dataSet_);
+			actionCommand_ = ducks::rootBehavior(dataSet_);
     	}
 //      actionCommand_.combineLeftEarLED(ActionCommand::EarLED::loading());
     }
