@@ -1,5 +1,5 @@
 {
-  "moduleSetup" : "hulks", //{default, fullVisionFake, replay, oldWalking, hulks}
+  "moduleSetup" : "default", //{default, fullVisionFake, replay, oldWalking, hulks}
   "sharedObjects" : [
     {
       "sharedObject" : "Motion",
