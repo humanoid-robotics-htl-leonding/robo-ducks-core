@@ -1,7 +1,7 @@
 #pragma once
 #include "Behavior/Units.hpp"
 
-#warning ATTENTION! Using Hulks Behaviours
+//#warning ATTENTION! Using Hulks Behaviours
 
 ActionCommand rootBehavior(const DataSet& d)
 {
@@ -13,6 +13,6 @@ ActionCommand rootBehavior(const DataSet& d)
   }
   else
   {
-    return high ? ActionCommand::penalized().combineLeftLED(ActionCommand::EyeLED::EyeLED()) : ActionCommand::penalized();
+    return high ? ActionCommand::penalized().combineLeftLED(ActionCommand::EyeLED::pink()) : ActionCommand::penalized();
   }
 }

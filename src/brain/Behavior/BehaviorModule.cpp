@@ -5,6 +5,9 @@
 #include "BehaviorModule.hpp"
 #include "DuckUnits.h"
 
+namespace hulks {
+#include "Units.hpp"
+}
 
 BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   : Module(manager)
@@ -56,7 +59,7 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
              *replacementKeeperAction_, *buttonData_, *worldState_, *kickConfigurationData_,
              *ballSearchPosition_, *headPositionData_, thoughts_, actionCommand_)
 {
-
+	useHulksBehaviour_ = this->configuration().get("tuhhSDK.autoload", "moduleSetup").asString() == "hulks";
   {
     // This is needed because callbacks are called asynchronously and a MotionRequest is large
     // enough that it is too dangerous.
@@ -64,7 +67,12 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
     actualRemoteMotionRequest_ = remoteMotionRequest_();
   }
   useRemoteMotionRequest_() = false;
-  print("Behaviour - Init", LogLevel::INFO);
+  print("Behaviour - Init: ", LogLevel::INFO);
+  if(useHulksBehaviour_){
+  	print("Behaviour is using HULKs Behaviour", LogLevel::FANCY);
+  }else{
+  	print("Behaviour is using RoboDucks Behaviour", LogLevel::FANCY);
+  }
 }
 
 void BehaviorModule::cycle() {
@@ -86,8 +94,12 @@ void BehaviorModule::cycle() {
     if (headOffData_->shouldDie) {
         actionCommand_ = ActionCommand::dead();
     } else {
-        actionCommand_ = rootBehavior(dataSet_); //TODO Make RootBehaviour Configurable
-      actionCommand_.combineLeftEarLED(ActionCommand::EarLED::loading());
+    	if(useHulksBehaviour_){
+    		actionCommand_ = hulks::rootBehavior(dataSet_);
+    	}else{
+			actionCommand_ = rootBehavior(dataSet_);
+    	}
+//      actionCommand_.combineLeftEarLED(ActionCommand::EarLED::loading());
     }
     if (headOffData_->shouldDieSignal) {
       actionCommand_ = ActionCommand::dead().combineAudio(ActionCommand::Audio::audioC5());

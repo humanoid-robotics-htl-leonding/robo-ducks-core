@@ -58,6 +58,7 @@ private:
     std::mutex actualRemoteMotionRequestLock_;
     /// the remote motion request (may be changed by other threads)
     Parameter<MotionRequest> remoteMotionRequest_;
+    bool useHulksBehaviour_;
     /// whether the remote motion request shall be used (can only be activated in INITIAL)
     Parameter<bool> useRemoteMotionRequest_;
 

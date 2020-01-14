@@ -1,6 +1,6 @@
 #pragma once
 
-#warning Using Hulks Behaviour is deprecated
+//#warning Using Hulks Behaviour is deprecated
 
 #include "Modules/NaoProvider.h"
 
