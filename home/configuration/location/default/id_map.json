@@ -34,6 +34,16 @@
 			"bodyid": "P0000073A07S94E00048",
 			"headid": "P0000074A05S94E00036",
 			"name": "Margaret"
+		},
+		{
+			"bodyid": "P0000073A05S88M00001",
+			"headid": "P0000074A03S88F00030",
+			"name": "Alex"
+		},
+		{
+			"bodyid": "P0000073A05S88M00017",
+			"headid": "P0000074A03S88M00016",
+			"name": "Lou"
 		}
 	]
 }

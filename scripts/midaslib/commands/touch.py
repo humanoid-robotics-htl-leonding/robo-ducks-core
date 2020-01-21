@@ -37,6 +37,7 @@ class TouchCommand(Command):
     def define_parser(self, parser: ArgumentParser):
         parser.add_argument("target", choices=["nao5", "nao6"], help="Nao Version to touch")
         parser.add_argument("--no-sysroot", "-n", action="store_true", default=False, help="Nao Version to touch")
+        parser.add_argument("--hostname", type=str, default=None, help="Hostname to set the nao to")
         pass
 
     @touch_step("SSH-Key")
@@ -67,70 +68,48 @@ class TouchCommand(Command):
             self.nao.execute("rm sysroot.tar.bz2".split(' '))
             print("Done.")
 
-        #
-        #
-        # if not args.sysroot_only:
-        #     logging.info("Copy SSH-Key")
-        #     nc.nao_copy_ssh_id(args.address)
-        #
-        # if not args.skip_sysroot:
-        #     logging.info("Copy sysroot")
-        #     nc.nao_cp(base_dir() + "/../toolchain/sysroot.tar.bz2",
-        #            "nao@" + nao_address + ":")
-        #     logging.info("Extracting sysroot")
-        #     nc.nao_cmd(nao_address, "tar xf sysroot.tar.bz2")
-        #     nc.nao_cmd(nao_address, "rm sysroot.tar.bz2")
-        # else:
-        #     logging.info("Skipping sysroot...")
-        #
-        # if args.sysroot_only:
-        #     exit(0)
-        #
-        # # logging.info("Set Hostname")
-        # # nao_cmd(nao_address,
-        # #         "hostnamectl set-hostname YOUR_ROBOT_NAME_HERE" + str(args.nao_number))
-        #
-        # logging.info("Copy Files")
-        # nao_cp(base_dir() + "/files/bin", "nao@" + nao_address + ":.local")
-        # nao_cp(base_dir() + "/files/etc", "nao@" + nao_address + ":.local")
-        # nao_cp(base_dir() + "/files/asound.state", "nao@" + nao_address + ":.config")
-        # nao_cp(base_dir() + "/files/.asoundrc", "nao@" + nao_address + ":~")
-        # nao_cp(base_dir() + "/files/.autoload.ini.*", "nao@" + nao_address + ":naoqi/preferences/")
-        #
-        # logging.info("Set executable bits")
-        # nao_cmd(nao_address, "chmod u+x .local/bin/connman-hulks")
-        # nao_cmd(nao_address, "chmod u+x .local/bin/setNetwork")
-        # nao_cmd(nao_address, "chmod u+x .local/bin/alsa-restore")
-        #
-        # logging.info("Copy bashrc")
-        # nao_cp(base_dir() + "/files/bashrc_v6", "nao@" + nao_address + ":.profile")
-        #
-        # # logging.info("Set nao ip")
-        # # nao_cmd(
-        # #     nao_address, "sed -e s/{wifi_ip}/" + get_nao_address(
-        # #         args.nao_number, False) + "/ -e s/{eth_ip}/" + get_nao_address(
-        # #             args.nao_number) + "/ -i /home/nao/.local/etc/connman-hulks.yaml")
-        #
-        # logging.info("Copy services")
-        # nao_cmd(nao_address, "mkdir -p .config/systemd/user")
-        # nao_cp([
-        #     base_dir() + "/files/connman-hulks.service",
-        #     base_dir() + "/files/lola-hulks.service",
-        #     base_dir() + "/files/hulk.service",
-        #     base_dir() + "/files/alsa-restore.service"
-        # ], "nao@" + nao_address + ":.config/systemd/user/")
-        #
-        # logging.info("Activate services")
-        # nao_cmd(nao_address, "systemctl --user enable lola-hulks.service")
-        # # nao_cmd(nao_address, "systemctl --user enable connman-hulks.service")
-        # nao_cmd(nao_address, "systemctl --user enable hulk.service")
-        # nao_cmd(nao_address, "systemctl --user enable alsa-restore.service")
-        #
-        # logging.info("Add robocup.conf")
-        # nao_cmd(nao_address, "touch robocup.conf")
-        #
-        # logging.info("Reboot NAO")
-        # nao_reboot(nao_address)
+        if args.hostname:
+            print("Setting hostname")
+            self.nao.execute(f"hostnamectl set-hostname {args.hostname}".split(' '))
+
+        print("Copying configs and such...")
+        self.nao.upload(os.path.join(nc.base_dir, "files", "bin"), ".local")
+        self.nao.upload(os.path.join(nc.base_dir, "files", "etc"), ".local")
+        self.nao.upload(os.path.join(nc.base_dir, "files", "asound.state"), ".config")
+        self.nao.upload(os.path.join(nc.base_dir, "files", ".asoundrc"), "~")
+        print("Done.")
+
+        print("Set executable bits")
+        self.nao.execute("chmod u+x .local/bin/alsa-restore".split(' '))
+        # self.nao.execute("chmod u+x .local/bin/connman-hulks".split(' '))
+        self.nao.execute("chmod u+x .local/bin/setNetwork".split(' '))
+        print("Done.")
+
+        print("Copy bashrc")
+        self.nao.upload(os.path.join(nc.base_dir, "files", "bashrc_v6"), ".profile")
+        print("Done.")
+
+        print("Copy services")
+        self.nao.execute("mkdir -p .config/systemd/user".split(' '))
+        self.nao.upload(os.path.join(nc.base_dir, "files", "alsa-restore.service"), ".config/systemd/user/")
+        # self.nao.upload(os.path.join(nc.base_dir, "files", "connman-hulks.service"), ".config/systemd/user/")
+        self.nao.upload(os.path.join(nc.base_dir, "files", "hulk.service"), ".config/systemd/user/")
+        self.nao.upload(os.path.join(nc.base_dir, "files", "lola-hulks.service"), ".config/systemd/user/")
+        print("Done.")
+
+        print("Activating Services")
+        self.nao.execute("systemctl --user enable alsa-restore.service".split(' '))
+        # self.nao.execute("systemctl --user enable connman-hulks.service".split(' '))
+        self.nao.execute("systemctl --user enable hulk.service".split(' '))
+        self.nao.execute("systemctl --user enable lola-hulks.service".split(' '))
+        print("Done.")
+
+        print("Add robocup.conf")
+        self.nao.execute("touch robocup.conf".split(' '))
+        print("Done.")
+
+        print("Rebooting now.")
+        self.nao.reboot()
 
 
 if __name__ == '__main__':
