@@ -1,4 +1,6 @@
 {
+   "autoExposure" : 0,
+   "autoWhiteBalance" : 1,
    "aeMaxAGain" : 256,
    "aeMaxDGain" : 132,
    "aeMinAGain" : 32,
@@ -11,6 +13,7 @@
    "exposure" : 0,
    "exposureAlgorithm" : 1,
    "fadeToBlack" : 0,
+   "focus" : 50,
    "fps" : 30,
    "gain" : 90,
    "gamma" : 220,
@@ -21,5 +24,7 @@
    ],
    "saturation" : 128,
    "sharpness" : 0,
-   "whiteBalanceTemperature" : 0
+   "whiteBalanceTemperature" : 0,
+   "hFlip" : 0,
+   "vFlip" : 0
 }
