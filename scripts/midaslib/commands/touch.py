@@ -21,14 +21,22 @@ def touch_step(name):
     return touch_decoration
 
 
+sysroot_file_names = {
+    "nao5": "sysroot-7.3.0-1.tar.bz2",
+    "nao6": "sysroot-9.2.0-1.tar.bz2"
+}
+
+
 @command("touch", "t")
 class TouchCommand(Command):
     nao: nc.Nao = None
     args = None
     help = "(Former Gammaray) Setup NAO for usage with RoboDucks Code."
 
-    @parse_address()
+    @parse_address(True)
     def define_parser(self, parser: ArgumentParser):
+        parser.add_argument("target", choices=["nao5", "nao6"], help="Nao Version to touch")
+        parser.add_argument("--no-sysroot", "-n", action="store_true", default=False, help="Nao Version to touch")
         pass
 
     @touch_step("SSH-Key")
@@ -41,6 +49,23 @@ class TouchCommand(Command):
 
         os.chmod(os.path.join(nc.base_dir, "files", "ssh_key"), stat.S_IRUSR)
         self.upload_ssh_key()
+
+        if not args.no_sysroot:
+            if args.target not in sysroot_file_names:
+                raise RuntimeError(f"Unknown nao version: {args.target}.")
+
+            sysroot_path = os.path.join(nc.project_base_dir, "toolchain", sysroot_file_names[args.target])
+
+            if not os.path.exists(sysroot_path):
+                raise RuntimeError(f"Please install sysroot for {args.target} as {sysroot_path}")
+
+            print("Uploading Sysroot...")
+            self.nao.upload(sysroot_path, "sysroot.tar.bz2")
+            print("Extracting Sysroot...")
+            self.nao.execute("tar xf sysroot.tar.bz2".split(' '))
+            print("Deleting old Sysroot...")
+            self.nao.execute("rm sysroot.tar.bz2".split(' '))
+            print("Done.")
 
         #
         #
