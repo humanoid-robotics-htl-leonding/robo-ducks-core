@@ -66,9 +66,9 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   useRemoteMotionRequest_() = false;
   print("Behaviour - Init: ", LogLevel::INFO);
   if(useHulksBehaviour_){
-  	print("Behaviour is using HULKs Behaviour", LogLevel::FANCY);
+  	print(" ==== Behaviour is using HULKs Behaviour ==== ", LogLevel::INFO);
   }else{
-  	print("Behaviour is using RoboDucks Behaviour", LogLevel::FANCY);
+  	print(" ==== Behaviour is using RoboDucks Behaviour ==== ", LogLevel::INFO);
   }
 }
 
