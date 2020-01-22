@@ -1,5 +1,5 @@
 {
-   "autoExposure" : 0,
+   "autoExposure" : 1,
    "autoWhiteBalance" : 1,
    "aeMaxAGain" : 256,
    "aeMaxDGain" : 132,
