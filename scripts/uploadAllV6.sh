@@ -7,5 +7,6 @@ cd $pwd
 list="naograce naodon naoalex naomarg"
 
 for nao in $list; do
-  echo ./midas upload -c develop nao6 $nao
+  echo "===== $nao ====="
+  ./midas upload -c develop nao6 $nao
 done
