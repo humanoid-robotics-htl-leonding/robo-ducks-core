@@ -8,7 +8,7 @@ ActionCommand playSoccer(const DataSet& d)
     // Set a debug target pose which can be set by config/ofa.
     return ActionCommand::walk(d.parameters.debugTargetRelativePose())
         .combineHead(trackBall(d))
-        .combineRightLED(ActionCommand::EyeLED::off());
+        .combineRightLED(ActionCommand::EyeLED::white());
   }
   if (d.gameControllerState.gamePhase == GamePhase::PENALTYSHOOT)
   {
@@ -17,7 +17,7 @@ ActionCommand playSoccer(const DataSet& d)
   if (d.playingRoles.role == PlayingRole::KEEPER)
   {
     // the keeper should always be a keeper
-    return keeper(d).combineRightLED(ActionCommand::EyeLED::off());
+    return keeper(d).combineRightLED(ActionCommand::EyeLED::blue());
   }
   // Avoid illegal defender
   if (!d.worldState.ballIsFree)
@@ -51,15 +51,15 @@ ActionCommand playSoccer(const DataSet& d)
     switch (d.playingRoles.role)
     {
       case PlayingRole::STRIKER:
-        return striker(d).combineRightLED(ActionCommand::EyeLED::off());
+        return striker(d).combineRightLED(ActionCommand::EyeLED::red());
       case PlayingRole::DEFENDER:
-        return defender(d).combineRightLED(ActionCommand::EyeLED::off());
+        return defender(d).combineRightLED(ActionCommand::EyeLED::green());
       case PlayingRole::BISHOP:
-        return bishop(d).combineRightLED(ActionCommand::EyeLED::off());
+        return bishop(d).combineRightLED(ActionCommand::EyeLED::yellow());
       case PlayingRole::SUPPORT_STRIKER:
-        return support(d).combineRightLED(ActionCommand::EyeLED::off());
+        return support(d).combineRightLED(ActionCommand::EyeLED::pink());
       case PlayingRole::REPLACEMENT_KEEPER:
-        return replacementKeeper(d).combineRightLED(ActionCommand::EyeLED::off());
+        return replacementKeeper(d).combineRightLED(ActionCommand::EyeLED::lightblue());
       default:
         assert(false);
         return defender(d);
@@ -67,7 +67,7 @@ ActionCommand playSoccer(const DataSet& d)
   }
   else
   {
-    return searchForBall(d).combineRightLED(ActionCommand::EyeLED::off());
+    return searchForBall(d).combineRightLED(ActionCommand::EyeLED::blue());
   }
 }
 
