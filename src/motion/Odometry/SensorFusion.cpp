@@ -22,8 +22,13 @@ SensorFusion::SensorFusion(const ModuleBase& module)
 
 void SensorFusion::update(const Vector3f& extGyro, const Vector3f& extAccel)
 {
+#ifdef NAOV6
+  Vector3d eigenExtGyro(extGyro.x(), extGyro.y(), extGyro.z());
+  Vector3d eigenExtAccel(-extAccel.x(), -extAccel.y(), -extAccel.z());
+#else
   Vector3d eigenExtGyro(extGyro.x(), extGyro.y(), -extGyro.z());
   Vector3d eigenExtAccel(-extAccel.x(), +extAccel.y(), -extAccel.z());
+#endif
 //pseudo fix, only gets called on startup
   if (!initialized_ && eigenExtAccel.norm() >= 8.0f)
   {
