@@ -1,5 +1,5 @@
 {
-   "autoExposure" : 0,
+   "autoExposure" : 1,
    "autoWhiteBalance" : 1,
    "aeMaxAGain" : 256,
    "aeMaxDGain" : 132,
@@ -10,7 +10,7 @@
    "brightnessDark" : 27,
    "bufferCount" : 3,
    "contrast" : 55,
-   "exposure" : 0,
+   "exposure" : 100000,
    "exposureAlgorithm" : 1,
    "fadeToBlack" : 0,
    "focus" : 50,
@@ -22,7 +22,7 @@
       640,
       480
    ],
-   "saturation" : 128,
+   "saturation" : 200,
    "sharpness" : 0,
    "whiteBalanceTemperature" : 0,
    "hFlip" : 1,
