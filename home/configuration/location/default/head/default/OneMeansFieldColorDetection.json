@@ -1,8 +1,8 @@
 {
-   "calculateInitialGuess" : true,
+   "calculateInitialGuess" : false,
    "initialGuessBottom" : [
-      100,
-      120
+      110,
+      115
    ],
    "initialGuessTop" : [
       100,
