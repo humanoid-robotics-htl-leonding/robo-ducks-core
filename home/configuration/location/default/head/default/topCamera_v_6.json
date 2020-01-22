@@ -1,5 +1,5 @@
 {
-   "autoExposure" : 0,
+   "autoExposure" : 1,
    "autoFocus" : 0,
    "autoHue" : 1,
    "autoWhiteBalance" : 1,
@@ -8,10 +8,10 @@
    "contrast" : 55,
    "enableDigitalEffects": false,
    "enableAWBBias": false,
-   "exposure" : 25000,
+   "exposure" : 100000,
    "focus" : 0,
    "fps" : 30,
-   "gain" : 0,
+   "gain" : 70,
    "hue" : 0,
    "registerAddr": 0,
    "registerWrite": false,
@@ -20,7 +20,7 @@
       640,
       480
    ],
-   "saturation" : 128,
+   "saturation" : 200,
    "sharpness" : 0,
    "whiteBalanceTemperature" : 3500
 }
