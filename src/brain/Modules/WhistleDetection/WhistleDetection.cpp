@@ -30,36 +30,38 @@ WhistleDetection::WhistleDetection(const ModuleManagerInterface &manager)
 void WhistleDetection::cycle()
 {
 	Chronometer time(debug(), mount_ + ".cycle_time");
-	if (rawGameControllerState_->gameState != GameState::SET) {
-		return;
-	}
-	if (recordData_->samples.empty()) {
-		return;
-	}
-	print("WD cycle", LogLevel::INFO);
+//	if (rawGameControllerState_->gameState != GameState::SET) {
+//		return;
+//	}
+	for (unsigned long channelIndex = 0; channelIndex < recordData_->samples.size(); channelIndex++) {
+		auto channel = recordData_->samples[channelIndex];
+		debug().update(mount_ + ".channel_" + std::to_string(channelIndex), channel);
+		if (channel.empty()) {
+			continue;
+		}
 
-	for (auto &sample : recordData_->samples[0]) //Todo Proper Channel Handling here
-	{
-		fftBuffer_.push_back(sample);
-		if (fftBuffer_.size() == fftBufferSize_) {
-			// check current fft buffer for whistle
-			foundWhistlesBuffer_.push_back(fftBufferContainsWhistle());
-			// count the number of found whistles in the whistle buffer
-			unsigned int whistleCount = 0;
-			for (unsigned int i = 0; i < foundWhistlesBuffer_.size(); i++) {
-				whistleCount += foundWhistlesBuffer_[i];
+		for (auto &sample : channel) //Todo Proper Channel Handling here
+		{
+			fftBuffer_.push_back(sample);
+			if (fftBuffer_.size() == fftBufferSize_) {
+				// check current fft buffer for whistle
+				foundWhistlesBuffer_.push_back(fftBufferContainsWhistle());
+				// count the number of found whistles in the whistle buffer
+				unsigned int whistleCount = 0;
+				for (bool i : foundWhistlesBuffer_) {
+					whistleCount += i;
+				}
+				// a whistle is reported if the whistle buffer contains at least a certain number of found whistles
+				if (whistleCount >= minWhistleCount_()) {
+					print("Whistle Heard!", LogLevel::INFO);
+					lastTimeWhistleHeard_ = cycleInfo_->startTime;
+					break;
+				}
+				fftBuffer_.clear();
+				break;
 			}
-			print("Whistle Heard", whistleCount, LogLevel::INFO);
-			// a whistle is reported if the whistle buffer contains at least a certain number of found whistles
-			if (whistleCount >= minWhistleCount_()) {
-				print("Whistle Heard!", LogLevel::INFO);
-				lastTimeWhistleHeard_ = cycleInfo_->startTime;
-			}
-			fftBuffer_.clear();
-			break;
 		}
 	}
-
 	whistleData_->lastTimeWhistleHeard = lastTimeWhistleHeard_;
 }
 
