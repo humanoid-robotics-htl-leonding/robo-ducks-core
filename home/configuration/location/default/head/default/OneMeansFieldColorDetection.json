@@ -1,12 +1,12 @@
 {
    "calculateInitialGuess" : false,
    "initialGuessBottom" : [
-      125,
-      120
+      115,
+      112
    ],
    "initialGuessTop" : [
-      120,
-      120
+      110,
+      115
    ],
    "thresholdUV" : 10,
    "thresholdY" : 1.75

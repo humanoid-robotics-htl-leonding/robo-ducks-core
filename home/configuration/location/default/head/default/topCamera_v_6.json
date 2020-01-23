@@ -8,7 +8,7 @@
    "contrast" : 55,
    "enableDigitalEffects": false,
    "enableAWBBias": false,
-   "exposure" : 6000,
+   "exposure" : 7000,
    "focus" : 0,
    "fps" : 30,
    "gain" : 120,
@@ -20,7 +20,7 @@
       640,
       480
    ],
-   "saturation" : 200,
+   "saturation" : 255,
    "sharpness" : 0,
    "whiteBalanceTemperature" : 3500
 }
