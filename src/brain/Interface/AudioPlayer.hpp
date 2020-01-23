@@ -31,7 +31,7 @@ private:
   /// a reference to the wrapper for the (possibly hardware specific) audio interface
   AudioInterface& audioInterface_;
   /// This data will be played back via the audioInterface_.
-  Dependency<PlaybackData> playbackData_;
+  Dependency<PlaybackData<AudioInterface::numChannels>> playbackData_;
   Dependency<AudioRequest> audioRequest_;
   Dependency<CycleInfo> cycleInfo_;
 
