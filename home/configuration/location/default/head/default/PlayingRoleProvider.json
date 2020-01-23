@@ -3,8 +3,8 @@
   "assignBishop": false,
   "assignBishopWithLessThanFourFieldPlayers": false,
   "playerOneCanBecomeStriker": true,
-  "allowReplacementKeeper": true,
-  "playerOneDistanceThreshold": 1.5,
+  "allowReplacementKeeper": false,
+  "playerOneDistanceThreshold": 0.5,
   "keeperTimeToReachBallPenalty": 0,
   "forceRole": "none"
 }

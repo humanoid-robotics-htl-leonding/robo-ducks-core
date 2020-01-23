@@ -15,7 +15,7 @@
    "fadeToBlack" : 0,
    "focus" : 50,
    "fps" : 30,
-   "gain" : 90,
+   "gain" : 0,
    "gamma" : 220,
    "hue" : 0,
    "resolution" : [
