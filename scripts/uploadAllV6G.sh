@@ -4,7 +4,7 @@ pwd=$(dirname $(readlink -f $0))
 echo "Executing from $pwd"
 cd $pwd
 
-list="naolou naodon naoalex naomarg"
+list="naolou naodon naoalex naomarg naograce"
 
 for nao in $list; do
   echo "===== $nao ====="
