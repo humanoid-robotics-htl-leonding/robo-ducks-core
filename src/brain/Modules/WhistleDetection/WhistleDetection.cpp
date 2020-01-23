@@ -50,6 +50,7 @@ void WhistleDetection::cycle()
 				unsigned int whistleCount = 0;
 				for (bool i : foundWhistlesBuffer_) {
 					whistleCount += i;
+					print("Whistles Heard: ", whistleCount, LogLevel::INFO);
 				}
 				// a whistle is reported if the whistle buffer contains at least a certain number of found whistles
 				if (whistleCount >= minWhistleCount_()) {
