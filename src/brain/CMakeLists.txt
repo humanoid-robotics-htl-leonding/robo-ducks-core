@@ -78,6 +78,7 @@ set(HEADERS
   Modules/HeadDamageProvider/HeadDamageProvider.hpp
   Modules/MotionPlanning/MotionPlanner.hpp
   Modules/WhistleDetection/WhistleDetection.hpp
+  Modules/WhistleDetection/FakeWhistleDetection.hpp
   Modules/ReplayRecorder/ReplayRecorder.hpp
   Modules/OdometryOffsetProvider/OdometryOffsetProvider.hpp
   Modules/TeamPlayersAugmenter/TeamPlayersAugmenter.hpp
@@ -132,6 +133,7 @@ set(SOURCES
   Modules/HeadDamageProvider/HeadDamageProvider.cpp
   Modules/MotionPlanning/MotionPlanner.cpp
   Modules/WhistleDetection/WhistleDetection.cpp
+  Modules/WhistleDetection/FakeWhistleDetection.cpp
   Modules/ReplayRecorder/ReplayRecorder.cpp
   Modules/OdometryOffsetProvider/OdometryOffsetProvider.cpp
   Modules/TeamPlayersAugmenter/TeamPlayersAugmenter.cpp

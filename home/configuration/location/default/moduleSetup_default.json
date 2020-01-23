@@ -81,7 +81,10 @@
   "UNSW2014Generator" : true,
   "WalkManager" : true,
   "WalkingEngine" : false,
-  "WhistleDetection" : true,
+
+  "WhistleDetection" : false,
+  "FakeWhistleDetection" : true,
+
   "WhistleIntegration" : true,
   "WorldStateProvider" : true
 }
