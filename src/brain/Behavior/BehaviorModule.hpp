@@ -93,7 +93,7 @@ private:
 
     Production<MotionRequest> motionRequest_;
     Production<AudioRequest> audioRequest_;
-    Production<PlaybackData> playbackData_;
+    Production<PlaybackData<AudioInterface::numChannels>> playbackData_;
 
     Production<LEDRequest> ledRequest_;
 

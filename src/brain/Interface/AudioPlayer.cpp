@@ -24,9 +24,9 @@ AudioPlayer::~AudioPlayer()
 
 void AudioPlayer::cycle()
 {
-  if (!playbackData_->samples.empty())
+  if (!playbackData_->samples[0].empty())
   {
-    audioInterface_.playbackAudioData(playbackData_->samples);
+    audioInterface_.playbackAudioData(playbackData_->samples[0]);
   }else if(audioRequest_->frequency != 0){
 
 

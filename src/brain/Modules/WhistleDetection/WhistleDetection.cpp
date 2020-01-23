@@ -23,7 +23,7 @@ WhistleDetection::WhistleDetection(const ModuleManagerInterface& manager)
 
 void WhistleDetection::cycle()
 {
-  Chronometer time(debug(), mount_ + ".cycle_time");
+ Chronometer time(debug(), mount_ + ".cycle_time");
   if (rawGameControllerState_->gameState != GameState::SET)
   {
     return;
@@ -32,8 +32,9 @@ void WhistleDetection::cycle()
   {
     return;
   }
+  print("WD cycle", LogLevel::INFO);
 
-  for (auto& sample : recordData_->samples)
+  for (auto& sample : recordData_->samples[0]) //Todo Proper Channel Handling here
   {
     fftBuffer_.push_back(sample);
     if (fftBuffer_.size() == fftBufferSize_)
@@ -46,6 +47,7 @@ void WhistleDetection::cycle()
       {
         whistleCount += foundWhistlesBuffer_[i];
       }
+      print("Whistle Heard", whistleCount, LogLevel::INFO);
       // a whistle is reported if the whistle buffer contains at least a certain number of found whistles
       if (whistleCount >= minWhistleCount_())
       {

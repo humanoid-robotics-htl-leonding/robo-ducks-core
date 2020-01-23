@@ -33,7 +33,7 @@ public:
 
 private:
   /// audio samples that were collected in the last cycle
-  const Dependency<RecordData> recordData_;
+  const Dependency<RecordData<AudioInterface::numChannels>> recordData_;
   /// the game controller state before whistle integration to run only in SET
   const Dependency<RawGameControllerState> rawGameControllerState_;
   /// the cycle info
