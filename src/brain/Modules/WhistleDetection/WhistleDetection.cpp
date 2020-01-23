@@ -30,9 +30,9 @@ WhistleDetection::WhistleDetection(const ModuleManagerInterface &manager)
 void WhistleDetection::cycle()
 {
 	Chronometer time(debug(), mount_ + ".cycle_time");
-//	if (rawGameControllerState_->gameState != GameState::SET) {
-//		return;
-//	}
+	if (rawGameControllerState_->gameState != GameState::SET) {
+		return;
+	}
 	for (unsigned long channelIndex = 0; channelIndex < recordData_->samples.size(); channelIndex++) {
 		auto channel = recordData_->samples[channelIndex];
 		debug().update(mount_ + ".channel_" + std::to_string(channelIndex), channel);
