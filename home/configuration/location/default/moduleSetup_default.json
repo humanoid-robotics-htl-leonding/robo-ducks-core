@@ -82,8 +82,8 @@
   "WalkManager" : true,
   "WalkingEngine" : false,
 
-  "WhistleDetection" : false,
-  "FakeWhistleDetection" : true,
+  "WhistleDetection" : true,
+  "FakeWhistleDetection" : false,
 
   "WhistleIntegration" : true,
   "WorldStateProvider" : true
