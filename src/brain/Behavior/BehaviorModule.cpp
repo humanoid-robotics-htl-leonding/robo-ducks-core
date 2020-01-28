@@ -79,14 +79,23 @@ void BehaviorModule::cycle() {
   } else {
 //    thoughts_->pushState(gameControllerState_->gameState)
 
-    if (headOffData_->shouldDie) {
-        actionCommand_ = ActionCommand::dead();
-    } else {
-		actionCommand_ = hulks::rootBehavior(dataSet_);
-    }
-    if (headOffData_->shouldDieSignal) {
-      actionCommand_ = ActionCommand::dead().combineAudio(ActionCommand::Audio::audioC5());
-    }
+	  if (headOffData_->shouldDie) {
+		  std::cout << "A" << std::endl;
+		  actionCommand_ = ActionCommand::dead().combineChestLED(ActionCommand::ChestLED::rainbow());
+	  }
+	  else {
+		  actionCommand_ = hulks::rootBehavior(dataSet_);
+	  }
+	  if (headOffData_->shouldDieSignal) {
+		  std::cout << "B" << std::endl;
+		  actionCommand_ = ActionCommand::dead()
+			  .combineChestLED(ActionCommand::ChestLED::red())
+			  .combineAudio(ActionCommand::Audio::audioC5());
+	  }
+	  if(headOffData_->lastCycle) {
+		  std::cout << "C" << std::endl;
+		  actionCommand_ = ActionCommand::dead();
+	  }
     actionCommand_.toMotionRequest(*motionRequest_);
 //    actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
     actionCommand_.toAudioRequest(*audioRequest_);
