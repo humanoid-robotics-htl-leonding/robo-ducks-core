@@ -1,6 +1,6 @@
 = RoboDucks
 
-== Usage of `M̀idas`
+== Usage of `Midas`
 The central tool when developing RoboDucks-Code is the midas-script.
 
 ``` bash
