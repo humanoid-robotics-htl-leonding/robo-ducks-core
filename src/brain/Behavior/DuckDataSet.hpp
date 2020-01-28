@@ -33,7 +33,7 @@
 
 class Thoughts;
 
-struct DataSet
+struct DuckDataSet
 {
   /**
    * @brief DataSet constructs a DataSet from references to the database
@@ -65,7 +65,7 @@ struct DataSet
    * @param hpd a reference to the head position data
    * @param lac a reference to the last action command
    */
-  DataSet(const ModuleBase& module, const GameControllerState& gcs, const BallState& bs,
+  DuckDataSet(const ModuleBase& module, const GameControllerState& gcs, const BallState& bs,
           const RobotPosition& rp, const BodyPose& bp, const PlayerConfiguration& pc,
           const PlayingRoles& pr, const MotionState& ms, const HeadMotionOutput& hmo,
           const TeamBallModel& tbm, const TeamPlayers& tps, const FieldDimensions& fd,
@@ -74,6 +74,8 @@ struct DataSet
           const DefendingPosition& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
           const ReplacementKeeperAction& rk, const ButtonData& bd, const WorldState& ws,
           const KickConfigurationData& kcd, const BallSearchPosition& bsp, const HeadPositionData& hpd,
+          Thoughts& thdat,
+
           const ActionCommand& lac)
     : parameters(module)
     , gameControllerState(gcs)
@@ -103,6 +105,7 @@ struct DataSet
     , worldState(ws)
     , kickConfigurationData(kcd)
     , lastActionCommand(lac)
+    , thoughts(thdat)
   {
   }
   /// struct to hold parameters of the behavior
@@ -161,4 +164,6 @@ struct DataSet
   const KickConfigurationData& kickConfigurationData;
   /// a reference to the last action command
   const ActionCommand& lastActionCommand;
+
+  Thoughts& thoughts;
 };

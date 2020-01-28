@@ -58,7 +58,6 @@ private:
     std::mutex actualRemoteMotionRequestLock_;
     /// the remote motion request (may be changed by other threads)
     Parameter<MotionRequest> remoteMotionRequest_;
-    bool useHulksBehaviour_;
     /// whether the remote motion request shall be used (can only be activated in INITIAL)
     Parameter<bool> useRemoteMotionRequest_;
 
@@ -100,9 +99,6 @@ private:
     Production<ThoughtControlRequest> thoughtControlRequest_;
     /// the last action command that was computed by the behavior
     ActionCommand actionCommand_;
-    /// Thoughts
-    Thoughts thoughts_;
-    /// the data set/bundle that is passed to the behavior
     DataSet dataSet_;
     /// a thread-safe copy of the remote motion request
     MotionRequest actualRemoteMotionRequest_;

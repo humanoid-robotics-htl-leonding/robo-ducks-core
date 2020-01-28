@@ -5,7 +5,10 @@
   "BallFilter" : true,
   "BallSearchMapManager" : true,
   "BallSearchPositionProvider" : true,
-  "BehaviorModule" : true,
+
+  "BehaviorModule" : false,
+  "DuckBehaviorModule" : true,
+
   "BishopPositionProvider" : true,
   "BodyDamageProvider" : true,
   "BodyPoseEstimation" : true,

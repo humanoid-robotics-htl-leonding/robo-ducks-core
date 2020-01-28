@@ -12,24 +12,24 @@
  * @param d
  * @return
  */
-ActionCommand chooseState(const DataSet &d)
+ActionCommand chooseState(const DuckDataSet &d)
 {
 	if (d.gameControllerState.penalty != Penalty::NONE) {
 		return penalized(d).combineChestLED(ActionCommand::ChestLED::red());
 	}
-	if(
+	if (
 		d.bodyPose.fallen &&
-		d.gameControllerState.gameState != GameState::SET &&
-		d.gameControllerState.gameState != GameState::INITIAL
+			d.gameControllerState.gameState != GameState::SET &&
+			d.gameControllerState.gameState != GameState::INITIAL
 		) {
 		return ActionCommand::standUp()
-		.combineLeftFootLED(ActionCommand::FootLED::rainbow())
-		.combineRightFootLED(ActionCommand::FootLED::rainbow());
+			.combineLeftFootLED(ActionCommand::FootLED::rainbow())
+			.combineRightFootLED(ActionCommand::FootLED::rainbow());
 	}
 	switch (d.gameControllerState.gameState) {
 		case GameState::INITIAL:
 			if (d.gameControllerState.chestButtonWasPressedInInitial) {
-        		return initial(d).combineChestLED(ActionCommand::ChestLED::pink());
+				return initial(d).combineChestLED(ActionCommand::ChestLED::pink());
 			}
 			else {
 				return started(d)

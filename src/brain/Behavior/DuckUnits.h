@@ -4,7 +4,7 @@
 #pragma once
 
 #include "ActionCommand.hpp"
-#include "DataSet.hpp"
+#include "DuckDataSet.hpp"
 
 #ifdef __clang__
 #pragma clang diagnostic push
