@@ -50,8 +50,12 @@ void CameraCalibration::cycle()
   }
 
   calibImage_ = image_data_->image422.to444Image();
-  projectPenaltyAreaOnImages();
-  projectCenterCircleOnImages();
+  if (image_data_->camera == Camera::TOP) {
+	  projectPenaltyAreaOnImages();
+  }
+  else {
+	  projectCenterCircleOnImages();
+  }
   sendImageForCalibration();
 }
 
@@ -125,36 +129,52 @@ void CameraCalibration::projectPenaltyAreaOnImages()
 }
 
 void CameraCalibration::projectCenterCircleOnImages() {
-	Vector2f top, left, right;
+	Vector2f zero, center, left, right, cut;
 
 	// Retrieve the field dimensions in meters
+	float fieldWidth = field_dimensions_->fieldWidth;
 	float centerCircleRadius = field_dimensions_->fieldCenterCircleDiameter / 2;
 
-	top.x() = centerCircleRadius;
-	top.y() = 0;
+	zero.x() = 0;
+	zero.y() = 0;
 
-	left.x() = 0.866 * centerCircleRadius;
-	left.y() = -centerCircleRadius * 0.5;
+	center.x() = fieldWidth / 2;
+	center.y() = 0;
 
-	right.x() = 0.866 * centerCircleRadius;
-	right.y() = centerCircleRadius * 0.5;
+	left.x() = fieldWidth / 2;
+	left.y() = -centerCircleRadius;
 
-	Vector2i pt, pl, pr;
-	if (!camera_matrix_->robotToPixel(top, pt) ||
+	right.x() = fieldWidth / 2;
+	right.y() = centerCircleRadius;
+
+	cut.x() = fieldWidth / 2 - centerCircleRadius;
+	cut.y() = 0;
+
+	Vector2i pz, pcc, pl, pr, pct;
+	if (!camera_matrix_->robotToPixel(zero, pz) ||
+		!camera_matrix_->robotToPixel(center, pcc) ||
 		!camera_matrix_->robotToPixel(left, pl) ||
-		!camera_matrix_->robotToPixel(right, pr))
+		!camera_matrix_->robotToPixel(right, pr) ||
+		!camera_matrix_->robotToPixel(cut, pct))
 	{
-		Log(LogLevel::WARNING) << "The center circle projection is outside of the observable image!";
+		Log(LogLevel::WARNING) << "The projection is outside of the observable image!";
 		return;
 	}
 
-	pt = image_data_->image422.get444From422Vector(pt);
+	pz = image_data_->image422.get444From422Vector(pz);
+	pcc = image_data_->image422.get444From422Vector(pcc);
 	pl = image_data_->image422.get444From422Vector(pl);
 	pr = image_data_->image422.get444From422Vector(pr);
+	pct = image_data_->image422.get444From422Vector(pct);
 
-	calibImage_.cross(pt, 8, Color::RED);
+	calibImage_.cross(pcc, 8, Color::RED);
 	calibImage_.cross(pl, 8, Color::RED);
 	calibImage_.cross(pr, 8, Color::RED);
+	calibImage_.cross(pct, 8, Color::RED);
+
+	calibImage_.line(pz, pcc, Color::PINK);
+	calibImage_.line(pct, pl, Color::PINK);
+	calibImage_.line(pct, pr, Color::PINK);
 }
 
 void CameraCalibration::sendImageForCalibration() {
