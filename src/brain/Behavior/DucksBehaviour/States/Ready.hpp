@@ -2,7 +2,7 @@
 
 
 
-ActionCommand ready(const DataSet &d)
+ActionCommand ready(const DuckDataSet &d)
 {
 	auto targetPos = d.setPosition.position;
 

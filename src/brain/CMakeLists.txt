@@ -6,6 +6,7 @@ set(HEADERS
   print.h
   Behavior/ActionCommand.hpp
   Behavior/BehaviorModule.hpp
+  Behavior/DuckBehaviorModule.hpp
   Behavior/BehaviorParameters.hpp
   Behavior/BishopPositionProvider.hpp
   Behavior/DefendingPositionProvider.hpp
@@ -96,6 +97,7 @@ set(SOURCES
   Behavior/BallSearchMapManager.cpp
   Behavior/BallSearchPositionProvider.cpp
   Behavior/BehaviorModule.cpp
+  Behavior/DuckBehaviorModule.cpp
   Behavior/BishopPositionProvider.cpp
   Behavior/DefendingPositionProvider.cpp
   Behavior/HeadPositionProvider.cpp

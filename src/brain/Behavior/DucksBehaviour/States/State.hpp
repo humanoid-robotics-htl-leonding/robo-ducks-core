@@ -12,7 +12,7 @@
  * @param d
  * @return
  */
-ActionCommand chooseState(const DataSet &d)
+ActionCommand chooseState(const DuckDataSet &d)
 {
 	if (d.gameControllerState.penalty != Penalty::NONE) {
 		return penalized(d).combineChestLED(ActionCommand::ChestLED::red());

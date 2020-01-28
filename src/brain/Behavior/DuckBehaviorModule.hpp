@@ -34,19 +34,19 @@
 #include "Data/LEDRequest.hpp"
 #include "Framework/Module.hpp"
 #include "Thoughts.hpp"
-#include "DataSet.hpp"
+#include "DuckDataSet.hpp"
 
 
-class BehaviorModule : public Module<BehaviorModule, Brain> {
+class DuckBehaviorModule : public Module<DuckBehaviorModule, Brain> {
 public:
     /// the name of this module
-    ModuleName name = "BehaviorModule";
+    ModuleName name = "DuckBehaviorModule";
 
     /**
      * @brief BehaviorModule initializes members
      * @param manager a reference to brain
      */
-    explicit BehaviorModule(const ModuleManagerInterface &manager);
+    explicit DuckBehaviorModule(const ModuleManagerInterface &manager);
 
     /**
      * @brief cycle executes the behavior
@@ -99,7 +99,10 @@ private:
     Production<ThoughtControlRequest> thoughtControlRequest_;
     /// the last action command that was computed by the behavior
     ActionCommand actionCommand_;
-    DataSet dataSet_;
+    /// Thoughts
+    Thoughts thoughts_;
+    /// the data set/bundle that is passed to the behavior
+    DuckDataSet dataSet_;
     /// a thread-safe copy of the remote motion request
     MotionRequest actualRemoteMotionRequest_;
 };

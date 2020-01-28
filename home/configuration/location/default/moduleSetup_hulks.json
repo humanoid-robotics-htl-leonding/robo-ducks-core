@@ -1,4 +1,7 @@
 {
   "StrikerActionProvider" : true,
-  "DucksStrikerActionProvider" : false
+  "DucksStrikerActionProvider" : false,
+
+  "BehaviorModule" : true,
+  "DuckBehaviorModule" : false
 }

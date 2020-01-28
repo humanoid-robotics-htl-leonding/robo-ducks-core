@@ -1,6 +1,6 @@
 #pragma once
 
-ActionCommand initial(const DataSet& d){
+ActionCommand initial(const DuckDataSet& d){
   auto command = ActionCommand::stand();
 
   if(d.thoughts.handleNewState()){

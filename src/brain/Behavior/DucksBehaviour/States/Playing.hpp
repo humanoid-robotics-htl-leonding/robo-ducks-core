@@ -1,5 +1,5 @@
 #pragma once
 
-ActionCommand playing(const DataSet& d){
+ActionCommand playing(const DuckDataSet& d){
   return roles(d);
 }

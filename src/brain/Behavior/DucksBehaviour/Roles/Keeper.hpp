@@ -1,5 +1,5 @@
 #pragma once
 
-ActionCommand roleKeeper(const DataSet& d){
+ActionCommand roleKeeper(const DuckDataSet& d){
   return ActionCommand::stand();
 }

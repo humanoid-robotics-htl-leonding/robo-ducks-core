@@ -1,5 +1,5 @@
 #pragma once
 
-ActionCommand roleNone(const DataSet& d){
+ActionCommand roleNone(const DuckDataSet& d){
   return ActionCommand::dead();
 }

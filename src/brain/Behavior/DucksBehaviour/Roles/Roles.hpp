@@ -10,7 +10,7 @@
  * @param d
  * @return
  */
-ActionCommand roles(const DataSet& d){
+ActionCommand roles(const DuckDataSet& d){
   switch(d.playingRoles.role){
     case PlayingRole::NONE:
       return roleNone(d).combineRightLED(ActionCommand::EyeLED::colors(1.0, 1.0, 1.0));
