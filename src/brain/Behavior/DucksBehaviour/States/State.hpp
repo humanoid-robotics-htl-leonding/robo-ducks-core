@@ -45,6 +45,6 @@ ActionCommand chooseState(const DuckDataSet &d)
 		case GameState::SET: return set(d).combineChestLED(ActionCommand::ChestLED::yellow());
 		case GameState::PLAYING: return playing(d).combineChestLED(ActionCommand::ChestLED::green());
 		case GameState::FINISHED: return started(d).combineChestLED(ActionCommand::ChestLED::white());
-		default: return ActionCommand::dead();
+		default: return ActionCommand::kneel();
 	}
 }

@@ -2,5 +2,5 @@
 
 ActionCommand roleNone(const DuckDataSet &d)
 {
-	return ActionCommand::dead();
+	return ActionCommand::kneel();
 }

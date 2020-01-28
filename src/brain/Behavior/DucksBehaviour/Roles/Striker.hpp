@@ -29,5 +29,5 @@ ActionCommand roleStriker(const DuckDataSet &d)
 		Log(LogLevel::WARNING) << "Invalid Striker Action";
 	}
 
-	return ActionCommand::dead();
+	return ActionCommand::stand();
 }
