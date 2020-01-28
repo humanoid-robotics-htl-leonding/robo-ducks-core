@@ -1,5 +1,6 @@
 #pragma once
 
-ActionCommand roleDefender(const DuckDataSet& d){
-  return ActionCommand::kneel();
+ActionCommand roleDefender(const DuckDataSet &d)
+{
+	return ActionCommand::kneel();
 }

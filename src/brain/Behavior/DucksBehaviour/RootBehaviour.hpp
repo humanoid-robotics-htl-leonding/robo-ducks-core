@@ -3,7 +3,8 @@
 //
 #pragma once
 
-ActionCommand rootBehavior(const DuckDataSet& d) {
-  ActionCommand state = chooseState(d);
-  return state;
+ActionCommand rootBehavior(const DuckDataSet &d)
+{
+	ActionCommand state = chooseState(d);
+	return state;
 }
