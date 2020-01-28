@@ -22,6 +22,6 @@ ActionCommand roles(const DuckDataSet &d)
 		case PlayingRole::STRIKER:return roleStriker(d).combineRightLED(ActionCommand::EyeLED::colors(1.0, 0.0, 0.0));;
 		case PlayingRole::SUPPORT_STRIKER:
 			return roleSupportStriker(d).combineRightLED(ActionCommand::EyeLED::colors(1.0, 0.0, 1.0));
-		default: return ActionCommand::dead();
+		default: return ActionCommand::kneel();
 	}
 }
