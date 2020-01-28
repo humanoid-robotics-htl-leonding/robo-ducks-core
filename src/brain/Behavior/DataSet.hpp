@@ -74,8 +74,6 @@ struct DataSet
           const DefendingPosition& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
           const ReplacementKeeperAction& rk, const ButtonData& bd, const WorldState& ws,
           const KickConfigurationData& kcd, const BallSearchPosition& bsp, const HeadPositionData& hpd,
-          Thoughts& thdat,
-
           const ActionCommand& lac)
     : parameters(module)
     , gameControllerState(gcs)
@@ -105,7 +103,6 @@ struct DataSet
     , worldState(ws)
     , kickConfigurationData(kcd)
     , lastActionCommand(lac)
-    , thoughts(thdat)
   {
   }
   /// struct to hold parameters of the behavior
@@ -164,6 +161,4 @@ struct DataSet
   const KickConfigurationData& kickConfigurationData;
   /// a reference to the last action command
   const ActionCommand& lastActionCommand;
-
-  Thoughts& thoughts;
 };

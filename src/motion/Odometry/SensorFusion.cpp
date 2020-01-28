@@ -22,16 +22,21 @@ SensorFusion::SensorFusion(const ModuleBase& module)
 
 void SensorFusion::update(const Vector3f& extGyro, const Vector3f& extAccel)
 {
+#ifdef NAOV6
+  Vector3d eigenExtGyro(extGyro.x(), extGyro.y(), extGyro.z());
+  Vector3d eigenExtAccel(-extAccel.x(), -extAccel.y(), -extAccel.z());
+#else
   Vector3d eigenExtGyro(extGyro.x(), extGyro.y(), -extGyro.z());
   Vector3d eigenExtAccel(-extAccel.x(), +extAccel.y(), -extAccel.z());
+#endif
 //pseudo fix, only gets called on startup
-  if (!initialized_ && eigenExtAccel.norm() >= 8.0f)
+  if (!initialized_ && eigenExtAccel.norm() >= 1.0f)
   {
     calculateOrientation(eigenExtGyro, eigenExtAccel);
     initialized_ = true;
     return;
   }
-  else if (!initialized_ && eigenExtAccel.norm() < 8.0f)
+  else if (!initialized_ && eigenExtAccel.norm() < 1.0f)
   {
     // Calculating the orientation of the nao while falling (low gravity)
     // would lead to big errors anyway

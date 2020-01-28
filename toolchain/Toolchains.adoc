@@ -1,0 +1,23 @@
+= Toolchains
+Erik Mayrhofer <obyoxar@gmail.com>
+
+== Hulks Toolchain
+Hulks Toolchain is used to compile the majority of the Hulks-Code
+
+== Installing
+
+```
+toolchain
+ |_ hulks-v5                    | ctc-linux64-hulks-7.3.0-1.tar.bz2
+    |_ root
+    |_ toolchain.cmake
+ |_ hulks-v6                    | ctc-linux64-hulks-9.2.0-1.tar.bz2
+    |_ root
+    |_ toolchain.cmake
+ |_ naoqi-v5                    | From ctc-linux64-atom-2.1.4.13.tar.bz2
+    |_ [Many Folders]
+    |_ cross-config.cmake
+    |_ toolchain.cmake
+    |_ toolchain.xml
+    |_ toolchain-atom.cmake
+```

@@ -418,9 +418,6 @@ public:
     }
 
   private:
-    /**
-     * @brief EyeLED creates an undefined EyeLED action command
-     */
     EyeLED() = default;
     /// The eye mode
     EyeMode eyeMode_ = EyeMode::OFF;

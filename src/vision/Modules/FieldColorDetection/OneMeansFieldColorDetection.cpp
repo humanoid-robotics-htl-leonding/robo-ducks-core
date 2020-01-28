@@ -49,8 +49,11 @@ void OMFCD::cycle()
     if (updateInitialGuessTop_)
     {
       Uni::Value value;
-      value << initialStep(imageData_->image422, 200, horizonY_);
+      auto yeet = initialStep(imageData_->image422, 200, horizonY_);
+      value << yeet;
       configuration().set(mount_, "initialGuessTop", value);
+      debug().update(mount_ + ".initialGuess", value);
+      std::cout << "FieldColorTop: " << yeet.x() << " " << yeet.y() << std::endl;
       updateInitialGuessTop_ = false;
     }
     initialGuess = initialGuessTop_();
@@ -60,8 +63,10 @@ void OMFCD::cycle()
     if (updateInitialGuessBottom_)
     {
       Uni::Value value;
-      value << initialStep(imageData_->image422, 200, horizonY_);
+      auto yeet = initialStep(imageData_->image422, 200, horizonY_);
+      value << yeet;
       configuration().set(mount_, "initialGuessBottom", value);
+      std::cout << "FieldColorBottom: " << yeet.x() << " " << yeet.y() << std::endl;
       updateInitialGuessBottom_ = false;
     }
     initialGuess = initialGuessBottom_();

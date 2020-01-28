@@ -1,11 +1,14 @@
 {
-  "AudioPlayer" : true,
+  "AudioPlayer" : false,
   "AudioReceiver" : true,
   "BallDetectionNeuralNet" : true,
   "BallFilter" : true,
   "BallSearchMapManager" : true,
   "BallSearchPositionProvider" : true,
-  "BehaviorModule" : true,
+
+  "BehaviorModule" : false,
+  "DuckBehaviorModule" : true,
+
   "BishopPositionProvider" : true,
   "BodyDamageProvider" : true,
   "BodyPoseEstimation" : true,
@@ -68,7 +71,10 @@
   "SlidingWindowProvider" : false,
   "SonarFilter" : true,
   "StandUp" : true,
-  "StrikerActionProvider" : true,
+
+  "StrikerActionProvider" : false,
+  "DucksStrikerActionProvider" : true,
+
   "SupportingPositionProvider" : true,
   "TeamBallFilter" : true,
   "TeamObstacleFilter" : true,
@@ -78,7 +84,10 @@
   "UNSW2014Generator" : true,
   "WalkManager" : true,
   "WalkingEngine" : false,
+
   "WhistleDetection" : true,
+  "FakeWhistleDetection" : false,
+
   "WhistleIntegration" : true,
   "WorldStateProvider" : true
 }

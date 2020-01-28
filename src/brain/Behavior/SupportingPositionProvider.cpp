@@ -14,7 +14,7 @@ SupportingPositionProvider::SupportingPositionProvider(const ModuleManagerInterf
   , supportingPosition_(*this)
   , minimumAngle_(*this, "minimumAngle", [this] { minimumAngle_() *= TO_RAD; })
   , distanceToBall_(*this, "distanceToBall", [] {})
-  , aggressiveSupporterLineX_(-fieldDimensions_->fieldLength / 2 + 2.f)
+  , aggressiveSupporterLineX_(-fieldDimensions_->fieldLength / 2 + fieldDimensions_->fieldLength/2.5f)
 {
   minimumAngle_() *= TO_RAD;
 }

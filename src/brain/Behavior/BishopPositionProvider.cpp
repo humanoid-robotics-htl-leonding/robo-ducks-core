@@ -18,7 +18,7 @@ BishopPositionProvider::BishopPositionProvider(const ModuleManagerInterface& man
   , teamPlayers_(*this)
   , worldState_(*this)
   , bishopPosition_(*this)
-  , aggressiveBishopLineX_(-fieldDimensions_->fieldLength / 2 + 3.f)
+  , aggressiveBishopLineX_(-fieldDimensions_->fieldLength / 2 + fieldDimensions_->fieldLength/3)
 {
   minimumAngle_() *= TO_RAD;
 }

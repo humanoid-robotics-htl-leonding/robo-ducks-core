@@ -42,6 +42,11 @@ void NaoProvider::init(Configuration& config, const NaoInfo& info)
     print("My body is V3.3", LogLevel::INFO);
     bodyConfigFile = "body_v_3-3.json";
   }
+  else if (info.bodyVersion == NaoVersion::V6)
+  {
+  	print("My body is V6", LogLevel::INFO);
+  	bodyConfigFile = "body_v_6.json";
+  }
   else
   {
     bodyConfigFile = "body_v_3-3.json";
@@ -61,6 +66,11 @@ void NaoProvider::init(Configuration& config, const NaoInfo& info)
   {
     print("My head is V4.0", LogLevel::INFO);
     headConfigFile = "head_v_4.json";
+  }
+  else if (info.headVersion == NaoVersion::V6)
+  {
+  	print("My head is V6.0", LogLevel::INFO);
+  	headConfigFile = "head_v_6.json";
   }
   else
   {

@@ -6,6 +6,7 @@ set(HEADERS
   print.h
   Behavior/ActionCommand.hpp
   Behavior/BehaviorModule.hpp
+  Behavior/DuckBehaviorModule.hpp
   Behavior/BehaviorParameters.hpp
   Behavior/BishopPositionProvider.hpp
   Behavior/DefendingPositionProvider.hpp
@@ -19,6 +20,7 @@ set(HEADERS
   Behavior/ReplacementKeeperActionProvider.hpp
   Behavior/SetPositionProvider.hpp
   Behavior/StrikerActionProvider.hpp
+  Behavior/DucksStrikerActionProvider.hpp
   Behavior/PenaltyStrikerActionProvider.hpp
   Behavior/SupportingPositionProvider.hpp
   Behavior/TimeToReachBallProvider.hpp
@@ -77,6 +79,7 @@ set(HEADERS
   Modules/HeadDamageProvider/HeadDamageProvider.hpp
   Modules/MotionPlanning/MotionPlanner.hpp
   Modules/WhistleDetection/WhistleDetection.hpp
+  Modules/WhistleDetection/FakeWhistleDetection.hpp
   Modules/ReplayRecorder/ReplayRecorder.hpp
   Modules/OdometryOffsetProvider/OdometryOffsetProvider.hpp
   Modules/TeamPlayersAugmenter/TeamPlayersAugmenter.hpp
@@ -94,6 +97,7 @@ set(SOURCES
   Behavior/BallSearchMapManager.cpp
   Behavior/BallSearchPositionProvider.cpp
   Behavior/BehaviorModule.cpp
+  Behavior/DuckBehaviorModule.cpp
   Behavior/BishopPositionProvider.cpp
   Behavior/DefendingPositionProvider.cpp
   Behavior/HeadPositionProvider.cpp
@@ -103,6 +107,7 @@ set(SOURCES
   Behavior/ReplacementKeeperActionProvider.cpp
   Behavior/SetPositionProvider.cpp
   Behavior/StrikerActionProvider.cpp
+  Behavior/DucksStrikerActionProvider.cpp
   Behavior/PenaltyStrikerActionProvider.cpp
   Behavior/SupportingPositionProvider.cpp
   Behavior/TimeToReachBallProvider.cpp
@@ -130,6 +135,7 @@ set(SOURCES
   Modules/HeadDamageProvider/HeadDamageProvider.cpp
   Modules/MotionPlanning/MotionPlanner.cpp
   Modules/WhistleDetection/WhistleDetection.cpp
+  Modules/WhistleDetection/FakeWhistleDetection.cpp
   Modules/ReplayRecorder/ReplayRecorder.cpp
   Modules/OdometryOffsetProvider/OdometryOffsetProvider.cpp
   Modules/TeamPlayersAugmenter/TeamPlayersAugmenter.cpp

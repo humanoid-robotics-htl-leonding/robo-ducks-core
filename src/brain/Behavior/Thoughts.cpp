@@ -12,7 +12,7 @@ Thoughts::Thoughts()
 
 }
 
-void Thoughts::update(DataSet& d) {
+void Thoughts::update(DuckDataSet& d) {
   if (gameState != d.gameControllerState.gameState) {
     stateSince = d.cycleInfo.startTime;
     isStateNew = true;

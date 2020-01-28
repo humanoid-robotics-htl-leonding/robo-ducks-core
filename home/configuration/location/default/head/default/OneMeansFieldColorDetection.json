@@ -2,10 +2,10 @@
    "calculateInitialGuess" : false,
    "initialGuessBottom" : [
       120,
-      110
+      120
    ],
    "initialGuessTop" : [
-      120,
+      100,
       110
    ],
    "thresholdUV" : 10,

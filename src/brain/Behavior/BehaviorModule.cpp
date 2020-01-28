@@ -3,8 +3,7 @@
 
 #include "ActionCommand.hpp"
 #include "BehaviorModule.hpp"
-#include "DuckUnits.h"
-
+#include "Units.hpp"
 
 BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   : Module(manager)
@@ -47,16 +46,14 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   , ledRequest_(*this)
   , thoughtControlRequest_(*this)
   , actionCommand_(ActionCommand::dead())
-  , thoughts_()
   , dataSet_(*this, *gameControllerState_, *ballState_, *robotPosition_, *bodyPose_,
              *playerConfiguration_, *playingRoles_, *motionState_, *headMotionOutput_,
              *teamBallModel_, *teamPlayers_, *fieldDimensions_, *strikerAction_,
              *penaltyStrikerAction_, *keeperAction_, *penaltyKeeperAction_, *cycleInfo_,
              *setPosition_, *defendingPosition_, *bishopPosition_, *supportingPosition_,
              *replacementKeeperAction_, *buttonData_, *worldState_, *kickConfigurationData_,
-             *ballSearchPosition_, *headPositionData_, thoughts_, actionCommand_)
+             *ballSearchPosition_, *headPositionData_, actionCommand_)
 {
-
   {
     // This is needed because callbacks are called asynchronously and a MotionRequest is large
     // enough that it is too dangerous.
@@ -64,7 +61,8 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
     actualRemoteMotionRequest_ = remoteMotionRequest_();
   }
   useRemoteMotionRequest_() = false;
-  print("Behaviour - Init", LogLevel::INFO);
+  print("Behaviour - Init: ", LogLevel::INFO);
+  print(" ==== Behaviour is using HULKs BehaviourModule ==== ", LogLevel::INFO);
 }
 
 void BehaviorModule::cycle() {
@@ -81,13 +79,10 @@ void BehaviorModule::cycle() {
   } else {
 //    thoughts_->pushState(gameControllerState_->gameState)
 
-    thoughts_.update(dataSet_);
-
     if (headOffData_->shouldDie) {
         actionCommand_ = ActionCommand::dead();
     } else {
-        actionCommand_ = rootBehavior(dataSet_); //TODO Make RootBehaviour Configurable
-      actionCommand_.combineLeftEarLED(ActionCommand::EarLED::loading());
+		actionCommand_ = hulks::rootBehavior(dataSet_);
     }
     if (headOffData_->shouldDieSignal) {
       actionCommand_ = ActionCommand::dead().combineAudio(ActionCommand::Audio::audioC5());
