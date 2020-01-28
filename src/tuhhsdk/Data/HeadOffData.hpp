@@ -13,6 +13,7 @@ public:
 
     bool shouldDie = false;
     bool shouldDieSignal = false;
+    bool lastCycle = false;
 
 
     void reset() {

@@ -87,13 +87,18 @@ void DuckBehaviorModule::cycle()
 		thoughts_.update(dataSet_);
 
 		if (headOffData_->shouldDie) {
-			actionCommand_ = ActionCommand::dead();
+			actionCommand_ = ActionCommand::dead().combineChestLED(ActionCommand::ChestLED::rainbow());
 		}
 		else {
 			actionCommand_ = ducks::rootBehavior(dataSet_);
 		}
 		if (headOffData_->shouldDieSignal) {
-			actionCommand_ = ActionCommand::dead().combineAudio(ActionCommand::Audio::audioC5());
+			actionCommand_ = ActionCommand::dead()
+				.combineChestLED(ActionCommand::ChestLED::red())
+				.combineAudio(ActionCommand::Audio::audioC5());
+		}
+		if(headOffData_->lastCycle) {
+			actionCommand_ = ActionCommand::dead();
 		}
 		actionCommand_.toMotionRequest(*motionRequest_);
 //    actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
