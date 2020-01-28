@@ -30,12 +30,13 @@ WhistleDetection::WhistleDetection(const ModuleManagerInterface &manager)
 void WhistleDetection::cycle()
 {
 	Chronometer time(debug(), mount_ + ".cycle_time");
+
 	if (rawGameControllerState_->gameState != GameState::SET) {
 		return;
 	}
+
 	for (unsigned long channelIndex = 0; channelIndex < recordData_->samples.size(); channelIndex++) {
 		auto channel = recordData_->samples[channelIndex];
-		debug().update(mount_ + ".channel_" + std::to_string(channelIndex), channel);
 		if (channel.empty()) {
 			continue;
 		}
@@ -50,8 +51,9 @@ void WhistleDetection::cycle()
 				unsigned int whistleCount = 0;
 				for (bool i : foundWhistlesBuffer_) {
 					whistleCount += i;
-					print("Whistles Heard: ", whistleCount, LogLevel::INFO);
 				}
+				debug().update(mount_ + ".whistles_heard_" + std::to_string(channelIndex), whistleCount);
+				debug().update(mount_ + ".lastTimeWhistleHeard_" + std::to_string(channelIndex), lastTimeWhistleHeard_);
 				// a whistle is reported if the whistle buffer contains at least a certain number of found whistles
 				if (whistleCount >= minWhistleCount_()) {
 					print("Whistle Heard!", LogLevel::INFO);
