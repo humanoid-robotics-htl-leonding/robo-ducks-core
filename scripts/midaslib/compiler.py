@@ -135,9 +135,15 @@ class Compiler:
 
             other_args = self.target.setup_args
 
-            if self.target == SimrobotCompileTarget:
-                simrobot_build_dir = os.path.join(project_root_dir, "tools", "simrobot", "build", "libtuhhSimRobot.so")
-                os.symlink(simrobot_build_dir, os.path.join(project_root_dir, "build", "simrobot", "current", "src", "tuhhsdk", "libtuhhSimRobot.so"))
-
             subprocess.run(["cmake", f"-DCMAKE_BUILD_TYPE={build_type.name}", *other_args, project_root_dir], cwd=build_dir)
 
+        if isinstance(self.target, SimrobotCompileTarget):
+            logging.info("Creating Symlink!")
+
+            simrobot_build_dir = os.path.join(project_root_dir, "tools", "SimRobot", "build", "libtuhhSimRobot.so")
+            libtuhh = os.path.join(project_root_dir, "build", "simrobot", "current", "src", "tuhhsdk", "libtuhhSimRobot.so")
+            if os.path.islink(simrobot_build_dir):
+                os.unlink(simrobot_build_dir)
+            logging.info(f"From {libtuhh}")
+            logging.info(f"To {simrobot_build_dir}")
+            os.symlink(libtuhh, simrobot_build_dir)
