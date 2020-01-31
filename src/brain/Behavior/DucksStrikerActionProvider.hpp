@@ -5,7 +5,7 @@
 #pragma once
 
 #include <Brain.hpp>
-#include <Data/StrikerAction.hpp>
+#include <Data/DucksStrikerAction.hpp>
 #include <Data/RobotPosition.hpp>
 #include <Data/BallData.hpp>
 #include <Data/FieldDimensions.hpp>
@@ -28,5 +28,5 @@ private:
 	const Dependency<RobotPosition> robotPosition_;
 	const Dependency<BallState> ballState_;
 
-	Production<StrikerAction> strikerAction_;
+	Production<DucksStrikerAction> strikerAction_;
 };

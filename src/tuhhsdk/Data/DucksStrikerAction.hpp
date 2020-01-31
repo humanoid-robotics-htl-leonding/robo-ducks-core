@@ -6,11 +6,11 @@
 #include "Tools/Math/Eigen.hpp"
 
 
-class StrikerAction : public DataType<StrikerAction>
+class DucksStrikerAction : public DataType<DucksStrikerAction>
 {
 public:
   /// the name of this DataType
-  DataTypeName name = "DuckStrikerAction";
+  DataTypeName name = "DucksStrikerAction";
   /**
    * @enum Type enumerates the possible types of action for a striker
    */
@@ -33,7 +33,7 @@ public:
   /// true if this struct is valid
   bool valid = false;
   /// the type of the action
-  Type type = Type::DRIBBLE;
+  Type type = Type::WAITING_FOR_BALL;
   /// the field coordinates of the ball target
   Vector2f target = Vector2f::Zero();
   /// type of kick we want to do

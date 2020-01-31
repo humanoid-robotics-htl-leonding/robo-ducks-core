@@ -123,6 +123,7 @@ set(TUHHSDK_HEADERS
   Data/StandUpOutput.hpp
   Data/StandUpResult.hpp
   Data/StrikerAction.hpp
+  Data/DucksStrikerAction.hpp
   Data/SupportingPosition.hpp
   Data/TeamBallModel.hpp
   Data/TeamObstacleData.hpp
