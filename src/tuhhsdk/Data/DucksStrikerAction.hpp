@@ -41,7 +41,7 @@ public:
   /// the relative pose from where we want to kick from
   Pose kickPose;
   /// if ball is kickable at the moment and how
-  BallUtils::Kickable kickable;
+  BallUtils::Kickable kickable = BallUtils::Kickable::NOT;
   /**
    * @brief reset does nothing
    */
