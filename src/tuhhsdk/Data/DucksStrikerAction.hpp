@@ -14,7 +14,7 @@ public:
   /**
    * @enum Type enumerates the possible types of action for a striker
    */
-  enum Type
+  enum Action
   {
       /// kicks the ball into the goal
       KICK_INTO_GOAL,
@@ -33,7 +33,7 @@ public:
   /// true if this struct is valid
   bool valid = false;
   /// the type of the action
-  Type type = Type::WAITING_FOR_BALL;
+  Action action = Action::WAITING_FOR_BALL;
   /// the field coordinates of the ball target
   Vector2f target = Vector2f::Zero();
   /// type of kick we want to do
@@ -54,7 +54,7 @@ public:
   {
     value = Uni::Value(Uni::ValueType::OBJECT);
     value["valid"] << valid;
-    value["type"] << static_cast<int>(type);
+    value["action"] << static_cast<int>(action);
     value["target"] << target;
     value["kickType"] << static_cast<int>(kickType);
     value["kickPose"] << kickPose;
@@ -64,8 +64,8 @@ public:
   {
     value["valid"] >> valid;
     int readNumber = 0;
-    value["type"] >> readNumber;
-    type = static_cast<Type>(readNumber);
+    value["action"] >> readNumber;
+    action = static_cast<Action>(readNumber);
     value["target"] >> target;
     value["kickType"] >> readNumber;
     kickType = static_cast<KickType>(readNumber);
