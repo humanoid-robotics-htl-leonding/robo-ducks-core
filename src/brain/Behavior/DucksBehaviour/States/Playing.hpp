@@ -12,22 +12,22 @@ ActionCommand playing(const DuckDataSet &d)
 //	auto command = roles(d);
 	auto command = ActionCommand::stand();
 
-	//1. === Implement "Look At Ball" (Erik Mayrhofer)
+	//Implement looking at ballSearchPosition
 	// -- left LED Red -> We see the ball.
 	// -- left LED Pink -> We look at where our team sees the ball.
-
-	// If we see the ball on our own, look at it.
-	if (d.ballState.age < 1.0 && d.ballState.confident) {
-		auto ballPos = d.ballState.position + d.ballState.velocity*d.cycleInfo.cycleTime;
-		command.combineHead(ActionCommand::Head::lookAt(
-			Vector3f(ballPos.x(), ballPos.y(), 0), 4, 4
-		)).combineLeftLED(ActionCommand::EyeLED::red());
-	//If we don't see the ball on our own, look at where our team thinks the ball is. Maybe we can find it there.
-	}else if(d.teamBallModel.found && d.teamBallModel.insideField){
-		auto ballPos = d.robotPosition.fieldToRobot(d.teamBallModel.position + d.teamBallModel.velocity*d.cycleInfo.cycleTime);
-		command.combineHead(ActionCommand::Head::lookAt(
-			Vector3f(ballPos.x(), ballPos.y(), 0), 4, 4
-		)).combineLeftLED(ActionCommand::EyeLED::pink());
+	if(d.ballSearchPosition.ownSearchPoseValid){
+		auto fieldPos = Vector3f(d.ballSearchPosition.searchPosition.x(), d.ballSearchPosition.searchPosition.y(), 0.0);
+		command.combineHead(ActionCommand::Head::lookAt(fieldPos, 1.0, 1.0));
+		switch(d.ballSearchPosition.reason){
+			case DuckBallSearchPosition::TEAM_BALL_MODEL:
+				command.combineLeftLED(ActionCommand::EyeLED::pink());
+				break;
+			case DuckBallSearchPosition::OWN_CAMERA:
+				command.combineLeftLED(ActionCommand::EyeLED::red());
+				break;
+			default: break;
+		}
 	}
+
 	return command;
 }
