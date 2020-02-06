@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Data/DucksStrikerAction.hpp>
 #include "Framework/Module.hpp"
 #include "Tools/Time.hpp"
 
@@ -60,7 +61,7 @@ private:
   /// the received NTP requests from this cycle
   const Dependency<NTPData> ntpData_;
   /// the action of the striker
-  const Dependency<StrikerAction> strikerAction_;
+  const Dependency<DucksStrikerAction> ducksStrikerAction_;
   /// the action of the keeper
   const Dependency<KeeperAction> keeperAction_;
   /// the data about the detection of the whistle

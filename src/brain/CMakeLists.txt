@@ -21,6 +21,7 @@ set(HEADERS
   Behavior/SetPositionProvider.hpp
   Behavior/StrikerActionProvider.hpp
   Behavior/DucksStrikerActionProvider.hpp
+  Behavior/DucksTimeToReachBallProvider.hpp
   Behavior/PenaltyStrikerActionProvider.hpp
   Behavior/SupportingPositionProvider.hpp
   Behavior/TimeToReachBallProvider.hpp
@@ -109,6 +110,7 @@ set(SOURCES
   Behavior/SetPositionProvider.cpp
   Behavior/StrikerActionProvider.cpp
   Behavior/DucksStrikerActionProvider.cpp
+  Behavior/DucksTimeToReachBallProvider.cpp
   Behavior/PenaltyStrikerActionProvider.cpp
   Behavior/SupportingPositionProvider.cpp
   Behavior/TimeToReachBallProvider.cpp
@@ -150,7 +152,7 @@ set(SOURCES
   Brain.cpp
   BrainThread.cpp
   print.cpp
-)
+        )
 
 
 add_library(${PROJECT_NAME} OBJECT ${SOURCES} ${HEADERS})

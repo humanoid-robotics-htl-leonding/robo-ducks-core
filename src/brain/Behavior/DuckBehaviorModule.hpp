@@ -23,7 +23,7 @@
 #include "Data/PlayingRoles.hpp"
 #include "Data/RobotPosition.hpp"
 #include "Data/SetPosition.hpp"
-#include "Data/StrikerAction.hpp"
+#include "Data/DucksStrikerAction.hpp"
 #include "Data/SupportingPosition.hpp"
 #include "Data/ReplacementKeeperAction.hpp"
 #include "Data/TeamBallModel.hpp"
@@ -75,7 +75,7 @@ private:
 	const Dependency<TeamPlayers> teamPlayers_;
 	const Dependency<DuckBallSearchPosition> ballSearchPosition_;
 	const Dependency<FieldDimensions> fieldDimensions_;
-	const Dependency<StrikerAction> strikerAction_;
+	const Dependency<DucksStrikerAction> strikerAction_;
 	const Dependency<PenaltyStrikerAction> penaltyStrikerAction_;
 	const Dependency<KickConfigurationData> kickConfigurationData_;
 	const Dependency<KeeperAction> keeperAction_;

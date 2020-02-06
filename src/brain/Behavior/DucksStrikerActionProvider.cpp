@@ -9,6 +9,7 @@ DucksStrikerActionProvider::DucksStrikerActionProvider(const ModuleManagerInterf
 	, fieldDimensions_(*this)
 	, robotPosition_(*this)
 	, ballState_(*this)
+    , teamObstacleData_(*this)
 	, strikerAction_(*this)
 {
 
@@ -35,4 +36,23 @@ void DucksStrikerActionProvider::cycle()
 	strikerAction_->target = Vector2f(0, 0);
 	strikerAction_->valid = true;*/
 
+    auto absoluteBallPosition = robotPosition_->robotToField(ballState_->position);
+    strikerAction_->valid = true;
+
+    if (absoluteBallPosition.x() >= 0 && isSurrounded()) {
+        strikerAction_->action = DucksStrikerAction::Action::KICK_INTO_GOAL;
+        strikerAction_->kickType = DucksStrikerAction::KickType::KICK;
+        strikerAction_->kickPose = Pose(ballState_->position, 0);
+    } else {
+        strikerAction_->action = DucksStrikerAction::Action ::WAITING_FOR_BALL;
+        strikerAction_->kickType = DucksStrikerAction::KickType::NONE;
+    }
+}
+
+bool DucksStrikerActionProvider::isSurrounded() {
+    for (auto teamObstacle : teamObstacleData_->obstacles) {
+        std::cout << "teamObstaclePosition: " << teamObstacle.absolutePosition.x() << ";" << teamObstacle.absolutePosition.y() << std::endl << std::endl;
+    }
+
+    return true;
 }

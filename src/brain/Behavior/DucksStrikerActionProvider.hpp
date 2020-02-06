@@ -9,6 +9,7 @@
 #include <Data/RobotPosition.hpp>
 #include <Data/BallData.hpp>
 #include <Data/FieldDimensions.hpp>
+#include <Data/TeamObstacleData.hpp>
 
 class DucksStrikerActionProvider : public Module<DucksStrikerActionProvider, Brain>
 {
@@ -23,10 +24,13 @@ public:
 
 	void cycle() override;
 
+	bool isSurrounded();
+
 private:
 	const Dependency<FieldDimensions> fieldDimensions_;
 	const Dependency<RobotPosition> robotPosition_;
 	const Dependency<BallState> ballState_;
+	const Dependency<TeamObstacleData> teamObstacleData_;
 
 	Production<DucksStrikerAction> strikerAction_;
 };
