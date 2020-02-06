@@ -30,9 +30,8 @@ class UploadCommand(Command):
         target = Targets[args.target]
         logging.info(f"Uploading '{build_type.name}' to '{target.name}'")
 
-        if not args.no_compile:
-            comp = Compiler(target, build_type)
-            comp.compile()
+        comp = Compiler(target, build_type)
+        comp.compile()
 
         upl = Uploader(args.config, args.address, target, build_type)
         upl.upload()

@@ -3,5 +3,14 @@
   "DucksStrikerActionProvider" : false,
 
   "BehaviorModule" : true,
-  "DuckBehaviorModule" : false
+  "DuckBehaviorModule" : false,
+
+  "BallSearchPositionProvider" : true,
+  "DuckBallSearchPositionProvider" : false,
+
+  "DucksSPLMessageReceiver" : false,
+  "SPLMessageReceiver" : true,
+
+  "DucksSPLMessageTransmitter" : false,
+  "SPLMessageTransmitter" : true
 }

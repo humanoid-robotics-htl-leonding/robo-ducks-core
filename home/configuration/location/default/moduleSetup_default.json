@@ -4,7 +4,9 @@
   "BallDetectionNeuralNet" : true,
   "BallFilter" : true,
   "BallSearchMapManager" : true,
-  "BallSearchPositionProvider" : true,
+
+  "BallSearchPositionProvider" : false,
+  "DuckBallSearchPositionProvider" : true,
 
   "BehaviorModule" : false,
   "DuckBehaviorModule" : true,
@@ -63,8 +65,13 @@
   "ReplayRecorder" : false,
   "RobotDetection" : true,
   "RobotProjectionProvider" : true,
-  "SPLMessageReceiver" : true,
-  "SPLMessageTransmitter" : true,
+
+  "DucksSPLMessageReceiver" : true,
+  "SPLMessageReceiver" : false,
+
+  "DucksSPLMessageTransmitter" : true,
+  "SPLMessageTransmitter" : false,
+
   "SPLNetworkService" : true,
   "SensorDataProvider" : true,
   "SetPositionProvider" : true,

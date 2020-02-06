@@ -96,6 +96,7 @@ set(HEADERS
 set(SOURCES
   Behavior/BallSearchMapManager.cpp
   Behavior/BallSearchPositionProvider.cpp
+  Behavior/DuckBallSearchPositionProvider.cpp
   Behavior/BehaviorModule.cpp
   Behavior/DuckBehaviorModule.cpp
   Behavior/BishopPositionProvider.cpp
@@ -143,7 +144,9 @@ set(SOURCES
   SPLNetwork/HULKsMessage.cpp
   SPLNetwork/SPLNetworkService.cpp
   SPLNetwork/SPLMessageReceiver.cpp
+  SPLNetwork/DucksSPLMessageReceiver.cpp
   SPLNetwork/SPLMessageTransmitter.cpp
+  SPLNetwork/DucksSPLMessageTransmitter.cpp
   Brain.cpp
   BrainThread.cpp
   print.cpp
