@@ -131,7 +131,7 @@ class Compiler:
 
         used_cpus = os.cpu_count() - 1
         logging.info(f"Using {used_cpus} Threads (-j{used_cpus})")
-        subprocess.run(["make", f"-j{used_cpus}"], cwd=build_dir)
+        return subprocess.run(["make", f"-j{used_cpus}"], cwd=build_dir)
 
     def setup(self):
         self.target.check_toolchain_installed()
