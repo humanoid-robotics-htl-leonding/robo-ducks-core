@@ -9,7 +9,8 @@
  */
 ActionCommand playing(const DuckDataSet &d)
 {
-	auto command = roles(d);
+//	auto command = roles(d);
+	auto command = ActionCommand::stand();
 
 	//1. === Implement "Look At Ball" (Erik Mayrhofer)
 	// -- left LED Red -> We see the ball.
