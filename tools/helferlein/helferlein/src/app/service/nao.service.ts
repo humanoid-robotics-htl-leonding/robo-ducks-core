@@ -31,13 +31,14 @@ export class NaoService {
       port: null,
       status: 'New',
       client: null,
-      onReceiveData: this.onReceiveData
+      onReceiveData: null
     });
     console.log('Added Client');
     console.log(this.tabs);
   }
 
   setUpClient(id: number, addr, port, onReceiveDataCallback = this.onReceiveData) {
+    console.log(onReceiveDataCallback.toString());
     if (this.tabs.some(t => t.id == id)) {
       const index = this.tabs.findIndex(t => t.id == id);
       if (this.tabs[index].client && !this.tabs[index].client.destroyed) {
@@ -45,6 +46,7 @@ export class NaoService {
       }
       this.tabs[index].address = addr;
       this.tabs[index].port = port;
+      this.tabs[index].onReceiveData = onReceiveDataCallback;
     } else {
       this.tabs.push({
         id,
@@ -54,6 +56,7 @@ export class NaoService {
         client: null,
         onReceiveData: onReceiveDataCallback
       });
+      console.log(onReceiveDataCallback.toString())
     }
     console.log('Setup');
     console.log(this.tabs);
@@ -61,6 +64,7 @@ export class NaoService {
 
   onReceiveData(buff) {
     try {
+      console.log('Old OnReceiveData');
       if (this.buffLen + buff.length > MAX_BUFF_LENGTH) {
         this.buff.shift();
       }
@@ -90,7 +94,7 @@ export class NaoService {
       });
       this.tabs[i].client.on('data', (chunk) => {
         try {
-          this.onReceiveData(chunk);
+          this.tabs[i].onReceiveData(chunk);
         } catch (e) {
           console.log('onDataError', e.message);
         }
@@ -110,6 +114,8 @@ export class NaoService {
   }
 
   send(id: number, requestObj) {
+    console.log('RequestObj');
+    console.log(requestObj);
     console.log(this.tabs);
     const client = this.tabs.find(t => t.id==id).client;
     console.log(client);

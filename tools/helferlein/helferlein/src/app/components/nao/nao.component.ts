@@ -5,6 +5,7 @@ import { NaoService } from 'src/app/service/nao.service';
 import { Tab } from 'src/app/model/tab';
 import { DebugMessageHeader } from 'src/app/model/message';
 import { Sink, write_str, write_u8, write_u16, write_u32 } from 'ts-binary';
+import { DebugMessageType } from 'src/app/model/message-type.enum';
 
 @Component({
   selector: 'app-nao',
@@ -18,17 +19,28 @@ export class NaoComponent implements OnInit {
   toggleForm = false;
   address = '';
   message = '';
+  messages: DebugMessageHeader[] = [];
 
   constructor(public dialog: MatDialog, private naoService: NaoService) {
     this.tab = this.naoService.tabs.find(t => t.id == this.id);
   }
 
   ngOnInit() {
+    this.tab = this.naoService.tabs.find(t => t.id == this.id);
   }
 
   connectToNao(){
     const clientfields = this.address.split(':');
-    this.naoService.setUpClient(this.id, clientfields[0],clientfields[1]);
+    this.naoService.setUpClient(this.id, clientfields[0],clientfields[1],(buff) => {
+      // if(this.messages.length==0 || this.messages[this.messages.length-1].isCompleted()){
+      //   if(this.buff.length)
+      // }
+
+//TODO implement automated Message-Management, new message starts when old has reached length
+
+      let header = new DebugMessageHeader(null,'',buff);
+      console.log(header);
+    });
     this.naoService.connect(this.id);
   }
 
@@ -37,34 +49,11 @@ export class NaoComponent implements OnInit {
   }
 
   send(){
-    const buffer = new ArrayBuffer(0);
-    let data: Sink = Sink(buffer);
-    let dmsgh  = new DebugMessageHeader();
-    // data = write_str(data, dmsgh.aheader);
-    // data = write_u8(data, dmsgh.bversion);
-    // data = write_u8(data, dmsgh.cmsgType);
-    // data = write_u16(data, dmsgh.dpadding_);
-    // data = write_u32(data, dmsgh.emsgLength);
-    // data = write_u32(data, dmsgh.fpadding);
-    // data = write_str(data, dmsgh.gmsg);
+    let dmsgh  = new DebugMessageHeader(DebugMessageType.DM_REQUEST_LIST,'');
+    let data: Sink = dmsgh.toSink();
 
-    const array = dmsgh.toIntArray();
-    console.log(array);
-    for(let i = 0; i < array.length; i++){
-      data = write_u8(data, array[i]);
-    }
-
-    console.log("YEET");
-    console.log(data);
-    console.log('Start');
-    for(let v = 0; v < data.view.byteLength; v++)
-    {
-      console.log(data.view.getUint8(v));
-    }
-    console.log('Fin');
-    //console.log(new Uint8Array(data.buffer));
-
-    this.naoService.send(this.id,data);
+    console.log(data.view);
+    this.naoService.send(this.id,new Uint8Array(data.view.buffer));
   }
 
 }
