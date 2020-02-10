@@ -1,0 +1,21 @@
+<mat-tab-group color="primary">
+  <mat-tab *ngFor="let tab of tabs">
+    <ng-template mat-tab-label>
+      <div *ngIf="tab.client">
+        {{tab.address}}:{{tab.port}}
+      </div>
+      [{{tab.status}}]
+      <button mat-icon-button (click)="closeTab(tab.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </ng-template>
+    <app-nao [id]="tab.id"></app-nao>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <button mat-button color="primary" (click)="openTab()" [disableRipple]="false">
+        <mat-icon>add</mat-icon>
+      </button>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>
