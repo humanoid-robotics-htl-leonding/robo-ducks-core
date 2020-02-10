@@ -701,7 +701,7 @@ void PoseHypothesis::updateWithTXIntersections(const LandmarkModel::Intersection
 				projectionMeasurementModel_.computePointCovFromPositionFeature(XIntersection.position, cam2ground);
 		std::cerr << "TX" << std::endl;
 		std::cerr << updateT.x() << "/" << updateT.y() << "/" << updateT.z() << std::endl;
-		poseSensorUpdate(XIntersection.position, associatedX, covX);
+		fieldPointUpdate(XIntersection.position, associatedX, covX);
 	}
 }
 
