@@ -661,7 +661,7 @@ void PoseHypothesis::updateWithTXIntersections(const LandmarkModel::Intersection
 											   const LandmarkModel::Intersection& XIntersection,
 											   const KinematicMatrix& cam2ground) {;
 	Pose associatedT;
-	Pose associatedX;
+	Vector2f associatedX;
 	bool found = false;
 	float distance = (TIntersection.position - XIntersection.position).norm();
 	if (abs(distance - (fieldDimensions_.fieldWidth / 2 - fieldDimensions_.fieldCenterCircleDiameter / 2)) < 0.5) {
@@ -670,7 +670,7 @@ void PoseHypothesis::updateWithTXIntersections(const LandmarkModel::Intersection
 				0,
 				fieldDimensions_.fieldWidth / 2,
 				-M_PI);
-		associatedX = Pose(
+		associatedX = Vector2f(
 				0,
 				-(fieldDimensions_.fieldWidth / 2 - fieldDimensions_.fieldCenterCircleDiameter / 2));
 		found = true;
@@ -680,7 +680,7 @@ void PoseHypothesis::updateWithTXIntersections(const LandmarkModel::Intersection
 				0,
 				fieldDimensions_.fieldWidth / 2,
 				-M_PI);
-		associatedX = Pose(
+		associatedX = Vector2f(
 				0,
 				fieldDimensions_.fieldWidth / 2 - fieldDimensions_.fieldCenterCircleDiameter / 2);
 		found = true;
@@ -697,20 +697,11 @@ void PoseHypothesis::updateWithTXIntersections(const LandmarkModel::Intersection
 		const auto covT =
 				computePoseCovFromFullPoseFeature(TIntersection.position, updateT.z(), cam2ground);
 		poseSensorUpdate(updateT, covT);
-		const Pose observationPose1X = associatedX * Pose(XIntersection.position).inverse();
-		const Pose observationPose2X = Pose(-observationPose1X.position, Angle::normalized(observationPose1X.orientation + M_PI));
-		const auto updateX = Angle::angleDiff(observationPose1X.orientation, stateMean_.z()) <
-							 Angle::angleDiff(observationPose2X.orientation, stateMean_.z())
-							 ? Vector3f(observationPose1X.position.x(), observationPose1X.position.y(),
-										observationPose1X.orientation)
-							 : Vector3f(observationPose2X.position.x(), observationPose2X.position.y(),
-										observationPose2X.orientation);
 		const auto covX =
-				computePoseCovFromFullPoseFeature(XIntersection.position, updateX.z(), cam2ground);
+				projectionMeasurementModel_.computePointCovFromPositionFeature(XIntersection.position, cam2ground);
 		std::cerr << "TX" << std::endl;
 		std::cerr << updateT.x() << "/" << updateT.y() << "/" << updateT.z() << std::endl;
-		std::cerr << updateX.x() << "/" << updateX.y() << "/" << updateX.z() << std::endl;
-		poseSensorUpdate(updateX, covX);
+		poseSensorUpdate(XIntersection.position, associatedX, covX);
 	}
 }
 
