@@ -127,6 +127,30 @@ public:
   void updateWithCenterCircle(const LandmarkModel::CenterCircle& centerCircle,
                               const KinematicMatrix& cam2ground,
                               const bool ignoreCirclePerceptsNearGoalSupport);
+
+  void updateWithSetOfIntersections(const std::vector<LandmarkModel::Intersection>& intersections,
+  		const KinematicMatrix& cam2ground);
+
+  void updateWithLLIntersections(const LandmarkModel::Intersection& intersection1,
+  		const LandmarkModel::Intersection& intersection2,
+  		const KinematicMatrix& cam2ground);
+
+  	void updateWithLTIntersections(const LandmarkModel::Intersection& intersection1,
+  			const LandmarkModel::Intersection& intersection2,
+  			const KinematicMatrix& cam2ground);
+
+	void updateWithTTIntersections(const LandmarkModel::Intersection& intersection1,
+								   const LandmarkModel::Intersection& intersection2,
+								   const KinematicMatrix& cam2ground);
+
+	void updateWithTXIntersections(const LandmarkModel::Intersection& intersection1,
+								   const LandmarkModel::Intersection& intersection2,
+								   const KinematicMatrix& cam2ground);
+
+	void updateWithXXIntersections(const LandmarkModel::Intersection& intersection1,
+								   const LandmarkModel::Intersection& intersection2,
+								   const KinematicMatrix& cam2ground);
+
   /**
    * @brief updateWithPenaltyArea updates this hypothesis with a penalty area. This will
    * perform a fieldmark update
