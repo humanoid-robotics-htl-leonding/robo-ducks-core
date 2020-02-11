@@ -25,14 +25,22 @@ export class NaoConnector {
       this.status = this.address + ' [Connecting]';
       this.client = new net.Socket({});
 
-      this.client.on('end', this.onEnd);
-      this.client.on('data', this.onData);
-      //this.client.on('connect', this.onConnect);
-      this.client.on('error', this.onError);
+      this.client.on('end', () => {
+        this.onEnd();
+      });
+      this.client.on('data', (chunk) => {
+        this.onData(chunk);
+      });
+      this.client.on('connect', () => {
+        this.onConnect();
+      });
+      this.client.on('error', (error) => {
+        this.onError(error);
+      });
     }
 
     if (this.client.destroyed || !this.client.connecting) {
-      this.client.connect(this.port, this.address, this.onConnect);
+      this.client.connect(this.port, this.address);
     }
 
     this.client.setKeepAlive(true);
@@ -90,6 +98,7 @@ export class NaoConnector {
 
   defaultOnConnect(){
     console.log('Connected to ' + this.address);
+    console.log(this);
     this.status = this.address;
   }
 
@@ -101,5 +110,6 @@ export class NaoConnector {
   defaultOnError(error){
     console.log('Error on ' + this.address, error);
     this.status = this.address + ' [Error]';
+    this.client.destroy();
   }
 }
