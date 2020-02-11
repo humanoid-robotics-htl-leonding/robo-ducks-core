@@ -26,18 +26,18 @@ public:
 
 	enum Reason
 	{
-		OWN_CAMERA,
-		TEAM_BALL_MODEL,
-		I_AM_ON_IT,
-		SEARCHING,
-		SEARCH_WALK
+		OWN_CAMERA = 0,
+		TEAM_BALL_MODEL = 1,
+		I_AM_ON_IT = 2,
+		SEARCHING = 3,
+		SEARCH_WALK = 4
 	};
 
 	/// the name of this DataType
 	DataTypeName name = "DuckBallSearchPosition";
 	/// the pose to move the robot to. (Field coordinates)
 	Pose pose;
-	/// the position to look at to find the ball
+	/// the position to look at to find the ball. (Field coordinates)
 	Vector2f searchPosition = Vector2f::Zero();
 	/// the positions to look at to find the ball for all other players.
 	std::array<Vector2f, MAX_NUM_PLAYERS> suggestedSearchPositions;

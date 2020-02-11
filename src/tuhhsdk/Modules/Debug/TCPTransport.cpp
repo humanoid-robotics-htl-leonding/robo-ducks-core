@@ -428,6 +428,7 @@ bool TCPTransport::Session::transmitList()
 
   std::shared_ptr<DebugMessageHeader> hdr = std::make_shared<DebugMessageHeader>();
   hdr->msgType = DM_LIST;
+  std::cout << "Responding to list with json of length" << json->length() << std::endl;
   hdr->msgLength = json->length();
 
   sendBuffers_.clear();

@@ -16,8 +16,9 @@ ActionCommand playing(const DuckDataSet &d)
 	// -- left LED Red -> We see the ball.
 	// -- left LED Pink -> We look at where our team sees the ball.
 	if(d.ballSearchPosition.ownSearchPoseValid){
-		auto fieldPos = Vector3f(d.ballSearchPosition.searchPosition.x(), d.ballSearchPosition.searchPosition.y(), 0.0);
-		command.combineHead(ActionCommand::Head::lookAt(fieldPos, 1.0, 1.0));
+		auto robotPos = d.robotPosition.fieldToRobot(d.ballSearchPosition.searchPosition);
+		auto robotSpacePos = Vector3f(robotPos.x(), robotPos.y(), 0.0);
+		command.combineHead(ActionCommand::Head::lookAt(robotSpacePos, 1.0, 1.0));
 		switch(d.ballSearchPosition.reason){
 			case DuckBallSearchPosition::TEAM_BALL_MODEL:
 				command.combineLeftLED(ActionCommand::EyeLED::pink());
@@ -29,7 +30,9 @@ ActionCommand playing(const DuckDataSet &d)
 				command.combineLeftLED(ActionCommand::EyeLED::blue());
 				break;
 			case DuckBallSearchPosition::SEARCH_WALK:
-				return walkTo(d.ballSearchPosition.pose, d).combineLeftLED(ActionCommand::EyeLED::lightblue());
+				return walkTo(d.ballSearchPosition.pose, d)
+				.combineHead(ActionCommand::Head::lookAt(robotSpacePos))
+				.combineLeftLED(ActionCommand::EyeLED::lightblue());
 			case DuckBallSearchPosition::I_AM_ON_IT:
 				return walkTo(d.ballSearchPosition.pose, d).combineLeftLED(ActionCommand::EyeLED::yellow());
 			default: break;
