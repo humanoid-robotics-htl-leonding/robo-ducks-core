@@ -12,6 +12,8 @@ PoseHypothesis::PoseHypothesis(const ModuleBase& module, const FieldDimensions& 
   , minCircleClusterCount_(module, "minCircleClusterCount", [] {})
   , evalLowPassGain_(module, "evalLowPassGain", [] {})
   , evalAssocationFraction_(module, "evalAssocationFraction", [] {})
+  , intersectionDistanceThreshold_(module, "intersectionDistanceThreshold", [] {})
+  , intersectionOrientationThreshold_(module, "intersectionOrientationThreshold", [] {})
   , measurementBaseVariance_(module, "measurementBaseVariance",
                              [this] {
                                measurementBaseVariance_().z() *= TO_RAD * TO_RAD;
@@ -462,8 +464,9 @@ void PoseHypothesis::updateWithLLIntersections(const LandmarkModel::Intersection
 	Pose associatedL2;
 	bool found = false;
 	float distance = (intersection1.position - intersection2.position).norm();
-	if (abs(orientationDiff - M_PI / 2) < 0.1) { // TODO Parameter
-		if (abs(distance - fieldDimensions_.fieldPenaltyAreaWidth) < 0.5) {
+	if (abs(orientationDiff - M_PI / 2) < intersectionOrientationThreshold_()) { // TODO Parameter
+		if (abs(distance - fieldDimensions_.fieldPenaltyAreaWidth) < intersectionDistanceThreshold_()) {
+			std::cerr << "LLPA" << std::endl;
 			if (Angle::normalized(intersection2.orientation - intersection1.orientation) > 0) {
 				// Outside of penalty area
 				associatedL1 = Pose(
@@ -481,10 +484,10 @@ void PoseHypothesis::updateWithLLIntersections(const LandmarkModel::Intersection
 				associatedL2 = Pose(associatedL1.position.x(), -associatedL1.position.y(),  -associatedL1.orientation);
 			}
 			found = true;
-		} else if (abs(distance - fieldDimensions_.fieldWidth) < 0.5) {
-
-		} else if (abs(distance - fieldDimensions_.fieldLength) < 0.5) {
-
+		} else if (abs(distance - fieldDimensions_.fieldWidth) < intersectionDistanceThreshold_()) {
+			std::cerr << "LLFW" << std::endl;
+		} else if (abs(distance - fieldDimensions_.fieldLength) < intersectionDistanceThreshold_()) {
+			std::cerr << "LLFL" << std::endl;
 		}
 	}
 	if (found) {
@@ -509,7 +512,6 @@ void PoseHypothesis::updateWithLLIntersections(const LandmarkModel::Intersection
 										 observationPose2L2.orientation);
 		const auto covT =
 				computePoseCovFromFullPoseFeature(intersection2.position, updateLR.z(), cam2ground);
-		std::cerr << "LL" << std::endl;
 		std::cerr << updateLL.x() << "/" << updateLL.y() << "/" << updateLL.z() << std::endl;
 		std::cerr << updateLR.x() << "/" << updateLR.y() << "/" << updateLR.z() << std::endl;
 		poseSensorUpdate(updateLR, covT);
@@ -525,11 +527,12 @@ void PoseHypothesis::updateWithLTIntersections(const LandmarkModel::Intersection
 	Pose associatedT;
 	bool found = false;
 	float distance = (LIntersection.position - TIntersection.position).norm();
-	if (abs(orientationDiff - M_PI * 3 / 4) < 0.1) { // TODO Parameter
+	if (abs(orientationDiff - M_PI * 3 / 4) < intersectionOrientationThreshold_()) { // TODO Parameter
 		// Penalty area
-		if (abs(distance - fieldDimensions_.fieldPenaltyAreaLength) < 0.5) {
+		if (abs(distance - fieldDimensions_.fieldPenaltyAreaLength) < intersectionDistanceThreshold_()) {
 			if (Angle::normalized(TIntersection.orientation - LIntersection.orientation) > 0) {
 				// Right side of penalty area
+				std::cerr << "LTPAR" << std::endl;
 				associatedL = Pose(
 						fieldDimensions_.fieldLength / 2 - fieldDimensions_.fieldPenaltyAreaLength,
 						-fieldDimensions_.fieldPenaltyAreaWidth / 2,
@@ -538,6 +541,7 @@ void PoseHypothesis::updateWithLTIntersections(const LandmarkModel::Intersection
 			}
 			else {
 				// Left side of penalty area
+				std::cerr << "LTPAL" << std::endl;
 				associatedL = Pose(
 						fieldDimensions_.fieldLength / 2 - fieldDimensions_.fieldPenaltyAreaLength,
 						fieldDimensions_.fieldPenaltyAreaWidth / 2,
@@ -546,12 +550,13 @@ void PoseHypothesis::updateWithLTIntersections(const LandmarkModel::Intersection
 			}
 			found = true;
 		}
-	} else if (abs(orientationDiff - M_PI / 4) < 0.1) {
+	} else if (abs(orientationDiff - M_PI / 4) < intersectionOrientationThreshold_()) {
 		// Side line or back line
-		if (abs(distance - fieldDimensions_.fieldLength / 2) < 0.5) {
+		if (abs(distance - fieldDimensions_.fieldLength / 2) < intersectionDistanceThreshold_()) {
 			// Side line
 			if (Angle::normalized(TIntersection.orientation - LIntersection.orientation) > 0) {
 				// Right side of goal
+				std::cerr << "LTSLR" << std::endl;
 				associatedL = Pose(
 						fieldDimensions_.fieldLength / 2,
 						-fieldDimensions_.fieldWidth / 2,
@@ -562,6 +567,7 @@ void PoseHypothesis::updateWithLTIntersections(const LandmarkModel::Intersection
 						M_PI / 2);
 			} else {
 				// Left side of goal
+				std::cerr << "LTSLL" << std::endl;
 				associatedL = Pose(
 						fieldDimensions_.fieldLength / 2,
 						fieldDimensions_.fieldWidth / 2,
@@ -572,10 +578,11 @@ void PoseHypothesis::updateWithLTIntersections(const LandmarkModel::Intersection
 						-M_PI / 2);
 			}
 			found = true;
-		} else if (abs(distance - (fieldDimensions_.fieldWidth / 2 - fieldDimensions_.fieldPenaltyAreaWidth / 2)) < 0.5) {
+		} else if (abs(distance - (fieldDimensions_.fieldWidth / 2 - fieldDimensions_.fieldPenaltyAreaWidth / 2)) < intersectionDistanceThreshold_()) {
 			// Back line direct
 			if (Angle::normalized(TIntersection.orientation - LIntersection.orientation) > 0) {
 				// Right side of goal
+				std::cerr << "LTBLDR" << std::endl;
 				associatedL = Pose(
 						fieldDimensions_.fieldLength / 2,
 						-fieldDimensions_.fieldWidth / 2,
@@ -586,6 +593,7 @@ void PoseHypothesis::updateWithLTIntersections(const LandmarkModel::Intersection
 						M_PI);
 			} else {
 				// Left side of goal
+				std::cerr << "LTBLDL" << std::endl;
 				associatedL = Pose(
 						fieldDimensions_.fieldLength / 2,
 						fieldDimensions_.fieldWidth / 2,
@@ -596,10 +604,11 @@ void PoseHypothesis::updateWithLTIntersections(const LandmarkModel::Intersection
 						M_PI);
 			}
 			found = true;
-		} else if (abs(distance - (fieldDimensions_.fieldWidth / 2 + fieldDimensions_.fieldPenaltyAreaWidth / 2)) < 0.5) {
+		} else if (abs(distance - (fieldDimensions_.fieldWidth / 2 + fieldDimensions_.fieldPenaltyAreaWidth / 2)) < intersectionDistanceThreshold_()) {
 			// Back line with T between
 			if (Angle::normalized(TIntersection.orientation - LIntersection.orientation) > 0) {
 				// Right side of goal
+				std::cerr << "LTBLXR" << std::endl;
 				associatedL = Pose(
 						fieldDimensions_.fieldLength / 2,
 						-fieldDimensions_.fieldWidth / 2,
@@ -610,6 +619,7 @@ void PoseHypothesis::updateWithLTIntersections(const LandmarkModel::Intersection
 						-M_PI);
 			} else {
 				// Left side of goal
+				std::cerr << "LTBLXR" << std::endl;
 				associatedL = Pose(
 						fieldDimensions_.fieldLength / 2,
 						-fieldDimensions_.fieldWidth / 2,
@@ -644,7 +654,6 @@ void PoseHypothesis::updateWithLTIntersections(const LandmarkModel::Intersection
 										observationPose2T.orientation);
 		const auto covT =
 				computePoseCovFromFullPoseFeature(TIntersection.position, updateT.z(), cam2ground);
-		std::cerr << "LT" << std::endl;
 		std::cerr << updateL.x() << "/" << updateL.y() << "/" << updateL.z() << std::endl;
 		std::cerr << updateT.x() << "/" << updateT.y() << "/" << updateT.z() << std::endl;
 		poseSensorUpdate(updateT, covT);
@@ -664,8 +673,9 @@ void PoseHypothesis::updateWithTXIntersections(const LandmarkModel::Intersection
 	Vector2f associatedX;
 	bool found = false;
 	float distance = (TIntersection.position - XIntersection.position).norm();
-	if (abs(distance - (fieldDimensions_.fieldWidth / 2 - fieldDimensions_.fieldCenterCircleDiameter / 2)) < 0.5) {
+	if (abs(distance - (fieldDimensions_.fieldWidth / 2 - fieldDimensions_.fieldCenterCircleDiameter / 2)) < intersectionDistanceThreshold_()) {
 		// Direct
+		std::cerr << "TXD" << std::endl;
 		associatedT = Pose(
 				0,
 				fieldDimensions_.fieldWidth / 2,
@@ -674,8 +684,9 @@ void PoseHypothesis::updateWithTXIntersections(const LandmarkModel::Intersection
 				0,
 				-(fieldDimensions_.fieldWidth / 2 - fieldDimensions_.fieldCenterCircleDiameter / 2));
 		found = true;
-	} else if (abs(distance - (fieldDimensions_.fieldWidth / 2 + fieldDimensions_.fieldCenterCircleDiameter / 2)) < 0.5) {
+	} else if (abs(distance - (fieldDimensions_.fieldWidth / 2 + fieldDimensions_.fieldCenterCircleDiameter / 2)) < intersectionDistanceThreshold_()) {
 		// X between
+		std::cerr << "TXX" << std::endl;
 		associatedT = Pose(
 				0,
 				fieldDimensions_.fieldWidth / 2,
@@ -699,7 +710,6 @@ void PoseHypothesis::updateWithTXIntersections(const LandmarkModel::Intersection
 		poseSensorUpdate(updateT, covT);
 		const auto covX =
 				projectionMeasurementModel_.computePointCovFromPositionFeature(XIntersection.position, cam2ground);
-		std::cerr << "TX" << std::endl;
 		std::cerr << updateT.x() << "/" << updateT.y() << "/" << updateT.z() << std::endl;
 		fieldPointUpdate(XIntersection.position, associatedX, covX);
 	}
@@ -709,7 +719,7 @@ void PoseHypothesis::updateWithXXIntersections(const LandmarkModel::Intersection
 											   const LandmarkModel::Intersection& intersection2,
 											   const KinematicMatrix& cam2ground) {
 	float distance = (intersection1.position - intersection2.position).norm();
-	if (abs(distance - fieldDimensions_.fieldCenterCircleDiameter) < 0.5) {
+	if (abs(distance - fieldDimensions_.fieldCenterCircleDiameter) < intersectionDistanceThreshold_()) {
 		Vector2f associatedX1;
 		Vector2f associatedX2;
 		if ((abs(stateMean_.z()) <= M_PI / 2 && intersection1.position.y() > intersection1.position.y()) ||
