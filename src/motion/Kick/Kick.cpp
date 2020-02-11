@@ -1,11 +1,14 @@
+#include <Modules/Log/Log.h>
 #include "Modules/NaoProvider.h"
 #include "Modules/Poses.h"
 #include "Tools/Kinematics/Com.h"
 #include "Tools/Kinematics/ForwardKinematics.h"
 #include "Tools/Kinematics/InverseKinematics.h"
 #include "Tools/Math/Angle.hpp"
-
+#include "../print.hpp"
 #include "Kick.hpp"
+
+Kick
 
 
 Kick::Kick(const ModuleManagerInterface& manager)
@@ -55,7 +58,7 @@ Kick::Kick(const ModuleManagerInterface& manager)
 
 void Kick::cycle()
 {
-  // update gyroscope filter
+
   filteredGyro_.x() = gyroLowPassRatio_() * filteredGyro_.x() +
                       (1.f - gyroLowPassRatio_()) * imuSensorData_->gyroscope.x();
   filteredGyro_.y() = gyroLowPassRatio_() * filteredGyro_.y() +
@@ -66,6 +69,10 @@ void Kick::cycle()
       motionActivation_->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::KICK)] ==
           1 &&
       motionRequest_->bodyMotion == MotionRequest::BodyMotion::KICK;
+  /*if(dist >4.0 ||dist<1.2){
+      print("KickDistance is out of bounds",LogLevel::ERROR);
+      return;
+  }*/
   if (currentInterpolatorID_ == interpolators_.size() && incomingKickRequest)
   {
     // select kick parameters based on requested kick type
@@ -92,8 +99,12 @@ void Kick::cycle()
     leftKicking_ = motionRequest_->kickData.ballSource.y() > 0;
     // select appropriate torso offset
     const Vector3f torsoOffset = leftKicking_ ? torsoOffsetLeft_() : torsoOffsetRight_();
-    // reset interpolators
-    resetInterpolators(kickParameters, torsoOffset);
+    std::cout<<"source "<<motionRequest_->kickData.ballSource.x()<< " "<<motionRequest_->kickData.ballSource.y()<<std::endl;
+      std::cout<<"target "<<motionRequest_->kickData.ballDestination.x()<< " "<<motionRequest_->kickData.ballDestination.y()<<std::endl;
+      KickProperties kickProperties = KickProperties::getFromSourceAndDestination(motionRequest_->kickData.ballSource,motionRequest_->kickData.ballDestination);
+
+      // reset interpolators
+      resetInterpolators(kickParameters, torsoOffset, kickProperties);
     // initialize kick
     currentInterpolatorID_ = 0;
   }
@@ -137,7 +148,7 @@ void Kick::cycle()
   }
 }
 
-void Kick::resetInterpolators(const KickParameters& kickParameters, const Vector3f& torsoOffset)
+void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector3f &torsoOffset, KickProperties dist)
 {
   /*
    * wait before start
@@ -194,11 +205,21 @@ void Kick::resetInterpolators(const KickParameters& kickParameters, const Vector
   kickBallAngles[JOINTS::L_SHOULDER_PITCH] += kickParameters.shoulderPitchAdjustment;
   kickBallAngles[JOINTS::R_SHOULDER_PITCH] -= kickParameters.shoulderPitchAdjustment;
   kickBallAngles[JOINTS::L_ANKLE_ROLL] = kickParameters.ankleRoll;
-  kickBallInterpolator_.reset(swingFootAngles, kickBallAngles, kickParameters.kickBallDuration);
+  //kickBallInterpolator_.reset(swingFootAngles, kickBallAngles, kickParameters.kickBallDuration);
+  float kickTime =(dist-4.75)/-0.66*100;
+    std::cout<<"kickDist: "<<dist<<std::endl;
 
+    std::cout<<"kicktime: "<<kickTime<<std::endl;
+
+    //TODO
+    //implement distance and direction to kick (roughly)
+    // directions outside of directional cone should be transformed to nearest circle-segment-radius
+    //distances outside of max or min range should be transformed along radial line
+
+  kickBallInterpolator_.reset(swingFootAngles, kickBallAngles, kickTime);
   /*
-   * pause
-   */
+     * pause
+     */
   pauseInterpolator_.reset(kickBallAngles, kickBallAngles, kickParameters.pauseDuration);
 
   /*

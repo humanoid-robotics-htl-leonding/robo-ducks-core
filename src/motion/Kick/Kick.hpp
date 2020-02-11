@@ -11,6 +11,18 @@
 #include "Tools/Kinematics/KinematicMatrix.h"
 
 #include "Utils/Interpolator/Interpolator.hpp"
+#define DISTANCE_MIN 1.3
+#define DISTANCE_SHORT_BOUNDARY 2.2
+#define DISTANCE_MEDIUM_BOUNDARY 3.1
+#define DISTANCE_MAX 4
+
+#define ANGLE_DIST_MAX 1.2
+#define ANGLE_DIST_MIN 0.4
+#define ANGLE_DIST_REF 4.0
+#define ANGLE_MAX std::atan2(ANGLE_DIST_MAX,ANGLE_DIST_REF)
+#define ANGLE_LEFT_MIN std::atan2(ANGLE_DIST_MIN,ANGLE_DIST_REF)
+#define ANGLE_RIGHT_MAX std::atan2(-ANGLE_DIST_MIN,ANGLE_DIST_REF)
+#define ANGLE_MIN std::atan2(-ANGLE_DIST_MAX,4.0)
 
 
 class Motion;
@@ -57,6 +69,77 @@ private:
   const Parameter<Vector3f> torsoOffsetLeft_;
   /// tors ooffset for right kick
   const Parameter<Vector3f> torsoOffsetRight_;
+
+
+
+  struct KickProperties{
+      float distance;
+      float angle;
+      typedef enum {
+          LEFT,
+          CENTER,
+          RIGHT,
+      } KICK_DIRECTION;
+      typedef enum {
+          SHORT,
+          MEDIUM,
+          LONG,
+      } KICK_DISTANCE;
+      KICK_DISTANCE kickDistance;
+      KICK_DIRECTION kickDirection;
+      static KickProperties getFromSourceAndDestination(Vector2f source,Vector2f destination){
+          KickProperties properties = *new KickProperties();
+            //initial calculations
+          float xdist=destination.x() - source.x();
+          float ydist=destination.y() - source.y();
+          float dist = std::sqrt(xdist*xdist+ydist*ydist);
+          float ang = std::atan2(ydist,xdist); //left positive - right negative
+
+
+          //corrections
+          if(dist >DISTANCE_MAX){
+              print("Exceeding max kick distance of "+std::to_string(DISTANCE_MAX)+"m, kickDistance is forced onto "+std::to_string(DISTANCE_MAX)+"m",LogLevel::WARNING);
+              dist =DISTANCE_MAX;
+          }
+          if(dist <DISTANCE_MIN){
+              print("Subceeding min kick distance of "+std::to_string(DISTANCE_MIN)+"m, kickDistance is forced onto "+std::to_string(DISTANCE_MIN)+"m",LogLevel::WARNING);
+              dist=DISTANCE_MIN;
+          }
+          if (ang >ANGLE_MAX){
+              ang =ANGLE_MAX;
+              print("Exceeding max kick angle  of "+std::to_string(ANGLE_MAX)+", kickAngle is forced onto "+std::to_string(ANGLE_MAX),LogLevel::WARNING);
+          }
+          if (ang <ANGLE_MIN){
+              ang = ANGLE_MIN;
+              print("Subceeding min kick angle  of "+std::to_string(ANGLE_MIN)+", kickAngle is forced onto "+std::to_string(ANGLE_MIN),LogLevel::WARNING);
+          }
+          properties.distance = dist;
+          properties.angle =ang;
+          //enums
+          if(properties.angle > ANGLE_LEFT_MIN){
+              properties.kickDirection = KickProperties::LEFT;
+          }
+          else if(properties.angle < ANGLE_RIGHT_MAX){
+              properties.kickDirection = KickProperties::RIGHT;
+          }
+          else {
+              properties.kickDirection = KickProperties::CENTER;
+          }
+
+
+          if(properties.distance <DISTANCE_SHORT_BOUNDARY){
+              properties.kickDistance = KickProperties::SHORT;
+          }
+          else if(properties.distance<DISTANCE_MEDIUM_BOUNDARY){
+              properties.kickDistance = KickProperties::MEDIUM;
+          }
+          else {
+              properties.kickDistance = KickProperties::LONG;
+          }
+
+          return properties;
+      }
+  };
 
   /// The KickParameters struct contains all information for a kick. A kick is divided into nine
   /// phases. Each phase interpolates from one set of joint angles to another in a given duration.
@@ -175,7 +258,7 @@ private:
    * @param kickParameters the parameters that determine the kick
    * @param torsoOffset the torso offset used for the kick
    */
-  void resetInterpolators(const KickParameters& kickParameters, const Vector3f& torsoOffset);
+  void resetInterpolators(const KickParameters &kickParameters, const Vector3f &torsoOffset, KickProperties d);
 
   /**
    * @brief computeWeightShiftAnglesFromReferenceCom computes angles from a reference CoM
