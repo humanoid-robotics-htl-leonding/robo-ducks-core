@@ -86,6 +86,7 @@ set(HEADERS
   Modules/HeadOffModule/HeadOffModule.hpp
   SPLNetwork/BHULKsHelper.hpp
   SPLNetwork/HULKsMessage.hpp
+  SPLNetwork/DucksMessage.hpp
   SPLNetwork/SPLNetworkService.hpp
   SPLNetwork/SPLMessageReceiver.hpp
   SPLNetwork/SPLMessageTransmitter.hpp
@@ -142,6 +143,7 @@ set(SOURCES
   Modules/TeamPlayersAugmenter/TeamPlayersAugmenter.cpp
   Modules/HeadOffModule/HeadOffModule.cpp
   SPLNetwork/HULKsMessage.cpp
+  SPLNetwork/DucksMessage.cpp
   SPLNetwork/SPLNetworkService.cpp
   SPLNetwork/SPLMessageReceiver.cpp
   SPLNetwork/DucksSPLMessageReceiver.cpp

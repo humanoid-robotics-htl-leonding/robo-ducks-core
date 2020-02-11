@@ -28,15 +28,22 @@ DuckBallSearchPositionProvider::DuckBallSearchPositionProvider(const ModuleManag
 	  {}),
 	  maxBallDetectionRange_(*this, "maxBallDetectionRange", []
 	  {}),
+	  inspectBallRange_(*this, "inspectBallRange", []
+	  {}),
 	  maxAgeValueContribution_(*this, "maxAgeValueContribution", []
 	  {}),
 	  probabilityWeight_(*this, "probabilityWeight", []
 	  {}),
-	  voronoiSeeds_(*this, "voronoiSeeds", [this]
-	  { rebuildSearchAreas(); }),
+	  voronoiSeeds_(*this, "voronoiSeeds", []
+	  {}),
+	  stepBackValue_(*this, "stepBackValue", []
+	  {}),
+	  stepBackThreshold_(*this, "stepBackThreshold", []
+	  {}),
 	  searchPosition_(*this),
 	  fieldLength_(fieldDimensions_->fieldLength),
-	  fieldWidth_(fieldDimensions_->fieldWidth)
+	  fieldWidth_(fieldDimensions_->fieldWidth),
+	  lookAtQueue_()
 {
 }
 
@@ -57,101 +64,53 @@ void DuckBallSearchPositionProvider::cycle()
 			searchPosition_->searchPosition = ballPos;
 			searchPosition_->ownSearchPoseValid = true;
 			searchPosition_->reason = DuckBallSearchPosition::Reason::OWN_CAMERA;
+			standingOnCooldown_ = 0;
 			//If we don't see the ball on our own, look at where our team thinks the ball is. Maybe we can find it there.
 		}else if(teamBallModel_->found && teamBallModel_->insideField){
+			standingOnCooldown_ = 0;
 			auto ballPos = robotPosition_->fieldToRobot(teamBallModel_->position + teamBallModel_->velocity*cycleInfo_->cycleTime);
 			searchPosition_->searchPosition = ballPos;
 			searchPosition_->ownSearchPoseValid = true;
 			searchPosition_->reason = DuckBallSearchPosition::Reason::TEAM_BALL_MODEL;
 		}
+		//3. == Scan Field
+		else{
+			auto list = std::list<ProbCell*>(ballSearchMap_->probabilityList_); //Copy
+			list.sort(ProbCell::probability_comparator_desc);
+			auto fieldSearchPosition = (*list.cbegin())->position;
+			searchPosition_->searchPosition = robotPosition_->fieldToRobot(fieldSearchPosition);
+			searchPosition_->reason = DuckBallSearchPosition::Reason::SEARCHING;
+			searchPosition_->ownSearchPoseValid=true;
+			if(searchPosition_->searchPosition.norm() > maxBallDetectionRange_()){
+				Vector2f posToRobot = fieldSearchPosition - robotPosition_->pose.position;
+				posToRobot.normalize();
+				auto targetWalkPos = fieldSearchPosition - posToRobot * inspectBallRange_();
+				searchPosition_->pose = Pose(targetWalkPos, acos(posToRobot.dot(Vector2f(1.0, 0.0))));
+				searchPosition_->reason = DuckBallSearchPosition::Reason::SEARCH_WALK;
+			}
+		}
+
+		//2. === Step Back
+
+		auto distAlert = dist < stepBackThreshold_() && !teamBallModel_->seen;
+
+		if(distAlert || standingOnCooldown_ > 0){
+			standingOnCooldown_ -= cycleInfo_->cycleTime;
+			if(distAlert){
+				standingOnCooldown_ = 1;
+			}
+			searchPosition_->ownSearchPoseValid = true;
+			searchPosition_->reason = DuckBallSearchPosition::Reason::I_AM_ON_IT;
+			searchPosition_->pose = robotPosition_->robotToField(Pose(stepBackValue_(), 0));
+			//TODO Dont run out of field.
+		}
+
+//		ballSearchMap_->probabilityList_
+
+
 
 		debug().update(mount_ + ".distance", dist);
+		debug().update(mount_ + ".standingOnCooldown", standingOnCooldown_);
 
-	}
-	sendDebug();
-}
-
-float DuckBallSearchPositionProvider::timeToReachPosition(const TeamPlayer &player,
-														  const Vector2f position) const
-{
-	const Vector2f relPosition = position - player.pose.position;
-	// TODO: Is 15cm per second a good approximation?
-	const float walkTimeDistance = relPosition.norm() / 0.18f;
-	// TODO: Is 10s per 180° a good approximation?
-	const float cellOrientation = std::atan2(relPosition.y(), relPosition.x());
-	const auto rotateTimeDistance =
-		static_cast<float>(Angle::angleDiff(cellOrientation, player.pose.orientation) * 10.f / M_PI);
-	// TODO: Is 10s a good approximation?
-	const float fallenPenalty = player.fallen ? 10.0f : 0.0f;
-
-	return walkTimeDistance + rotateTimeDistance + fallenPenalty;
-}
-
-float DuckBallSearchPositionProvider::timeToReachCell(const TeamPlayer &player,
-													  const ProbCell &cell) const
-{
-	return timeToReachPosition(player, cell.position);
-}
-
-float DuckBallSearchPositionProvider::getValue(const ProbCell &cell) const
-{
-	return cell.probability * probabilityWeight_() +
-		std::min(maxAgeValueContribution_(), static_cast<float>(cell.age));
-}
-
-void DuckBallSearchPositionProvider::sendDebug()
-{
-	debug().update(mount_ + ".explorerCount", explorers_.size());
-	if (!explorers_.empty()) {
-		if (debug().isSubscribed(mount_ + ".voronoiSeeds")) {
-			VecVector2f seeds;
-			for (auto &seed : voronoiSeeds_()[explorers_.size() - 1]) {
-				seeds.emplace_back(seed.x() * fieldLength_ * 0.5f, seed.y() * fieldWidth_ * 0.5f);
-			}
-			debug().update(mount_ + ".voronoiSeeds", seeds);
-		}
-	}
-}
-
-float DuckBallSearchPositionProvider::getCosts(const TeamPlayer &player, const ProbCell &cellToExplore)
-{
-	return (timeToReachCell(player, cellToExplore) + 2.f) / getValue(cellToExplore);
-}
-
-void DuckBallSearchPositionProvider::rebuildSearchAreas()
-{
-	searchAreas_.clear();
-	searchAreas_.reserve(explorers_.size());
-
-	if (explorers_.empty()) {
-		return;
-	}
-
-	for (auto &seed : voronoiSeeds_()[explorers_.size() - 1]) {
-		SearchArea area;
-		area.voronoiSeed = {seed.x() * fieldLength_ / 2.f, seed.y() * fieldWidth_ / 2.f};
-		area.defaultPosition = area.voronoiSeed;
-		area.cellToExplore = &ballSearchMap_->cellFromPositionConst(area.defaultPosition);
-		searchAreas_.emplace_back(area);
-	}
-
-	// voronoi (https://en.wikipedia.org/wiki/Voronoi_diagram)
-	// The field is divided into so called searchAreas. Division is done by reading
-	// the seeds (aka generators) coming from the config and do some voronoi on them.
-	for (auto &cell : ballSearchMap_->probabilityList_) {
-		SearchArea *minimumDistanceArea = &(searchAreas_[0]);
-		float minimumDistance = std::numeric_limits<float>::max();
-		int areaNum = 0;
-
-		for (auto &area : searchAreas_) {
-			Vector2f relDistance = area.voronoiSeed - cell->position;
-			float areaDistance = relDistance.squaredNorm();
-			if (areaDistance < minimumDistance) {
-				minimumDistance = areaDistance;
-				minimumDistanceArea = &area;
-			}
-			areaNum++;
-		}
-		minimumDistanceArea->cells.push_back(cell);
 	}
 }

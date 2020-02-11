@@ -27,12 +27,15 @@ public:
 	enum Reason
 	{
 		OWN_CAMERA,
-		TEAM_BALL_MODEL
+		TEAM_BALL_MODEL,
+		I_AM_ON_IT,
+		SEARCHING,
+		SEARCH_WALK
 	};
 
 	/// the name of this DataType
 	DataTypeName name = "DuckBallSearchPosition";
-	/// the pose to move the robot to.
+	/// the pose to move the robot to. (Field coordinates)
 	Pose pose;
 	/// the position to look at to find the ball
 	Vector2f searchPosition = Vector2f::Zero();

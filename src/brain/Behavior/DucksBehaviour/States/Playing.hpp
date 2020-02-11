@@ -25,6 +25,13 @@ ActionCommand playing(const DuckDataSet &d)
 			case DuckBallSearchPosition::OWN_CAMERA:
 				command.combineLeftLED(ActionCommand::EyeLED::red());
 				break;
+			case DuckBallSearchPosition::SEARCHING:
+				command.combineLeftLED(ActionCommand::EyeLED::blue());
+				break;
+			case DuckBallSearchPosition::SEARCH_WALK:
+				return walkTo(d.ballSearchPosition.pose, d).combineLeftLED(ActionCommand::EyeLED::lightblue());
+			case DuckBallSearchPosition::I_AM_ON_IT:
+				return walkTo(d.ballSearchPosition.pose, d).combineLeftLED(ActionCommand::EyeLED::yellow());
 			default: break;
 		}
 	}
