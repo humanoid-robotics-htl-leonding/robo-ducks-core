@@ -68,10 +68,6 @@ void Kick::cycle()
       motionActivation_->activations[static_cast<unsigned int>(MotionRequest::BodyMotion::KICK)] ==
           1 &&
       motionRequest_->bodyMotion == MotionRequest::BodyMotion::KICK;
-  /*if(dist >4.0 ||dist<1.2){
-      print("KickDistance is out of bounds",LogLevel::ERROR);
-      return;
-  }*/
   if (currentInterpolatorID_ == interpolators_.size() && incomingKickRequest)
   {
     // select kick parameters based on requested kick type
@@ -98,10 +94,7 @@ void Kick::cycle()
     leftKicking_ = motionRequest_->kickData.ballSource.y() > 0;
     // select appropriate torso offset
     const Vector3f torsoOffset = leftKicking_ ? torsoOffsetLeft_() : torsoOffsetRight_();
-    std::cout<<"source "<<motionRequest_->kickData.ballSource.x()<< " "<<motionRequest_->kickData.ballSource.y()<<std::endl;
-      std::cout<<"target "<<motionRequest_->kickData.ballDestination.x()<< " "<<motionRequest_->kickData.ballDestination.y()<<std::endl;
       KickProperties kickProperties = KickProperties::getFromSourceAndDestination(motionRequest_->kickData.ballSource,motionRequest_->kickData.ballDestination);
-
       // reset interpolators
       resetInterpolators(kickParameters, torsoOffset, kickProperties);
     // initialize kick
@@ -204,9 +197,34 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
   kickBallAngles[JOINTS::L_SHOULDER_PITCH] += kickParameters.shoulderPitchAdjustment;
   kickBallAngles[JOINTS::R_SHOULDER_PITCH] -= kickParameters.shoulderPitchAdjustment;
   kickBallAngles[JOINTS::L_ANKLE_ROLL] = kickParameters.ankleRoll;
-  kickBallInterpolator_.reset(swingFootAngles, kickBallAngles, kickParameters.kickBallDuration);
-  properties.angle *=1;
+  float kickDistance;
+  float kickAngle;
+
+  switch(properties.kickDistance){
+      case KickProperties::SHORT:
+          kickDistance = GROUPED_DIST_SHORT;
+          break;
+      case KickProperties::MEDIUM:
+          kickDistance = GROUPED_DIST_MEDIUM;
+          break;
+      case KickProperties::LONG:
+          kickDistance = GROUPED_DIST_LONG;
+          break;
+  }
+    switch(properties.kickDirection){
+        case KickProperties::LEFT:
+            kickAngle = GROUPED_DIR_LEFT;
+            break;
+        case KickProperties::CENTER:
+            kickAngle = GROUPED_DIR_CENTER;
+            break;
+        case KickProperties::RIGHT:
+            kickAngle = GROUPED_DIR_RIGHT;
+            break;
+    }
     //TODO
+    kickBallInterpolator_.reset(swingFootAngles, kickBallAngles, kickParameters.kickBallDuration);
+
     //implement distance and direction to kick (roughly)
     // directions outside of directional cone should be transformed to nearest circle-segment-radius
     //distances outside of max or min range should be transformed along radial line
