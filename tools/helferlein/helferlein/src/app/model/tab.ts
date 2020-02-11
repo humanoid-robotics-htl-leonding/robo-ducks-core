@@ -1,10 +1,7 @@
 import { Socket } from 'net';
+import { NaoConnector } from './nao-connector';
 
 export interface Tab {
   id: number;
-  address: string;
-  port: number;
-  status: string;
-  client: Socket;
-  onReceiveData: (buff) => void;
+  connector: NaoConnector;
 }

@@ -1,15 +1,14 @@
 <mat-tab-group color="primary">
   <mat-tab *ngFor="let tab of tabs">
     <ng-template mat-tab-label>
-      <div *ngIf="tab.client">
-        {{tab.address}}:{{tab.port}}
+      <div>
+        {{tab.connector.status}}
       </div>
-      [{{tab.status}}]
       <button mat-icon-button (click)="closeTab(tab.id)">
         <mat-icon>delete</mat-icon>
       </button>
     </ng-template>
-    <app-nao [id]="tab.id"></app-nao>
+    <app-nao [connector]="tab.connector"></app-nao>
   </mat-tab>
   <mat-tab>
     <ng-template mat-tab-label>

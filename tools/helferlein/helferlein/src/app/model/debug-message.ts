@@ -2,25 +2,50 @@ import { Sink, write_str, write_u8, write_u16, write_u32, read_str } from 'ts-bi
 import { DebugMessageType } from './message-type.enum';
 
 export class DebugMessage {
-  header = 'DMSG';
-  version = 1;
-  msgType: DebugMessageType;
-  padding_ = 0;
-  msgLength: number;
-  padding = 0;
-  msg: string;
 
   constructor(type: DebugMessageType = null, message: string = '', array: Uint8Array = null) {
     if (type) {
-      this.fromArguments(type, message);
+      if (array) {
+        this.msgType = type;
+        this.msg = DebugMessage.uint8ArrayToString(array);
+      } else {
+        this.fromArguments(type, message);
+      }
     } else if (array) {
       this.parseHeader(array);
     }
   }
+  header = '';
+  version: number = null;
+  msgType: DebugMessageType = null;
+  padding_: number = null;
+  msgLength: number = null;
+  padding: number = null;
+  msg: string;
+
+  static stringToUint8Array(string: string): Uint8Array {
+    const array: Uint8Array = new Uint8Array(string.length);
+    for (let i = 0; i < string.length; i++) {
+      array[i] = string.charCodeAt(i);
+    }
+    return array;
+  }
+
+  static uint8ArrayToString(array: Uint8Array): string {
+    let string = '';
+    for (const v of array) {
+      string += String.fromCharCode(v);
+    }
+    return string;
+  }
 
   fromArguments(type, message) {
+    this.header = 'DMSG';
+    this.version = 1;
     this.msgType = type;
+    this.padding_ = 0;
     this.msgLength = message.length;
+    this.padding = 0;
     this.msg = message;
   }
 
@@ -43,8 +68,8 @@ export class DebugMessage {
     }
   }
 
-  isCompleted(): boolean{
-    return this.length()==this.msgLength+16;
+  isCompleted(): boolean {
+    return this.length() == this.msgLength + 16;
   }
 
   // toIntArray(): Uint8Array {
@@ -110,9 +135,35 @@ export class DebugMessage {
     return 16 + this.msg.length;
   }
 
-  appendMessage(buff: Uint8Array){
-    for(let v of buff){
-      this.msg += String.fromCharCode(v);
+  completedLength(): number {
+    return 16 + this.msgLength - this.length();
+  }
+
+  missingLength(): number {
+    return this.completedLength() - this.length();
+  }
+
+  appendMessage(buff: Uint8Array): Uint8Array {
+    let returnBuff = buff;
+    if (buff.length > this.missingLength()) {
+      returnBuff = buff.subarray(this.missingLength());
     }
+    else{
+      returnBuff = new Uint8Array();
+    }
+    this.msg += DebugMessage.uint8ArrayToString(buff.subarray(0, this.missingLength()));
+    return returnBuff;
+  }
+
+  headerIncomplete(): boolean {
+    if (this.msgType == null
+      || this.header.length == 0
+      || this.version == null
+      || this.padding_ == null
+      || this.msgLength == null
+      || this.padding == null) {
+        return false;
+      }
+    return false;
   }
 }

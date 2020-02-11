@@ -1,12 +1,19 @@
 <div class="connection-toolbar">
-  <input matInput placeholder="Nao Address" [(ngModel)]="address">
+  <input matInput placeholder="Nao Address" [(ngModel)]="connector.address">
   <!-- <div *ngIf="this.naoService.client != null">
     Connecting: {{this.naoService.client.connecting}}
   </div> -->
   <button mat-button
-    [disabled]="this.address.length==0"
+    [disabled]="connector.address.length==0"
     (click)="connectToNao()">Connect</button>
 
   <input matInput placeholder="Message" [(ngModel)]="message">
   <button mat-raised-button (click)="send()" color="primary">Send</button>
+
+  <input matInput [(ngModel)]="connector.status">
+  <div *ngIf="connector.client">
+    Connecting: {{connector.client.connecting}}
+    Destroyed: {{connector.client.destroyed}}
+    Address: {{connector.client.remoteAddress}}
+  </div>
 </div>

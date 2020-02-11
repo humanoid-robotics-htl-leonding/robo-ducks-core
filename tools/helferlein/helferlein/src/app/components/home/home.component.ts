@@ -17,12 +17,12 @@ export class HomeComponent implements OnInit {
   }
 
   openTab(){
-    this.naoService.addClient();
+    this.naoService.addTab();
     this.loadTabs();
   }
 
   closeTab(id: number){
-    this.naoService.destroyClient(id);
+    this.naoService.removeTab(id);
     this.loadTabs();
   }
 
