@@ -125,8 +125,6 @@ private:
           else {
               properties.kickDirection = KickProperties::CENTER;
           }
-
-
           if(properties.distance <DISTANCE_SHORT_BOUNDARY){
               properties.kickDistance = KickProperties::SHORT;
           }

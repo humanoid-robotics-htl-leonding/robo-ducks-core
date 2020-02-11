@@ -8,7 +8,6 @@
 #include "../print.hpp"
 #include "Kick.hpp"
 
-Kick
 
 
 Kick::Kick(const ModuleManagerInterface& manager)
@@ -148,7 +147,7 @@ void Kick::cycle()
   }
 }
 
-void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector3f &torsoOffset, KickProperties dist)
+void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector3f &torsoOffset, KickProperties properties)
 {
   /*
    * wait before start
@@ -205,18 +204,14 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
   kickBallAngles[JOINTS::L_SHOULDER_PITCH] += kickParameters.shoulderPitchAdjustment;
   kickBallAngles[JOINTS::R_SHOULDER_PITCH] -= kickParameters.shoulderPitchAdjustment;
   kickBallAngles[JOINTS::L_ANKLE_ROLL] = kickParameters.ankleRoll;
-  //kickBallInterpolator_.reset(swingFootAngles, kickBallAngles, kickParameters.kickBallDuration);
-  float kickTime =(dist-4.75)/-0.66*100;
-    std::cout<<"kickDist: "<<dist<<std::endl;
-
-    std::cout<<"kicktime: "<<kickTime<<std::endl;
-
+  kickBallInterpolator_.reset(swingFootAngles, kickBallAngles, kickParameters.kickBallDuration);
+  properties.angle *=1;
     //TODO
     //implement distance and direction to kick (roughly)
     // directions outside of directional cone should be transformed to nearest circle-segment-radius
     //distances outside of max or min range should be transformed along radial line
 
-  kickBallInterpolator_.reset(swingFootAngles, kickBallAngles, kickTime);
+  //kickBallInterpolator_.reset(swingFootAngles, kickBallAngles, kickTime);
   /*
      * pause
      */
