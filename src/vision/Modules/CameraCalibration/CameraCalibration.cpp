@@ -49,7 +49,14 @@ void CameraCalibration::cycle()
     return;
   }
 
-  projectPenaltyAreaOnImages();
+  calibImage_ = image_data_->image422.to444Image();
+  if (image_data_->camera == Camera::TOP) {
+	  projectPenaltyAreaOnImages();
+  }
+  else {
+	  projectCenterCircleOnImages();
+  }
+  sendImageForCalibration();
 }
 
 void CameraCalibration::projectPenaltyAreaOnImages()
@@ -94,13 +101,8 @@ void CameraCalibration::projectPenaltyAreaOnImages()
       !camera_matrix_->robotToPixel(corner_right, cr))
   {
     Log(LogLevel::WARNING) << "The penalty area projection is outside of the observable image!";
-    // Send the unmodified camera image when the projection points are outside of the image.
-    debug().sendImage(mount_ + "." + image_data_->identification + "_penalty_project_image",
-                      image_data_->image422.to444Image());
     return;
   }
-
-  Image calibImage(image_data_->image422.to444Image());
 
   ptl = image_data_->image422.get444From422Vector(ptl);
   ptr = image_data_->image422.get444From422Vector(ptr);
@@ -110,21 +112,72 @@ void CameraCalibration::projectPenaltyAreaOnImages()
   cr = image_data_->image422.get444From422Vector(cr);
 
   // Draw lines for the penalty area on the camera image.
-  calibImage.cross((ptl + ptr) / 2, 8, Color::RED); // middle of penalty line.
-  calibImage.cross((pbl + pbr) / 2, 8, Color::RED); // middle of penalty_box? line.
-  calibImage.cross(ptl, 8, Color::RED);
-  calibImage.cross(ptr, 8, Color::RED);
-  calibImage.cross(pbl, 8, Color::RED);
-  calibImage.cross(pbr, 8, Color::RED);
-  calibImage.line(ptl, ptr, Color::PINK);
-  calibImage.line(pbl, pbr, Color::PINK);
-  calibImage.line(pbl, ptl, Color::PINK);
-  calibImage.line(pbr, ptr, Color::PINK);
+  calibImage_.cross((ptl + ptr) / 2, 8, Color::RED); // middle of penalty line.
+  calibImage_.cross((pbl + pbr) / 2, 8, Color::RED); // middle of penalty_box? line.
+  calibImage_.cross(ptl, 8, Color::RED);
+  calibImage_.cross(ptr, 8, Color::RED);
+  calibImage_.cross(pbl, 8, Color::RED);
+  calibImage_.cross(pbr, 8, Color::RED);
+  calibImage_.line(ptl, ptr, Color::PINK);
+  calibImage_.line(pbl, pbr, Color::PINK);
+  calibImage_.line(pbl, ptl, Color::PINK);
+  calibImage_.line(pbr, ptr, Color::PINK);
   // Draw the line between the field corners and mark them with crosses
-  calibImage.line(cl, cr, Color::PINK);
-  calibImage.cross(cl, 8, Color::RED);
-  calibImage.cross(cr, 8, Color::RED);
+  calibImage_.line(cl, cr, Color::PINK);
+  calibImage_.cross(cl, 8, Color::RED);
+  calibImage_.cross(cr, 8, Color::RED);
+}
 
-  debug().sendImage(mount_ + "." + image_data_->identification + "_penalty_project_image",
-                    calibImage);
+void CameraCalibration::projectCenterCircleOnImages() {
+	Vector2f zero, center, left, right, cut;
+
+	// Retrieve the field dimensions in meters
+	float fieldWidth = field_dimensions_->fieldWidth;
+	float centerCircleRadius = field_dimensions_->fieldCenterCircleDiameter / 2;
+
+	zero.x() = 0;
+	zero.y() = 0;
+
+	center.x() = fieldWidth / 2;
+	center.y() = 0;
+
+	left.x() = fieldWidth / 2;
+	left.y() = -centerCircleRadius;
+
+	right.x() = fieldWidth / 2;
+	right.y() = centerCircleRadius;
+
+	cut.x() = fieldWidth / 2 - centerCircleRadius;
+	cut.y() = 0;
+
+	Vector2i pz, pcc, pl, pr, pct;
+	if (!camera_matrix_->robotToPixel(zero, pz) ||
+		!camera_matrix_->robotToPixel(center, pcc) ||
+		!camera_matrix_->robotToPixel(left, pl) ||
+		!camera_matrix_->robotToPixel(right, pr) ||
+		!camera_matrix_->robotToPixel(cut, pct))
+	{
+		Log(LogLevel::WARNING) << "The projection is outside of the observable image!";
+		return;
+	}
+
+	pz = image_data_->image422.get444From422Vector(pz);
+	pcc = image_data_->image422.get444From422Vector(pcc);
+	pl = image_data_->image422.get444From422Vector(pl);
+	pr = image_data_->image422.get444From422Vector(pr);
+	pct = image_data_->image422.get444From422Vector(pct);
+
+	calibImage_.cross(pcc, 8, Color::RED);
+	calibImage_.cross(pl, 8, Color::RED);
+	calibImage_.cross(pr, 8, Color::RED);
+	calibImage_.cross(pct, 8, Color::RED);
+
+	calibImage_.line(pz, pcc, Color::PINK);
+	calibImage_.line(pct, pl, Color::PINK);
+	calibImage_.line(pct, pr, Color::PINK);
+}
+
+void CameraCalibration::sendImageForCalibration() {
+	debug().sendImage(mount_ + "." + image_data_->identification + "_penalty_project_image",
+					  calibImage_);
 }

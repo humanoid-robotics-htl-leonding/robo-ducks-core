@@ -1,5 +1,6 @@
 #pragma once
 
-ActionCommand roleNone(const DataSet& d){
-  return ActionCommand::dead();
+ActionCommand roleNone(const DuckDataSet &d)
+{
+	return ActionCommand::kneel();
 }

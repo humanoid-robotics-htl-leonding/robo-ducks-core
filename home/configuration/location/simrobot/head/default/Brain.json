@@ -1,3 +1,5 @@
 {
-    "headMovement.headPitch": 15
+    "headMovement.headPitch": 15,
+    "behavior.playerRole": "player",
+    "behavior.initialPoses": [ -3, -2, -1, -1, -2, -3 ]
 }

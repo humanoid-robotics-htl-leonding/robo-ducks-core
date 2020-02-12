@@ -18,7 +18,7 @@ ActionCommand ready(const DataSet& d)
   const float orientation =
       iAmKickOffStriker ? std::atan2(-d.setPosition.position.y(), -d.setPosition.position.x()) : 0;
   const ActionCommand::EyeLED ledCommand =
-          d.setPosition.isKickoffPosition ? ActionCommand::EyeLED::EyeLED() : ActionCommand::EyeLED::EyeLED();
+      d.setPosition.isKickoffPosition ? ActionCommand::EyeLED::red() : ActionCommand::EyeLED::blue();
   return walkToPose(d, Pose(d.setPosition.position, orientation), true, WalkMode::PATH, Velocity(),
                     3.f)
       .combineHead(lookAround(d, 40.f * TO_RAD))

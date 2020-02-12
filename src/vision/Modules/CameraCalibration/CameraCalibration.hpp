@@ -41,6 +41,8 @@ private:
    * @author Thomas Schattschneider
    */
   void projectPenaltyAreaOnImages();
+  void projectCenterCircleOnImages();
+  void sendImageForCalibration();
   /// a reference to the image of the cycle
   const Dependency<ImageData> image_data_;
   /// a reference to the camera matrix
@@ -49,4 +51,6 @@ private:
   const Dependency<FieldDimensions> field_dimensions_;
   /// a reference to the head matrix buffer
   const Dependency<HeadMatrixBuffer> head_matrix_buffer_;
+
+  Image calibImage_;
 };

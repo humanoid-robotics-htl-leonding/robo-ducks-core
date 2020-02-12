@@ -409,6 +409,15 @@ public:
     {
       return colors(1, 0.07f, 0.58f);
     }
+    /**
+     * @brief violet creates a violet action command for an EyeLED
+     * @return a violet action command for an EyeLed
+     */
+     static EyeLED violet()
+    {
+         return colors(1.0, 0.0, 1.0);
+    }
+
 
     static EyeLED rainbow()
     {
@@ -418,9 +427,6 @@ public:
     }
 
   private:
-    /**
-     * @brief EyeLED creates an undefined EyeLED action command
-     */
     EyeLED() = default;
     /// The eye mode
     EyeMode eyeMode_ = EyeMode::OFF;

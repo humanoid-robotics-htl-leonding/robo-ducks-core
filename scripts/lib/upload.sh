@@ -18,6 +18,8 @@ function upload {
   # path to the ssh key
   local SSH_KEY="${BASEDIR}/scripts/ssh_key"
 
+  local TARGET="nao6"
+
   # create temp directory
   local TMP_DIR=`mktemp -d`
   if [ "$?" -ne 0 ]; then
@@ -37,8 +39,10 @@ function upload {
   fi
   ln -s "${BASEDIR}/home/motions" "${TMP_DIR}/naoqi/motions"
   ln -s "${BASEDIR}/home/poses"   "${TMP_DIR}/naoqi/poses"
-  ln -s "${BASEDIR}/build/nao/${BUILD_TYPE}/src/tuhhsdk/libtuhhALModule.so" "${TMP_DIR}/naoqi/lib/libtuhhALModule.so"
-  ln -s "${BASEDIR}/build/nao/${BUILD_TYPE}/src/tuhhsdk/tuhhNao" "${TMP_DIR}/naoqi/bin/tuhhNao"
+  if [[ "${TARGET}" -ne "nao6" ]]; then
+    ln -s "${BASEDIR}/build/${TARGET}/${BUILD_TYPE}/src/tuhhsdk/libtuhhALModule.so" "${TMP_DIR}/naoqi/lib/libtuhhALModule.so"
+  fi
+  ln -s "${BASEDIR}/build/${TARGET}/${BUILD_TYPE}/src/tuhhsdk/tuhhNao" "${TMP_DIR}/naoqi/bin/tuhhNao"
 
   # ssh wants the key permissions to be like that
   if [ -e "${SSH_KEY}" ]; then
@@ -56,7 +60,7 @@ function upload {
   fi
 
   # run rsync with prepared parameters
-  rsync ${RSYNC_PARAMETERS} --rsh="${SSH_CMD}" "${TMP_DIR}/naoqi" "${RSYNC_TARGET}:"
+  echo rsync ${RSYNC_PARAMETERS} --rsh="${SSH_CMD}" "${TMP_DIR}/naoqi" "${RSYNC_TARGET}:"
   local RSYNC_RESULT=$?
 
   # clean temp directory

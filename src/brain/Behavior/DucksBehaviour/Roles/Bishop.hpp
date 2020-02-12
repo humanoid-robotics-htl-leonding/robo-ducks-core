@@ -1,5 +1,6 @@
 #pragma once
 
-ActionCommand roleBishop(const DataSet& d){
-  return ActionCommand::kneel();
+ActionCommand roleBishop(const DuckDataSet &d)
+{
+	return ActionCommand::kneel();
 }

@@ -323,6 +323,16 @@ namespace Uni
     return boost::get<valuesList_t>(value_).begin();
   }
 
+  Value::valuesList_t::const_iterator Value::vectorBegin() const
+  {
+      return listBegin();
+  }
+
+  Value::valuesList_t::iterator Value::vectorBegin()
+  {
+      return listBegin();
+  }
+
   Value::valuesList_t::const_iterator Value::listEnd() const
   {
     if (type_ != ValueType::ARRAY)
@@ -338,4 +348,14 @@ namespace Uni
                                "is only useful for arrays (value was not)");
     return boost::get<valuesList_t>(value_).end();
   }
+
+    Value::valuesList_t::const_iterator Value::vectorEnd() const
+    {
+        return listEnd();
+    }
+
+    Value::valuesList_t::iterator Value::vectorEnd()
+    {
+        return listEnd();
+    }
 }

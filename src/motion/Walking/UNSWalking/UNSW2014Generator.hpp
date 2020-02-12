@@ -157,10 +157,10 @@ private:
   /// dependencies from other modules
   const Dependency<BodyPose> bodyPose_;
   const Dependency<CycleInfo> cycleInfo_;
-  const Dependency<IMUSensorData> imuSensorData_;
-  const Dependency<JointSensorData> jointSensorData_;
-  const Dependency<RobotKinematics> robotKinematics_;
-  const Dependency<CollisionDetectorData> collisionDetectorData_;
+  const Dependency<IMUSensorData> imuSensorData_;//TODO CHECK
+  const Dependency<JointSensorData> jointSensorData_; //TODO CHECK
+  const Dependency<RobotKinematics> robotKinematics_; //TODO CHECK
+  const Dependency<CollisionDetectorData> collisionDetectorData_;//TODO CHECK //obstaclefilter
   const Dependency<MotionRequest> motionRequest_;
   /// the production of this module
   Production<WalkGenerator> walkGenerator_;
@@ -213,7 +213,7 @@ private:
   /// the status of the weight shift process (e.g. did it take longer than expected)
   WeightShiftStatus weightShiftStatus_;
   /// The time when slow weight shifts were detected.
-  TimePoint timeWhenSlowWeightShiftsDetected_ = 0;
+  TimePoint timeWhenSlowWeightShiftsDetected_ = TimePoint(0);
   /// How often was the weight not shifted in a row?
   int weightShiftMisses_;
   /// How often took the weight shift significantly longer in a row?

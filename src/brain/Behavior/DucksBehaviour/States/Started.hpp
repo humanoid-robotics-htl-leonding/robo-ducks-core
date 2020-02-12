@@ -1,5 +1,6 @@
 #pragma once
 
-ActionCommand started(const DataSet& d){
-  return ActionCommand::dead();
+ActionCommand started(const DuckDataSet &d)
+{
+	return ActionCommand::stand();
 }
