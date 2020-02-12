@@ -484,10 +484,6 @@ void PoseHypothesis::updateWithLLIntersections(const LandmarkModel::Intersection
 				associatedL2 = Pose(associatedL1.position.x(), -associatedL1.position.y(),  -associatedL1.orientation);
 			}
 			found = true;
-		} else if (abs(distance - fieldDimensions_.fieldWidth) < intersectionDistanceThreshold_()) {
-			std::cerr << "LLFW" << std::endl;
-		} else if (abs(distance - fieldDimensions_.fieldLength) < intersectionDistanceThreshold_()) {
-			std::cerr << "LLFL" << std::endl;
 		}
 	}
 	if (found) {
@@ -721,7 +717,7 @@ void PoseHypothesis::updateWithTTIntersections(const LandmarkModel::Intersection
 
 void PoseHypothesis::updateWithTXIntersections(const LandmarkModel::Intersection& TIntersection,
 											   const LandmarkModel::Intersection& XIntersection,
-											   const KinematicMatrix& cam2ground) {;
+											   const KinematicMatrix& cam2ground) {
 	Pose associatedT;
 	Vector2f associatedX;
 	bool found = false;
