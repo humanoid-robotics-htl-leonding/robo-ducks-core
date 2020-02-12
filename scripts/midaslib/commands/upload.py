@@ -32,7 +32,10 @@ class UploadCommand(Command):
 
         if not args.no_compile:
             comp = Compiler(target, build_type)
-            comp.compile()
+            compile_result = comp.compile()
+            logging.info(f"Compile finished with code {compile_result.returncode}")
+            if compile_result.returncode != 0:
+                return
 
         upl = Uploader(args.config, args.address, target, build_type)
         upl.upload()

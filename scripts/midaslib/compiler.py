@@ -24,6 +24,7 @@ class Nao5CompileTarget(CompileTarget):
     name = "Nao V5"
     id = "nao5"
     foldername = "nao5"
+    short = "5"
     # -DNAO_V5=ON -DNAOLIB=ON -DTOOLCHAIN_DIR="${TOOLCHAIN_DIR}"
     setup_args = ["-DNAO_V5=ON", "-DNAOLIB=ON", f"-DTOOLCHAIN_DIR='{project_root_dir}/toolchain'"]
 
@@ -44,6 +45,7 @@ class Nao6CompileTarget(CompileTarget):
     name = "Nao V6"
     id = "nao6"
     foldername = "nao6"
+    short = "5"
     setup_args = ["-DNAO_V6=ON",  f"-DTOOLCHAIN_DIR='{project_root_dir}/toolchain'"]
 
     def check_toolchain_installed(self):
@@ -57,6 +59,7 @@ class Nao6CompileTarget(CompileTarget):
 class SimrobotCompileTarget(CompileTarget):
     name = "Simrobot"
     id = "simrobot"
+    short = "sim"
     foldername = "simrobot"
     setup_args = ["-DSIMROBOT=ON"]
 
@@ -71,30 +74,39 @@ class DebugBuildType(BuildType):
     name = "Debug"
     id = "debug"
     foldername = "Debug"
+    short = "b"
 
 
 class DevelopBuildType(BuildType):
     name = "Develop"
     id = "develop"
     foldername = "Develop"
+    short = "v"
 
 
 class ReleaseBuildType(BuildType):
     name = "Release"
     id = "release"
     foldername = "Release"
+    short = "r"
 
 
 Targets: Dict[str, Type[CompileTarget]] = {
     Nao5CompileTarget.id:  Nao5CompileTarget,
+    Nao5CompileTarget.short:  Nao5CompileTarget,
     Nao6CompileTarget.id:  Nao6CompileTarget,
+    Nao6CompileTarget.short:  Nao6CompileTarget,
     SimrobotCompileTarget.id:  SimrobotCompileTarget,
+    SimrobotCompileTarget.short:  SimrobotCompileTarget,
 }
 
 BuildTypes: Dict[str, Type[BuildType]] = {
     DevelopBuildType.id: DevelopBuildType,
     DebugBuildType.id: DebugBuildType,
-    ReleaseBuildType.id: ReleaseBuildType
+    ReleaseBuildType.id: ReleaseBuildType,
+    DevelopBuildType.short: DevelopBuildType,
+    DebugBuildType.short: DebugBuildType,
+    ReleaseBuildType.short: ReleaseBuildType
 }
 
 
@@ -119,7 +131,7 @@ class Compiler:
 
         used_cpus = os.cpu_count() - 1
         logging.info(f"Using {used_cpus} Threads (-j{used_cpus})")
-        subprocess.run(["make", f"-j{used_cpus}"], cwd=build_dir)
+        return subprocess.run(["make", f"-j{used_cpus}"], cwd=build_dir)
 
     def setup(self):
         self.target.check_toolchain_installed()
