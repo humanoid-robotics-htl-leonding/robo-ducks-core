@@ -11,17 +11,20 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 
 import { NaoComponent } from './components/nao/nao.component';
 import { NaoTabComponent } from './components/nao-tab/nao-tab.component';
 import { HomeComponent } from './components/home/home.component';
+import { RawCardComponent } from './components/elements/raw-card/raw-card.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NaoComponent,
     NaoTabComponent,
-    HomeComponent
+    HomeComponent,
+    RawCardComponent
   ],
   imports: [
     BrowserModule,
@@ -33,7 +36,8 @@ import { HomeComponent } from './components/home/home.component';
     MatButtonModule,
     MatToolbarModule,
     MatTabsModule,
-    MatIconModule
+    MatIconModule,
+    MatCardModule
   ],
   providers: [],
   bootstrap: [AppComponent]
