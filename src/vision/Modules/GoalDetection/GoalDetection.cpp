@@ -91,42 +91,11 @@ void GoalDetection::createGoalData() {
 	debugGoalPoints_.clear();
 	std::sort(goalPostGroups_.begin(), goalPostGroups_.end(),
 			  [](const VecVector2i& g1, const VecVector2i& g2) { return (g1.back().y() < g2.back().y()); });
-	if (goalPostGroups_.size() == 1) {
-		Vector2f goalPoint;
-		if (cameraMatrix_->pixelToRobot(goalPostGroups_.front().back(), goalPoint)) {
-			goalData_->posts.push_back(goalPoint);
-			debugGoalPoints_.push_back(goalPostGroups_.front().back());
-		}
-	}
-	else if (goalPostGroups_.size() > 1) {
-		float goalPostDistance = fieldDimensions_->goalInnerWidth + fieldDimensions_->goalPostDiameter;
-		float bestFit = -10;
-		Vector2f goalPoint1;
-		Vector2f goalPoint2;
-		auto it = goalPostGroups_.begin();
-		for (; std::next(it) != goalPostGroups_.end(); it++) {
-			if (!cameraMatrix_->pixelToRobot((*it).back(), goalPoint1)) {
-				continue;
-			}
-			auto ti = std::next(it);
-			for (; ti != goalPostGroups_.end(); ti++) {
-				if (!cameraMatrix_->pixelToRobot((*ti).back(), goalPoint2)) {
-					continue;
-				}
-				float distance = (goalPoint1 - goalPoint2).norm();
-				if (abs(distance - goalPostDistance) < abs(bestFit - goalPostDistance)) {
-					debugGoalPoints_.clear();
-					debugGoalPoints_.push_back((*it).back());
-					debugGoalPoints_.push_back((*ti).back());
-					bestFit = distance;
-				}
-			}
-		}
-		for (const auto& debugGoalPoint : debugGoalPoints_) {
-			Vector2f goalPoint;
-			if (cameraMatrix_->pixelToRobot(debugGoalPoint, goalPoint)) {
-				goalData_->posts.push_back(goalPoint);
-			}
+	Vector2f goalPost;
+	for (auto& group : goalPostGroups_) {
+		if (cameraMatrix_->pixelToRobot(group.back(), goalPost)) {
+			debugGoalPoints_.push_back(group.back());
+			goalData_->posts.push_back(goalPost);
 		}
 	}
 	goalData_->timestamp = imageData_->timestamp;
@@ -140,14 +109,14 @@ void GoalDetection::cycle()
 		return;
 	}
 	{
-		Chronometer time(debug(), mount_ + "." + imageData_->identification + "_cycle_time");/*
-		detectGoalPoints();
-		bombermanMaxDistanceGrouping();
-		debugGoalPostGroups_ = goalPostGroups_;
-		createGoalData();*/
-		goalData_->valid = false;
+		Chronometer time(debug(), mount_ + "." + imageData_->identification + "_cycle_time");
+		//detectGoalPoints();
+		//bombermanMaxDistanceGrouping();
+		//debugGoalPostGroups_ = goalPostGroups_;
+		//createGoalData();
 	}
 	sendImagesForDebug();
+	goalData_->valid = false;
 }
 
 void GoalDetection::sendImagesForDebug()
