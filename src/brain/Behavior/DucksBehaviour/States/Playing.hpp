@@ -17,8 +17,8 @@
  */
 ActionCommand playing(const DuckDataSet &d)
 {
-//	auto command = roles(d);
-	auto command = ActionCommand::stand();
+	auto command = roles(d);
+//	auto command = ActionCommand::stand();
 
 	//Implement looking at ballSearchPosition
 	// -- left LED Red -> We see the ball.

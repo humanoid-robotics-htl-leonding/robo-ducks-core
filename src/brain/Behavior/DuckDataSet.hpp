@@ -6,7 +6,7 @@
 #include "Data/BodyPose.hpp"
 #include "Data/ButtonData.hpp"
 #include "Data/CycleInfo.hpp"
-#include "Data/DefendingPosition.hpp"
+#include "Data/DucksDefendingPosition.hpp"
 #include "Data/FieldDimensions.hpp"
 #include "Data/GameControllerState.hpp"
 #include "Data/HeadMotionOutput.hpp"
@@ -71,7 +71,7 @@ struct DuckDataSet
           const TeamBallModel& tbm, const TeamPlayers& tps, const FieldDimensions& fd,
           const StrikerAction& sa, const PenaltyStrikerAction& ps, const KeeperAction& ka,
           const PenaltyKeeperAction& pa, const CycleInfo& ci, const SetPosition& sp,
-          const DefendingPosition& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
+          const DucksDefendingPosition& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
           const ReplacementKeeperAction& rk, const ButtonData& bd, const WorldState& ws,
           const KickConfigurationData& kcd, const DuckBallSearchPosition& bsp, const HeadPositionData& hpd,
           Thoughts& thdat,
@@ -147,7 +147,7 @@ struct DuckDataSet
   /// a reference to the set position
   const SetPosition& setPosition;
   /// a reference to the defending position
-  const DefendingPosition& defendingPosition;
+  const DucksDefendingPosition& defendingPosition;
   /// a reference to the bishop position
   const BishopPosition& bishopPosition;
   /// a reference to the supporting position

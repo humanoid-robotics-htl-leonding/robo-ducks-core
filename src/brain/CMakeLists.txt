@@ -10,6 +10,7 @@ set(HEADERS
   Behavior/BehaviorParameters.hpp
   Behavior/BishopPositionProvider.hpp
   Behavior/DefendingPositionProvider.hpp
+        Behavior/DucksDefenderActionProvider.hpp
   Behavior/DataSet.hpp
   Behavior/BallSearchMapManager.hpp
   Behavior/HeadPositionProvider.hpp
@@ -102,6 +103,7 @@ set(SOURCES
   Behavior/DuckBehaviorModule.cpp
   Behavior/BishopPositionProvider.cpp
   Behavior/DefendingPositionProvider.cpp
+        Behavior/DucksDefenderActionProvider.cpp
   Behavior/HeadPositionProvider.cpp
   Behavior/KeeperActionProvider.cpp
   Behavior/PenaltyKeeperActionProvider.cpp
