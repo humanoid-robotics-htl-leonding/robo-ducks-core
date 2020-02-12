@@ -242,7 +242,10 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
 
     }
     else {
-        kickBallAngles[JOINTS::L_ANKLE_PITCH] = 20.0 *TO_RAD;
+        kickBallAngles[JOINTS::L_ANKLE_PITCH] = -60.0 *TO_RAD;
+        kickBallAngles[JOINTS::L_KNEE_PITCH] = 8.0 *TO_RAD;
+
+        kickBallAngles[JOINTS::L_HIP_PITCH] = -42.0 *TO_RAD;
 
     }
 
@@ -252,7 +255,7 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
 
 
 
-  std::cout<<"KickBall-AnklePitch"<<kickBallAngles[JOINTS::L_ANKLE_PITCH] /TO_RAD<<std::endl;
+  std::cout<<"KickBall-HipPitch"<<kickBallAngles[JOINTS::L_HIP_PITCH] /TO_RAD<<std::endl;
 
   //kickBallInterpolator_.reset(swingFootAngles, kickBallAngles, kickTime);
   /*
@@ -283,7 +286,6 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
         retractFootAngles[JOINTS::L_HIP_PITCH] =-60*TO_RAD;
     }
     else {
-        retractFootAngles[JOINTS::L_KNEE_PITCH]=20.0 *TO_RAD;
         retractFootAngles[JOINTS::L_KNEE_PITCH]=60.0 *TO_RAD;
         retractFootAngles[JOINTS::L_ANKLE_PITCH]=-10.0 *TO_RAD;
         retractFootAngles[JOINTS::L_HIP_PITCH] =-60*TO_RAD;
