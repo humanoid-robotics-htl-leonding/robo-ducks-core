@@ -238,7 +238,7 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
         kickBallAngles[JOINTS::L_ANKLE_PITCH] = -65.0 *TO_RAD;
     }
     else if (kickDistance == GROUPED_DIST_MEDIUM){
-        kickBallAngles[JOINTS::L_ANKLE_PITCH] = -60.0 *TO_RAD;
+        kickBallAngles[JOINTS::L_ANKLE_PITCH] = -40.0 *TO_RAD;
 
     }
     else {
@@ -272,17 +272,21 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
   retractFootAngles[JOINTS::L_ANKLE_ROLL] = kickParameters.ankleRoll;
 
 
-    if( kickDistance == GROUPED_DIST_LONG){
+    if( kickDistance == GROUPED_DIST_LONG){ //these are currently the same, but could be changed to improve kick timings
         retractFootAngles[JOINTS::L_KNEE_PITCH]=60.0 *TO_RAD;
         retractFootAngles[JOINTS::L_ANKLE_PITCH]=-10.0 *TO_RAD;
         retractFootAngles[JOINTS::L_HIP_PITCH] =-60*TO_RAD;
     }
     else if (kickDistance == GROUPED_DIST_MEDIUM){
-        retractFootAngles[JOINTS::L_KNEE_PITCH]=20.0 *TO_RAD;
-
+        retractFootAngles[JOINTS::L_KNEE_PITCH]=60.0 *TO_RAD;
+        retractFootAngles[JOINTS::L_ANKLE_PITCH]=-10.0 *TO_RAD;
+        retractFootAngles[JOINTS::L_HIP_PITCH] =-60*TO_RAD;
     }
     else {
         retractFootAngles[JOINTS::L_KNEE_PITCH]=20.0 *TO_RAD;
+        retractFootAngles[JOINTS::L_KNEE_PITCH]=60.0 *TO_RAD;
+        retractFootAngles[JOINTS::L_ANKLE_PITCH]=-10.0 *TO_RAD;
+        retractFootAngles[JOINTS::L_HIP_PITCH] =-60*TO_RAD;
     }
     std::cout<<"retractFoot-KneePitch"<<retractFootAngles[JOINTS::L_KNEE_PITCH] /TO_RAD<<std::endl;
     std::cout<<"retractFoot-AnklePitch"<<retractFootAngles[JOINTS::L_ANKLE_PITCH] /TO_RAD<<std::endl;
