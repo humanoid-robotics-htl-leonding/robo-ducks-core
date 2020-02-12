@@ -41,12 +41,9 @@ private:
 
   const Dependency<BallSearchMap> ballSearchMap_;
   const Dependency<GameControllerState> gameControllerState_;
-  const Dependency<PlayerConfiguration> playerConfiguration_;
-  const Dependency<PlayingRoles> playingRoles_;
   const Dependency<TeamPlayers> teamPlayers_;
   const Dependency<BallState> ballState_;
   const Dependency<RobotPosition> robotPosition_;
-  const Dependency<BodyPose> bodyPose_;
   const Dependency<TeamBallModel> teamBallModel_;
   const Dependency<FieldDimensions> fieldDimensions_;
   const Dependency<JointSensorData> jointSensorData_;
@@ -81,7 +78,4 @@ private:
   const float fieldWidth_;
 
   float standingOnCooldown_;
-
-//  std::priority_queue<ProbCell*, std::vector<ProbCell*>, std::function<decltype(ProbCell::probability_comparator)>> lookAtQueue_;
-	std::list<ProbCell*> lookAtQueue_;
 };

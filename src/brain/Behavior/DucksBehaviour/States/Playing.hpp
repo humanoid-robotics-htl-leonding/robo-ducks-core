@@ -1,6 +1,14 @@
 #pragma once
 
 /**
+ *
+ * Left Eye:
+ *  * Team_ball_model: pink
+ *  * Own_camera: red
+ *  * searching: blue
+ *  * search_walk: light_blue
+ *  * i_am_on_it: yellow
+ *
  * 1. Choose and execute Role
  * 2. a) Look at the ball if we can see it
  * 	  b) Look at where our team thinks the ball is.

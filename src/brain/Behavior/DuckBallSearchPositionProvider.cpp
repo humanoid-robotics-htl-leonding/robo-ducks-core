@@ -14,12 +14,9 @@ DuckBallSearchPositionProvider::DuckBallSearchPositionProvider(const ModuleManag
 	: Module(manager),
 	  ballSearchMap_(*this),
 	  gameControllerState_(*this),
-	  playerConfiguration_(*this),
-	  playingRoles_(*this),
 	  teamPlayers_(*this),
 	  ballState_(*this),
 	  robotPosition_(*this),
-	  bodyPose_(*this),
 	  teamBallModel_(*this),
 	  fieldDimensions_(*this),
 	  jointSensorData_(*this),
@@ -44,7 +41,7 @@ DuckBallSearchPositionProvider::DuckBallSearchPositionProvider(const ModuleManag
 	  searchPosition_(*this),
 	  fieldLength_(fieldDimensions_->fieldLength),
 	  fieldWidth_(fieldDimensions_->fieldWidth),
-	  lookAtQueue_()
+	  standingOnCooldown_(0)
 {
 	maxSideAngle_() *= TO_RAD;
 }
@@ -130,8 +127,6 @@ void DuckBallSearchPositionProvider::cycle()
 		if(searchPosition_->reason != DuckBallSearchPosition::Reason::SEARCH_WALK){
 			auto localSearchPosition = robotPosition_->fieldToRobot(searchPosition_->searchPosition);
 			auto angleToSearchPosition = std::atan2(localSearchPosition.y(), localSearchPosition.x());
-			debug().update(mount_+".angle", angleToSearchPosition/TO_RAD);
-			std::cout << angleToSearchPosition << " -- " << maxSideAngle_() << std::endl;
 			if(std::abs(angleToSearchPosition) > maxSideAngle_()) {
 				Vector2f posToRobot = searchPosition_->searchPosition - robotPosition_->pose.position;
 				auto angle = std::atan2(posToRobot.y(), posToRobot.x());
@@ -153,12 +148,5 @@ void DuckBallSearchPositionProvider::cycle()
 			searchPosition_->pose = robotPosition_->robotToField(Pose(stepBackValue_(), 0));
 			//TODO Dont run out of field.
 		}
-
-
-
-
-		debug().update(mount_ + ".distance", dist);
-		debug().update(mount_ + ".standingOnCooldown", standingOnCooldown_);
-
 	}
 }

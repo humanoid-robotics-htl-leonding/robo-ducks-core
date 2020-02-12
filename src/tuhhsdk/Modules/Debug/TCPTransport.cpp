@@ -251,7 +251,6 @@ void TCPTransport::Session::readHeader()
   boost::asio::async_read(
       socket_, boost::asio::buffer(&receivedHeader_, sizeof(DebugMessageHeader)),
       [this, self](boost::system::error_code error, std::size_t length) {
-		  std::cout << "Reading Header " << std::endl;
         if (error)
         {
           if (!(error == boost::asio::error::eof && length != sizeof(DebugMessageHeader)))
@@ -266,7 +265,6 @@ void TCPTransport::Session::readHeader()
 
         Log(LogLevel::DEBUG) << "TCPTransport: received header";
 
-		  std::cout << "Starting ReadBody" << std::endl;
         readBody();
       });
 }
@@ -279,7 +277,6 @@ void TCPTransport::Session::readBody()
   boost::asio::async_read(
       socket_, boost::asio::buffer(bodyBuffer_),
       [this, self](boost::system::error_code error, std::size_t /*length*/) {
-		  std::cout << "Reading Body MsgLength: " << receivedHeader_.msgLength << std::endl;
         if (error)
         {
           Log(LogLevel::ERROR) << "TCPTransport: error while receiving body, disconnecting. Error: "
@@ -295,15 +292,12 @@ void TCPTransport::Session::readBody()
 
         Log(LogLevel::DEBUG) << "TCPTransport: Parsed Body!";
 
-		  std::cout << "Starting ReadHeader" << std::endl;
         readHeader();
       });
 }
 
 void TCPTransport::Session::parseBody(const std::string& body)
 {
-	std::cout << "Parsing Body: " << body << std::endl;
-	std::cout << "MsgType" << (int)receivedHeader_.msgType << std::endl;
   switch (receivedHeader_.msgType)
   {
     case DM_SUBSCRIBE:
@@ -428,7 +422,6 @@ bool TCPTransport::Session::transmitList()
 
   std::shared_ptr<DebugMessageHeader> hdr = std::make_shared<DebugMessageHeader>();
   hdr->msgType = DM_LIST;
-  std::cout << "Responding to list with json of length" << json->length() << std::endl;
   hdr->msgLength = json->length();
 
   sendBuffers_.clear();
