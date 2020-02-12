@@ -31,6 +31,7 @@ public:
 
 private:
 	const Parameter<float> ballFocalPointDepth_;
+	const Parameter<float> ballFocalPointYshift_;
 	const Parameter<float> maxDeflectBallDistance_;
 
 	const Dependency<FieldDimensions> fieldDimensions_;
