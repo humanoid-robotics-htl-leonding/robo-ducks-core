@@ -473,7 +473,7 @@ void PoseHypothesis::updateWithLLIntersections(const LandmarkModel::Intersection
 						fieldDimensions_.fieldLength / 2 - fieldDimensions_.fieldPenaltyAreaLength,
 						fieldDimensions_.fieldPenaltyAreaWidth / 2,
 						-M_PI / 4);
-				associatedL2 = Pose(associatedL1.position.x(), -associatedL1.position.y(), -associatedL2.orientation);
+				associatedL2 = Pose(associatedL1.position.x(), -associatedL1.position.y(), -associatedL1.orientation);
 			}
 			else {
 				// Inside of penalty area
@@ -674,7 +674,7 @@ void PoseHypothesis::updateWithTTIntersections(const LandmarkModel::Intersection
 						fieldDimensions_.fieldLength / 2,
 						fieldDimensions_.fieldPenaltyAreaWidth / 2,
 						M_PI);
-				associatedT2 = Pose(associatedT1.position.x(), -associatedT1.position.y(), associatedT2.orientation);
+				associatedT2 = Pose(associatedT1.position.x(), -associatedT1.position.y(), associatedT1.orientation);
 			}
 			else {
 				// Outside of field
@@ -728,10 +728,10 @@ void PoseHypothesis::updateWithTXIntersections(const LandmarkModel::Intersection
 		associatedT = Pose(
 				0,
 				fieldDimensions_.fieldWidth / 2,
-				-M_PI);
+				-M_PI / 2);
 		associatedX = Vector2f(
 				0,
-				-(fieldDimensions_.fieldWidth / 2 - fieldDimensions_.fieldCenterCircleDiameter / 2));
+				-fieldDimensions_.fieldCenterCircleDiameter / 2);
 		found = true;
 	} else if (abs(distance - (fieldDimensions_.fieldWidth / 2 + fieldDimensions_.fieldCenterCircleDiameter / 2)) < intersectionDistanceThreshold_()) {
 		// X between
@@ -739,10 +739,10 @@ void PoseHypothesis::updateWithTXIntersections(const LandmarkModel::Intersection
 		associatedT = Pose(
 				0,
 				fieldDimensions_.fieldWidth / 2,
-				-M_PI);
+				-M_PI / 2);
 		associatedX = Vector2f(
 				0,
-				fieldDimensions_.fieldWidth / 2 - fieldDimensions_.fieldCenterCircleDiameter / 2);
+				fieldDimensions_.fieldCenterCircleDiameter / 2);
 		found = true;
 	}
 	if (found) {
@@ -790,6 +790,7 @@ void PoseHypothesis::updateWithXXIntersections(const LandmarkModel::Intersection
 		const auto covX2 =
 				projectionMeasurementModel_.computePointCovFromPositionFeature(intersection2.position, cam2ground);
 		fieldPointUpdate(intersection2.position, associatedX2, covX2);
+		std::cerr << "XX" << std::endl;
 	}
 }
 
