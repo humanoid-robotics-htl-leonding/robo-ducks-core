@@ -63,6 +63,7 @@ export class NaoConnector {
   send(message: Uint8Array) {
     if (this.client && !this.client.destroyed) {
       if (message && message.length >= 16) {
+        console.log('Sent: ',message);
         this.client.write(message);
       }
     }
@@ -74,32 +75,35 @@ export class NaoConnector {
     this.send(new Uint8Array(sink.view.buffer));
   }
 
+  /**
+   * The default Callback when the Connector receives Data from a NAO.
+   * Messages come in chunks (Uint8Arrays) and therefore, several chunks have to
+   * be combined into one message
+   * @param chunk The latest message from the NAO
+   */
   defaultOnData(chunk: Uint8Array) {
-    console.log('Start ',this.checksum);
-    //console.log('Remaining');
-    //console.log(this.remainingChunk);
+    console.log('Got: ',chunk);
     const oldLen = this.remainingChunk.length;
-    this.remainingChunk = new Uint8Array(oldLen + chunk.length);
+    this.remainingChunk = new Uint8Array(oldLen + chunk.length);  // Unused parts of the last chunk are concatinated with the new chunk
     this.remainingChunk.set(this.remainingChunk);
     this.remainingChunk.set(chunk, oldLen);
-    //console.log(this.remainingChunk);
     let index = 0;
-    while(index<this.remainingChunk.length) {
-      if (this.messages.length == 0 || this.messages[this.messages.length-1].isCompleted) {
-        // if(this.messages.length >= 2){
-        //   console.log('loolig');
-        //   console.log(this.messages);
-        //   return;
-        // }
+    while(index<this.remainingChunk.length) { //we want all of the chunk to be put in DebugMessages
+      if(this.messages.length > 0){
+        console.log('Last Message: ', this.messages[this.messages.length-1]);
+        console.log('Current: ',this.messages[this.messages.length-1].currentLength());
+        console.log('Final', this.messages[this.messages.length-1].finalLength());
+      }
+      if (this.messages.length == 0 || this.messages[this.messages.length-1].isCompleted()) {
         this.messages.push(new DebugMessage());
       }
-      const message = this.messages[this.messages.length-1];
+      const message = this.messages[this.messages.length-1];  //always put the chunk in the latest (and only incomplete) message
       if (message.headerIncomplete()) {
-        if (this.remainingChunk.length - index < 16) {
+        if (this.remainingChunk.length - index < 16) {  //we want the whole header to be parsed at once
           let oldChunk = this.remainingChunk;
           this.remainingChunk = new Uint8Array(oldChunk.length - index);
           this.remainingChunk.set(oldChunk.slice(index));
-          return;
+          return; //it it isn't possible to parse a header we save the chunk and wait for the next one
         }
         message.parseHeader(this.remainingChunk.subarray(index, 16));
         index += 16;
@@ -107,9 +111,8 @@ export class NaoConnector {
       index += message.appendMessage(this.remainingChunk.subarray(index));
     }
     this.remainingChunk = new Uint8Array(0);
-    //console.log(this);
-    console.log('End ', this.checksum);
-    this.checksum++;
+    console.log(this);
+    console.log(this.messages[this.messages.length-1].currentLength());
   }
 
   defaultOnEnd() {

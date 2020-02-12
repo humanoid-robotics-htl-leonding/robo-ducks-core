@@ -59,14 +59,16 @@ export class DebugMessage {
       this.header = msgheader;
       this.version = sink.view.getUint8(4);
       this.msgType = sink.view.getUint8(5);
-      this.padding_ = sink.view.getUint16(6);
-      this.msgLength = sink.view.getUint32(8);
-      this.padding = sink.view.getUint32(12);
+      this.padding_ = sink.view.getUint16(6,true);
+      this.msgLength = sink.view.getInt32(8,true);
+      console.log('MsgLength');
+      console.log(sink.view.getUint8(8),sink.view.getUint8(9),sink.view.getUint8(10),sink.view.getUint8(11))
+      this.padding = sink.view.getUint32(12,true);
     }
   }
 
   isCompleted(): boolean {
-    return this.length() == this.msgLength + 16;
+    return this.currentLength() == this.finalLength();
   }
 
   toSink(): Sink {
@@ -99,16 +101,16 @@ export class DebugMessage {
     return data;
   }
 
-  length(): number {
-    return 16 + this.msg.length;
+  currentLength(): number {
+    return this.msg.length;
   }
 
-  completedLength(): number {
-    return 16 + this.msgLength - this.length();
+  finalLength(): number {
+    return this.msgLength;
   }
 
   missingLength(): number {
-    return this.completedLength() - this.length();
+    return this.msgLength - this.msg.length;
   }
 
   appendMessage(buff: Uint8Array): number {
