@@ -66,8 +66,13 @@ private:
   const Parameter<Vector2f> stepBackValue_;
   const Parameter<float> stepBackThreshold_;
 
+    Parameter<float> desperationMax_;
+    Parameter<float> desperationThreshold_;
+    Parameter<float> desperationReduction_;
+
   //Maximum angle the search position may have to the nao without turning
   Parameter<float> maxSideAngle_;
+
 
   /// The position to look for a ball.
   Production<DuckBallSearchPosition> searchPosition_;
@@ -78,4 +83,6 @@ private:
   const float fieldWidth_;
 
   float standingOnCooldown_;
+
+  float desperation_ = 0;
 };

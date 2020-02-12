@@ -15,10 +15,10 @@
  * @param d
  * @return
  */
+
 ActionCommand playing(const DuckDataSet &d)
 {
 	auto command = roles(d);
-//	auto command = ActionCommand::stand();
 
 	//Implement looking at ballSearchPosition
 	// -- left LED Red -> We see the ball.
@@ -27,37 +27,46 @@ ActionCommand playing(const DuckDataSet &d)
 		auto robotPos = d.robotPosition.fieldToRobot(d.ballSearchPosition.searchPosition);
 		auto robotPose = d.robotPosition.fieldToRobot(d.ballSearchPosition.pose);
 		auto robotSpacePos = Vector3f(robotPos.x(), robotPos.y(), 0.0);
-		command.combineHead(ActionCommand::Head::lookAt(robotSpacePos, 1.0, 1.0));
-
-		if((command.body().getTarget().position - robotPos).norm() < 1.0){
-
-
-			switch(d.ballSearchPosition.reason){
-				case DuckBallSearchPosition::TEAM_BALL_MODEL:
-					command.combineLeftLED(ActionCommand::EyeLED::pink());
-					break;
-				case DuckBallSearchPosition::OWN_CAMERA:
-					command.combineLeftLED(ActionCommand::EyeLED::red());
-					break;
-				case DuckBallSearchPosition::SEARCHING:
-					command.combineLeftLED(ActionCommand::EyeLED::blue());
-					break;
-				case DuckBallSearchPosition::SEARCH_WALK:
-					return walkTo(d.ballSearchPosition.pose, d)
+		if(d.ballSearchPosition.desperate){
+			if(d.ballSearchPosition.reason == DuckBallSearchPosition::SEARCH_WALK){
+				command = walkTo(d.ballSearchPosition.pose, d)
 					.combineHead(ActionCommand::Head::lookAt(robotSpacePos))
 					.combineLeftLED(ActionCommand::EyeLED::lightblue());
-				case DuckBallSearchPosition::SEARCH_TURN:
-					return command
+			}else if(d.ballSearchPosition.reason == DuckBallSearchPosition::SEARCH_TURN){
+				command
 					.combineBodyWalkType(WalkMode::DIRECT_WITH_ORIENTATION)
 					.combineBodyWalkTargetOrientation(robotPose.orientation)
 					.combineHead(ActionCommand::Head::lookAt(robotSpacePos))
 					.combineLeftLED(ActionCommand::EyeLED::blue());
-				case DuckBallSearchPosition::I_AM_ON_IT:
-					return walkTo(d.ballSearchPosition.pose, d).combineLeftLED(ActionCommand::EyeLED::yellow());
-				default: break;
+			}else if(d.ballSearchPosition.reason == DuckBallSearchPosition::I_AM_ON_IT){
+				command = walkTo(d.ballSearchPosition.pose, d).combineLeftLED(ActionCommand::EyeLED::yellow());
 			}
-
 		}
+
+		command.combineHead(ActionCommand::Head::lookAt(robotSpacePos, 1.0, 1.0));
+
+		switch(d.ballSearchPosition.reason){
+			case DuckBallSearchPosition::TEAM_BALL_MODEL:
+				command.combineLeftLED(ActionCommand::EyeLED::pink());
+				break;
+			case DuckBallSearchPosition::OWN_CAMERA:
+				command.combineLeftLED(ActionCommand::EyeLED::red());
+				break;
+			case DuckBallSearchPosition::SEARCHING:
+				command.combineLeftLED(ActionCommand::EyeLED::blue());
+				break;
+			case DuckBallSearchPosition::SEARCH_WALK:
+				command.combineLeftLED(ActionCommand::EyeLED::lightblue());
+				break;
+			case DuckBallSearchPosition::SEARCH_TURN:
+				command.combineLeftLED(ActionCommand::EyeLED::blue());
+				break;
+			case DuckBallSearchPosition::I_AM_ON_IT:
+				command.combineLeftLED(ActionCommand::EyeLED::yellow());
+				break;
+			default: break;
+		}
+
 	}
 
 	return command;
