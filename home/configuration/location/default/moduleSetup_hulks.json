@@ -12,5 +12,8 @@
   "SPLMessageReceiver" : true,
 
   "DucksSPLMessageTransmitter" : false,
-  "SPLMessageTransmitter" : true
+  "SPLMessageTransmitter" : true,
+
+  "DefendingPositionProvider" : true,
+  "DucksDefenderActionProvider" : false
 }

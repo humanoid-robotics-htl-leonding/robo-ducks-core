@@ -80,6 +80,29 @@ class FieldConfig(qtw.QWidget, LayerConfig, metaclass=LayerConfigMeta):
                     "innerWidth": 1.5,
                     "depth": 0.5
                 }
+            },
+            "small": {
+                "center_x": 5.2,
+                "center_y": -3.7,
+                "field": {
+                    "length": 5.24,
+                    "width": 3.38,
+                    "lineWidth": 0.06,
+                    "penaltyMarkerSize": 0.06,
+                    "penaltyMarkerDistance": 0.73,
+                    "penaltyAreaLength": 0.39,
+                    "penaltyAreaWidth": 1.0,
+                    "centerCircleDiameter": 0.8,
+                    "borderStripWidth": 0.28,
+                    "throwInLineLength": 4.0,
+                    "throwInLineSpacing": 0.26
+                },
+                "goal": {
+                    "postDiameter": 0.1,
+                    "height": 0.8,
+                    "innerWidth": 1.45,
+                    "depth": 0.5
+                }
             }
         }
 
