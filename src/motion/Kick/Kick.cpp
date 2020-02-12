@@ -142,6 +142,41 @@ void Kick::cycle()
 
 void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector3f &torsoOffset, KickProperties properties)
 {
+    float kickDistance;
+    float kickAngle;
+
+    switch(properties.kickDistance){
+        case KickProperties::SHORT:
+            kickDistance = GROUPED_DIST_SHORT;
+            break;
+        case KickProperties::MEDIUM:
+            kickDistance = GROUPED_DIST_MEDIUM;
+            break;
+        case KickProperties::LONG:
+            kickDistance = GROUPED_DIST_LONG;
+            break;
+        default:
+            kickDistance = GROUPED_DIST_HAMMER;
+    }
+
+    std::cout<<"kickDistance: "<<kickDistance<<std::endl;
+
+    switch(properties.kickDirection){
+        case KickProperties::LEFT:
+            kickAngle = GROUPED_DIR_LEFT;
+            break;
+        case KickProperties::CENTER:
+            kickAngle = GROUPED_DIR_CENTER;
+            break;
+        case KickProperties::RIGHT:
+            kickAngle = GROUPED_DIR_RIGHT;
+            break;
+        default:
+            kickAngle = GROUPED_DIR_CENTER;
+    }
+
+
+
   /*
    * wait before start
    */
@@ -197,37 +232,27 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
   kickBallAngles[JOINTS::L_SHOULDER_PITCH] += kickParameters.shoulderPitchAdjustment;
   kickBallAngles[JOINTS::R_SHOULDER_PITCH] -= kickParameters.shoulderPitchAdjustment;
   kickBallAngles[JOINTS::L_ANKLE_ROLL] = kickParameters.ankleRoll;
-  float kickDistance;
-  float kickAngle;
 
-  switch(properties.kickDistance){
-      case KickProperties::SHORT:
-          kickDistance = GROUPED_DIST_SHORT;
-          break;
-      case KickProperties::MEDIUM:
-          kickDistance = GROUPED_DIST_MEDIUM;
-          break;
-      case KickProperties::LONG:
-          kickDistance = GROUPED_DIST_LONG;
-          break;
-  }
-    switch(properties.kickDirection){
-        case KickProperties::LEFT:
-            kickAngle = GROUPED_DIR_LEFT;
-            break;
-        case KickProperties::CENTER:
-            kickAngle = GROUPED_DIR_CENTER;
-            break;
-        case KickProperties::RIGHT:
-            kickAngle = GROUPED_DIR_RIGHT;
-            break;
+
+    if( kickDistance == GROUPED_DIST_LONG){
+        kickBallAngles[JOINTS::L_ANKLE_PITCH] = -65.0 *TO_RAD;
     }
-    //TODO
-    kickBallInterpolator_.reset(swingFootAngles, kickBallAngles, kickParameters.kickBallDuration);
+    else if (kickDistance == GROUPED_DIST_MEDIUM){
+        kickBallAngles[JOINTS::L_ANKLE_PITCH] = -60.0 *TO_RAD;
 
-    //implement distance and direction to kick (roughly)
-    // directions outside of directional cone should be transformed to nearest circle-segment-radius
-    //distances outside of max or min range should be transformed along radial line
+    }
+    else {
+        kickBallAngles[JOINTS::L_ANKLE_PITCH] = 20.0 *TO_RAD;
+
+    }
+
+
+
+  kickBallInterpolator_.reset(swingFootAngles, kickBallAngles, kickParameters.kickBallDuration);
+
+
+
+  std::cout<<"KickBall-AnklePitch"<<kickBallAngles[JOINTS::L_ANKLE_PITCH] /TO_RAD<<std::endl;
 
   //kickBallInterpolator_.reset(swingFootAngles, kickBallAngles, kickTime);
   /*
@@ -245,7 +270,26 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
   retractFootAngles[JOINTS::L_SHOULDER_PITCH] -= kickParameters.shoulderPitchAdjustment;
   retractFootAngles[JOINTS::R_SHOULDER_PITCH] += kickParameters.shoulderPitchAdjustment;
   retractFootAngles[JOINTS::L_ANKLE_ROLL] = kickParameters.ankleRoll;
-  retractFootInterpolator_.reset(kickBallAngles, retractFootAngles,
+
+
+    if( kickDistance == GROUPED_DIST_LONG){
+        retractFootAngles[JOINTS::L_KNEE_PITCH]=60.0 *TO_RAD;
+        retractFootAngles[JOINTS::L_ANKLE_PITCH]=-10.0 *TO_RAD;
+        retractFootAngles[JOINTS::L_HIP_PITCH] =-60*TO_RAD;
+    }
+    else if (kickDistance == GROUPED_DIST_MEDIUM){
+        retractFootAngles[JOINTS::L_KNEE_PITCH]=20.0 *TO_RAD;
+
+    }
+    else {
+        retractFootAngles[JOINTS::L_KNEE_PITCH]=20.0 *TO_RAD;
+    }
+    std::cout<<"retractFoot-KneePitch"<<retractFootAngles[JOINTS::L_KNEE_PITCH] /TO_RAD<<std::endl;
+    std::cout<<"retractFoot-AnklePitch"<<retractFootAngles[JOINTS::L_ANKLE_PITCH] /TO_RAD<<std::endl;
+    std::cout<<"retractFoot-HipPitch"<<retractFootAngles[JOINTS::L_HIP_PITCH] /TO_RAD<<std::endl;
+
+
+    retractFootInterpolator_.reset(kickBallAngles, retractFootAngles,
                                  kickParameters.retractFootDuration);
 
   /*

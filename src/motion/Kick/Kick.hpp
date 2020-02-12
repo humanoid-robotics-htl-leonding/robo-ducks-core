@@ -11,22 +11,25 @@
 #include "Tools/Kinematics/KinematicMatrix.h"
 
 #include "Utils/Interpolator/Interpolator.hpp"
-#define DISTANCE_MIN 1.3
-#define DISTANCE_SHORT_BOUNDARY 2.2
-#define DISTANCE_MEDIUM_BOUNDARY 3.1
-#define DISTANCE_MAX 4
+#define DISTANCE_MIN 1.3f
+#define DISTANCE_SHORT_BOUNDARY 2.2f
+#define DISTANCE_MEDIUM_BOUNDARY 3.1f
+#define DISTANCE_MAX 4.0f
+#define DISTANCE_HAMMER 5.0f
 
-#define ANGLE_DIST_MAX 1.2
-#define ANGLE_DIST_MIN 0.4
-#define ANGLE_DIST_REF 4.0
+
+#define ANGLE_DIST_MAX 1.2f
+#define ANGLE_DIST_MIN 0.4f
+#define ANGLE_DIST_REF 4.0f
 #define ANGLE_MAX std::atan2(ANGLE_DIST_MAX,ANGLE_DIST_REF)
 #define ANGLE_LEFT_MIN std::atan2(ANGLE_DIST_MIN,ANGLE_DIST_REF)
 #define ANGLE_RIGHT_MAX std::atan2(-ANGLE_DIST_MIN,ANGLE_DIST_REF)
 #define ANGLE_MIN std::atan2(-ANGLE_DIST_MAX,ANGLE_DIST_REF)
 
-#define GROUPED_DIST_SHORT  1.75
-#define GROUPED_DIST_MEDIUM 2.65
-#define GROUPED_DIST_LONG 3.55
+#define GROUPED_DIST_SHORT  1.75f
+#define GROUPED_DIST_MEDIUM 2.65f
+#define GROUPED_DIST_LONG 3.55f
+#define GROUPED_DIST_HAMMER 5.0f
 
 #define GROUPED_DIR_LEFT std::atan2((ANGLE_DIST_MAX-ANGLE_DIST_MIN)/2.0+ANGLE_DIST_MIN,ANGLE_DIST_REF)
 #define GROUPED_DIR_CENTER std::atan2(0.0,ANGLE_DIST_REF)
@@ -91,6 +94,7 @@ private:
           SHORT,
           MEDIUM,
           LONG,
+          HAMMER
       } KICK_DISTANCE;
       KICK_DISTANCE kickDistance;
       KICK_DIRECTION kickDirection;
@@ -102,13 +106,18 @@ private:
           float dist = std::sqrt(xdist*xdist+ydist*ydist);
           float ang = std::atan2(ydist,xdist); //left positive - right negative
 
+          std::cout<<"real Distance is: "<<dist<<std::endl;
 
           //corrections
-          if(dist >DISTANCE_MAX){
+          if(dist>DISTANCE_HAMMER){
+              print("KickTarget-Distance is away more than "+std::to_string(DISTANCE_HAMMER)+"m, commencing HAMMER-shot",LogLevel::WARNING);
+              dist= DISTANCE_HAMMER;
+          }
+          else if(dist >DISTANCE_MAX){
               print("Exceeding max kick distance of "+std::to_string(DISTANCE_MAX)+"m, kickDistance is forced onto "+std::to_string(DISTANCE_MAX)+"m",LogLevel::WARNING);
               dist =DISTANCE_MAX;
           }
-          if(dist <DISTANCE_MIN){
+          else if(dist <DISTANCE_MIN){
               print("Subceeding min kick distance of "+std::to_string(DISTANCE_MIN)+"m, kickDistance is forced onto "+std::to_string(DISTANCE_MIN)+"m",LogLevel::WARNING);
               dist=DISTANCE_MIN;
           }
@@ -138,8 +147,11 @@ private:
           else if(properties.distance<DISTANCE_MEDIUM_BOUNDARY){
               properties.kickDistance = KickProperties::MEDIUM;
           }
-          else {
+          else if ( properties.distance <DISTANCE_MAX) {
               properties.kickDistance = KickProperties::LONG;
+          }
+          else {
+              properties.kickDistance = KickProperties::HAMMER;
           }
 
           return properties;
