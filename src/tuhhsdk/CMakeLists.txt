@@ -5,6 +5,7 @@ project(tuhh)
 set(TUHHSDK_SOURCES
   Data/MirrorableMotionOutput.cpp
   Definitions/BHULKsStandardMessage.cpp
+        Definitions/DucksStandardMessage.cpp
   Definitions/keys.cpp
   Framework/Database.cpp
   Framework/DebugDatabase.cpp
@@ -136,6 +137,7 @@ set(TUHHSDK_HEADERS
   Data/HeadOffData.hpp
   Data/ThoughtControlRequest.hpp
         Definitions/BHULKsStandardMessage.h
+        Definitions/DucksStandardMessage.h
   Definitions/keys.h
   Definitions/RoboCupGameControlData.h
   Definitions/SPLStandardMessage.h

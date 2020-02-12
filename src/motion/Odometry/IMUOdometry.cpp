@@ -20,6 +20,8 @@ void IMUOdometry::cycle()
   sensorFusion_.update(imuSensorData_->gyroscope, imuSensorData_->accelerometer, cycleInfo_->cycleTime);
 
   Vector3f rpy = sensorFusion_.getOrientation();
+  debug().update(mount_ + ".Gyro", imuSensorData_->gyroscope);
+  debug().update(mount_ + ".Accelerometer", imuSensorData_->accelerometer);
   debug().update(mount_ + ".Orientation", rpy);
 
   accumulatedOdometry_.orientation = rpy.z();

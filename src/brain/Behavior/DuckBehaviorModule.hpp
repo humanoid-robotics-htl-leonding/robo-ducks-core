@@ -73,7 +73,7 @@ private:
 	const Dependency<HeadMotionOutput> headMotionOutput_;
 	const Dependency<TeamBallModel> teamBallModel_;
 	const Dependency<TeamPlayers> teamPlayers_;
-	const Dependency<BallSearchPosition> ballSearchPosition_;
+	const Dependency<DuckBallSearchPosition> ballSearchPosition_;
 	const Dependency<FieldDimensions> fieldDimensions_;
 	const Dependency<StrikerAction> strikerAction_;
 	const Dependency<PenaltyStrikerAction> penaltyStrikerAction_;

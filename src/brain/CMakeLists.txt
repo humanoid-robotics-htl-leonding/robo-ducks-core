@@ -86,6 +86,7 @@ set(HEADERS
   Modules/HeadOffModule/HeadOffModule.hpp
   SPLNetwork/BHULKsHelper.hpp
   SPLNetwork/HULKsMessage.hpp
+  SPLNetwork/DucksMessage.hpp
   SPLNetwork/SPLNetworkService.hpp
   SPLNetwork/SPLMessageReceiver.hpp
   SPLNetwork/SPLMessageTransmitter.hpp
@@ -96,6 +97,7 @@ set(HEADERS
 set(SOURCES
   Behavior/BallSearchMapManager.cpp
   Behavior/BallSearchPositionProvider.cpp
+  Behavior/DuckBallSearchPositionProvider.cpp
   Behavior/BehaviorModule.cpp
   Behavior/DuckBehaviorModule.cpp
   Behavior/BishopPositionProvider.cpp
@@ -141,9 +143,12 @@ set(SOURCES
   Modules/TeamPlayersAugmenter/TeamPlayersAugmenter.cpp
   Modules/HeadOffModule/HeadOffModule.cpp
   SPLNetwork/HULKsMessage.cpp
+  SPLNetwork/DucksMessage.cpp
   SPLNetwork/SPLNetworkService.cpp
   SPLNetwork/SPLMessageReceiver.cpp
+  SPLNetwork/DucksSPLMessageReceiver.cpp
   SPLNetwork/SPLMessageTransmitter.cpp
+  SPLNetwork/DucksSPLMessageTransmitter.cpp
   Brain.cpp
   BrainThread.cpp
   print.cpp
