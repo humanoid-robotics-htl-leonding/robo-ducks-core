@@ -8,7 +8,8 @@ const net = electron.remote.require('net');
 
 export class NaoConnector {
 
-  address: string = '';
+  checksum = 0;
+  address = '';
   port = 12441;
   status = 'New';
   client: Socket;
@@ -46,15 +47,15 @@ export class NaoConnector {
     this.client.setKeepAlive(true);
   }
 
-  reset(){
-    if(this.client && !this.client.destroyed){
+  reset() {
+    if (this.client && !this.client.destroyed) {
       this.client.destroy();
       this.status = this.address + ' [Destroyed]';
     }
   }
 
-  disconnect(){
-    if(this.client){
+  disconnect() {
+    if (this.client) {
       this.client.end();
     }
   }
@@ -74,21 +75,41 @@ export class NaoConnector {
   }
 
   defaultOnData(chunk: Uint8Array) {
-    this.remainingChunk.set(chunk,this.remainingChunk.length);
-    while(this.remainingChunk.length>0){
-      if(this.messages.length==0 || this.messages[this.messages.length].isCompleted){
+    console.log('Start ',this.checksum);
+    //console.log('Remaining');
+    //console.log(this.remainingChunk);
+    const oldLen = this.remainingChunk.length;
+    this.remainingChunk = new Uint8Array(oldLen + chunk.length);
+    this.remainingChunk.set(this.remainingChunk);
+    this.remainingChunk.set(chunk, oldLen);
+    //console.log(this.remainingChunk);
+    let index = 0;
+    while(index<this.remainingChunk.length) {
+      if (this.messages.length == 0 || this.messages[this.messages.length-1].isCompleted) {
+        // if(this.messages.length >= 2){
+        //   console.log('loolig');
+        //   console.log(this.messages);
+        //   return;
+        // }
         this.messages.push(new DebugMessage());
       }
-      const message = this.messages[this.messages.length];
-      if(message.headerIncomplete()){
-        if(this.remainingChunk.length<16){
+      const message = this.messages[this.messages.length-1];
+      if (message.headerIncomplete()) {
+        if (this.remainingChunk.length - index < 16) {
+          let oldChunk = this.remainingChunk;
+          this.remainingChunk = new Uint8Array(oldChunk.length - index);
+          this.remainingChunk.set(oldChunk.slice(index));
           return;
         }
-        message.parseHeader(this.remainingChunk.subarray(0,16));
-        this.remainingChunk = this.remainingChunk.subarray(16);
+        message.parseHeader(this.remainingChunk.subarray(index, 16));
+        index += 16;
       }
-      this.remainingChunk = message.appendMessage(this.remainingChunk);
+      index += message.appendMessage(this.remainingChunk.subarray(index));
     }
+    this.remainingChunk = new Uint8Array(0);
+    //console.log(this);
+    console.log('End ', this.checksum);
+    this.checksum++;
   }
 
   defaultOnEnd() {
@@ -96,18 +117,18 @@ export class NaoConnector {
     this.status = this.address + ' [Disconnected]';
   }
 
-  defaultOnConnect(){
+  defaultOnConnect() {
     console.log('Connected to ' + this.address);
     console.log(this);
     this.status = this.address;
   }
 
-  defaultOnClose(){
-    console.log('Connection to '+ this.address + ' closed');
+  defaultOnClose() {
+    console.log('Connection to ' + this.address + ' closed');
     this.status = this.address + ' [Disconnected]';
   }
 
-  defaultOnError(error){
+  defaultOnError(error) {
     console.log('Error on ' + this.address, error);
     this.status = this.address + ' [Error]';
     this.client.destroy();
