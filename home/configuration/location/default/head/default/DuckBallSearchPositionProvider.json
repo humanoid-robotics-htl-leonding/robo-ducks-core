@@ -17,7 +17,7 @@
 	"stepBackThreshold": 0.5,
 	"maxSearchSideAngle": 60,
 
-	"desperationThreshold": 2.0,
+	"desperationThreshold": 5,
 	"desperationReduction": 10,
 	"desperationMax": 30
 }
