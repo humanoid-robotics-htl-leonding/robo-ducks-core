@@ -30,7 +30,8 @@ public:
 		TEAM_BALL_MODEL = 1,
 		I_AM_ON_IT = 2,
 		SEARCHING = 3,
-		SEARCH_WALK = 4
+		SEARCH_WALK = 4,
+		SEARCH_TURN = 5,
 	};
 
 	/// the name of this DataType

@@ -124,6 +124,10 @@ public:
       return type_;
     }
 
+    const Pose getTarget() const {
+    	return target_;
+    }
+
   private:
     /**
      * @brief Body creates an undefined body action command
@@ -750,6 +754,16 @@ public:
   {
     body_ = body;
     return *this;
+  }
+
+  ActionCommand& combineBodyWalkType(const WalkMode& mode){
+  	body_.walkingMode_ = mode;
+  	return *this;
+  }
+
+  ActionCommand& combineBodyWalkTargetOrientation(float orientation){
+  	body_.target_.orientation = orientation;
+  	return *this;
   }
   /**
    * @brief combineLeftArm replaces the left arm part of an action command

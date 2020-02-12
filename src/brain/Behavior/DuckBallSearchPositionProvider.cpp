@@ -124,6 +124,7 @@ void DuckBallSearchPositionProvider::cycle()
 			}
 		}
 
+		//2. === If ball rolls to the side, then turn
 		if(searchPosition_->reason != DuckBallSearchPosition::Reason::SEARCH_WALK){
 			auto localSearchPosition = robotPosition_->fieldToRobot(searchPosition_->searchPosition);
 			auto angleToSearchPosition = std::atan2(localSearchPosition.y(), localSearchPosition.x());
@@ -132,7 +133,7 @@ void DuckBallSearchPositionProvider::cycle()
 				auto angle = std::atan2(posToRobot.y(), posToRobot.x());
 
 				searchPosition_->pose = Pose(robotPosition_->pose.position, angle);
-				searchPosition_->reason = DuckBallSearchPosition::Reason::SEARCH_WALK;
+				searchPosition_->reason = DuckBallSearchPosition::Reason::SEARCH_TURN;
 			}
 		}
 		//2. === Step Back

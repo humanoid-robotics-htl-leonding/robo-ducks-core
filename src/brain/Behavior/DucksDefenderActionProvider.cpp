@@ -12,6 +12,7 @@
 DucksDefenderActionProvider::DucksDefenderActionProvider(const ModuleManagerInterface& manager)
   : Module(manager)
   , ballFocalPointDepth_(*this, "ballFocalPointDepth", []{})
+  , ballFocalPointYshift_(*this, "ballFocalPointYShift", []{})
   , maxDeflectBallDistance_(*this, "maxDeflectBallDistance", []{})
   , fieldDimensions_(*this)
   , gameControllerState_(*this)
@@ -39,14 +40,14 @@ void DucksDefenderActionProvider::cycle()
 	auto ballY = teamBallModel_->position.y();
 
 	auto focalX = -fieldDimensions_->fieldLength/2.-ballFocalPointDepth_();
-	auto focalY = 0;
+	auto focalY = ballFocalPointYshift_();
 
 	auto dX = ballX - focalX;
 	auto dY = ballY - focalY;
 
 	auto k = dY/dX;
 
-	auto defenderY = k*(defenderX-focalX);
+	auto defenderY = k*(defenderX-focalX)+focalY;
 
 	auto suggestedIntersectPosition = Vector2f(defenderX, defenderY);
 
