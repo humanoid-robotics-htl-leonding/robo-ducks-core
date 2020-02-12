@@ -1,4 +1,5 @@
 import os
+import stat
 import tempfile
 
 from midaslib.compiler import Nao6CompileTarget
@@ -21,12 +22,19 @@ class Uploader:
         self.target = target
         self.build_type = build_type
 
-    def upload(self):
+    def upload(self, exit_on_fail=True):
         temp_dir = tempfile.TemporaryDirectory("_naoqi", "midas_")
         print(temp_dir.name)
         os.makedirs(os.path.join(temp_dir.name, "naoqi", "lib"))
         os.makedirs(os.path.join(temp_dir.name, "naoqi", "bin"))
         os.makedirs(os.path.join(temp_dir.name, "naoqi", "filetransport_ball_candidates"))
+
+        if os.path.exists(nc.ssh_key_path):
+            mode = os.stat(nc.ssh_key_path).st_mode & 0o777
+            if mode != 0o400:
+                os.chmod(nc.ssh_key_path, stat.S_IREAD)
+                mode = os.stat(nc.ssh_key_path).st_mode
+                print(f"Changed ssh_key mode to {mode}")
 
         if self.with_config:
             create_build_link([base_dir, "home", "preferences"], [temp_dir.name, "naoqi", "preferences"])
@@ -44,6 +52,11 @@ class Uploader:
 
         nao = nc.Nao(self.address)
 
-        nao.rsync(os.path.join(temp_dir.name, "naoqi"), False)
+        result = nao.rsync(os.path.join(temp_dir.name, "naoqi"), False)
 
         temp_dir.cleanup()
+
+        if exit_on_fail:
+            if result > 0:
+                exit(result)
+        return result
