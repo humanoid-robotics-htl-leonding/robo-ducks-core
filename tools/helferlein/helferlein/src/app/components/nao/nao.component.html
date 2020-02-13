@@ -16,4 +16,7 @@
     Destroyed: {{connector.client.destroyed}}
     Address: {{connector.client.remoteAddress}}
   </div>
+  <div *ngIf="connector.messages.length>0">
+    <app-raw-card *ngFor="let element of elements" [content]="connector.messages[connector.messages.length-1].msg"></app-raw-card>
+  </div>
 </div>
