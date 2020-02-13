@@ -45,7 +45,9 @@ DuckBallSearchPositionProvider::DuckBallSearchPositionProvider(const ModuleManag
 	  fieldLength_(fieldDimensions_->fieldLength),
 	  fieldWidth_(fieldDimensions_->fieldWidth),
 	  standingOnCooldown_(0),
-	  desperation_(0)
+	  desperation_(0),
+	  oldSearchPosition_(0, 0),
+	  oldSearchProbability_(0)
 {
 	maxSideAngle_() *= TO_RAD;
 }
@@ -53,9 +55,6 @@ DuckBallSearchPositionProvider::DuckBallSearchPositionProvider(const ModuleManag
 void DuckBallSearchPositionProvider::cycle()
 {
 	Chronometer time(debug(), mount_ + ".cycle_time");
-
-	auto distVec = teamBallModel_->position - robotPosition_->pose.position;
-	auto dist = distVec.norm();
 
 
 	bool guessing = false;
@@ -86,12 +85,13 @@ void DuckBallSearchPositionProvider::cycle()
 
 		//3.1 === Snack a possible position to investigate
 		auto fieldSearchPositionIterator = list.cbegin();
+		bool thisIsValid = false;
 		while(fieldSearchPositionIterator != list.cend()){
 			auto positionUnderInspection = (*fieldSearchPositionIterator)->position;
 			auto myDistance = (robotPosition_->pose.position - positionUnderInspection).norm();
 
 			//3.1.1 We dont want the position if my team players are nearer or are walking to it.
-			bool thisIsValid = true;
+			thisIsValid = true;
 			for(auto teamPlayer = teamPlayers_->players.cbegin(); teamPlayer < teamPlayers_->players.cend(); teamPlayer++){
 
 				//Other Team Player is closer
@@ -107,12 +107,23 @@ void DuckBallSearchPositionProvider::cycle()
 //					}
 			}
 
+			float probabilityIncreaseFactor = (*fieldSearchPositionIterator)->probability / oldSearchProbability_;
+			if(probabilityIncreaseFactor < 1.2){
+				thisIsValid = false;
+			}
+
 			if(thisIsValid) break;
 			fieldSearchPositionIterator++;
 		}
+		auto fieldSearchPosition = (*fieldSearchPositionIterator)->position;
+		if(!thisIsValid){
+			fieldSearchPosition = oldSearchPosition_;
+			oldSearchProbability_ = ballSearchMap_->cellFromPositionConst(fieldSearchPosition).probability;
+		}else{
+			oldSearchProbability_ = (*fieldSearchPositionIterator)->probability;
+		}
 
 		//3.2 Look at snacked position
-		auto fieldSearchPosition = (*fieldSearchPositionIterator)->position;
 		searchPosition_->searchPosition = fieldSearchPosition;
 		searchPosition_->reason = DuckBallSearchPosition::Reason::SEARCHING;
 		searchPosition_->ownSearchPoseValid=true;
@@ -143,18 +154,20 @@ void DuckBallSearchPositionProvider::cycle()
 		}
 	}
 	//2. === Step Back
-	auto distAlert = dist < stepBackThreshold_() && !teamBallModel_->seen;
-
-	if(distAlert || standingOnCooldown_ > 0){
-		standingOnCooldown_ -= cycleInfo_->cycleTime;
-		if(distAlert){
-			standingOnCooldown_ = 1;
-		}
-		searchPosition_->ownSearchPoseValid = true;
-		searchPosition_->reason = DuckBallSearchPosition::Reason::I_AM_ON_IT;
-		searchPosition_->pose = robotPosition_->robotToField(Pose(stepBackValue_(), 0));
-		//TODO Dont run out of field.
-	}
+//	auto distVec = teamBallModel_->position - robotPosition_->pose.position;
+//	auto dist = distVec.norm();
+//	auto distAlert = dist < stepBackThreshold_() && !teamBallModel_->seen;
+//
+//	if(distAlert || standingOnCooldown_ > 0){
+//		standingOnCooldown_ -= cycleInfo_->cycleTime;
+//		if(distAlert){
+//			standingOnCooldown_ = 1;
+//		}
+//		searchPosition_->ownSearchPoseValid = true;
+//		searchPosition_->reason = DuckBallSearchPosition::Reason::I_AM_ON_IT;
+//		searchPosition_->pose = robotPosition_->robotToField(Pose(stepBackValue_(), 0));
+//		//TODO Dont run out of field.
+//	}
 
 	if(guessing && desperation_ < 30.){
 		desperation_ += cycleInfo_->cycleTime;
@@ -165,4 +178,7 @@ void DuckBallSearchPositionProvider::cycle()
 	}
 	searchPosition_->desperation = desperation_;
 	searchPosition_->desperate = (desperation_ > 2.0);
+
+	//Hysteresis
+	oldSearchPosition_ = searchPosition_->searchPosition;
 }

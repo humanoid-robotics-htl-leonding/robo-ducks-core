@@ -6,7 +6,8 @@ Hulks Toolchain is used to compile the majority of the Hulks-Code
 
 == Installing
 
-```
+[source]
+----
 toolchain
  |_ hulks-v5                    | ctc-linux64-hulks-7.3.0-1.tar.bz2
     |_ root
@@ -20,4 +21,4 @@ toolchain
     |_ toolchain.cmake
     |_ toolchain.xml
     |_ toolchain-atom.cmake
-```
+----
