@@ -3,6 +3,7 @@ import { DebugMessage } from './debug-message';
 import { DebugMessageType } from './message-type.enum';
 import { Sink } from 'ts-binary';
 import { NaoService } from '../service/nao.service';
+import { ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 declare var electron: any;
 const net = electron.remote.require('net');
 
@@ -20,6 +21,13 @@ export class NaoConnector {
   onConnect: () => void = this.defaultOnConnect;
   onError: (error) => void = this.defaultOnError;
 
+  @Output() receivedData = new EventEmitter();
+  @Output() connectionEnded = new EventEmitter();
+  @Output() connected = new EventEmitter();
+  @Output() connectionError = new EventEmitter();
+
+  constructor(){}
+
   connect() {
     if (!this.client) {
       console.log('Connecting to ' + this.address + '...');
@@ -28,15 +36,18 @@ export class NaoConnector {
 
       this.client.on('end', () => {
         this.onEnd();
+        this.connectionEnded.emit();
       });
       this.client.on('data', (chunk) => {
         this.onData(chunk);
       });
       this.client.on('connect', () => {
         this.onConnect();
+        this.connected.emit();
       });
       this.client.on('error', (error) => {
         this.onError(error);
+        this.connectionError.emit();
       });
     }
 
@@ -82,19 +93,16 @@ export class NaoConnector {
    * @param chunk The latest message from the NAO
    */
   defaultOnData(chunk: Uint8Array) {
-    console.log('Got: ',chunk);
     const oldLen = this.remainingChunk.length;
     this.remainingChunk = new Uint8Array(oldLen + chunk.length);  // Unused parts of the last chunk are concatinated with the new chunk
     this.remainingChunk.set(this.remainingChunk);
     this.remainingChunk.set(chunk, oldLen);
     let index = 0;
     while(index<this.remainingChunk.length) { //we want all of the chunk to be put in DebugMessages
-      if(this.messages.length > 0){
-        console.log('Last Message: ', this.messages[this.messages.length-1]);
-        console.log('Current: ',this.messages[this.messages.length-1].currentLength());
-        console.log('Final', this.messages[this.messages.length-1].finalLength());
-      }
       if (this.messages.length == 0 || this.messages[this.messages.length-1].isCompleted()) {
+        if(this.messages.length>0){
+          this.receivedData.emit();
+        }
         this.messages.push(new DebugMessage());
       }
       const message = this.messages[this.messages.length-1];  //always put the chunk in the latest (and only incomplete) message
@@ -111,8 +119,6 @@ export class NaoConnector {
       index += message.appendMessage(this.remainingChunk.subarray(index));
     }
     this.remainingChunk = new Uint8Array(0);
-    console.log(this);
-    console.log(this.messages[this.messages.length-1].currentLength());
   }
 
   defaultOnEnd() {
