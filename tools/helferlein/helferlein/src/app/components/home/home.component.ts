@@ -18,38 +18,38 @@ export class HomeComponent implements OnInit {
   constructor(private naoService: NaoService, private changeRef: ChangeDetectorRef) { }
 
   ngOnInit() {
-    const customMenu = menu.buildFromTemplate(
-      [
-        {
-          label: 'File',
-          submenu: [
-            {
-              label: 'Tab',
-              submenu: [
-                {
-                  label: 'New',
-                  click: () => {
-                    this.openTab();
-                  },
-                  accelerator: 'CmdOrCtrl+N'
-                },
-                {
-                  label: 'Close',
-                  click: () => {
-                    this.closeTab(this.selected.value);
-                  },
-                  accelerator: 'CmdOrCtrl+W'
-                }
-              ]
-            },
-            {label: 'Delete'},
-            {type: 'separator'},
+    // const customMenu = menu.buildFromTemplate(
+    //   [
+    //     {
+    //       label: 'File',
+    //       submenu: [
+    //         {
+    //           label: 'Tab',
+    //           submenu: [
+    //             {
+    //               label: 'New',
+    //               click: () => {
+    //                 this.openTab();
+    //               },
+    //               accelerator: 'CmdOrCtrl+N'
+    //             },
+    //             {
+    //               label: 'Close',
+    //               click: () => {
+    //                 this.closeTab(this.selected.value);
+    //               },
+    //               accelerator: 'CmdOrCtrl+W'
+    //             }
+    //           ]
+    //         },
+    //         {label: 'Delete'},
+    //         {type: 'separator'},
 
-          ]
-        }
-      ]
-    );
-    menu.setApplicationMenu(customMenu);
+    //       ]
+    //     }
+    //   ]
+    // );
+    // menu.setApplicationMenu(customMenu);
     this.openTab();
   }
 
