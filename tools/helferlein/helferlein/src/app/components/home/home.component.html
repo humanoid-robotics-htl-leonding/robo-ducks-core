@@ -1,5 +1,6 @@
-<mat-tab-group color="primary">
-  <mat-tab *ngFor="let tab of tabs">
+<mat-tab-group color="primary" [selectedIndex]="selected.value"
+(selectedIndexChange)="selectTab($event)">
+  <mat-tab *ngFor="let tab of tabs; let index = index">
     <ng-template mat-tab-label>
       <div>
         {{tab.connector.status}}
@@ -8,11 +9,11 @@
         <mat-icon>delete</mat-icon>
       </button>
     </ng-template>
-    <app-nao [connector]="tab.connector"></app-nao>
+    <app-nao [connector]="tab.connector" (addTab)="openTab()" (closeTab)="closeTab(index)"></app-nao>
   </mat-tab>
-  <mat-tab>
+  <mat-tab [disabled]="true">
     <ng-template mat-tab-label>
-      <button mat-button color="primary" (click)="openTab()" [disableRipple]="false">
+      <button mat-button color="primary" (click)="openTab()" [disableRipple]="true">
         <mat-icon>add</mat-icon>
       </button>
     </ng-template>
