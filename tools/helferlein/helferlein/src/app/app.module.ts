@@ -12,6 +12,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { PortalModule } from '@angular/cdk/portal';
 
 import { NaoComponent } from './components/nao/nao.component';
 import { NaoTabComponent } from './components/nao-tab/nao-tab.component';
@@ -37,7 +38,8 @@ import { RawCardComponent } from './components/elements/raw-card/raw-card.compon
     MatToolbarModule,
     MatTabsModule,
     MatIconModule,
-    MatCardModule
+    MatCardModule,
+    PortalModule
   ],
   providers: [],
   bootstrap: [AppComponent]
