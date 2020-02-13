@@ -46,10 +46,11 @@ void DucksStrikerActionProvider::cycle()
         strikerAction_->kickType = DucksStrikerAction::KickType::KICK;
         strikerAction_->kickPose = Pose(teamBallModel_->position, 0);
     } else if (isSurrounded()) {
-        //shoot to the nearest teammate
+        // TODO: shoots to the nearest teammate
     } else {
         strikerAction_->action = DucksStrikerAction::Action ::WAITING_FOR_BALL;
         strikerAction_->kickType = DucksStrikerAction::KickType::NONE;
+        // TODO: go back to fixed position
     }
 }
 
@@ -58,5 +59,5 @@ bool DucksStrikerActionProvider::isSurrounded() {
         //std::cout << "teamObstaclePosition: " << teamObstacle.absolutePosition.x() << ";" << teamObstacle.absolutePosition.y() << std::endl << std::endl;
     }
 
-    return true;
+    return false;
 }
