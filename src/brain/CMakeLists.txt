@@ -13,6 +13,7 @@ set(HEADERS
         Behavior/DucksDefenderActionProvider.hpp
   Behavior/DataSet.hpp
   Behavior/BallSearchMapManager.hpp
+  Behavior/DucksBallSearchMapManager.hpp
   Behavior/HeadPositionProvider.hpp
   Behavior/BallSearchPositionProvider.hpp
   Behavior/KeeperActionProvider.hpp
@@ -98,6 +99,7 @@ set(HEADERS
 
 set(SOURCES
   Behavior/BallSearchMapManager.cpp
+  Behavior/DucksBallSearchMapManager.cpp
   Behavior/BallSearchPositionProvider.cpp
   Behavior/DuckBallSearchPositionProvider.cpp
   Behavior/BehaviorModule.cpp
