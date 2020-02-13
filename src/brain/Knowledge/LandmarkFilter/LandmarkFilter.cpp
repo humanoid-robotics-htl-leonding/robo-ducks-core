@@ -202,14 +202,21 @@ void LandmarkFilter::assembleGoals()
       float dist = (post1->position - post2->position).norm();
       if (std::abs(dist - optimalGoalPostDistance_) < maxGoalPostDistanceDeviation_())
       {
+      	Vector2f leftPost;
+      	Vector2f rightPost;
         if (post1->position.y() > post2->position.y())
         {
-          landmarkModel_->goals.emplace_back(post1->position, post2->position);
+        	leftPost = post1->position;
+        	rightPost = post2->position;
         }
         else
         {
-          landmarkModel_->goals.emplace_back(post2->position, post1->position);
+        	leftPost = post2->position;
+        	rightPost = post1->position;
         }
+		float orientation = std::atan2(leftPost.x() - rightPost.x(), rightPost.y() - leftPost.y());
+        std::cerr << orientation << std::endl;
+        landmarkModel_->goals.emplace_back(leftPost, rightPost, true, orientation);
       }
     }
   }

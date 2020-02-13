@@ -304,6 +304,10 @@ void UKFPositionKnowledge::measurementUpdate()
     }
 
     poseHypothesis.updateWithSetOfIntersections(landmarkModel_->intersections, cameraMatrix_->camera2ground);
+
+    for (auto& goal : landmarkModel_->goals) {
+    	poseHypothesis.updateWithGoal(goal, cameraMatrix_->camera2ground);
+    }
   }
 }
 
