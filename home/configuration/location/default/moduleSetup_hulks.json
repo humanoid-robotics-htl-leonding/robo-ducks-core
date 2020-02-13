@@ -18,5 +18,8 @@
   "DucksDefenderActionProvider" : false,
 
   "BallSearchMapManager" : true,
-  "DucksBallSearchMapManager" : false
+  "DucksBallSearchMapManager" : false,
+  
+  "PlayingRoleProvider" : true,
+  "DucksPlayingRoleProvider" : false
 }
