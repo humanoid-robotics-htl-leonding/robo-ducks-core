@@ -4,6 +4,7 @@
 
 #include "Data/BallSearchMap.hpp"
 #include "Data/BallState.hpp"
+#include "Data/TeamBallModel.hpp"
 #include "Data/BodyPose.hpp"
 #include "Data/CycleInfo.hpp"
 #include "Data/FieldDimensions.hpp"
@@ -59,6 +60,7 @@ private:
   const Dependency<PlayerConfiguration> playerConfiguration_;
   const Dependency<RobotPosition> robotPosition_;
   const Dependency<TeamPlayers> teamPlayers_;
+  const Dependency<TeamBallModel> teamBallModel_;
 
   Production<BallSearchMap> ballSearchMap_;
 
@@ -75,6 +77,8 @@ private:
   const float fieldWidth_;
   /// the field length given by the fieldDimensions (dependency)
   const float fieldLength_;
+
+  TimePoint nextGuessAllowedTime_;
 
   /**
    * @brief Updates the map with all data available (all robot poses and ball data)

@@ -25,9 +25,11 @@ DucksBallSearchMapManager::DucksBallSearchMapManager(const ModuleManagerInterfac
   , playerConfiguration_(*this)
   , robotPosition_(*this)
   , teamPlayers_(*this)
+  , teamBallModel_(*this)
   , ballSearchMap_(*this)
   , fieldWidth_(fieldDimensions_->fieldWidth)
   , fieldLength_(fieldDimensions_->fieldLength)
+  , nextGuessAllowedTime_(0)
 {
   fovAngle_() *= TO_RAD; // Obviously.
   maxBallDetectionRangeSquared_ = maxBallDetectionRange_() * maxBallDetectionRange_();
@@ -183,7 +185,19 @@ void DucksBallSearchMapManager::updateMap()
   }
 
   //Integrate Desperation
-  if(tea)
+  if(cycleInfo_->startTime > nextGuessAllowedTime_){
+	  if(!teamBallModel_->seen) {
+		  ballSearchMap_->cellFromPosition(Vector2f(-fieldLength_/6*1., fieldWidth_/4)).probability += 0.01;
+		  ballSearchMap_->cellFromPosition(Vector2f(-fieldLength_/6*1., -fieldWidth_/4)).probability += 0.01;
+		  ballSearchMap_->cellFromPosition(Vector2f(-fieldLength_/6*2., -fieldWidth_/4)).probability += 0.01;
+		  ballSearchMap_->cellFromPosition(Vector2f(-fieldLength_/6*2., fieldWidth_/4)).probability += 0.01;
+		  nextGuessAllowedTime_ = cycleInfo_->startTime + 5000;
+	  }
+  }
+  if(teamBallModel_->found){
+	  nextGuessAllowedTime_ = cycleInfo_->startTime + 2000;
+  }
+  debug().update(mount_+".nextGuessAllowedTime", nextGuessAllowedTime_);
   
 
   // Sum all probabilities

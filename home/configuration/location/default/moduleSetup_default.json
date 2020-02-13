@@ -3,7 +3,8 @@
   "AudioReceiver" : true,
   "BallDetectionNeuralNet" : true,
   "BallFilter" : true,
-  "BallSearchMapManager" : true,
+  "BallSearchMapManager" : false,
+  "DucksBallSearchMapManager" : true,
 
   "BallSearchPositionProvider" : false,
   "DuckBallSearchPositionProvider" : true,

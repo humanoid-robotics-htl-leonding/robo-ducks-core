@@ -15,5 +15,8 @@
   "SPLMessageTransmitter" : true,
 
   "DefendingPositionProvider" : true,
-  "DucksDefenderActionProvider" : false
+  "DucksDefenderActionProvider" : false,
+
+  "BallSearchMapManager" : true,
+  "DucksBallSearchMapManager" : false
 }
