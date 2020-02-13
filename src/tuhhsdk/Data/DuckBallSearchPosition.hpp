@@ -26,15 +26,19 @@ public:
 
 	enum Reason
 	{
-		OWN_CAMERA,
-		TEAM_BALL_MODEL
+		OWN_CAMERA = 0,
+		TEAM_BALL_MODEL = 1,
+		I_AM_ON_IT = 2,
+		SEARCHING = 3,
+		SEARCH_WALK = 4,
+		SEARCH_TURN = 5,
 	};
 
 	/// the name of this DataType
 	DataTypeName name = "DuckBallSearchPosition";
-	/// the pose to move the robot to.
+	/// the pose to move the robot to. (Field coordinates)
 	Pose pose;
-	/// the position to look at to find the ball
+	/// the position to look at to find the ball. (Field coordinates)
 	Vector2f searchPosition = Vector2f::Zero();
 	/// the positions to look at to find the ball for all other players.
 	std::array<Vector2f, MAX_NUM_PLAYERS> suggestedSearchPositions;
@@ -51,6 +55,9 @@ public:
 	/// smallest player number)
 	unsigned int globalMostWisePlayerNumber = 0;
 
+	float desperation = 0;
+	bool desperate = false;
+
 	Reason reason = Reason::OWN_CAMERA;
 
 	void reset() override
@@ -63,6 +70,7 @@ public:
 		}
 		ownSearchPoseValid = false;
 		availableForSearch = false;
+		desperate = false;
 	}
 
 	void toValue(Uni::Value &value) const override
@@ -70,13 +78,15 @@ public:
 		value = Uni::Value(Uni::ValueType::OBJECT);
 		value["pose"] << pose;
 		value["searchPosition"] << searchPosition;
-		value["suggestedSearchPositions"] << suggestedSearchPositions;
 		value["ownSearchPoseValid"] << ownSearchPoseValid;
-		value["suggestedSearchPositionsValid"] << suggestedSearchPositionValid;
 		value["availableForSearch"] << availableForSearch;
 		value["localMostWisePlayerNumber"] << localMostWisePlayerNumber;
 		value["globalMostWisePlayerNumber"] << globalMostWisePlayerNumber;
 		value["reason"] << static_cast<int>(reason);
+		value["desperation"] << desperation;
+		value["desperate"] << desperate;
+		value["suggestedSearchPositions"] << suggestedSearchPositions;
+		value["suggestedSearchPositionsValid"] << suggestedSearchPositionValid;
 	}
 
 	void fromValue(const Uni::Value &value) override
@@ -84,13 +94,15 @@ public:
 		int readNumber;
 		value["pose"] >> pose;
 		value["searchPosition"] >> searchPosition;
-		value["suggestedSearchPositions"] >> suggestedSearchPositions;
 		value["ownSearchPoseValid"] >> ownSearchPoseValid;
-		value["suggestedSearchPositionsValid"] >> suggestedSearchPositionValid;
 		value["availableForSearch"] >> availableForSearch;
 		value["localMostWisePlayerNumber"] >> localMostWisePlayerNumber;
 		value["globalMostWisePlayerNumber"] >> globalMostWisePlayerNumber;
 		value["reason"] >> readNumber;
 		reason = static_cast<Reason>(readNumber);
+		value["desperation"] >> desperation;
+		value["desperate"] >> desperate;
+		value["suggestedSearchPositionsValid"] >> suggestedSearchPositionValid;
+		value["suggestedSearchPositions"] >> suggestedSearchPositions;
 	}
 };

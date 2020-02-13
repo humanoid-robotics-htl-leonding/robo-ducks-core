@@ -1,8 +1,7 @@
-#include "Definitions/BHULKsStandardMessage.h"
+#include "Definitions/DucksStandardMessage.h"
 #include "Definitions/SPLStandardMessage.h"
 
-#include "BHULKsHelper.hpp"
-#include "HULKsMessage.hpp"
+#include "DucksMessage.hpp"
 #include "DucksSPLMessageReceiver.hpp"
 #include "print.h"
 
@@ -59,10 +58,10 @@ void DucksSPLMessageReceiver::cycle()
     p.fallen = (msg.fallen > 0);
     p.penalized = p.playerNumber <= rawGameControllerState_->penalties.size() && rawGameControllerState_->penalties[p.playerNumber - 1] != Penalty::NONE;
 
-    B_HULKs::BHULKsStandardMessage bhmsg;
+    Ducks::DucksStandardMessage bhmsg;
     // This check is not completely safe. bhmsg.sizeOfBHULKsMessage returns the size of a message with no obstacles and no NTP messages.
     // If a malformatted message is received, bhmsg.read could read more bytes than allowed.
-    if (msg.numOfDataBytes >= bhmsg.sizeOfBHULKsMessage() && bhmsg.read(msg.data))
+    if (msg.numOfDataBytes >= bhmsg.sizeOfDucksMessage() && bhmsg.read(msg.data))
     {
       const unsigned int receiveTime = it.second.getSystemTime();
       if (bhmsg.requestsNTPMessage)
@@ -88,7 +87,7 @@ void DucksSPLMessageReceiver::cycle()
       // figure out whether robot is a HULK
       p.isHULK = (bhmsg.member == HULKS_MEMBER);
       // add local obstacles of the robot to the RawTeamPlayer
-      p.localObstacles = bhmsg.obstacles;
+      p.localObstacles = std::vector<B_HULKs::Obstacle>(bhmsg.obstacles.cbegin(), bhmsg.obstacles.cend()); //Cast DucksObstacle to BHUlks
       // convert obstacle centers back to meters because the B-HULKs message is based on millimeters
       for (auto& playerObstacle : p.localObstacles)
       {
@@ -99,11 +98,11 @@ void DucksSPLMessageReceiver::cycle()
       p.penalized = bhmsg.isPenalized;
       p.keeperWantsToPlayBall = bhmsg.kingIsPlayingBall;
       p.currentPassTarget = bhmsg.passTarget;
-      p.currentlyPerformingRole = B_HULKs::bhulkToPlayingRole(bhmsg.currentlyPerfomingRole);
+      p.currentlyPerformingRole = bhmsg.currentlyPerfomingRole;
       p.roleAssignments.resize(BHULKS_STANDARD_MESSAGE_MAX_NUM_OF_PLAYERS);
       for (unsigned int i = 0; i < BHULKS_STANDARD_MESSAGE_MAX_NUM_OF_PLAYERS; i++)
       {
-        p.roleAssignments[i] = B_HULKs::bhulkToPlayingRole(bhmsg.roleAssignments[i]);
+        p.roleAssignments[i] = bhmsg.roleAssignments[i];
       }
       p.headYaw = bhmsg.headYawAngle;
       if (ntpRobots_.size() >= static_cast<unsigned int>(msg.playerNum) && ntpRobots_[msg.playerNum - 1].valid)
@@ -123,8 +122,8 @@ void DucksSPLMessageReceiver::cycle()
       }
 
       // Here the hulks message is being processed if there is any.
-      HULKs::HULKsMessage hulksMessage;
-      if (msg.numOfDataBytes >= bhmsg.sizeOfBHULKsMessage() + hulksMessage.sizeOfHULKsMessage() && hulksMessage.read(msg.data + bhmsg.sizeOfBHULKsMessage()))
+      Ducks::DucksMessage hulksMessage;
+      if (msg.numOfDataBytes >= bhmsg.sizeOfDucksMessage() + hulksMessage.sizeOfDucksMessage() && hulksMessage.read(msg.data + bhmsg.sizeOfDucksMessage()))
       {
         p.isPoseValid = hulksMessage.isPoseValid;
         p.walkingTo = hulksMessage.walkingTo;

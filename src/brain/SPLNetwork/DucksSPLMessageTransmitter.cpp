@@ -1,10 +1,9 @@
 #include <cstring>
 
-#include "Definitions/BHULKsStandardMessage.h"
+#include "Definitions/DucksStandardMessage.h"
 #include "Definitions/SPLStandardMessage.h"
 
-#include "BHULKsHelper.hpp"
-#include "HULKsMessage.hpp"
+#include "DucksMessage.hpp"
 #include "DucksSPLMessageTransmitter.hpp"
 
 
@@ -63,11 +62,11 @@ void DucksSPLMessageTransmitter::cycle()
   msg.ball[0] = ballState_->position.x() * 1000.f;
   msg.ball[1] = ballState_->position.y() * 1000.f;
 
-  B_HULKs::BHULKsStandardMessage bhmsg;
-  bhmsg.member = HULKS_MEMBER;
-  bhmsg.isUpright = !bodyPose_->fallen;
-  bhmsg.hasGroundContact = bodyPose_->footContact;
-  bhmsg.timeOfLastGroundContact = bodyPose_->timeOfLastFootContact.getSystemTime();
+  Ducks::DucksStandardMessage dsmsg;
+  dsmsg.member = DUCKS_MEMBER;
+  dsmsg.isUpright = !bodyPose_->fallen;
+  dsmsg.hasGroundContact = bodyPose_->footContact;
+  dsmsg.timeOfLastGroundContact = bodyPose_->timeOfLastFootContact.getSystemTime();
   B_HULKs::OwnTeamInfo ownTeamInfo;
   ownTeamInfo.timestampWhenReceived = gameControllerState_->timestampOfLastMessage.getSystemTime();
   ownTeamInfo.packetNumber = gameControllerState_->packetNumber;
@@ -84,47 +83,47 @@ void DucksSPLMessageTransmitter::cycle()
                                              ? (gameControllerState_->penalties[i] != Penalty::NONE)
                                              : false;
   }
-  bhmsg.isPenalized = (gameControllerState_->penalty != Penalty::NONE) ||
+  dsmsg.isPenalized = (gameControllerState_->penalty != Penalty::NONE) ||
                       (gameControllerState_->gameState == GameState::INITIAL &&
                        !gameControllerState_->chestButtonWasPressedInInitial);
-  bhmsg.headYawAngle = jointSensorData_->angles[JOINTS::HEAD_YAW];
-  bhmsg.currentlyPerfomingRole = B_HULKs::playingToBHULKRole(playingRoles_->role);
+  dsmsg.headYawAngle = jointSensorData_->angles[JOINTS::HEAD_YAW];
+  dsmsg.currentlyPerfomingRole = playingRoles_->role;
   for (unsigned int i = 0; i < BHULKS_STANDARD_MESSAGE_MAX_NUM_OF_PLAYERS; i++)
   {
     if (i < playingRoles_->playerRoles.size())
     {
-      bhmsg.roleAssignments[i] = B_HULKs::playingToBHULKRole(playingRoles_->playerRoles[i]);
+      dsmsg.roleAssignments[i] = playingRoles_->playerRoles[i];
     }
-    else
-    {
-      bhmsg.roleAssignments[i] = B_HULKs::Role::beatenPieces;
-    }
+//    else TODO
+//    {
+//      dsmsg.roleAssignments[i] = B_HULKs::Role::beatenPieces;
+//    }
   }
 
   if (playingRoles_->role == PlayingRole::KEEPER && keeperAction_->action.valid &&
       keeperAction_->wantsToPlayBall)
   {
-    bhmsg.kingIsPlayingBall = true;
+    dsmsg.kingIsPlayingBall = true;
   }
 
   if (playingRoles_->role == PlayingRole::STRIKER && ducksStrikerAction_->valid &&
       ducksStrikerAction_->action == DucksStrikerAction::Action::PASS)
   {
-    //bhmsg.passTarget = strikerAction_->passTarget;
+    dsmsg.passTarget = strikerAction_->passTarget;
   }
   // The default initialization of both times is a timepoint that is as far in the future as
   // possible.
   if (timeToReachBall_->valid)
   {
-    bhmsg.timeWhenReachBall =
+    dsmsg.timeWhenReachBall =
         cycleInfo_->startTime.getSystemTime() + timeToReachBall_->timeToReachBall * 1000;
-    bhmsg.timeWhenReachBallQueen =
+    dsmsg.timeWhenReachBallQueen =
         cycleInfo_->startTime.getSystemTime() + timeToReachBall_->timeToReachBallStriker * 1000;
   }
-  bhmsg.ballTimeWhenLastSeen = ballState_->timeWhenLastSeen.getSystemTime();
-  bhmsg.timestampLastJumped = robotPosition_->lastTimeJumped.getSystemTime();
-  bhmsg.confidenceOfLastWhistleDetection = B_HULKs::HearingConfidence::allEarsAreOk;
-  bhmsg.lastTimeWhistleDetected = whistleData_->lastTimeWhistleHeard.getSystemTime();
+  dsmsg.ballTimeWhenLastSeen = ballState_->timeWhenLastSeen.getSystemTime();
+  dsmsg.timestampLastJumped = robotPosition_->lastTimeJumped.getSystemTime();
+  dsmsg.confidenceOfLastWhistleDetection = Ducks::HearingConfidence::allEarsAreOk;
+  dsmsg.lastTimeWhistleDetected = whistleData_->lastTimeWhistleHeard.getSystemTime();
   for (auto& obstacle : obstacleData_->obstacles)
   {
     // there can not be INVALID obstacles at this stage anymore
@@ -135,54 +134,56 @@ void DucksSPLMessageTransmitter::cycle()
     {
       continue;
     }
-    B_HULKs::Obstacle bhObstacle;
+    Ducks::Obstacle bhObstacle;
     bhObstacle.center[0] = obstacle.relativePosition.x() * 1000.f;
     bhObstacle.center[1] = obstacle.relativePosition.y() * 1000.f;
     bhObstacle.timestampLastSeen = cycleInfo_->startTime.getSystemTime();
-    bhObstacle.type = static_cast<B_HULKs::ObstacleType>(obstacle.type);
-    bhmsg.obstacles.push_back(bhObstacle);
+    bhObstacle.type = static_cast<Ducks::ObstacleType>(obstacle.type);
+    dsmsg.obstacles.push_back(bhObstacle);
   }
   if (cycleInfo_->getTimeDiff(lastNTPRequest_) > 2.0f)
   {
-    bhmsg.requestsNTPMessage = true;
+    dsmsg.requestsNTPMessage = true;
     lastNTPRequest_ = cycleInfo_->startTime;
   }
-  bhmsg.ntpMessages.reserve(bufferedNTPRequests_.size());
+  dsmsg.ntpMessages.reserve(bufferedNTPRequests_.size());
   for (auto& ntpRequest : bufferedNTPRequests_)
   {
-    B_HULKs::BNTPMessage ntpMessage;
+    Ducks::BNTPMessage ntpMessage;
     ntpMessage.receiver = ntpRequest.sender;
     ntpMessage.requestOrigination = ntpRequest.origination;
     ntpMessage.requestReceipt = ntpRequest.receipt;
-    bhmsg.ntpMessages.push_back(ntpMessage);
+    dsmsg.ntpMessages.push_back(ntpMessage);
   }
   // The list is cleared even if the BH message is not sent because otherwise the message could
   // never be sent.
   bufferedNTPRequests_.clear();
   // This is the last possible time point to set the time of the message.
   // Use getCurrentTime here, because it is better for NTP.
-  bhmsg.timestamp = TimePoint::getCurrentTime().getSystemTime();
-  if (bhmsg.sizeOfBHULKsMessage() <= SPL_STANDARD_MESSAGE_DATA_SIZE)
+  dsmsg.timestamp = TimePoint::getCurrentTime().getSystemTime();
+  if (dsmsg.sizeOfDucksMessage() <= SPL_STANDARD_MESSAGE_DATA_SIZE)
   {
-    bhmsg.write(msg.data);
-    msg.numOfDataBytes = bhmsg.sizeOfBHULKsMessage();
+    dsmsg.write(msg.data);
+    msg.numOfDataBytes = dsmsg.sizeOfDucksMessage();
 
-    HULKs::HULKsMessage hulksmsg;
-    hulksmsg.isPoseValid = robotPosition_->valid;
+    Ducks::DucksMessage ducksmsg;
+    ducksmsg.isPoseValid = robotPosition_->valid;
 
     if (motionRequest_->bodyMotion == MotionRequest::BodyMotion::WALK)
     {
-      hulksmsg.walkingTo = robotPosition_->robotToField(motionRequest_->walkData.target);
+      ducksmsg.walkingTo = robotPosition_->robotToField(motionRequest_->walkData.target);
     }
     else
     {
-      hulksmsg.walkingTo = robotPosition_->pose;
+      ducksmsg.walkingTo = robotPosition_->pose;
     }
 
-    hulksmsg.ballVel[0] = ballState_->velocity.x();
-    hulksmsg.ballVel[1] = ballState_->velocity.y();
+    ducksmsg.ballVel[0] = ballState_->velocity.x();
+    ducksmsg.ballVel[1] = ballState_->velocity.y();
 
-    HULKs::BallSearchData& ballSearchData = hulksmsg.ballSearchData;
+
+    // ========= BALL SEARCH DATA ============
+    Ducks::BallSearchData& ballSearchData = ducksmsg.ballSearchData;
 
     ballSearchData.currentSearchPosition = ballSearchPosition_->searchPosition;
     ballSearchData.availableForSearch = ballSearchPosition_->availableForSearch;
@@ -209,10 +210,12 @@ void DucksSPLMessageTransmitter::cycle()
         ballSearchMap_->timestampBallSearchMapUnreliable_.getSystemTime();
     ballSearchData.mostWisePlayerNumber = ballSearchPosition_->localMostWisePlayerNumber;
 
-    if (msg.numOfDataBytes + hulksmsg.sizeOfHULKsMessage() <= SPL_STANDARD_MESSAGE_DATA_SIZE)
+
+
+    if (msg.numOfDataBytes + ducksmsg.sizeOfDucksMessage() <= SPL_STANDARD_MESSAGE_DATA_SIZE)
     {
-      hulksmsg.write(msg.data + msg.numOfDataBytes);
-      msg.numOfDataBytes += hulksmsg.sizeOfHULKsMessage();
+      ducksmsg.write(msg.data + msg.numOfDataBytes);
+      msg.numOfDataBytes += ducksmsg.sizeOfDucksMessage();
     }
   }
 

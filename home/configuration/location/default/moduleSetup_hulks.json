@@ -12,5 +12,14 @@
   "SPLMessageReceiver" : true,
 
   "DucksSPLMessageTransmitter" : false,
-  "SPLMessageTransmitter" : true
+  "SPLMessageTransmitter" : true,
+
+  "DefendingPositionProvider" : true,
+  "DucksDefenderActionProvider" : false,
+
+  "BallSearchMapManager" : true,
+  "DucksBallSearchMapManager" : false,
+  
+  "PlayingRoleProvider" : true,
+  "DucksPlayingRoleProvider" : false
 }

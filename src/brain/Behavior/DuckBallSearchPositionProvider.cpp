@@ -14,12 +14,9 @@ DuckBallSearchPositionProvider::DuckBallSearchPositionProvider(const ModuleManag
 	: Module(manager),
 	  ballSearchMap_(*this),
 	  gameControllerState_(*this),
-	  playerConfiguration_(*this),
-	  playingRoles_(*this),
 	  teamPlayers_(*this),
 	  ballState_(*this),
 	  robotPosition_(*this),
-	  bodyPose_(*this),
 	  teamBallModel_(*this),
 	  fieldDimensions_(*this),
 	  jointSensorData_(*this),
@@ -28,130 +25,160 @@ DuckBallSearchPositionProvider::DuckBallSearchPositionProvider(const ModuleManag
 	  {}),
 	  maxBallDetectionRange_(*this, "maxBallDetectionRange", []
 	  {}),
+	  inspectBallRange_(*this, "inspectBallRange", []
+	  {}),
 	  maxAgeValueContribution_(*this, "maxAgeValueContribution", []
 	  {}),
 	  probabilityWeight_(*this, "probabilityWeight", []
 	  {}),
-	  voronoiSeeds_(*this, "voronoiSeeds", [this]
-	  { rebuildSearchAreas(); }),
+	  voronoiSeeds_(*this, "voronoiSeeds", []
+	  {}),
+	  stepBackValue_(*this, "stepBackValue", []
+	  {}),
+	  stepBackThreshold_(*this, "stepBackThreshold", []
+	  {}),
+	  desperationMax_(*this, "desperationMax", [] {}),
+	  desperationThreshold_(*this, "desperationThreshold", [] {}),
+	  desperationReduction_(*this, "desperationReduction", [] {}),
+	  maxSideAngle_(*this, "maxSearchSideAngle", [this] { maxSideAngle_() *= TO_RAD; }),
 	  searchPosition_(*this),
 	  fieldLength_(fieldDimensions_->fieldLength),
-	  fieldWidth_(fieldDimensions_->fieldWidth)
+	  fieldWidth_(fieldDimensions_->fieldWidth),
+	  standingOnCooldown_(0),
+	  desperation_(0),
+	  oldSearchPosition_(0, 0),
+	  oldSearchProbability_(0)
 {
+	maxSideAngle_() *= TO_RAD;
 }
 
 void DuckBallSearchPositionProvider::cycle()
 {
-	{
-		Chronometer time(debug(), mount_ + ".cycle_time");
-
-		auto distVec = teamBallModel_->position - robotPosition_->pose.position;
-		auto dist = distVec.norm();
+	Chronometer time(debug(), mount_ + ".cycle_time");
 
 
-		//1. === Implement "Look At Ball" (Erik Mayrhofer)
+	bool guessing = false;
 
-		// If we see the ball on our own, look at it.
-		if (ballState_->age < 1.0 && ballState_->confident) {
-			auto ballPos = ballState_->position + ballState_->velocity*cycleInfo_->cycleTime;
-			searchPosition_->searchPosition = ballPos;
-			searchPosition_->ownSearchPoseValid = true;
-			searchPosition_->reason = DuckBallSearchPosition::Reason::OWN_CAMERA;
-			//If we don't see the ball on our own, look at where our team thinks the ball is. Maybe we can find it there.
-		}else if(teamBallModel_->found && teamBallModel_->insideField){
-			auto ballPos = robotPosition_->fieldToRobot(teamBallModel_->position + teamBallModel_->velocity*cycleInfo_->cycleTime);
-			searchPosition_->searchPosition = ballPos;
-			searchPosition_->ownSearchPoseValid = true;
-			searchPosition_->reason = DuckBallSearchPosition::Reason::TEAM_BALL_MODEL;
-		}
+	debug().update(mount_+".testPose", Pose(0, 0, 0));
+	//1. === Implement "Look At Ball" (Erik Mayrhofer)
 
-		debug().update(mount_ + ".distance", dist);
-
+	// If we see the ball on our own, look at it.
+	if (ballState_->age < 1.0 && ballState_->confident) {
+		auto ballPos = ballState_->position + ballState_->velocity*cycleInfo_->cycleTime;
+		searchPosition_->searchPosition = robotPosition_->robotToField(ballPos);
+		searchPosition_->ownSearchPoseValid = true;
+		searchPosition_->reason = DuckBallSearchPosition::Reason::OWN_CAMERA;
+		standingOnCooldown_ = 0;
+		//If we don't see the ball on our own, look at where our team thinks the ball is. Maybe we can find it there.
+	}else if(teamBallModel_->found && teamBallModel_->insideField){
+		standingOnCooldown_ = 0;
+		auto ballPos = teamBallModel_->position + teamBallModel_->velocity*cycleInfo_->cycleTime;
+		searchPosition_->searchPosition = ballPos;
+		searchPosition_->ownSearchPoseValid = true;
+		searchPosition_->reason = DuckBallSearchPosition::Reason::TEAM_BALL_MODEL;
 	}
-	sendDebug();
-}
+	//3. == Scan Field
+	else{
+		guessing = true;
+		auto list = std::list<ProbCell*>(ballSearchMap_->probabilityList_); //Copy
+		list.sort(ProbCell::probability_comparator_desc);
 
-float DuckBallSearchPositionProvider::timeToReachPosition(const TeamPlayer &player,
-														  const Vector2f position) const
-{
-	const Vector2f relPosition = position - player.pose.position;
-	// TODO: Is 15cm per second a good approximation?
-	const float walkTimeDistance = relPosition.norm() / 0.18f;
-	// TODO: Is 10s per 180° a good approximation?
-	const float cellOrientation = std::atan2(relPosition.y(), relPosition.x());
-	const auto rotateTimeDistance =
-		static_cast<float>(Angle::angleDiff(cellOrientation, player.pose.orientation) * 10.f / M_PI);
-	// TODO: Is 10s a good approximation?
-	const float fallenPenalty = player.fallen ? 10.0f : 0.0f;
+		//3.1 === Snack a possible position to investigate
+		auto fieldSearchPositionIterator = list.cbegin();
+		bool thisIsValid = false;
+		while(fieldSearchPositionIterator != list.cend()){
+			auto positionUnderInspection = (*fieldSearchPositionIterator)->position;
+			auto myDistance = (robotPosition_->pose.position - positionUnderInspection).norm();
 
-	return walkTimeDistance + rotateTimeDistance + fallenPenalty;
-}
+			//3.1.1 We dont want the position if my team players are nearer or are walking to it.
+			thisIsValid = true;
+			for(auto teamPlayer = teamPlayers_->players.cbegin(); teamPlayer < teamPlayers_->players.cend(); teamPlayer++){
 
-float DuckBallSearchPositionProvider::timeToReachCell(const TeamPlayer &player,
-													  const ProbCell &cell) const
-{
-	return timeToReachPosition(player, cell.position);
-}
-
-float DuckBallSearchPositionProvider::getValue(const ProbCell &cell) const
-{
-	return cell.probability * probabilityWeight_() +
-		std::min(maxAgeValueContribution_(), static_cast<float>(cell.age));
-}
-
-void DuckBallSearchPositionProvider::sendDebug()
-{
-	debug().update(mount_ + ".explorerCount", explorers_.size());
-	if (!explorers_.empty()) {
-		if (debug().isSubscribed(mount_ + ".voronoiSeeds")) {
-			VecVector2f seeds;
-			for (auto &seed : voronoiSeeds_()[explorers_.size() - 1]) {
-				seeds.emplace_back(seed.x() * fieldLength_ * 0.5f, seed.y() * fieldWidth_ * 0.5f);
+				//Other Team Player is closer
+				if((teamPlayer->pose.position - positionUnderInspection).norm() < myDistance){
+					thisIsValid = false;
+					break;
+				}
+				//Other Team Player is investigating same are
+				//TODO and i am not significantly closer to the area
+//					if((teamPlayer->currentSearchPosition - positionUnderInspection).norm() < maxBallDetectionRange_()){
+//						thisIsValid = false;
+//						break;
+//					}
 			}
-			debug().update(mount_ + ".voronoiSeeds", seeds);
-		}
-	}
-}
 
-float DuckBallSearchPositionProvider::getCosts(const TeamPlayer &player, const ProbCell &cellToExplore)
-{
-	return (timeToReachCell(player, cellToExplore) + 2.f) / getValue(cellToExplore);
-}
-
-void DuckBallSearchPositionProvider::rebuildSearchAreas()
-{
-	searchAreas_.clear();
-	searchAreas_.reserve(explorers_.size());
-
-	if (explorers_.empty()) {
-		return;
-	}
-
-	for (auto &seed : voronoiSeeds_()[explorers_.size() - 1]) {
-		SearchArea area;
-		area.voronoiSeed = {seed.x() * fieldLength_ / 2.f, seed.y() * fieldWidth_ / 2.f};
-		area.defaultPosition = area.voronoiSeed;
-		area.cellToExplore = &ballSearchMap_->cellFromPositionConst(area.defaultPosition);
-		searchAreas_.emplace_back(area);
-	}
-
-	// voronoi (https://en.wikipedia.org/wiki/Voronoi_diagram)
-	// The field is divided into so called searchAreas. Division is done by reading
-	// the seeds (aka generators) coming from the config and do some voronoi on them.
-	for (auto &cell : ballSearchMap_->probabilityList_) {
-		SearchArea *minimumDistanceArea = &(searchAreas_[0]);
-		float minimumDistance = std::numeric_limits<float>::max();
-		int areaNum = 0;
-
-		for (auto &area : searchAreas_) {
-			Vector2f relDistance = area.voronoiSeed - cell->position;
-			float areaDistance = relDistance.squaredNorm();
-			if (areaDistance < minimumDistance) {
-				minimumDistance = areaDistance;
-				minimumDistanceArea = &area;
+			float probabilityIncreaseFactor = (*fieldSearchPositionIterator)->probability / oldSearchProbability_;
+			if(probabilityIncreaseFactor < 1.2){
+				thisIsValid = false;
 			}
-			areaNum++;
+
+			if(thisIsValid) break;
+			fieldSearchPositionIterator++;
 		}
-		minimumDistanceArea->cells.push_back(cell);
+		auto fieldSearchPosition = (*fieldSearchPositionIterator)->position;
+		if(!thisIsValid){
+			fieldSearchPosition = oldSearchPosition_;
+			oldSearchProbability_ = ballSearchMap_->cellFromPositionConst(fieldSearchPosition).probability;
+		}else{
+			oldSearchProbability_ = (*fieldSearchPositionIterator)->probability;
+		}
+
+		//3.2 Look at snacked position
+		searchPosition_->searchPosition = fieldSearchPosition;
+		searchPosition_->reason = DuckBallSearchPosition::Reason::SEARCHING;
+		searchPosition_->ownSearchPoseValid=true;
+
+		//3.3 If position is too far away.... walk to it.
+		auto localSearchPosition = robotPosition_->fieldToRobot(searchPosition_->searchPosition);
+		if(localSearchPosition.norm() > maxBallDetectionRange_()){
+			Vector2f posToRobot = fieldSearchPosition - robotPosition_->pose.position;
+			posToRobot.normalize();
+			auto targetWalkPos = fieldSearchPosition - posToRobot * inspectBallRange_();
+			auto angle = std::atan2(posToRobot.y(), posToRobot.x());
+
+			searchPosition_->pose = Pose(targetWalkPos, angle);
+			searchPosition_->reason = DuckBallSearchPosition::Reason::SEARCH_WALK;
+		}
 	}
+
+	//2. === If ball rolls to the side, then turn
+	if(searchPosition_->reason != DuckBallSearchPosition::Reason::SEARCH_WALK){
+		auto localSearchPosition = robotPosition_->fieldToRobot(searchPosition_->searchPosition);
+		auto angleToSearchPosition = std::atan2(localSearchPosition.y(), localSearchPosition.x());
+		if(std::abs(angleToSearchPosition) > maxSideAngle_()) {
+			Vector2f posToRobot = searchPosition_->searchPosition - robotPosition_->pose.position;
+			auto angle = std::atan2(posToRobot.y(), posToRobot.x());
+
+			searchPosition_->pose = Pose(robotPosition_->pose.position, angle);
+			searchPosition_->reason = DuckBallSearchPosition::Reason::SEARCH_TURN;
+		}
+	}
+	//2. === Step Back
+//	auto distVec = teamBallModel_->position - robotPosition_->pose.position;
+//	auto dist = distVec.norm();
+//	auto distAlert = dist < stepBackThreshold_() && !teamBallModel_->seen;
+//
+//	if(distAlert || standingOnCooldown_ > 0){
+//		standingOnCooldown_ -= cycleInfo_->cycleTime;
+//		if(distAlert){
+//			standingOnCooldown_ = 1;
+//		}
+//		searchPosition_->ownSearchPoseValid = true;
+//		searchPosition_->reason = DuckBallSearchPosition::Reason::I_AM_ON_IT;
+//		searchPosition_->pose = robotPosition_->robotToField(Pose(stepBackValue_(), 0));
+//		//TODO Dont run out of field.
+//	}
+
+	if(guessing && desperation_ < 30.){
+		desperation_ += cycleInfo_->cycleTime;
+		if(desperation_ > 30.) desperation_ = 30.;
+	}else if(desperation_ > 0.){
+		desperation_ -= 10 * cycleInfo_->cycleTime;
+		if(desperation_ < 0) desperation_ = 0;
+	}
+	searchPosition_->desperation = desperation_;
+	searchPosition_->desperate = (desperation_ > 2.0);
+
+	//Hysteresis
+	oldSearchPosition_ = searchPosition_->searchPosition;
 }
