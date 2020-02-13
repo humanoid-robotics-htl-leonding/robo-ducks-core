@@ -58,5 +58,14 @@ void DucksDefenderActionProvider::cycle()
 	}else{
 		defendingPosition_->targetPose.position = Vector2f(defenderX, defenderY);
 	}
+
+	Vector2f moveDist = (defendingPosition_->targetPose.position - robotPosition_->pose.position);
+	Vector2f scaledMoveDist = moveDist.cwiseProduct(Vector2f(1.0, 0.5));
+
+	if(scaledMoveDist.norm() < 1.0){
+		defendingPosition_->type = DucksDefendingPosition::Type::DEFEND;
+	}else{
+		defendingPosition_->type = DucksDefendingPosition::Type::MOVE;
+	}
   }
 }

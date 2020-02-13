@@ -27,6 +27,7 @@ ActionCommand playing(const DuckDataSet &d)
 		auto robotPos = d.robotPosition.fieldToRobot(d.ballSearchPosition.searchPosition);
 		auto robotPose = d.robotPosition.fieldToRobot(d.ballSearchPosition.pose);
 		auto robotSpacePos = Vector3f(robotPos.x(), robotPos.y(), 0.0);
+
 		if(d.ballSearchPosition.desperate){
 			if(d.ballSearchPosition.reason == DuckBallSearchPosition::SEARCH_WALK){
 				command = walkTo(d.ballSearchPosition.pose, d)

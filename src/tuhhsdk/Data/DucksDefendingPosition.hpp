@@ -4,34 +4,41 @@
 #include "Tools/Math/Eigen.hpp"
 #include "Tools/Math/Pose.hpp"
 
-class DucksDefendingPosition : public DataType<DucksDefendingPosition>
+class DucksDefendingPosition: public DataType<DucksDefendingPosition>
 {
 public:
-  /// the name of this DataType
-  DataTypeName name = "DucksDefendingPosition";
-  /// whether the playing position is valid
+	/// the name of this DataType
+	DataTypeName name = "DucksDefendingPosition";
+	/// whether the playing position is valid
 
-  bool valid = false;
-  Pose targetPose = Pose(Vector2f(0, 0), 0);
+	enum Type
+	{
+		MOVE,
+		DEFEND
+	};
 
-  /**
-   * @brief invalidates the position
-   */
-  void reset()
-  {
-    valid = false;
-  }
+	bool valid = false;
+	Pose targetPose = Pose(Vector2f(0, 0), 0);
+	Type type = Type::MOVE;
 
-  virtual void toValue(Uni::Value& value) const
-  {
-    value = Uni::Value(Uni::ValueType::OBJECT);
-    value["valid"] << valid;
-    value["targetPose"] << targetPose;
-  }
+	/**
+	 * @brief invalidates the position
+	 */
+	void reset()
+	{
+		valid = false;
+	}
 
-  virtual void fromValue(const Uni::Value& value)
-  {
-    value["valid"] >> valid;
-    value["targetPose"] >> targetPose;
-  }
+	virtual void toValue(Uni::Value &value) const
+	{
+		value = Uni::Value(Uni::ValueType::OBJECT);
+		value["valid"] << valid;
+		value["targetPose"] << targetPose;
+	}
+
+	virtual void fromValue(const Uni::Value &value)
+	{
+		value["valid"] >> valid;
+		value["targetPose"] >> targetPose;
+	}
 };
