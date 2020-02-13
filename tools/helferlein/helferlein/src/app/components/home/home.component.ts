@@ -53,34 +53,33 @@ export class HomeComponent implements OnInit {
     this.openTab();
   }
 
-  openTab(){
+  openTab() {
     this.naoService.addTab();
     this.loadTabs();
     this.selectTab(this.tabs.length - 1);
     console.log(this.tabs);
   }
 
-  closeTab(id: number){
-    if(id < this.tabs.length){
+  closeTab(id: number) {
+    if (id < this.tabs.length) {
       this.naoService.removeTab(id);
       this.loadTabs();
-      if(id == this.selected.value && id > this.tabs.length - 1){
-        this.selected.setValue(this.selected.value-1);
+      if (id == this.selected.value && id > this.tabs.length - 1) {
+        this.selected.setValue(this.selected.value - 1);
       }
     }
   }
 
-  loadTabs(){
+  loadTabs() {
     this.tabs = this.naoService.tabs;
     this.changeRef.detectChanges();
   }
 
-  selectTab(index){
+  selectTab(index) {
     console.log('Index', index);
-    if(index>=this.tabs.length){
-      this.selected.setValue(this.tabs.length-1);
-    }
-    else{
+    if (index >= this.tabs.length) {
+      this.selected.setValue(this.tabs.length - 1);
+    } else {
       this.selected.setValue(index);
     }
     console.log('Selected', this.selected);
