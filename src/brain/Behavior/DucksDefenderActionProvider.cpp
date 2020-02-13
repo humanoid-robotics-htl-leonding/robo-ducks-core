@@ -39,6 +39,10 @@ void DucksDefenderActionProvider::cycle()
 	auto ballX = teamBallModel_->position.x();
 	auto ballY = teamBallModel_->position.y();
 
+	if(ballX < defenderX){
+		defenderX = ballX - 1;
+	}
+
 	auto focalX = -fieldDimensions_->fieldLength/2.-ballFocalPointDepth_();
 	auto focalY = ballFocalPointYshift_();
 
