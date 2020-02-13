@@ -26,9 +26,9 @@ public:
   enum KickType
   {
       /// kicks the ball
-      KICK,
+      KICK = 0,
       /// don't kick
-      NONE
+      NONE = 1
   };
   /// true if this struct is valid
   bool valid = false;

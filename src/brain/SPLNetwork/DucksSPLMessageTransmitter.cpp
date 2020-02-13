@@ -109,7 +109,8 @@ void DucksSPLMessageTransmitter::cycle()
   if (playingRoles_->role == PlayingRole::STRIKER && ducksStrikerAction_->valid &&
       ducksStrikerAction_->action == DucksStrikerAction::Action::PASS)
   {
-    dsmsg.passTarget = strikerAction_->passTarget;
+    // dsmsg.passTarget = strikerAction_->passTarget;
+    // TODO: implement Pass Target for Message Transmitter
   }
   // The default initialization of both times is a timepoint that is as far in the future as
   // possible.
