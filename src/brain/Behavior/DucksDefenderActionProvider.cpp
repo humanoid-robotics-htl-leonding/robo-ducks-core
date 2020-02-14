@@ -39,7 +39,7 @@ void DucksDefenderActionProvider::cycle()
 
 		auto ballX = teamBallModel_->position.x();
 		auto ballY = teamBallModel_->position.y();
-		auto defenderX = std::min(ballX - 1.0, -fieldDimensions_->fieldLength / 4.);
+		auto defenderX = std::min(ballX - 0.4, -fieldDimensions_->fieldLength / 4.);
 
 		auto focalX = -fieldDimensions_->fieldLength / 2. - ballFocalPointDepth_();
 		auto focalY = ballFocalPointYshift_();
@@ -55,7 +55,7 @@ void DucksDefenderActionProvider::cycle()
 
 		auto ballToSuggested = teamBallModel_->position - suggestedIntersectPosition;
 
-		if (ballToSuggested.norm() < maxDeflectBallDistance_()) {
+		if (ballToSuggested.norm() < maxDeflectBallDistance_() || (teamBallModel_->position - robotPosition_->pose.position).norm() < maxDeflectBallDistance_()) {
 			defendingPosition_->targetPose =
 				Pose(teamBallModel_->position, std::atan2(ballToSuggested.y(), ballToSuggested.x()));
 		}
