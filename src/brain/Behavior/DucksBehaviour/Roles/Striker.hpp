@@ -14,6 +14,14 @@ ActionCommand kickBall(const DuckDataSet &d, const StrikerAction &sa)
 
 ActionCommand roleStriker(const DuckDataSet &d)
 {
+    if (d.strikerAction.valid) {
+        switch (d.strikerAction.action) {
+            case DucksStrikerAction::Action::WALK_TO_BALL:
+                return walkTo(d.strikerAction.kickPose, d);
+            default:
+                Log(LogLevel::WARNING) << "Invalid Striker Action";
+        }
+    }
 //    d.robotPosition.robotToField()
 //    ActionCommand cmd = ActionCommand::walk(d.robotPosition.robotToField(Pose(0, 0, 45*TO_RAD)));
 
