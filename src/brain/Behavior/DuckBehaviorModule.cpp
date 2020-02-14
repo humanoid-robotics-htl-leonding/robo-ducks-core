@@ -47,7 +47,7 @@ DuckBehaviorModule::DuckBehaviorModule(const ModuleManagerInterface &manager)
 	  playbackData_(*this),
 	  ledRequest_(*this),
 	  thoughtControlRequest_(*this),
-	  actionCommand_(ActionCommand::dead()),
+	  actionCommand_(DucksActionCommand::dead()),
 	  thoughts_(),
 	  dataSet_(*this, *gameControllerState_, *ballState_, *robotPosition_, *bodyPose_,
 			   *playerConfiguration_, *playingRoles_, *motionState_, *headMotionOutput_,
@@ -87,18 +87,18 @@ void DuckBehaviorModule::cycle()
 		thoughts_.update(dataSet_);
 
 		if (headOffData_->shouldDie) {
-			actionCommand_ = ActionCommand::dead().combineChestLED(ActionCommand::ChestLED::rainbow());
+			actionCommand_ = DucksActionCommand::dead().combineChestLED(DucksActionCommand::ChestLED::rainbow());
 		}
 		else {
 			actionCommand_ = ducks::rootBehavior(dataSet_);
 		}
 		if (headOffData_->shouldDieSignal) {
-			actionCommand_ = ActionCommand::dead()
-				.combineChestLED(ActionCommand::ChestLED::red())
-				.combineAudio(ActionCommand::Audio::audioC5());
+			actionCommand_ = DucksActionCommand::dead()
+				.combineChestLED(DucksActionCommand::ChestLED::red())
+				.combineAudio(DucksActionCommand::Audio::audioC5());
 		}
 		if(headOffData_->lastCycle) {
-			actionCommand_ = ActionCommand::dead();
+			actionCommand_ = DucksActionCommand::dead();
 		}
 		actionCommand_.toMotionRequest(*motionRequest_);
 //    actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
