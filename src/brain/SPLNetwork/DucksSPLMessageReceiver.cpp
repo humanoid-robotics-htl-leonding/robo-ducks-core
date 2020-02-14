@@ -42,6 +42,13 @@ void DucksSPLMessageReceiver::cycle()
     {
       continue;
     }
+	  //TODO Why exactly isn't this check already made.
+	  //Maybe hack by Erik Mayrhofer
+	  std::cout << "I am " << playerConfiguration_->teamNumber << " received " << static_cast<unsigned int>(msg.teamNum) << std::endl;
+	  if(static_cast<unsigned int>(msg.teamNum) != playerConfiguration_->teamNumber){
+		  continue;
+	  }
+
     RawTeamPlayer p;
     p.age = 0.0f;
     p.playerNumber = msg.playerNum;
