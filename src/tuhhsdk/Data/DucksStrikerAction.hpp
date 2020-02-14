@@ -21,7 +21,9 @@ public:
       /// passes the ball to coordinates
       PASS,
       /// waiting for the ball to reach the opposite side
-      WAITING_FOR_BALL
+      WAITING_FOR_BALL,
+      // walks to ball
+      WALK_TO_BALL
   };
   enum KickType
   {
