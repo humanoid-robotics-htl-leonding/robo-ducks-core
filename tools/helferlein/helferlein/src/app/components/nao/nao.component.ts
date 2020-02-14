@@ -8,12 +8,13 @@ import { Sink, write_str, write_u8, write_u16, write_u32 } from 'ts-binary';
 import { DebugMessageType } from 'src/app/model/message-type.enum';
 import { NaoConnector } from 'src/app/model/nao-connector';
 import { RawCardComponent } from '../elements/raw-card/raw-card.component';
+import { state } from '@angular/animations';
 // const menu = require('electron').remote.Menu;
 
 @Component({
   selector: 'app-nao',
   templateUrl: './nao.component.html',
-  styleUrls: ['./nao.component.scss']
+  styleUrls: ['./nao.component.scss'],
 })
 export class NaoComponent implements OnInit {
 

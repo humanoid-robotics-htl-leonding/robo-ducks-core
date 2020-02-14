@@ -1,4 +1,4 @@
-<div class="connection-toolbar">
+<div class="nao-tab">
   <input matInput placeholder="Nao Address" [(ngModel)]="connector.address">
   <!-- <div *ngIf="this.naoService.client != null">
     Connecting: {{this.naoService.client.connecting}}
@@ -18,5 +18,13 @@
   </div>
   <div *ngIf="connector.messages.length>0">
     <app-raw-card *ngFor="let element of elements" [content]="connector.messages[connector.messages.length-1].msg"></app-raw-card>
+  </div>
+
+  <div class="bottom-controls">
+    <div class="bottom-fab">
+      <button mat-fab color="primary">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
   </div>
 </div>

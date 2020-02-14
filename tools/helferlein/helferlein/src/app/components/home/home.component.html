@@ -1,6 +1,6 @@
 <mat-tab-group color="primary" [selectedIndex]="selected.value"
-(selectedIndexChange)="selectTab($event)">
-  <mat-tab *ngFor="let tab of tabs; let index = index">
+(selectedIndexChange)="selectTab($event)" style="height: 100%">
+  <mat-tab *ngFor="let tab of tabs; let index = index" class="nao-tab">
     <ng-template mat-tab-label>
       <div>
         {{tab.connector.status}}

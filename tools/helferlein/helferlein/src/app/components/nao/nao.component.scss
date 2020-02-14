@@ -1,4 +1,30 @@
 @import '~@angular/material/theming';
 
-.connection-toolbar{
+.nao-tab{
+  height: 100%;
+}
+
+.bottom-controls{
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  height: 100px;
+  width: 80px;
+  overflow: hidden;
+}
+
+.bottom-fab{
+  position: relative;
+  right: -70%;
+  bottom: 0px;
+  height: 100%;
+  width: 100%;
+  margin: 10px;
+  transition: right ease-out 0.3s;
+}
+
+.bottom-controls:hover{
+  .bottom-fab{
+    right: 0px;
+  }
 }
