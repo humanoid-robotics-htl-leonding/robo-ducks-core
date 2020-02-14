@@ -14,6 +14,27 @@
 
 class Motion;
 
+
+class KickProperties{
+public:
+    float distance;
+    float angle;
+    enum class KICK_DIRECTION{
+        CENTER,
+        SIDE,
+    };
+    enum class KICK_DISTANCE{
+        SHORT,
+        MEDIUM,
+        LONG,
+        HAMMER
+    };
+    KICK_DISTANCE kickDistance;
+    KICK_DIRECTION kickDirection;
+
+};
+
+
 /**
  * @brief execute a dynamic kick that adapts to the current ball position
  */
@@ -58,78 +79,6 @@ private:
   const Parameter<Vector3f> torsoOffsetRight_;
 
 
-
-  struct KickProperties{
-      float distance;
-      float angle;
-      typedef enum {
-          CENTER,
-          SIDE,
-      } KICK_DIRECTION;
-      typedef enum {
-          SHORT,
-          MEDIUM,
-          LONG,
-          HAMMER
-      } KICK_DISTANCE;
-      KICK_DISTANCE kickDistance;
-      KICK_DIRECTION kickDirection;
-      static KickProperties getFromSourceAndDestination(Vector2f source,Vector2f destination){
-          KickProperties properties = *new KickProperties();
-            //initial calculations
-          float xdist=destination.x() - source.x();
-          float ydist=destination.y() - source.y();
-          float dist = std::sqrt(xdist*xdist+ydist*ydist);
-          float ang = std::atan2(ydist,xdist); //left positive - right negative
-
-          std::cout<<"real Distance is: "<<dist<<std::endl;
-
-          //corrections
-          if(dist>coneMeasurements_().hammerDistanceBoundary){
-              print("KickTarget-Distance is away more than "+std::to_string(coneMeasurements_().hammerDistanceBoundary)+"m, commencing HAMMER-shot",LogLevel::WARNING);
-              dist= coneMeasurements_().hammerDistanceBoundary;
-          }
-          else if(dist >coneMeasurements_().maximumRadius){
-              print("Exceeding max kick distance of "+std::to_string(coneMeasurements_().maximumRadius)+"m, kickDistance is forced onto "+std::to_string(coneMeasurements_().maximumRadius)+"m",LogLevel::WARNING);
-              dist =coneMeasurements_().maximumRadius;
-          }
-          else if(dist <coneMeasurements_().minimalRadius){
-              print("Subceeding min kick distance of "+std::to_string(coneMeasurements_().minimalRadius)+"m, kickDistance is forced onto "+std::to_string(coneMeasurements_().minimalRadius)+"m",LogLevel::WARNING);
-              dist=coneMeasurements_().minimalRadius;
-          }
-          if (ang >coneMeasurements_().maximumAngle){
-              ang =coneMeasurements_().maximumAngle;
-              print("Exceeding max kick angle  of "+std::to_string(coneMeasurements_().maximumAngle)+", kickAngle is forced onto "+std::to_string(coneMeasurements_().maximumAngle),LogLevel::WARNING);
-          }
-          if (ang <coneMeasurements_().minimalAngle){
-              ang = coneMeasurements_().minimalAngle;
-              print("Subceeding min kick angle  of "+std::to_string(coneMeasurements_().minimalAngle)+", kickAngle is forced onto "+std::to_string(coneMeasurements_().minimalAngle),LogLevel::WARNING);
-          }
-          properties.distance = dist;
-          properties.angle =ang;
-          //enums
-          if(std::abs(properties.angle) > coneMeasurements_().sideKickAngle){
-              properties.kickDirection = KickProperties::SIDE;
-          }
-          else {
-              properties.kickDirection = KickProperties::CENTER;
-          }
-          if(properties.distance <coneMeasurements_().shortDistanceBoundary){
-              properties.kickDistance = KickProperties::SHORT;
-          }
-          else if(properties.distance<coneMeasurements_().mediumDistanceBoundary){
-              properties.kickDistance = KickProperties::MEDIUM;
-          }
-          else if ( properties.distance <coneMeasurements_().hammerDistanceBoundary) {
-              properties.kickDistance = KickProperties::LONG;
-          }
-          else {
-              properties.kickDistance = KickProperties::HAMMER;
-          }
-
-          return properties;
-      }
-  };
 
   /// The KickParameters struct contains all information for a kick. A kick is divided into nine
   /// phases. Each phase interpolates from one set of joint angles to another in a given duration.
@@ -272,7 +221,7 @@ private:
             value["sideKickAngle"] >> sideKickAngle;
         }
     };
-    static Parameter<ConeMeasurements> coneMeasurements_;
+    Parameter<ConeMeasurements> coneMeasurements_;
 
 
     /// interpolators for all kick phases
@@ -355,4 +304,7 @@ private:
    * @param outputAngles output parameter containing whole body angles
    */
   void gyroFeedback(std::vector<float>& outputAngles) const;
+
+
+  KickProperties getFromSourceAndDestination(Vector2f source,Vector2f destination) const;
 };

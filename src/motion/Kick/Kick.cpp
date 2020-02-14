@@ -61,6 +61,11 @@ Kick::Kick(const ModuleManagerInterface& manager)
   sideKickParameters_().shoulderPitchAdjustment *= TO_RAD;
   sideKickParameters_().ankleRoll *= TO_RAD;
   sideKickParameters_().anklePitch *= TO_RAD;
+    coneMeasurements_().maximumAngle *= TO_RAD;
+    coneMeasurements_().sideDirectionBoundary *= TO_RAD;
+    coneMeasurements_().minimalAngle *= TO_RAD;
+    coneMeasurements_().centerKickAngle *= TO_RAD;
+    coneMeasurements_().sideKickAngle *= TO_RAD;
 }
 
 void Kick::cycle()
@@ -102,7 +107,7 @@ void Kick::cycle()
     leftKicking_ = motionRequest_->kickData.ballSource.y() > 0;
     // select appropriate torso offset
     const Vector3f torsoOffset = leftKicking_ ? torsoOffsetLeft_() : torsoOffsetRight_();
-      KickProperties kickProperties = KickProperties::getFromSourceAndDestination(motionRequest_->kickData.ballSource,motionRequest_->kickData.ballDestination);
+      KickProperties kickProperties = getFromSourceAndDestination(motionRequest_->kickData.ballSource,motionRequest_->kickData.ballDestination);
       // reset interpolators
       resetInterpolators(kickParameters, torsoOffset, kickProperties);
     // initialize kick
@@ -154,13 +159,13 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
     double kickAngle;
 
     switch(properties.kickDistance){
-        case KickProperties::SHORT:
+        case KickProperties::KICK_DISTANCE::SHORT:
             kickDistance = coneMeasurements_().shortKickDistance;
             break;
-        case KickProperties::MEDIUM:
+        case KickProperties::KICK_DISTANCE::MEDIUM:
             kickDistance = coneMeasurements_().mediumKickDistance;
             break;
-        case KickProperties::LONG:
+        case KickProperties::KICK_DISTANCE::LONG:
             kickDistance = coneMeasurements_().longKickDistance;
             break;
         default:
@@ -170,10 +175,10 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
     std::cout<<"kickDistance: "<<kickDistance<<std::endl;
 
     switch(properties.kickDirection){
-        case KickProperties::SIDE:
+        case KickProperties::KICK_DIRECTION::SIDE:
             kickAngle = coneMeasurements_().sideKickAngle;
             break;
-        case KickProperties::CENTER:
+        case KickProperties::KICK_DIRECTION::CENTER:
             kickAngle = coneMeasurements_().centerKickAngle;
             break;
         default:
@@ -181,7 +186,6 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
     }
 
     std::cout<<"kickAngle: "<<kickAngle /TO_RAD<<std::endl;
-
 
   /*
    * wait before start
@@ -417,4 +421,61 @@ void Kick::gyroFeedback(std::vector<float>& outputAngles) const
   outputAngles[JOINTS::R_ANKLE_ROLL] +=
       (leftKicking_ ? 1 : -1) * gyroSidewaysBalanceFactor_() * filteredGyro_.x();
   outputAngles[JOINTS::R_ANKLE_PITCH] += gyroForwardBalanceFactor_() * filteredGyro_.y();
+}
+
+
+KickProperties Kick::getFromSourceAndDestination(Vector2f source,Vector2f destination) const {
+    KickProperties properties = *new KickProperties();
+    //initial calculations
+    float xdist=destination.x() - source.x();
+    float ydist=destination.y() - source.y();
+    float dist = std::sqrt(xdist*xdist+ydist*ydist);
+    float ang = std::atan2(ydist,xdist); //left positive - right negative
+
+    std::cout<<"real Distance is: "<<dist<<std::endl;
+
+    //corrections
+    if(dist>coneMeasurements_().hammerDistanceBoundary){
+        print("KickTarget-Distance is away more than "+std::to_string(coneMeasurements_().hammerDistanceBoundary)+"m, commencing HAMMER-shot",LogLevel::WARNING);
+        dist= coneMeasurements_().hammerDistanceBoundary;
+    }
+    else if(dist >coneMeasurements_().maximumRadius){
+        print("Exceeding max kick distance of "+std::to_string(coneMeasurements_().maximumRadius)+"m, kickDistance is forced onto "+std::to_string(coneMeasurements_().maximumRadius)+"m",LogLevel::WARNING);
+        dist =coneMeasurements_().maximumRadius;
+    }
+    else if(dist <coneMeasurements_().minimalRadius){
+        print("Subceeding min kick distance of "+std::to_string(coneMeasurements_().minimalRadius)+"m, kickDistance is forced onto "+std::to_string(coneMeasurements_().minimalRadius)+"m",LogLevel::WARNING);
+        dist=coneMeasurements_().minimalRadius;
+    }
+    if (ang >coneMeasurements_().maximumAngle){
+        ang =coneMeasurements_().maximumAngle;
+        print("Exceeding max kick angle  of "+std::to_string(coneMeasurements_().maximumAngle)+", kickAngle is forced onto "+std::to_string(coneMeasurements_().maximumAngle),LogLevel::WARNING);
+    }
+    if (ang <coneMeasurements_().minimalAngle){
+        ang = coneMeasurements_().minimalAngle;
+        print("Subceeding min kick angle  of "+std::to_string(coneMeasurements_().minimalAngle)+", kickAngle is forced onto "+std::to_string(coneMeasurements_().minimalAngle),LogLevel::WARNING);
+    }
+    properties.distance = dist;
+    properties.angle =ang;
+    //enums
+    if(std::abs(properties.angle) > coneMeasurements_().sideKickAngle){
+        properties.kickDirection = KickProperties::KICK_DIRECTION::SIDE;
+    }
+    else {
+        properties.kickDirection = KickProperties::KICK_DIRECTION::SIDE;
+    }
+    if(properties.distance <coneMeasurements_().shortDistanceBoundary){
+        properties.kickDistance = KickProperties::KICK_DISTANCE::SHORT;
+    }
+    else if(properties.distance<coneMeasurements_().mediumDistanceBoundary){
+        properties.kickDistance = KickProperties::KICK_DISTANCE::MEDIUM;
+    }
+    else if ( properties.distance <coneMeasurements_().hammerDistanceBoundary) {
+        properties.kickDistance = KickProperties::KICK_DISTANCE::LONG;
+    }
+    else {
+        properties.kickDistance = KickProperties::KICK_DISTANCE::HAMMER;
+    }
+
+    return properties;
 }
