@@ -34,7 +34,7 @@ DucksActionCommand playing(const DuckDataSet &d)
 				){
 				command = walkTo(d.ballSearchPosition.pose, d);
 			}else if(d.ballSearchPosition.reason == DuckBallSearchPosition::SEARCH_TURN){
-				command = walkTo(d.robotPosition.pose.oriented(robotPose.orientation), d)
+				command = walkTo(d.robotPosition.pose.oriented(d.ballSearchPosition.pose.orientation), d)
 					.combineBodyWalkType(WalkMode::DIRECT_WITH_ORIENTATION);
 			}else{
 				command = DucksActionCommand::stand();
