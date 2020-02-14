@@ -31,20 +31,20 @@ Kick::Kick(const ModuleManagerInterface& manager)
                            })
   , sideKickParameters_(*this, "sideKickParameters",
                         [this] {
-                          sideKickParameters_().yawLeft2right *= TO_RAD;
-                          sideKickParameters_().shoulderRoll *= TO_RAD;
-                          sideKickParameters_().shoulderPitchAdjustment *= TO_RAD;
-                          sideKickParameters_().ankleRoll *= TO_RAD;
-                          sideKickParameters_().anklePitch *= TO_RAD;
+                            sideKickParameters_().yawLeft2right *= TO_RAD;
+                            sideKickParameters_().shoulderRoll *= TO_RAD;
+                            sideKickParameters_().shoulderPitchAdjustment *= TO_RAD;
+                            sideKickParameters_().ankleRoll *= TO_RAD;
+                            sideKickParameters_().anklePitch *= TO_RAD;
+                            })
+  , coneMeasurements_(*this, "coneMeasurements",
+                        [this] {
+                            coneMeasurements_().maximumAngle *= TO_RAD;
+                            coneMeasurements_().sideDirectionBoundary *= TO_RAD;
+                            coneMeasurements_().minimalAngle *= TO_RAD;
+                            coneMeasurements_().centerKickAngle *= TO_RAD;
+                            coneMeasurements_().sideKickAngle *= TO_RAD;
                         })
-                        , coneMeasurements_(*this, "coneMeasurements",
-                                            [this] {
-                                                coneMeasurements_().maximumAngle *= TO_RAD;
-                                                coneMeasurements_().sideDirectionBoundary *= TO_RAD;
-                                                coneMeasurements_().minimalAngle *= TO_RAD;
-                                                coneMeasurements_().centerKickAngle *= TO_RAD;
-                                                coneMeasurements_().sideKickAngle *= TO_RAD;
-                                            })
   , currentInterpolatorID_(interpolators_.size())
   , gyroLowPassRatio_(*this, "gyroLowPassRatio", [] {})
   , gyroForwardBalanceFactor_(*this, "gyroForwardBalanceFactor", [] {})
@@ -61,11 +61,11 @@ Kick::Kick(const ModuleManagerInterface& manager)
   sideKickParameters_().shoulderPitchAdjustment *= TO_RAD;
   sideKickParameters_().ankleRoll *= TO_RAD;
   sideKickParameters_().anklePitch *= TO_RAD;
-    coneMeasurements_().maximumAngle *= TO_RAD;
-    coneMeasurements_().sideDirectionBoundary *= TO_RAD;
-    coneMeasurements_().minimalAngle *= TO_RAD;
-    coneMeasurements_().centerKickAngle *= TO_RAD;
-    coneMeasurements_().sideKickAngle *= TO_RAD;
+  coneMeasurements_().maximumAngle *= TO_RAD;
+  coneMeasurements_().sideDirectionBoundary *= TO_RAD;
+  coneMeasurements_().minimalAngle *= TO_RAD;
+  coneMeasurements_().centerKickAngle *= TO_RAD;
+  coneMeasurements_().sideKickAngle *= TO_RAD;
 }
 
 void Kick::cycle()
