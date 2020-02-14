@@ -163,6 +163,11 @@ private:
   Parameter<KickParameters> forwardKickParameters_;
   Parameter<KickParameters> sideKickParameters_;
 
+  //TODO - check if SideKickParameters work for Angled Kick - criss cross
+  //TODO remove KickType from kick Invocation, but add forceHammer to kickinvocation
+  //TODO clean kick configuration -verification kick with left foot when kicking angle is negative and vice versa
+
+
     struct ConeMeasurements : public Uni::To, public Uni::From
     {
         float minimalRadius;
