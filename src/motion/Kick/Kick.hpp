@@ -11,29 +11,6 @@
 #include "Tools/Kinematics/KinematicMatrix.h"
 
 #include "Utils/Interpolator/Interpolator.hpp"
-#define DISTANCE_MIN 1.3f
-#define DISTANCE_SHORT_BOUNDARY 2.2f
-#define DISTANCE_MEDIUM_BOUNDARY 3.1f
-#define DISTANCE_MAX 4.0f
-#define DISTANCE_HAMMER 5.0f
-
-
-#define ANGLE_DIST_MAX 1.2f
-#define ANGLE_DIST_MIN 0.4f
-#define ANGLE_DIST_REF 4.0f
-#define ANGLE_MAX std::atan2(ANGLE_DIST_MAX,ANGLE_DIST_REF)
-#define ANGLE_LEFT_MIN std::atan2(ANGLE_DIST_MIN,ANGLE_DIST_REF)
-#define ANGLE_RIGHT_MAX std::atan2(-ANGLE_DIST_MIN,ANGLE_DIST_REF)
-#define ANGLE_MIN std::atan2(-ANGLE_DIST_MAX,ANGLE_DIST_REF)
-
-#define GROUPED_DIST_SHORT  1.75f
-#define GROUPED_DIST_MEDIUM 2.65f
-#define GROUPED_DIST_LONG 3.55f
-#define GROUPED_DIST_HAMMER 5.0f
-
-#define GROUPED_DIR_LEFT std::atan2((ANGLE_DIST_MAX-ANGLE_DIST_MIN)/2.0+ANGLE_DIST_MIN,ANGLE_DIST_REF)
-#define GROUPED_DIR_CENTER std::atan2(0.0,ANGLE_DIST_REF)
-#define GROUPED_DIR_RIGHT std::atan2(-((ANGLE_DIST_MAX-ANGLE_DIST_MIN)/2.0+ANGLE_DIST_MIN),ANGLE_DIST_REF)
 
 class Motion;
 
@@ -86,9 +63,8 @@ private:
       float distance;
       float angle;
       typedef enum {
-          LEFT,
           CENTER,
-          RIGHT,
+          SIDE,
       } KICK_DIRECTION;
       typedef enum {
           SHORT,
@@ -109,45 +85,42 @@ private:
           std::cout<<"real Distance is: "<<dist<<std::endl;
 
           //corrections
-          if(dist>DISTANCE_HAMMER){
-              print("KickTarget-Distance is away more than "+std::to_string(DISTANCE_HAMMER)+"m, commencing HAMMER-shot",LogLevel::WARNING);
-              dist= DISTANCE_HAMMER;
+          if(dist>coneMeasurements_().hammerDistanceBoundary){
+              print("KickTarget-Distance is away more than "+std::to_string(coneMeasurements_().hammerDistanceBoundary)+"m, commencing HAMMER-shot",LogLevel::WARNING);
+              dist= coneMeasurements_().hammerDistanceBoundary;
           }
-          else if(dist >DISTANCE_MAX){
-              print("Exceeding max kick distance of "+std::to_string(DISTANCE_MAX)+"m, kickDistance is forced onto "+std::to_string(DISTANCE_MAX)+"m",LogLevel::WARNING);
-              dist =DISTANCE_MAX;
+          else if(dist >coneMeasurements_().maximumRadius){
+              print("Exceeding max kick distance of "+std::to_string(coneMeasurements_().maximumRadius)+"m, kickDistance is forced onto "+std::to_string(coneMeasurements_().maximumRadius)+"m",LogLevel::WARNING);
+              dist =coneMeasurements_().maximumRadius;
           }
-          else if(dist <DISTANCE_MIN){
-              print("Subceeding min kick distance of "+std::to_string(DISTANCE_MIN)+"m, kickDistance is forced onto "+std::to_string(DISTANCE_MIN)+"m",LogLevel::WARNING);
-              dist=DISTANCE_MIN;
+          else if(dist <coneMeasurements_().minimalRadius){
+              print("Subceeding min kick distance of "+std::to_string(coneMeasurements_().minimalRadius)+"m, kickDistance is forced onto "+std::to_string(coneMeasurements_().minimalRadius)+"m",LogLevel::WARNING);
+              dist=coneMeasurements_().minimalRadius;
           }
-          if (ang >ANGLE_MAX){
-              ang =ANGLE_MAX;
-              print("Exceeding max kick angle  of "+std::to_string(ANGLE_MAX)+", kickAngle is forced onto "+std::to_string(ANGLE_MAX),LogLevel::WARNING);
+          if (ang >coneMeasurements_().maximumAngle){
+              ang =coneMeasurements_().maximumAngle;
+              print("Exceeding max kick angle  of "+std::to_string(coneMeasurements_().maximumAngle)+", kickAngle is forced onto "+std::to_string(coneMeasurements_().maximumAngle),LogLevel::WARNING);
           }
-          if (ang <ANGLE_MIN){
-              ang = ANGLE_MIN;
-              print("Subceeding min kick angle  of "+std::to_string(ANGLE_MIN)+", kickAngle is forced onto "+std::to_string(ANGLE_MIN),LogLevel::WARNING);
+          if (ang <coneMeasurements_().minimalAngle){
+              ang = coneMeasurements_().minimalAngle;
+              print("Subceeding min kick angle  of "+std::to_string(coneMeasurements_().minimalAngle)+", kickAngle is forced onto "+std::to_string(coneMeasurements_().minimalAngle),LogLevel::WARNING);
           }
           properties.distance = dist;
           properties.angle =ang;
           //enums
-          if(properties.angle > ANGLE_LEFT_MIN){
-              properties.kickDirection = KickProperties::LEFT;
-          }
-          else if(properties.angle < ANGLE_RIGHT_MAX){
-              properties.kickDirection = KickProperties::RIGHT;
+          if(std::abs(properties.angle) > coneMeasurements_().sideKickAngle){
+              properties.kickDirection = KickProperties::SIDE;
           }
           else {
               properties.kickDirection = KickProperties::CENTER;
           }
-          if(properties.distance <DISTANCE_SHORT_BOUNDARY){
+          if(properties.distance <coneMeasurements_().shortDistanceBoundary){
               properties.kickDistance = KickProperties::SHORT;
           }
-          else if(properties.distance<DISTANCE_MEDIUM_BOUNDARY){
+          else if(properties.distance<coneMeasurements_().mediumDistanceBoundary){
               properties.kickDistance = KickProperties::MEDIUM;
           }
-          else if ( properties.distance <DISTANCE_MAX) {
+          else if ( properties.distance <coneMeasurements_().hammerDistanceBoundary) {
               properties.kickDistance = KickProperties::LONG;
           }
           else {
@@ -241,7 +214,68 @@ private:
   Parameter<KickParameters> forwardKickParameters_;
   Parameter<KickParameters> sideKickParameters_;
 
-  /// interpolators for all kick phases
+    struct ConeMeasurements : public Uni::To, public Uni::From
+    {
+        float minimalRadius;
+        float shortDistanceBoundary;
+        float mediumDistanceBoundary;
+        float maximumRadius;
+        float hammerDistanceBoundary;
+        float maximumAngle;
+        float sideDirectionBoundary;
+        float minimalAngle;
+
+
+        float shortKickDistance;
+        float mediumKickDistance;
+        float longKickDistance;
+        float hammerKickDistance;
+
+        float centerKickAngle;
+        float sideKickAngle;
+
+        virtual void toValue(Uni::Value& value) const
+        {
+            value = Uni::Value(Uni::ValueType::OBJECT);
+            value["minimalRadius"] << minimalRadius;
+            value["shortDistanceBoundary"] << shortDistanceBoundary;
+            value["mediumDistanceBoundary"] << mediumDistanceBoundary;
+            value["maximumRadius"] << maximumRadius;
+            value["hammerDistanceBoundary"] << hammerDistanceBoundary;
+            value["maximumAngle"] << maximumAngle;
+            value["sideDirectionBoundary"] << sideDirectionBoundary;
+            value["minimalAngle"] << minimalAngle;
+            value["shortKickDistance"] << shortKickDistance;
+            value["mediumKickDistance"] << mediumKickDistance;
+            value["longKickDistance"] << longKickDistance;
+            value["hammerKickDistance"] << hammerKickDistance;
+            value["centerKickAngle"] << centerKickAngle;
+            value["sideKickAngle"] << sideKickAngle;
+
+        }
+
+        virtual void fromValue(const Uni::Value& value)
+        {
+            value["minimalRadius"] >> minimalRadius;
+            value["shortDistanceBoundary"] >> shortDistanceBoundary;
+            value["mediumDistanceBoundary"] >> mediumDistanceBoundary;
+            value["maximumRadius"] >> maximumRadius;
+            value["hammerDistanceBoundary"] >>  hammerDistanceBoundary;
+            value["maximumAngle"] >> maximumAngle;
+            value["sideDirectionBoundary"] >> sideDirectionBoundary;
+            value["minimalAngle"] >> minimalAngle;
+            value["shortKickDistance"] >> shortKickDistance;
+            value["mediumKickDistance"] >> mediumKickDistance;
+            value["longKickDistance"] >> longKickDistance;
+            value["hammerKickDistance"] >> hammerKickDistance;
+            value["centerKickAngle"] >> centerKickAngle;
+            value["sideKickAngle"] >> sideKickAngle;
+        }
+    };
+    static Parameter<ConeMeasurements> coneMeasurements_;
+
+
+    /// interpolators for all kick phases
   Interpolator waitBeforeStartInterpolator_;
   Interpolator weightShiftInterpolator_;
   Interpolator liftFootInterpolator_;
