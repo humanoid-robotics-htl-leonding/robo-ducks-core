@@ -9,6 +9,11 @@ import { DebugMessageType } from 'src/app/model/message-type.enum';
 import { NaoConnector } from 'src/app/model/nao-connector';
 import { RawCardComponent } from '../elements/raw-card/raw-card.component';
 import { state } from '@angular/animations';
+import { NaoElement } from 'src/app/model/nao-element';
+import { ComponentPortal } from '@angular/cdk/portal';
+import { NaoElementComponent } from '../elements/nao-element/nao-element.component';
+import { NaoImageComponent } from '../elements/nao-image/nao-image.component';
+import { NaoGridElement } from 'src/app/model/nao-grid-element';
 // const menu = require('electron').remote.Menu;
 
 @Component({
@@ -23,7 +28,7 @@ export class NaoComponent implements OnInit {
   @Output() closeTab = new EventEmitter();
   toggleForm = false;
   message = '';
-  elements: number[] = [];
+  elements: NaoGridElement[] = [];
 
   constructor(public dialog: MatDialog, private naoService: NaoService) {
   }
@@ -43,9 +48,20 @@ export class NaoComponent implements OnInit {
     this.connector.sendString(DebugMessageType.DM_REQUEST_LIST, this.message);
   }
 
-  newRawCard(){
-    console.log('New Card', this);
-    this.elements.push(1);
+  doAction(event){
+    console.log(event);
+  }
+
+  addElement(type: string){
+
+  }
+
+  getComponentPortal(element: NaoElement){
+    switch(element.type){
+      case 'image': {
+        return new ComponentPortal(NaoImageComponent);
+      }
+    }
   }
 
 }

@@ -1,30 +1,61 @@
 <div class="nao-tab">
-  <input matInput placeholder="Nao Address" [(ngModel)]="connector.address">
-  <!-- <div *ngIf="this.naoService.client != null">
-    Connecting: {{this.naoService.client.connecting}}
-  </div> -->
-  <button mat-button
-    [disabled]="connector.address.length==0"
-    (click)="connectToNao()">Connect</button>
+  <div class="connection-form">
+    <input matInput placeholder="Nao Address" [(ngModel)]="connector.address">
+    <!-- <div *ngIf="this.naoService.client != null">
+      Connecting: {{this.naoService.client.connecting}}
+    </div> -->
+    <button mat-button
+      [disabled]="connector.address.length==0"
+      (click)="connectToNao()">Connect</button>
 
-  <input matInput placeholder="Message" [(ngModel)]="message">
-  <button mat-raised-button (click)="send()" color="primary">Send</button>
+    <input matInput placeholder="Message" [(ngModel)]="message">
+    <button mat-raised-button (click)="send()" color="primary">Send</button>
 
-  <input matInput [(ngModel)]="connector.status">
-  <div *ngIf="connector.client">
-    Connecting: {{connector.client.connecting}}
-    Destroyed: {{connector.client.destroyed}}
-    Address: {{connector.client.remoteAddress}}
+    <input matInput [(ngModel)]="connector.status">
+    <div *ngIf="connector.client">
+      Connecting: {{connector.client.connecting}}
+      Destroyed: {{connector.client.destroyed}}
+      Address: {{connector.client.remoteAddress}}
+    </div>
   </div>
-  <div *ngIf="connector.messages.length>0">
-    <app-raw-card *ngFor="let element of elements" [content]="connector.messages[connector.messages.length-1].msg"></app-raw-card>
+
+  <div class="nao-content">
+    <mat-grid-list cols="10">
+      <mat-grid-tile *ngFor="let element of elements"
+      [colspan]="element.colspan" [rowspan]="element.rowspan">
+        <app-nao-element [type]="element.type" [connector]="connector"></app-nao-element>
+      </mat-grid-tile>
+    </mat-grid-list>
   </div>
 
-  <div class="bottom-controls">
+  <div class="bottom-controls"
+  (mouseenter)="addFab.open=true" (mouseleave)="addFab.open=false">
     <div class="bottom-fab">
-      <button mat-fab color="primary">
-        <mat-icon>add</mat-icon>
-      </button>
+      <eco-fab-speed-dial #addFab [direction]="up">
+        <eco-fab-speed-dial-trigger [spin]="true">
+          <button mat-fab color="primary" (click)="doAction('trigger')">
+            <mat-icon class="spin180">add</mat-icon>
+          </button>
+        </eco-fab-speed-dial-trigger>
+        <eco-fab-speed-dial-actions>
+          <button mat-mini-fab (click)="doAction('text')"
+          matTooltip="Text" [matTooltipPosition]="'left'">
+            <mat-icon>subject</mat-icon>
+          </button>
+          <button mat-mini-fab (click)="doAction('map')"
+          matTooltip="Map" [matTooltipPosition]="'left'">
+            <mat-icon>map</mat-icon>
+          </button>
+          <button mat-mini-fab (click)="doAction('config')"
+          matTooltip="Config" [matTooltipPosition]="'left'">
+            <mat-icon>settings</mat-icon>
+          </button>
+          <button mat-mini-fab (click)="doAction('image')"
+          matTooltip="Image" [matTooltipPosition]="'left'">
+            <mat-icon>image</mat-icon>
+          </button>
+        </eco-fab-speed-dial-actions>
+      </eco-fab-speed-dial>
     </div>
   </div>
 </div>

@@ -13,11 +13,20 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { PortalModule } from '@angular/cdk/portal';
+import { EcoFabSpeedDialModule } from '@ecodev/fab-speed-dial';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 import { NaoComponent } from './components/nao/nao.component';
 import { NaoTabComponent } from './components/nao-tab/nao-tab.component';
 import { HomeComponent } from './components/home/home.component';
 import { RawCardComponent } from './components/elements/raw-card/raw-card.component';
+import { NaoElementComponent } from './components/elements/nao-element/nao-element.component';
+import { NaoImageComponent } from './components/elements/nao-image/nao-image.component';
+import { NaoTextComponent } from './components/elements/nao-text/nao-text.component';
+import { NaoMapComponent } from './components/elements/nao-map/nao-map.component';
+import { NaoConfigComponent } from './components/elements/nao-config/nao-config.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +34,12 @@ import { RawCardComponent } from './components/elements/raw-card/raw-card.compon
     NaoComponent,
     NaoTabComponent,
     HomeComponent,
-    RawCardComponent
+    RawCardComponent,
+    NaoElementComponent,
+    NaoImageComponent,
+    NaoTextComponent,
+    NaoMapComponent,
+    NaoConfigComponent
   ],
   imports: [
     BrowserModule,
@@ -39,7 +53,11 @@ import { RawCardComponent } from './components/elements/raw-card/raw-card.compon
     MatTabsModule,
     MatIconModule,
     MatCardModule,
-    PortalModule
+    PortalModule,
+    EcoFabSpeedDialModule,
+    MatSlideToggleModule,
+    MatTooltipModule,
+    MatGridListModule
   ],
   providers: [],
   bootstrap: [AppComponent]
