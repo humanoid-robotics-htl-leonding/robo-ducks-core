@@ -171,9 +171,6 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
         default:
             kickDistance = coneMeasurements_().hammerKickDistance;
     }
-
-    std::cout<<"kickDistance: "<<kickDistance<<std::endl;
-
     switch(properties.kickDirection){
         case KickProperties::KICK_DIRECTION::SIDE:
             kickAngle = coneMeasurements_().sideKickAngle;
@@ -184,9 +181,6 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
         default:
             kickAngle = coneMeasurements_().centerKickAngle;
     }
-
-    std::cout<<"kickAngle: "<<kickAngle /TO_RAD<<std::endl;
-
   /*
    * wait before start
    */
@@ -432,7 +426,6 @@ KickProperties Kick::getFromSourceAndDestination(Vector2f source,Vector2f destin
     float dist = std::sqrt(xdist*xdist+ydist*ydist);
     float ang = std::atan2(ydist,xdist); //left positive - right negative
 
-    std::cout<<"real Distance is: "<<dist<<std::endl;
 
     //corrections
     if(dist>coneMeasurements_().hammerDistanceBoundary){
@@ -479,3 +472,18 @@ KickProperties Kick::getFromSourceAndDestination(Vector2f source,Vector2f destin
 
     return properties;
 }
+bool Kick::isValidKick(Vector2f source, Vector2f destination)
+{
+    //ballsource.y positiv und ang negativ - sonst??
+    float xdist=destination.x() - source.x();
+    float ydist=destination.y() - source.y();
+    float ang = std::atan2(ydist,xdist); //left positive - right negative
+    if(source.y() >0.0 && ang <=0.0){
+        return true;
+    }
+    if(source.y() <0.0 && ang >=0.0){
+        return true;
+    }
+    return false;
+}
+

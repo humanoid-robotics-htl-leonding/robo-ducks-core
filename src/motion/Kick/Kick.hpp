@@ -165,8 +165,6 @@ private:
 
   //TODO - check if SideKickParameters work for Angled Kick - criss cross
   //TODO remove KickType from kick Invocation, but add forceHammer to kickinvocation
-  //TODO clean kick configuration -verification kick with left foot when kicking angle is negative and vice versa
-
 
     struct ConeMeasurements : public Uni::To, public Uni::From
     {
@@ -312,4 +310,7 @@ private:
 
 
   KickProperties getFromSourceAndDestination(Vector2f source,Vector2f destination) const;
+
+
+  static bool isValidKick(Vector2f source,Vector2f destination);
 };
