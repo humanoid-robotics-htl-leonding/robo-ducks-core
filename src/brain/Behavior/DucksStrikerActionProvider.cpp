@@ -52,12 +52,11 @@ void DucksStrikerActionProvider::cycle()
         strikerAction_->action = DucksStrikerAction::WALK_TO_BALL;
 
         if (
-                robotPosition_->pose.position.x() >= targetToBall.x() - 0.1 &&
+                robotPosition_->pose.position.x() >= targetToBall.x() - 0.1 &&uck
                 robotPosition_->pose.position.y() >= targetToBall.y() - 0.1 &&
                 robotPosition_->pose.position.x() <= targetToBall.x() + 0.1 &&
                 robotPosition_->pose.position.y() <= targetToBall.y() + 0.1
         ){
-            std::cout << "Ready To Kick" << std::endl;
             strikerAction_->action = DucksStrikerAction::KICK_INTO_GOAL;
             strikerAction_->kickType = DucksStrikerAction::KickType::KICK;
         }
