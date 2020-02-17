@@ -58,7 +58,6 @@ void PenaltyStrikerActionProvider::cycle()
         kickPose, *ballState_, distanceToBallKick_().x(), angleToBall, distanceToBallKick_().y());
     penaltyStrikerAction_->kickPose = kickPose;
     penaltyStrikerAction_->type = PenaltyStrikerAction::Type::KICK_INTO_GOAL;
-    penaltyStrikerAction_->kickType = PenaltyStrikerAction::KickType::FORWARD;
     penaltyStrikerAction_->target = target;
     penaltyStrikerAction_->kickable = kickable;
     penaltyStrikerAction_->valid = true;

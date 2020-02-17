@@ -31,8 +31,8 @@ void DucksStrikerActionProvider::cycle()
 
 	strikerAction_->kickable = BallUtils::Kickable::NOT;
 	strikerAction_->kickPose = robotPosition_->fieldToRobot(Pose(targetPos, orientation));
-	strikerAction_->type = DucksStrikerAction::Type::KICK_INTO_GOAL;
-	strikerAction_->kickType = DucksStrikerAction::KickType::KICK;
+	strikerAction_->type = StrikerAction::Type::KICK_INTO_GOAL;
+	strikerAction_->passTarget = 0;
 	strikerAction_->target = Vector2f(0, 0);
 	strikerAction_->valid = true;*/
 

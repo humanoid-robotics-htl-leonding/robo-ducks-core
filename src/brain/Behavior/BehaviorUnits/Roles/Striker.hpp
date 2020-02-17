@@ -20,7 +20,7 @@ ActionCommand striker(const DataSet& d)
     {
       case StrikerAction::PASS:
         return walkToBallAndKick(d, d.strikerAction.kickPose, d.strikerAction.kickable,
-                                 d.strikerAction.target, true, Velocity(), d.strikerAction.kickType);
+                                 d.strikerAction.target, true, Velocity());
       case StrikerAction::DRIBBLE:
         // explicit fall through since these acually don't differ anyway
         // TODO: @reviewer, @teamBehavior what to do with this part?
@@ -31,7 +31,7 @@ ActionCommand striker(const DataSet& d)
       case StrikerAction::KICK_INTO_GOAL:
       default:
         return walkToBallAndKick(d, d.strikerAction.kickPose, d.strikerAction.kickable,
-                                 d.strikerAction.target, true, Velocity(), d.strikerAction.kickType);
+                                 d.strikerAction.target, true, Velocity());
     }
   }
   else
