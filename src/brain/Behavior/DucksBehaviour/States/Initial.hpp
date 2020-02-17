@@ -1,8 +1,8 @@
 #pragma once
 
-ActionCommand initial(const DuckDataSet &d)
+DucksActionCommand initial(const DuckDataSet &d)
 {
-	auto command = ActionCommand::stand();
+	auto command = DucksActionCommand::stand();
 
 	if (d.thoughts.handleNewState()) {
 		command.combineThoughtCommand(ThoughtCommand::RESET_COMPASS_DIRECTION);

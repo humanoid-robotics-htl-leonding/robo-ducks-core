@@ -1,9 +1,9 @@
 #pragma once
 
-ActionCommand kickBall(const DuckDataSet &d, const StrikerAction &sa)
+DucksActionCommand kickBall(const DuckDataSet &d, const StrikerAction &sa)
 {
 	if (sa.kickable != BallUtils::Kickable::NOT) {
-		return ActionCommand::kick(d.ballState.position,
+		return DucksActionCommand::kick(d.ballState.position,
 								   sa.target);  // TODO Wrong Kick Type (use SA)
 	}
 	else {
@@ -11,10 +11,10 @@ ActionCommand kickBall(const DuckDataSet &d, const StrikerAction &sa)
 	}
 }
 
-ActionCommand roleStriker(const DuckDataSet &d)
+DucksActionCommand roleStriker(const DuckDataSet &d)
 {
 //    d.robotPosition.robotToField()
-//    ActionCommand cmd = ActionCommand::walk(d.robotPosition.robotToField(Pose(0, 0, 45*TO_RAD)));
+//    DucksActionCommand cmd = DucksActionCommand::walk(d.robotPosition.robotToField(Pose(0, 0, 45*TO_RAD)));
 
 	auto sa = d.strikerAction;
 
@@ -24,9 +24,6 @@ ActionCommand roleStriker(const DuckDataSet &d)
 			default: Log(LogLevel::ERROR) << "StrikerActionType: " << sa.type << "is not implemented yet.";
 		}
 	}
-	else {
-		Log(LogLevel::WARNING) << "Invalid Striker Action";
-	}
 
-	return ActionCommand::stand();
+	return DucksActionCommand::stand().invalidate();
 }

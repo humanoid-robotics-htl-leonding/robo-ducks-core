@@ -37,15 +37,11 @@ DuckBallSearchPositionProvider::DuckBallSearchPositionProvider(const ModuleManag
 	  {}),
 	  stepBackThreshold_(*this, "stepBackThreshold", []
 	  {}),
-	  desperationMax_(*this, "desperationMax", [] {}),
-	  desperationThreshold_(*this, "desperationThreshold", [] {}),
-	  desperationReduction_(*this, "desperationReduction", [] {}),
 	  maxSideAngle_(*this, "maxSearchSideAngle", [this] { maxSideAngle_() *= TO_RAD; }),
 	  searchPosition_(*this),
 	  fieldLength_(fieldDimensions_->fieldLength),
 	  fieldWidth_(fieldDimensions_->fieldWidth),
 	  standingOnCooldown_(0),
-	  desperation_(0),
 	  oldSearchPosition_(0, 0),
 	  oldSearchProbability_(0)
 {
@@ -57,7 +53,6 @@ void DuckBallSearchPositionProvider::cycle()
 	Chronometer time(debug(), mount_ + ".cycle_time");
 
 
-	bool guessing = false;
 
 	debug().update(mount_+".testPose", Pose(0, 0, 0));
 	//1. === Implement "Look At Ball" (Erik Mayrhofer)
@@ -79,7 +74,6 @@ void DuckBallSearchPositionProvider::cycle()
 	}
 	//3. == Scan Field
 	else{
-		guessing = true;
 		auto list = std::list<ProbCell*>(ballSearchMap_->probabilityList_); //Copy
 		list.sort(ProbCell::probability_comparator_desc);
 
@@ -168,16 +162,6 @@ void DuckBallSearchPositionProvider::cycle()
 //		searchPosition_->pose = robotPosition_->robotToField(Pose(stepBackValue_(), 0));
 //		//TODO Dont run out of field.
 //	}
-
-	if(guessing && desperation_ < 30.){
-		desperation_ += cycleInfo_->cycleTime;
-		if(desperation_ > 30.) desperation_ = 30.;
-	}else if(desperation_ > 0.){
-		desperation_ -= 10 * cycleInfo_->cycleTime;
-		if(desperation_ < 0) desperation_ = 0;
-	}
-	searchPosition_->desperation = desperation_;
-	searchPosition_->desperate = (desperation_ > 2.0);
 
 	//Hysteresis
 	oldSearchPosition_ = searchPosition_->searchPosition;
