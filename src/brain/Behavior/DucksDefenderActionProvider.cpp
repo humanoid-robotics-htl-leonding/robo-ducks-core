@@ -9,23 +9,21 @@
 #include "DucksDefenderActionProvider.hpp"
 
 
-DucksDefenderActionProvider::DucksDefenderActionProvider(const ModuleManagerInterface &manager)
-	: Module(manager),
-	  ballFocalPointDepth_(*this, "ballFocalPointDepth", []
-	  {}),
-	  ballFocalPointYshift_(*this, "ballFocalPointYShift", []
-	  {}),
-	  maxDeflectBallDistance_(*this, "maxDeflectBallDistance", []
-	  {}),
-	  fieldDimensions_(*this),
-	  gameControllerState_(*this),
-	  obstacleData_(*this),
-	  playingRoles_(*this),
-	  robotPosition_(*this),
-	  teamBallModel_(*this),
-	  teamPlayers_(*this),
-	  worldState_(*this),
-	  defendingPosition_(*this)
+DucksDefenderActionProvider::DucksDefenderActionProvider(const ModuleManagerInterface& manager)
+  : Module(manager)
+  , ballFocalPointDepth_(*this, "ballFocalPointDepth", []{})
+  , ballFocalPointYshift_(*this, "ballFocalPointYShift", []{})
+  , maxDeflectBallDistance_(*this, "maxDeflectBallDistance", []{})
+  , fieldDimensions_(*this)
+  , gameControllerState_(*this)
+  , obstacleData_(*this)
+  , playingRoles_(*this)
+  , robotPosition_(*this)
+  , teamBallModel_(*this)
+  , teamPlayers_(*this)
+  , desperation_(*this)
+  , worldState_(*this)
+  , defendingPosition_(*this)
 {
 }
 
@@ -33,6 +31,10 @@ void DucksDefenderActionProvider::cycle()
 {
 	Chronometer time(debug(), mount_ + ".cycle_time");
 
+  if(desperation_->lookAtBallUrgency > 0.8){
+  	defendingPosition_->valid = false;
+  	return;
+  }
 
 	if (gameControllerState_->gameState == GameState::PLAYING) {
 		defendingPosition_->valid = true;

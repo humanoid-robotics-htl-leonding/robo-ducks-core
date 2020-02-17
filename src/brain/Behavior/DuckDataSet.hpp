@@ -28,7 +28,7 @@
 #include "Data/PenaltyKeeperAction.hpp"
 #include "Framework/Module.hpp"
 
-#include "ActionCommand.hpp"
+#include "DucksActionCommand.hpp"
 #include "BehaviorParameters.hpp"
 
 class Thoughts;
@@ -76,7 +76,7 @@ struct DuckDataSet
           const KickConfigurationData& kcd, const DuckBallSearchPosition& bsp, const HeadPositionData& hpd,
           Thoughts& thdat,
 
-          const ActionCommand& lac)
+          const DucksActionCommand& lac)
     : parameters(module)
     , gameControllerState(gcs)
     , ballState(bs)
@@ -163,7 +163,7 @@ struct DuckDataSet
   /// a reference ot th kick configuration data
   const KickConfigurationData& kickConfigurationData;
   /// a reference to the last action command
-  const ActionCommand& lastActionCommand;
+  const DucksActionCommand& lastActionCommand;
 
   Thoughts& thoughts;
 };

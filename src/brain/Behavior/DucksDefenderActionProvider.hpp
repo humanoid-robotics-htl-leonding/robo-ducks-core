@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Data/Desperation.hpp>
 #include "Data/DucksDefendingPosition.hpp"
 #include "Data/FieldDimensions.hpp"
 #include "Data/GameControllerState.hpp"
@@ -41,6 +42,7 @@ private:
 	const Dependency<RobotPosition> robotPosition_;
 	const Dependency<TeamBallModel> teamBallModel_;
 	const Dependency<TeamPlayers> teamPlayers_;
+	const Dependency<Desperation> desperation_;
 	const Dependency<WorldState> worldState_;
 	Production<DucksDefendingPosition> defendingPosition_;
 

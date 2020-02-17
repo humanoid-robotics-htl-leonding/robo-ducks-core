@@ -97,7 +97,7 @@ private:
 	Production<ThoughtControlRequest> thoughtControlRequest_;
 
 	/// the last action command that was computed by the behavior
-	ActionCommand actionCommand_;
+	DucksActionCommand actionCommand_;
 	/// Thoughts
 	Thoughts thoughts_;
 	/// the data set/bundle that is passed to the behavior
