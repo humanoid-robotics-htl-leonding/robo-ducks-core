@@ -84,30 +84,28 @@ void Kick::cycle()
   if (currentInterpolatorID_ == interpolators_.size() && incomingKickRequest)
   {
     // select kick parameters based on requested kick type
-    KickParameters kickParameters;
-    switch (motionRequest_->kickData.kickType)
-    {
-      case KickType::FORWARD:
-      {
-        kickParameters = forwardKickParameters_();
-        break;
-      }
-      case KickType::SIDE:
-      {
-        kickParameters = sideKickParameters_();
-        break;
-      }
-      default:
-      {
-        kickParameters = forwardKickParameters_();
-        break;
-      }
-    }
+
     // check whether left or right foot is to be used
     leftKicking_ = motionRequest_->kickData.ballSource.y() > 0;
     // select appropriate torso offset
     const Vector3f torsoOffset = leftKicking_ ? torsoOffsetLeft_() : torsoOffsetRight_();
       KickProperties kickProperties = getFromSourceAndDestination(motionRequest_->kickData.ballSource,motionRequest_->kickData.ballDestination);
+      KickParameters kickParameters;
+      switch (kickProperties.kickDirection)
+      {
+          case KickProperties::KICK_DIRECTION::CENTER:
+              kickParameters = forwardKickParameters_();
+              break;
+          case KickProperties::KICK_DIRECTION::SIDE:
+              kickParameters = sideKickParameters_();
+              break;
+          default:
+              kickParameters = forwardKickParameters_();
+              break;
+      }
+
+
+
       // reset interpolators
       resetInterpolators(kickParameters, torsoOffset, kickProperties);
     // initialize kick
