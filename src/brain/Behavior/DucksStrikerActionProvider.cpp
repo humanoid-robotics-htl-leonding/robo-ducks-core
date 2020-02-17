@@ -55,6 +55,7 @@ void DucksStrikerActionProvider::cycle()
         if (difference <= 0.1){
             strikerAction_->action = DucksStrikerAction::KICK_INTO_GOAL;
             strikerAction_->kickType = DucksStrikerAction::KickType::KICK;
+            strikerAction_->kickable = BallUtils::Kickable::RIGHT;
         }
     } else if (isSurrounded()) {
         // TODO: shoots to the nearest teammate

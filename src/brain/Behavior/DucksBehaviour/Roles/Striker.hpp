@@ -1,6 +1,6 @@
 #pragma once
 
-ActionCommand kickBall(const DuckDataSet &d, const StrikerAction &sa)
+ActionCommand kickBall(const DuckDataSet &d, const DucksStrikerAction &sa)
 {
 	if (sa.kickable != BallUtils::Kickable::NOT) {
 		return ActionCommand::kick(d.ballState.position,
@@ -18,6 +18,8 @@ ActionCommand roleStriker(const DuckDataSet &d)
         switch (d.strikerAction.action) {
             case DucksStrikerAction::Action::WALK_TO_BALL:
                 return walkTo(d.strikerAction.kickPose, d);
+            case DucksStrikerAction::Action::KICK_INTO_GOAL:
+                return kickBall(d, d.strikerAction);
             default:
                 Log(LogLevel::WARNING) << "Invalid Striker Action";
         }
