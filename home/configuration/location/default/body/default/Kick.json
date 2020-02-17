@@ -54,7 +54,7 @@
     "mediumDistanceBoundary":3.1,
     "maximumRadius":4.0,
     "hammerDistanceBoundary":5.0,
-    "maximumAngle": 16.7,
+    "maximumAngle": 45.0,
     "sideDirectionBoundary":5.7,
     "minimalAngle": 0.0,
     "shortKickDistance": 1.75,

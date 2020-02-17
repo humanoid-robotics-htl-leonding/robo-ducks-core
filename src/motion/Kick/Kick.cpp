@@ -213,6 +213,11 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
         default:
             kickAngle = coneMeasurements_().centerKickAngle;
     }
+
+    std::cout<<"kickDistance: "<<kickDistance<<std::endl;
+    std::cout<<"kickAngle: "<< kickAngle/TO_RAD<<std::endl;
+
+
   /*
    * wait before start
    */
@@ -274,12 +279,19 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
         kickBallAngles[JOINTS::L_ANKLE_PITCH] = kickAdjustments_().longDistanceStraightLeftAnklePitch;
 
         if (kickAngle == coneMeasurements_().sideKickAngle){
+            //TODO test with real robot
+            kickBallAngles[JOINTS::L_ANKLE_PITCH] = -43.0*TO_RAD;
+            std::cout<<"kickBall-LAnklePitch: "<<kickBallAngles[JOINTS::L_ANKLE_PITCH]/TO_RAD<<std::endl;
+
         }
     }
     else if (kickDistance == coneMeasurements_().mediumKickDistance){
         kickBallAngles[JOINTS::L_ANKLE_PITCH] = kickAdjustments_().mediumDistanceStraightLeftAnklePitch;
 
         if(kickAngle == coneMeasurements_().sideKickAngle){
+            kickBallAngles[JOINTS::L_ANKLE_PITCH] = -5.0*TO_RAD;
+            std::cout<<"kickBall-LAnklePitch: "<<kickBallAngles[JOINTS::L_ANKLE_PITCH]/TO_RAD<<std::endl;
+            //TODO test with real robot
 
         }
 
@@ -290,11 +302,9 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
             kickBallAngles[JOINTS::L_HIP_PITCH] = kickAdjustments_().shortDistanceStraightLeftHipPitch;
 
         if (kickAngle == coneMeasurements_().sideKickAngle){
+            //TODO test with real robot
 
         }
-
-
-
     }
 
 
@@ -466,18 +476,20 @@ KickProperties Kick::getFromSourceAndDestination(Vector2f source,Vector2f destin
     }
     if (ang >coneMeasurements_().maximumAngle){
         ang =coneMeasurements_().maximumAngle;
-        print("Exceeding max kick angle  of "+std::to_string(coneMeasurements_().maximumAngle)+", kickAngle is forced onto "+std::to_string(coneMeasurements_().maximumAngle),LogLevel::WARNING);
+        print("Exceeding max kick angle of "+std::to_string(coneMeasurements_().maximumAngle)+", kickAngle is forced onto "+std::to_string(coneMeasurements_().maximumAngle),LogLevel::WARNING);
     }
     if (ang <coneMeasurements_().minimalAngle){
         ang = coneMeasurements_().minimalAngle;
-        print("Subceeding min kick angle  of "+std::to_string(coneMeasurements_().minimalAngle)+", kickAngle is forced onto "+std::to_string(coneMeasurements_().minimalAngle),LogLevel::WARNING);
+        print("Subceeding min kick angle of "+std::to_string(coneMeasurements_().minimalAngle)+", kickAngle is forced onto "+std::to_string(coneMeasurements_().minimalAngle),LogLevel::WARNING);
     }
 
 
     properties.distance = dist;
     properties.angle =ang;
+    std::cout<<"Angle: "<< ang/TO_RAD<<std::endl;
+
     //enums
-    if(std::abs(properties.angle) > coneMeasurements_().sideKickAngle){
+    if(std::abs(properties.angle) > coneMeasurements_().sideDirectionBoundary){
         properties.kickDirection = KickProperties::KICK_DIRECTION::SIDE;
     }
     else {
