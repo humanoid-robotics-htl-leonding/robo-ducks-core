@@ -48,6 +48,8 @@ void DucksStrikerActionProvider::cycle()
         targetToBall.normalize();
         targetToBall *= 0.2;
         targetToBall += ball;
+        Vector2f xDistance = Vector2f(targetToBall.y(), -1 * targetToBall.x()).normalized() * 0.06;
+        targetToBall = targetToBall + xDistance;
         strikerAction_->kickPose = Pose(targetToBall, 0);
         strikerAction_->action = DucksStrikerAction::WALK_TO_BALL;
         float difference = (robotPosition_->pose.position - targetToBall).norm();
@@ -56,7 +58,7 @@ void DucksStrikerActionProvider::cycle()
         if (difference <= 0.1 && rotationDifference <= 0.1){
             strikerAction_->action = DucksStrikerAction::KICK_INTO_GOAL;
             strikerAction_->kickType = DucksStrikerAction::KickType::KICK;
-            strikerAction_->kickable = BallUtils::Kickable::RIGHT;
+            strikerAction_->kickable = BallUtils::Kickable::LEFT;
         }
     } else if (isSurrounded()) {
         // TODO: shoots to the nearest teammate
