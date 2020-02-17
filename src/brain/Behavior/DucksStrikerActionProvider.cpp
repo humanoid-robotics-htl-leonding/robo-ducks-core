@@ -32,7 +32,6 @@ void DucksStrikerActionProvider::cycle()
 	strikerAction_->kickPose = robotPosition_->fieldToRobot(Pose(targetPos, orientation));
 	strikerAction_->type = StrikerAction::Type::KICK_INTO_GOAL;
 	strikerAction_->passTarget = 0;
-	strikerAction_->kickType = StrikerAction::KickType::FORWARD;
 	strikerAction_->target = Vector2f(0, 0);
 	strikerAction_->valid = true;
 }

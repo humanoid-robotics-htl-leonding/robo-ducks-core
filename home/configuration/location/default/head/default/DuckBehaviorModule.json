@@ -26,7 +26,7 @@
     {
       "ballDestination": [0, 0],
       "ballSource": [0, 0],
-      "kickType": 0
+      "forceHammer":false
     },
     "keeperData": 0,
     "headAngleData":

@@ -7,8 +7,7 @@ ActionCommand penaltyShootoutStriker(const DataSet& d)
   if (d.penaltyStrikerAction.valid)
   {
     return walkToBallAndKick(d, d.penaltyStrikerAction.kickPose, d.penaltyStrikerAction.kickable,
-                             d.penaltyStrikerAction.target, false, Velocity(0.5f, 0.5f, true),
-                             d.penaltyStrikerAction.kickType)
+                             d.penaltyStrikerAction.target, false, Velocity(0.5f, 0.5f, true))
         .combineHead(trackBall(d))
         .combineLeftLED(ActionCommand::EyeLED::red());
   }
