@@ -50,13 +50,9 @@ void DucksStrikerActionProvider::cycle()
         targetToBall += ball;
         strikerAction_->kickPose = Pose(targetToBall, 0);
         strikerAction_->action = DucksStrikerAction::WALK_TO_BALL;
+        float difference = (robotPosition_->pose.position - targetToBall).norm();
 
-        if (
-                robotPosition_->pose.position.x() >= targetToBall.x() - 0.1 &&uck
-                robotPosition_->pose.position.y() >= targetToBall.y() - 0.1 &&
-                robotPosition_->pose.position.x() <= targetToBall.x() + 0.1 &&
-                robotPosition_->pose.position.y() <= targetToBall.y() + 0.1
-        ){
+        if (difference <= 0.1){
             strikerAction_->action = DucksStrikerAction::KICK_INTO_GOAL;
             strikerAction_->kickType = DucksStrikerAction::KickType::KICK;
         }
