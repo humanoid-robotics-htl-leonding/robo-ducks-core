@@ -39,17 +39,28 @@ void DucksStrikerActionProvider::cycle()
     auto absoluteBallPosition = teamBallModel_->position;
     strikerAction_->valid = true;
 
-    std::cout << "" << absoluteBallPosition.x() << " " << absoluteBallPosition.y() << std::endl;
+    // std::cout << "" << absoluteBallPosition.x() << " " << absoluteBallPosition.y() << std::endl;
 
     if (absoluteBallPosition.x() >= 0) {
         auto ball = teamBallModel_->position;
         auto targetPos = Vector2f(fieldDimensions_->fieldLength/2, 0);
         Vector2f targetToBall =  ball - targetPos;
         targetToBall.normalize();
-        targetToBall *= 0.1;
+        targetToBall *= 0.2;
         targetToBall += ball;
         strikerAction_->kickPose = Pose(targetToBall, 0);
         strikerAction_->action = DucksStrikerAction::WALK_TO_BALL;
+
+        if (
+                robotPosition_->pose.position.x() >= targetToBall.x() - 0.1 &&
+                robotPosition_->pose.position.y() >= targetToBall.y() - 0.1 &&
+                robotPosition_->pose.position.x() <= targetToBall.x() + 0.1 &&
+                robotPosition_->pose.position.y() <= targetToBall.y() + 0.1
+        ){
+            std::cout << "Ready To Kick" << std::endl;
+            strikerAction_->action = DucksStrikerAction::KICK_INTO_GOAL;
+            strikerAction_->kickType = DucksStrikerAction::KickType::KICK;
+        }
     } else if (isSurrounded()) {
         // TODO: shoots to the nearest teammate
     } else {
