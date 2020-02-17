@@ -89,7 +89,7 @@ void Kick::cycle()
     leftKicking_ = motionRequest_->kickData.ballSource.y() > 0;
     // select appropriate torso offset
     const Vector3f torsoOffset = leftKicking_ ? torsoOffsetLeft_() : torsoOffsetRight_();
-      KickProperties kickProperties = getFromSourceAndDestination(motionRequest_->kickData.ballSource,motionRequest_->kickData.ballDestination);
+      KickProperties kickProperties = getFromSourceAndDestination(motionRequest_->kickData.ballSource,motionRequest_->kickData.ballDestination,motionRequest_->kickData.forceHammer);
       KickParameters kickParameters;
       switch (kickProperties.kickDirection)
       {
@@ -416,7 +416,7 @@ void Kick::gyroFeedback(std::vector<float>& outputAngles) const
 }
 
 
-KickProperties Kick::getFromSourceAndDestination(Vector2f source,Vector2f destination) const {
+KickProperties Kick::getFromSourceAndDestination(Vector2f source,Vector2f destination,bool forceHammer) const {
     KickProperties properties = *new KickProperties();
     //initial calculations
     float xdist=destination.x() - source.x();
@@ -446,6 +446,8 @@ KickProperties Kick::getFromSourceAndDestination(Vector2f source,Vector2f destin
         ang = coneMeasurements_().minimalAngle;
         print("Subceeding min kick angle  of "+std::to_string(coneMeasurements_().minimalAngle)+", kickAngle is forced onto "+std::to_string(coneMeasurements_().minimalAngle),LogLevel::WARNING);
     }
+
+
     properties.distance = dist;
     properties.angle =ang;
     //enums
@@ -453,7 +455,7 @@ KickProperties Kick::getFromSourceAndDestination(Vector2f source,Vector2f destin
         properties.kickDirection = KickProperties::KICK_DIRECTION::SIDE;
     }
     else {
-        properties.kickDirection = KickProperties::KICK_DIRECTION::SIDE;
+        properties.kickDirection = KickProperties::KICK_DIRECTION::CENTER;
     }
     if(properties.distance <coneMeasurements_().shortDistanceBoundary){
         properties.kickDistance = KickProperties::KICK_DISTANCE::SHORT;
@@ -468,6 +470,9 @@ KickProperties Kick::getFromSourceAndDestination(Vector2f source,Vector2f destin
         properties.kickDistance = KickProperties::KICK_DISTANCE::HAMMER;
     }
 
+    if(forceHammer){
+        properties.kickDistance = KickProperties::KICK_DISTANCE::HAMMER;
+    }
     return properties;
 }
 bool Kick::isValidKick(Vector2f source, Vector2f destination)

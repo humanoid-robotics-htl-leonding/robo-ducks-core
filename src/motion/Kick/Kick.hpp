@@ -309,7 +309,7 @@ private:
   void gyroFeedback(std::vector<float>& outputAngles) const;
 
 
-  KickProperties getFromSourceAndDestination(Vector2f source,Vector2f destination) const;
+  KickProperties getFromSourceAndDestination(Vector2f source,Vector2f destination, bool forceHammer) const;
 
 
   static bool isValidKick(Vector2f source,Vector2f destination);
