@@ -75,13 +75,13 @@ public:
 		 * @return a kick action command for the body
 		 */
 		static Body kick(const Vector2f &ball_position, const Vector2f &ball_target,
-						 const KickType kickType)
+						 const bool forceHammer)
 		{
 			Body body;
 			body.type_ = MotionRequest::BodyMotion::KICK;
 			body.ballPosition_ = ball_position;
 			body.ballTarget_ = ball_target;
-			body.kickType_ = kickType;
+			body.forceHammer_ = forceHammer;
 			body.valid_ = true;
 			return body;
 		}
@@ -161,7 +161,7 @@ public:
 			, velocity_()
 			, ballPosition_()
 			, ballTarget_()
-			, kickType_()
+			, forceHammer_()
 			, inWalkKickType_()
 			, kickFoot_()
 			, keeperType_() {}
@@ -178,8 +178,7 @@ public:
 		Vector2f ballPosition_;
 		/// the target ball position for a kick command
 		Vector2f ballTarget_;
-		/// the KickType of a kick command
-		KickType kickType_;
+		bool forceHammer_;
 		/// the type of the in walk kick
 		InWalkKickType inWalkKickType_ = InWalkKickType::NONE;
 		/// the foot used for in walk kicking
@@ -820,9 +819,9 @@ public:
 	 * @return a kick action command
 	 */
 	static DucksActionCommand kick(const Vector2f &ball_position, const Vector2f &ball_target,
-								   const KickType kickType)
+								   const bool forceHammer = false)
 	{
-		return DucksActionCommand(Body::kick(ball_position, ball_target, kickType), Arm::body(), Arm::body(),
+		return DucksActionCommand(Body::kick(ball_position, ball_target, forceHammer), Arm::body(), Arm::body(),
 								  Head::body(), EyeLED::colors(), EyeLED::colors());
 	}
 	/**
@@ -1001,7 +1000,7 @@ public:
 		motion_request.walkStopData.gracefully = false;
 		motion_request.kickData.ballSource = body_.ballPosition_;
 		motion_request.kickData.ballDestination = body_.ballTarget_;
-		motion_request.kickData.kickType = body_.kickType_;
+		motion_request.kickData.forceHammer = body_.forceHammer_;
 		motion_request.keeperData.keep = body_.keeperType_;
 		if (!motion_request.usesArms()) {
 			motion_request.leftArmMotion = leftArm_.type_;

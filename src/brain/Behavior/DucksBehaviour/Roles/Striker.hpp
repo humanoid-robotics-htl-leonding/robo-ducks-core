@@ -3,7 +3,7 @@
 DucksActionCommand kickBall(const DuckDataSet &d, const StrikerAction &sa)
 {
 	if (sa.kickable != BallUtils::Kickable::NOT) {
-		return ActionCommand::kick(d.ballState.position,
+		return DucksActionCommand::kick(d.ballState.position,
 								   sa.target);  // TODO Wrong Kick Type (use SA)
 	}
 	else {
