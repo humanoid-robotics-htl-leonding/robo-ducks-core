@@ -12,8 +12,28 @@
 
 #include "Utils/Interpolator/Interpolator.hpp"
 
-
 class Motion;
+
+
+class KickProperties{
+public:
+    float distance;
+    float angle;
+    enum class KICK_DIRECTION{
+        CENTER,
+        SIDE,
+    };
+    enum class KICK_DISTANCE{
+        SHORT,
+        MEDIUM,
+        LONG,
+        HAMMER
+    };
+    KICK_DISTANCE kickDistance;
+    KICK_DIRECTION kickDirection;
+
+};
+
 
 /**
  * @brief execute a dynamic kick that adapts to the current ball position
@@ -57,6 +77,8 @@ private:
   const Parameter<Vector3f> torsoOffsetLeft_;
   /// tors ooffset for right kick
   const Parameter<Vector3f> torsoOffsetRight_;
+
+
 
   /// The KickParameters struct contains all information for a kick. A kick is divided into nine
   /// phases. Each phase interpolates from one set of joint angles to another in a given duration.
@@ -141,7 +163,71 @@ private:
   Parameter<KickParameters> forwardKickParameters_;
   Parameter<KickParameters> sideKickParameters_;
 
-  /// interpolators for all kick phases
+  //TODO - check if SideKickParameters work for Angled Kick - criss cross
+  //TODO remove KickType from kick Invocation, but add forceHammer to kickinvocation
+
+    struct ConeMeasurements : public Uni::To, public Uni::From
+    {
+        float minimalRadius;
+        float shortDistanceBoundary;
+        float mediumDistanceBoundary;
+        float maximumRadius;
+        float hammerDistanceBoundary;
+        float maximumAngle;
+        float sideDirectionBoundary;
+        float minimalAngle;
+
+
+        float shortKickDistance;
+        float mediumKickDistance;
+        float longKickDistance;
+        float hammerKickDistance;
+
+        float centerKickAngle;
+        float sideKickAngle;
+
+        virtual void toValue(Uni::Value& value) const
+        {
+            value = Uni::Value(Uni::ValueType::OBJECT);
+            value["minimalRadius"] << minimalRadius;
+            value["shortDistanceBoundary"] << shortDistanceBoundary;
+            value["mediumDistanceBoundary"] << mediumDistanceBoundary;
+            value["maximumRadius"] << maximumRadius;
+            value["hammerDistanceBoundary"] << hammerDistanceBoundary;
+            value["maximumAngle"] << maximumAngle;
+            value["sideDirectionBoundary"] << sideDirectionBoundary;
+            value["minimalAngle"] << minimalAngle;
+            value["shortKickDistance"] << shortKickDistance;
+            value["mediumKickDistance"] << mediumKickDistance;
+            value["longKickDistance"] << longKickDistance;
+            value["hammerKickDistance"] << hammerKickDistance;
+            value["centerKickAngle"] << centerKickAngle;
+            value["sideKickAngle"] << sideKickAngle;
+
+        }
+
+        virtual void fromValue(const Uni::Value& value)
+        {
+            value["minimalRadius"] >> minimalRadius;
+            value["shortDistanceBoundary"] >> shortDistanceBoundary;
+            value["mediumDistanceBoundary"] >> mediumDistanceBoundary;
+            value["maximumRadius"] >> maximumRadius;
+            value["hammerDistanceBoundary"] >>  hammerDistanceBoundary;
+            value["maximumAngle"] >> maximumAngle;
+            value["sideDirectionBoundary"] >> sideDirectionBoundary;
+            value["minimalAngle"] >> minimalAngle;
+            value["shortKickDistance"] >> shortKickDistance;
+            value["mediumKickDistance"] >> mediumKickDistance;
+            value["longKickDistance"] >> longKickDistance;
+            value["hammerKickDistance"] >> hammerKickDistance;
+            value["centerKickAngle"] >> centerKickAngle;
+            value["sideKickAngle"] >> sideKickAngle;
+        }
+    };
+    Parameter<ConeMeasurements> coneMeasurements_;
+
+
+    /// interpolators for all kick phases
   Interpolator waitBeforeStartInterpolator_;
   Interpolator weightShiftInterpolator_;
   Interpolator liftFootInterpolator_;
@@ -175,7 +261,7 @@ private:
    * @param kickParameters the parameters that determine the kick
    * @param torsoOffset the torso offset used for the kick
    */
-  void resetInterpolators(const KickParameters& kickParameters, const Vector3f& torsoOffset);
+  void resetInterpolators(const KickParameters &kickParameters, const Vector3f &torsoOffset, KickProperties d);
 
   /**
    * @brief computeWeightShiftAnglesFromReferenceCom computes angles from a reference CoM
@@ -221,4 +307,10 @@ private:
    * @param outputAngles output parameter containing whole body angles
    */
   void gyroFeedback(std::vector<float>& outputAngles) const;
+
+
+  KickProperties getFromSourceAndDestination(Vector2f source,Vector2f destination) const;
+
+
+  static bool isValidKick(Vector2f source,Vector2f destination);
 };
