@@ -45,6 +45,26 @@ Kick::Kick(const ModuleManagerInterface& manager)
                             coneMeasurements_().centerKickAngle *= TO_RAD;
                             coneMeasurements_().sideKickAngle *= TO_RAD;
                         })
+  , kickAdjustments_(*this, "kickAdjustments",
+                        [this] {
+                            kickAdjustments_().longDistanceStraightLeftAnklePitch *= TO_RAD;
+                            kickAdjustments_().mediumDistanceStraightLeftAnklePitch *= TO_RAD;
+                            kickAdjustments_().shortDistanceStraightLeftHipPitch *= TO_RAD;
+                            kickAdjustments_().shortDistanceStraightLeftKneePitch *= TO_RAD;
+                            kickAdjustments_().shortDistanceStraightLeftAnklePitch *= TO_RAD;
+                        })
+  , retractAdjustments_(*this, "retractAdjustments",
+                       [this] {
+                           retractAdjustments_().longDistanceStraightLeftAnklePitch *= TO_RAD;
+                           retractAdjustments_().longDistanceStraightLeftKneePitch *= TO_RAD;
+                           retractAdjustments_().longDistanceStraightLeftHipPitch *= TO_RAD;
+                           retractAdjustments_().mediumDistanceStraightLeftAnklePitch *= TO_RAD;
+                           retractAdjustments_().mediumDistanceStraightLeftHipPitch *= TO_RAD;
+                           retractAdjustments_().mediumDistanceStraightLeftKneePitch *= TO_RAD;
+                           retractAdjustments_().shortDistanceStraightLeftHipPitch *= TO_RAD;
+                           retractAdjustments_().shortDistanceStraightLeftKneePitch *= TO_RAD;
+                           retractAdjustments_().shortDistanceStraightLeftAnklePitch *= TO_RAD;
+                       })
   , currentInterpolatorID_(interpolators_.size())
   , gyroLowPassRatio_(*this, "gyroLowPassRatio", [] {})
   , gyroForwardBalanceFactor_(*this, "gyroForwardBalanceFactor", [] {})
@@ -66,6 +86,20 @@ Kick::Kick(const ModuleManagerInterface& manager)
   coneMeasurements_().minimalAngle *= TO_RAD;
   coneMeasurements_().centerKickAngle *= TO_RAD;
   coneMeasurements_().sideKickAngle *= TO_RAD;
+  kickAdjustments_().longDistanceStraightLeftAnklePitch *= TO_RAD;
+  kickAdjustments_().mediumDistanceStraightLeftAnklePitch *= TO_RAD;
+  kickAdjustments_().shortDistanceStraightLeftHipPitch *= TO_RAD;
+  kickAdjustments_().shortDistanceStraightLeftKneePitch *= TO_RAD;
+  kickAdjustments_().shortDistanceStraightLeftAnklePitch *= TO_RAD;
+  retractAdjustments_().longDistanceStraightLeftAnklePitch *= TO_RAD;
+  retractAdjustments_().longDistanceStraightLeftKneePitch *= TO_RAD;
+  retractAdjustments_().longDistanceStraightLeftHipPitch *= TO_RAD;
+  retractAdjustments_().mediumDistanceStraightLeftAnklePitch *= TO_RAD;
+  retractAdjustments_().mediumDistanceStraightLeftHipPitch *= TO_RAD;
+  retractAdjustments_().mediumDistanceStraightLeftKneePitch *= TO_RAD;
+  retractAdjustments_().shortDistanceStraightLeftHipPitch *= TO_RAD;
+  retractAdjustments_().shortDistanceStraightLeftKneePitch *= TO_RAD;
+  retractAdjustments_().shortDistanceStraightLeftAnklePitch *= TO_RAD;
 }
 
 void Kick::cycle()
@@ -237,30 +271,23 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
 
 
     if( kickDistance == coneMeasurements_().longKickDistance){
-        kickBallAngles[JOINTS::L_ANKLE_PITCH] = -65.0 *TO_RAD;
+        kickBallAngles[JOINTS::L_ANKLE_PITCH] = kickAdjustments_().longDistanceStraightLeftAnklePitch;
 
         if (kickAngle == coneMeasurements_().sideKickAngle){
         }
     }
     else if (kickDistance == coneMeasurements_().mediumKickDistance){
-        kickBallAngles[JOINTS::L_ANKLE_PITCH] = -40.0 *TO_RAD;
+        kickBallAngles[JOINTS::L_ANKLE_PITCH] = kickAdjustments_().mediumDistanceStraightLeftAnklePitch;
 
         if(kickAngle == coneMeasurements_().sideKickAngle){
-            kickBallAngles[JOINTS::L_ANKLE_PITCH] = 40.0 *TO_RAD;
-
-            kickBallAngles[JOINTS::L_ANKLE_ROLL] = 24.0 *TO_RAD;
-            kickBallAngles[JOINTS::L_HIP_ROLL] = 15.0*TO_RAD;
-            kickBallAngles[JOINTS::R_HIP_ROLL] = 15.0*TO_RAD;
 
         }
 
     }
     else {
-
-            kickBallAngles[JOINTS::L_ANKLE_PITCH] = -60.0 *TO_RAD;
-            kickBallAngles[JOINTS::L_KNEE_PITCH] = 8.0 *TO_RAD;
-
-            kickBallAngles[JOINTS::L_HIP_PITCH] = -42.0 *TO_RAD;
+            kickBallAngles[JOINTS::L_ANKLE_PITCH] = kickAdjustments_().shortDistanceStraightLeftAnklePitch;
+            kickBallAngles[JOINTS::L_KNEE_PITCH] =kickAdjustments_().shortDistanceStraightLeftKneePitch;
+            kickBallAngles[JOINTS::L_HIP_PITCH] = kickAdjustments_().shortDistanceStraightLeftHipPitch;
 
         if (kickAngle == coneMeasurements_().sideKickAngle){
 
@@ -293,26 +320,25 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
 
 
     if( kickDistance == coneMeasurements_().longKickDistance){ //these are currently the same, but could be changed to improve kick timings
-            retractFootAngles[JOINTS::L_KNEE_PITCH]=60.0 *TO_RAD;
-            retractFootAngles[JOINTS::L_ANKLE_PITCH]=-10.0 *TO_RAD;
-            retractFootAngles[JOINTS::L_HIP_PITCH] =-60*TO_RAD;
+            retractFootAngles[JOINTS::L_KNEE_PITCH]=retractAdjustments_().longDistanceStraightLeftKneePitch;
+            retractFootAngles[JOINTS::L_ANKLE_PITCH]=retractAdjustments_().longDistanceStraightLeftAnklePitch;
+            retractFootAngles[JOINTS::L_HIP_PITCH] =retractAdjustments_().longDistanceStraightLeftHipPitch;
         if (kickAngle == coneMeasurements_().sideKickAngle){
 
         }
     }
     else if (kickDistance == coneMeasurements_().mediumKickDistance){
-            retractFootAngles[JOINTS::L_KNEE_PITCH]=60.0 *TO_RAD;
-            retractFootAngles[JOINTS::L_ANKLE_PITCH]=-10.0 *TO_RAD;
-            retractFootAngles[JOINTS::L_HIP_PITCH] =-60*TO_RAD;
+        retractFootAngles[JOINTS::L_KNEE_PITCH]=retractAdjustments_().mediumDistanceStraightLeftKneePitch;
+        retractFootAngles[JOINTS::L_ANKLE_PITCH]=retractAdjustments_().mediumDistanceStraightLeftAnklePitch;
+        retractFootAngles[JOINTS::L_HIP_PITCH] =retractAdjustments_().mediumDistanceStraightLeftHipPitch;
 
         if (kickAngle == coneMeasurements_().sideKickAngle){
         }
     }
     else {
-
-            retractFootAngles[JOINTS::L_KNEE_PITCH]=60.0 *TO_RAD;
-            retractFootAngles[JOINTS::L_ANKLE_PITCH]=-10.0 *TO_RAD;
-            retractFootAngles[JOINTS::L_HIP_PITCH] =-60*TO_RAD;
+        retractFootAngles[JOINTS::L_KNEE_PITCH]=retractAdjustments_().shortDistanceStraightLeftKneePitch;
+        retractFootAngles[JOINTS::L_ANKLE_PITCH]=retractAdjustments_().shortDistanceStraightLeftAnklePitch;
+        retractFootAngles[JOINTS::L_HIP_PITCH] =retractAdjustments_().shortDistanceStraightLeftHipPitch;
         if (kickAngle == coneMeasurements_().sideKickAngle){
 
         }

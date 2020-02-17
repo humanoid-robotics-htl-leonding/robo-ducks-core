@@ -163,9 +163,7 @@ private:
   Parameter<KickParameters> forwardKickParameters_;
   Parameter<KickParameters> sideKickParameters_;
 
-  //TODO - check if SideKickParameters work for Angled Kick - criss cross
-  //TODO remove KickType from kick Invocation, but add forceHammer to kickinvocation
-
+  //TODO - check if SideKickParameters work for Angled Kick - criss crossdddddddd
     struct ConeMeasurements : public Uni::To, public Uni::From
     {
         float minimalRadius;
@@ -226,6 +224,87 @@ private:
     };
     Parameter<ConeMeasurements> coneMeasurements_;
 
+    struct KickAdjustments : public Uni::To, public Uni::From
+    {
+        //longDistanceStraight
+        float longDistanceStraightLeftAnklePitch;
+        //longDistanceSide
+        //mediumDistanceStraight
+        float mediumDistanceStraightLeftAnklePitch;
+        //mediumDistanceSide
+        //shortDistanceStraight
+        float shortDistanceStraightLeftAnklePitch;
+        float shortDistanceStraightLeftKneePitch;
+        float shortDistanceStraightLeftHipPitch;
+        //shortDistanceSide
+
+        virtual void toValue(Uni::Value& value) const
+        {
+            value = Uni::Value(Uni::ValueType::OBJECT);
+            value["longDistanceStraightLeftAnklePitch"] << longDistanceStraightLeftAnklePitch;
+            value["mediumDistanceStraightLeftAnklePitch"] << mediumDistanceStraightLeftAnklePitch;
+            value["shortDistanceStraightLeftAnklePitch"] << shortDistanceStraightLeftAnklePitch;
+            value["shortDistanceStraightLeftKneePitch"] << shortDistanceStraightLeftKneePitch;
+            value["shortDistanceStraightLeftHipPitch"] << shortDistanceStraightLeftHipPitch;
+        }
+
+        virtual void fromValue(const Uni::Value& value)
+        {
+            value["longDistanceStraightLeftAnklePitch"] >> longDistanceStraightLeftAnklePitch;
+            value["mediumDistanceStraightLeftAnklePitch"] >> mediumDistanceStraightLeftAnklePitch;
+            value["shortDistanceStraightLeftAnklePitch"] >> shortDistanceStraightLeftAnklePitch;
+            value["shortDistanceStraightLeftKneePitch"] >> shortDistanceStraightLeftKneePitch;
+            value["shortDistanceStraightLeftHipPitch"] >> shortDistanceStraightLeftHipPitch;
+        }
+    };
+
+    Parameter<KickAdjustments> kickAdjustments_;
+
+    struct RetractAdjustments : public Uni::To, public Uni::From
+    {
+        float longDistanceStraightLeftAnklePitch =-10.0;
+        float longDistanceStraightLeftKneePitch =60.0;
+        float longDistanceStraightLeftHipPitch =-60.0;
+        //longDistanceSide
+        //mediumDistanceStraight
+        float mediumDistanceStraightLeftAnklePitch = -10.0;
+        float mediumDistanceStraightLeftKneePitch = 60.0;
+        float mediumDistanceStraightLeftHipPitch = -60.0;
+        //mediumDistanceSide
+        //shortDistanceStraight
+        float shortDistanceStraightLeftAnklePitch = -10.0;
+        float shortDistanceStraightLeftKneePitch = 60.0;
+        float shortDistanceStraightLeftHipPitch = -60.0;
+
+        virtual void toValue(Uni::Value& value) const
+        {
+            value = Uni::Value(Uni::ValueType::OBJECT);
+            value["longDistanceStraightLeftAnklePitch"] << longDistanceStraightLeftAnklePitch;
+            value["longDistanceStraightLeftKneePitch"] << longDistanceStraightLeftKneePitch;
+            value["longDistanceStraightLeftHipPitch"] << longDistanceStraightLeftHipPitch;
+            value["mediumDistanceStraightLeftAnklePitch"] << mediumDistanceStraightLeftAnklePitch;
+            value["mediumDistanceStraightLeftKneePitch"] << mediumDistanceStraightLeftKneePitch;
+            value["mediumDistanceStraightLeftHipPitch"] << mediumDistanceStraightLeftHipPitch;
+            value["shortDistanceStraightLeftAnklePitch"] << shortDistanceStraightLeftAnklePitch;
+            value["shortDistanceStraightLeftKneePitch"] << shortDistanceStraightLeftKneePitch;
+            value["shortDistanceStraightLeftHipPitch"] << shortDistanceStraightLeftHipPitch;
+        }
+
+        virtual void fromValue(const Uni::Value& value)
+        {
+            value["longDistanceStraightLeftAnklePitch"] >> longDistanceStraightLeftAnklePitch;
+            value["longDistanceStraightLeftKneePitch"] >> longDistanceStraightLeftKneePitch;
+            value["longDistanceStraightLeftHipPitch"] >> longDistanceStraightLeftHipPitch;
+            value["mediumDistanceStraightLeftAnklePitch"] >> mediumDistanceStraightLeftAnklePitch;
+            value["mediumDistanceStraightLeftKneePitch"] >> mediumDistanceStraightLeftKneePitch;
+            value["mediumDistanceStraightLeftHipPitch"] >> mediumDistanceStraightLeftHipPitch;
+            value["shortDistanceStraightLeftAnklePitch"] >> shortDistanceStraightLeftAnklePitch;
+            value["shortDistanceStraightLeftKneePitch"] >> shortDistanceStraightLeftKneePitch;
+            value["shortDistanceStraightLeftHipPitch"] >> shortDistanceStraightLeftHipPitch;
+        }
+    };
+
+    Parameter<RetractAdjustments> retractAdjustments_;
 
     /// interpolators for all kick phases
   Interpolator waitBeforeStartInterpolator_;
