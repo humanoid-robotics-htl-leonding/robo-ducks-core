@@ -29,10 +29,6 @@ public:
   };
   enum KickType
   {
-    /// forward kick
-    FORWARD,
-    /// side kick
-    SIDE,
     /// the gentle in-walk
     IN_WALK_GENTLE,
     /// the strong in-walk

@@ -4,8 +4,7 @@ ActionCommand kickBall(const DuckDataSet &d, const StrikerAction &sa)
 {
 	if (sa.kickable != BallUtils::Kickable::NOT) {
 		return ActionCommand::kick(d.ballState.position,
-								   sa.target,
-								   KickType::FORWARD);  // TODO Wrong Kick Type (use SA)
+								   sa.target);  // TODO Wrong Kick Type (use SA)
 	}
 	else {
 		return walkTo(sa.kickPose, d);

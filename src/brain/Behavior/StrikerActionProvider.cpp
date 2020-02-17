@@ -141,7 +141,6 @@ void StrikerActionProvider::cycle()
           // shoot away from goal ASAP
           strikerAction_->type = StrikerAction::Type::KICK_INTO_GOAL;
           strikerAction_->target = ballTarget;
-          strikerAction_->kickType = StrikerAction::KickType::FORWARD;
           strikerAction_->kickPose = BallUtils::kickPose(
               relBallPosition, robotPosition_->fieldToRobot(ballTarget), distanceToBallKick_().x(),
               lastSign, forceSign, distanceToBallKick_().y());
@@ -195,7 +194,6 @@ void StrikerActionProvider::cycle()
           // fill data
           strikerAction_->type = StrikerAction::Type::KICK_INTO_GOAL;
           strikerAction_->target = ballTarget;
-          strikerAction_->kickType = StrikerAction::KickType::FORWARD;
           strikerAction_->kickPose = BallUtils::kickPose(
               relBallPosition, robotPosition_->fieldToRobot(ballTarget), distanceToBallKick_().x(),
               lastSign, forceSign, distanceToBallKick_().y());
@@ -287,7 +285,6 @@ void StrikerActionProvider::cycle()
         // fill data
         strikerAction_->type = StrikerAction::Type::KICK_INTO_GOAL;
         strikerAction_->target = ballTarget;
-        strikerAction_->kickType = StrikerAction::KickType::FORWARD;
         strikerAction_->kickPose = BallUtils::kickPose(
             relBallPosition, robotPosition_->fieldToRobot(ballTarget), distanceToBallKick_().x(),
             lastSign, forceSign, distanceToBallKick_().y());
