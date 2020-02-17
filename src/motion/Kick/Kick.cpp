@@ -5,7 +5,6 @@
 #include "Tools/Kinematics/ForwardKinematics.h"
 #include "Tools/Kinematics/InverseKinematics.h"
 #include "Tools/Math/Angle.hpp"
-#include "../print.hpp"
 #include "Kick.hpp"
 
 
