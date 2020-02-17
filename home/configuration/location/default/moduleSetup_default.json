@@ -11,7 +11,7 @@
 
   "BehaviorModule" : false,
   "DuckBehaviorModule" : true,
-
+  "DucksDesperationProvider": true,
   "BishopPositionProvider" : true,
   "BodyDamageProvider" : true,
   "BodyPoseEstimation" : true,

@@ -3,7 +3,7 @@
 ActionCommand kickBall(const DuckDataSet &d, const DucksStrikerAction &sa)
 {
 	if (sa.kickable != BallUtils::Kickable::NOT) {
-		return ActionCommand::kick(d.ballState.position,
+		return DucksActionCommand::kick(d.ballState.position,
 								   sa.target);  // TODO Wrong Kick Type (use SA)
 	}
 	else {
@@ -11,7 +11,7 @@ ActionCommand kickBall(const DuckDataSet &d, const DucksStrikerAction &sa)
 	}
 }
 
-ActionCommand roleStriker(const DuckDataSet &d)
+DucksActionCommand roleStriker(const DuckDataSet &d)
 {
     if (d.strikerAction.valid) {
         switch (d.strikerAction.action) {
@@ -24,7 +24,7 @@ ActionCommand roleStriker(const DuckDataSet &d)
         }
     }
 //    d.robotPosition.robotToField()
-//    ActionCommand cmd = ActionCommand::walk(d.robotPosition.robotToField(Pose(0, 0, 45*TO_RAD)));
+//    DucksActionCommand cmd = DucksActionCommand::walk(d.robotPosition.robotToField(Pose(0, 0, 45*TO_RAD)));
 
 //	auto sa = d.strikerAction;
 //

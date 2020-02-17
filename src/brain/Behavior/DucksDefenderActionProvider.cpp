@@ -21,6 +21,7 @@ DucksDefenderActionProvider::DucksDefenderActionProvider(const ModuleManagerInte
   , robotPosition_(*this)
   , teamBallModel_(*this)
   , teamPlayers_(*this)
+  , desperation_(*this)
   , worldState_(*this)
   , defendingPosition_(*this)
 {
@@ -30,6 +31,10 @@ void DucksDefenderActionProvider::cycle()
 {
   Chronometer time(debug(), mount_ + ".cycle_time");
 
+  if(desperation_->lookAtBallUrgency > 0.8){
+  	defendingPosition_->valid = false;
+  	return;
+  }
 
 
   if(gameControllerState_->gameState == GameState::PLAYING){

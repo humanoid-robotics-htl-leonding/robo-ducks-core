@@ -12,39 +12,39 @@
  * @param d
  * @return
  */
-ActionCommand chooseState(const DuckDataSet &d)
+DucksActionCommand chooseState(const DuckDataSet &d)
 {
 	if (d.gameControllerState.penalty != Penalty::NONE) {
-		return penalized(d).combineChestLED(ActionCommand::ChestLED::red());
+		return penalized(d).combineChestLED(DucksActionCommand::ChestLED::red());
 	}
 	if (
 		d.bodyPose.fallen &&
 			d.gameControllerState.gameState != GameState::SET &&
 			d.gameControllerState.gameState != GameState::INITIAL
 		) {
-		return ActionCommand::standUp()
-			.combineLeftFootLED(ActionCommand::FootLED::rainbow())
-			.combineRightFootLED(ActionCommand::FootLED::rainbow());
+		return DucksActionCommand::standUp()
+			.combineLeftFootLED(DucksActionCommand::FootLED::rainbow())
+			.combineRightFootLED(DucksActionCommand::FootLED::rainbow());
 	}
 	switch (d.gameControllerState.gameState) {
 		case GameState::INITIAL:
 			if (d.gameControllerState.chestButtonWasPressedInInitial) {
-				return initial(d).combineChestLED(ActionCommand::ChestLED::pink());
+				return initial(d).combineChestLED(DucksActionCommand::ChestLED::pink());
 			}
 			else {
 				return started(d)
-					.combineLeftLED(ActionCommand::EyeLED::rainbow())
-					.combineRightLED(ActionCommand::EyeLED::rainbow())
-					.combineChestLED(ActionCommand::ChestLED::rainbow())
-					.combineLeftFootLED(ActionCommand::FootLED::rainbow())
-					.combineRightFootLED(ActionCommand::FootLED::rainbow())
-					.combineLeftEarLED(ActionCommand::EarLED::loading())
-					.combineRightEarLED(ActionCommand::EarLED::loading());
+					.combineLeftLED(DucksActionCommand::EyeLED::rainbow())
+					.combineRightLED(DucksActionCommand::EyeLED::rainbow())
+					.combineChestLED(DucksActionCommand::ChestLED::rainbow())
+					.combineLeftFootLED(DucksActionCommand::FootLED::rainbow())
+					.combineRightFootLED(DucksActionCommand::FootLED::rainbow())
+					.combineLeftEarLED(DucksActionCommand::EarLED::loading())
+					.combineRightEarLED(DucksActionCommand::EarLED::loading());
 			}
-		case GameState::READY: return ready(d).combineChestLED(ActionCommand::ChestLED::blue());
-		case GameState::SET: return set(d).combineChestLED(ActionCommand::ChestLED::yellow());
-		case GameState::PLAYING: return playing(d).combineChestLED(ActionCommand::ChestLED::green());
-		case GameState::FINISHED: return started(d).combineChestLED(ActionCommand::ChestLED::white());
-		default: return ActionCommand::kneel();
+		case GameState::READY: return ready(d).combineChestLED(DucksActionCommand::ChestLED::blue());
+		case GameState::SET: return set(d).combineChestLED(DucksActionCommand::ChestLED::yellow());
+		case GameState::PLAYING: return playing(d).combineChestLED(DucksActionCommand::ChestLED::green());
+		case GameState::FINISHED: return started(d).combineChestLED(DucksActionCommand::ChestLED::white());
+		default: return DucksActionCommand::kneel();
 	}
 }
