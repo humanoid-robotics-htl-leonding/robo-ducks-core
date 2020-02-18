@@ -26,6 +26,7 @@ DucksBallSearchMapManager::DucksBallSearchMapManager(const ModuleManagerInterfac
   , robotPosition_(*this)
   , teamPlayers_(*this)
   , teamBallModel_(*this)
+  , ballPrediction_(*this)
   , ballSearchMap_(*this)
   , fieldWidth_(fieldDimensions_->fieldWidth)
   , fieldLength_(fieldDimensions_->fieldLength)
@@ -90,6 +91,9 @@ void DucksBallSearchMapManager::updateMap()
   for (const auto& player : allPlayers_)
   {
     integrateRobotKnowledge(*player);
+  }
+  for(const auto& i : ballPrediction_->forecast){
+	  ballSearchMap_->cellFromPosition(i.position).probability += 0.01f*i.certainty;
   }
 
   const auto rows = static_cast<uint8_t>(ballSearchMap_->rowsCount_);

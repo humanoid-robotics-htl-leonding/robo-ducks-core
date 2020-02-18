@@ -23,5 +23,7 @@
   "PlayingRoleProvider" : true,
   "DucksPlayingRoleProvider" : false,
 
-  "DucksDesperationProvider": false
+  "DucksDesperationProvider": false,
+
+  "DucksBallPredictor": false
 }

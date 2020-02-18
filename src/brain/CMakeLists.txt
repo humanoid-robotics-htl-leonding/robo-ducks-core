@@ -68,6 +68,8 @@ set(HEADERS
   Knowledge/Ball/BallFilter.hpp
   Knowledge/Ball/FakeBallProvider.hpp
   Knowledge/Ball/TeamBallFilter.hpp
+        Knowledge/Ball/DucksBallPredictor.hpp
+
   Knowledge/LandmarkFilter/LandmarkFilter.hpp
   Knowledge/Position/FakeRobotPoseProvider.hpp
   Knowledge/Position/UKFPositionKnowledge.hpp
@@ -131,6 +133,7 @@ set(SOURCES
   Knowledge/Ball/BallFilter.cpp
   Knowledge/Ball/FakeBallProvider.cpp
   Knowledge/Ball/TeamBallFilter.cpp
+        Knowledge/Ball/DucksBallPredictor.cpp
   Knowledge/LandmarkFilter/LandmarkFilter.cpp
   Knowledge/Position/FakeRobotPoseProvider.cpp
   Knowledge/Position/UKFPositionKnowledge.cpp

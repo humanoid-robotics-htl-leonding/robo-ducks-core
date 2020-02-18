@@ -58,8 +58,12 @@
   "PenaltyKeeperActionProvider" : true,
   "PenaltySpotDetection" : true,
   "PenaltyStrikerActionProvider" : true,
+
   "PlayingRoleProvider" : false,
   "DucksPlayingRoleProvider" : true,
+
+  "DucksBallPredictor": true,
+
   "Point" : true,
   "Poser" : true,
   "Projection" : true,
