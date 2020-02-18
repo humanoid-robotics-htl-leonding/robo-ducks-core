@@ -11,6 +11,7 @@ DucksStrikerActionProvider::DucksStrikerActionProvider(const ModuleManagerInterf
 	, teamBallModel_(*this)
     , teamObstacleData_(*this)
     , desperation_(*this)
+    , ballState_(*this)
 	, strikerAction_(*this)
 {
 
@@ -47,7 +48,7 @@ void DucksStrikerActionProvider::cycle()
 
     // std::cout << "" << absoluteBallPosition.x() << " " << absoluteBallPosition.y() << std::endl;
 
-    if (absoluteBallPosition.x() >= 0) {
+    if (absoluteBallPosition.x() >= 0 && teamBallModel_->found) {
         Vector2f ball = teamBallModel_->position;
         Vector2f goal = Vector2f(fieldDimensions_->fieldLength/2, 0);
         Vector2f goalToBall =  ball - goal;
@@ -61,7 +62,7 @@ void DucksStrikerActionProvider::cycle()
         float difference = (robotPosition_->pose.position - kickPosition).norm();
         float rotationDifference = robotPosition_->pose.orientation - strikerAction_->kickPose.orientation;
 
-        if(difference <= 0.1 && rotationDifference <= 0.1) {
+        if(difference <= 0.1 && rotationDifference <= 0.1 && ballState_->found) {
             strikerAction_->action = DucksStrikerAction::Action::KICK_INTO_GOAL;
             strikerAction_->kickType = DucksStrikerAction::KickType::KICK;
             strikerAction_->kickable = BallUtils::Kickable::LEFT;

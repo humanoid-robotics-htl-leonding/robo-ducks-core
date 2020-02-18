@@ -34,6 +34,7 @@ private:
 	const Dependency<TeamBallModel> teamBallModel_;
 	const Dependency<TeamObstacleData> teamObstacleData_;
 	const Dependency<Desperation> desperation_;
+	const Dependency<BallState> ballState_;
 
 	Production<DucksStrikerAction> strikerAction_;
 };
