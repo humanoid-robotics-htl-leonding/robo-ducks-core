@@ -6,12 +6,12 @@
 
 #include <Data/GameControllerState.hpp>
 
-#include "DuckDataSet.hpp"
+#include "DucksDataSet.hpp"
 
 class Thoughts {
 public:
     explicit Thoughts();
-    void update(DuckDataSet& d);
+    void update(DucksDataSet& d);
 
     bool handleNewState();
 

@@ -33,7 +33,7 @@
 
 class Thoughts;
 
-struct DuckDataSet
+struct DucksDataSet
 {
   /**
    * @brief DataSet constructs a DataSet from references to the database
@@ -65,18 +65,18 @@ struct DuckDataSet
    * @param hpd a reference to the head position data
    * @param lac a reference to the last action command
    */
-  DuckDataSet(const ModuleBase& module, const GameControllerState& gcs, const BallState& bs,
-          const RobotPosition& rp, const BodyPose& bp, const PlayerConfiguration& pc,
-          const PlayingRoles& pr, const MotionState& ms, const HeadMotionOutput& hmo,
-          const TeamBallModel& tbm, const TeamPlayers& tps, const FieldDimensions& fd,
-          const StrikerAction& sa, const PenaltyStrikerAction& ps, const KeeperAction& ka,
-          const PenaltyKeeperAction& pa, const CycleInfo& ci, const SetPosition& sp,
-          const DucksDefendingPosition& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
-          const ReplacementKeeperAction& rk, const ButtonData& bd, const WorldState& ws,
-          const KickConfigurationData& kcd, const DuckBallSearchPosition& bsp, const HeadPositionData& hpd,
-          Thoughts& thdat,
+  DucksDataSet(const ModuleBase& module, const GameControllerState& gcs, const BallState& bs,
+			   const RobotPosition& rp, const BodyPose& bp, const PlayerConfiguration& pc,
+			   const PlayingRoles& pr, const MotionState& ms, const HeadMotionOutput& hmo,
+			   const TeamBallModel& tbm, const TeamPlayers& tps, const FieldDimensions& fd,
+			   const StrikerAction& sa, const PenaltyStrikerAction& ps, const KeeperAction& ka,
+			   const PenaltyKeeperAction& pa, const CycleInfo& ci, const SetPosition& sp,
+			   const DucksDefendingPosition& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
+			   const ReplacementKeeperAction& rk, const ButtonData& bd, const WorldState& ws,
+			   const KickConfigurationData& kcd, const DuckBallSearchPosition& bsp, const HeadPositionData& hpd,
+			   Thoughts& thdat,
 
-          const DucksActionCommand& lac)
+			   const DucksActionCommand& lac)
     : parameters(module)
     , gameControllerState(gcs)
     , ballState(bs)

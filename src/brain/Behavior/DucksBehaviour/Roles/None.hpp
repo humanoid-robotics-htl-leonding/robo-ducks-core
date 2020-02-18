@@ -1,6 +1,6 @@
 #pragma once
 
-DucksActionCommand roleNone(const DuckDataSet &d)
+DucksActionCommand roleNone(const DucksDataSet &d)
 {
 	return DucksActionCommand::kneel().invalidate();
 }

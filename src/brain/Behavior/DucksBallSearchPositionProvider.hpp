@@ -22,17 +22,17 @@
 
 class Brain;
 
-class DuckBallSearchPositionProvider: public Module<DuckBallSearchPositionProvider, Brain>
+class DucksBallSearchPositionProvider: public Module<DucksBallSearchPositionProvider, Brain>
 {
 public:
 	/// the name of this module
-	ModuleName name = "DuckBallSearchPositionProvider";
+	ModuleName name = "DucksBallSearchPositionProvider";
 
 	/**
-	 * @brief DuckBallSearchPositionProvider The constructor
+	 * @brief DucksBallSearchPositionProvider The constructor
 	 * @param manager Reference to the ModuleManagerInterface (e.g. brain)
 	 */
-	explicit DuckBallSearchPositionProvider(const ModuleManagerInterface &manager);
+	explicit DucksBallSearchPositionProvider(const ModuleManagerInterface &manager);
 
 	void cycle() override;
 

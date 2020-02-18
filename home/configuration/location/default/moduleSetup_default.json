@@ -7,10 +7,10 @@
   "DucksBallSearchMapManager" : true,
 
   "BallSearchPositionProvider" : false,
-  "DuckBallSearchPositionProvider" : true,
+  "DucksBallSearchPositionProvider" : true,
 
   "BehaviorModule" : false,
-  "DuckBehaviorModule" : true,
+  "DucksBehaviorModule" : true,
   "DucksDesperationProvider": true,
   "BishopPositionProvider" : true,
   "BodyDamageProvider" : true,

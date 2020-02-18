@@ -1,6 +1,6 @@
 #pragma once
 
-DucksActionCommand kickBall(const DuckDataSet &d, const StrikerAction &sa)
+DucksActionCommand kickBall(const DucksDataSet &d, const StrikerAction &sa)
 {
 	if (sa.kickable != BallUtils::Kickable::NOT) {
 		return DucksActionCommand::kick(d.ballState.position,
@@ -11,7 +11,7 @@ DucksActionCommand kickBall(const DuckDataSet &d, const StrikerAction &sa)
 	}
 }
 
-DucksActionCommand roleStriker(const DuckDataSet &d)
+DucksActionCommand roleStriker(const DucksDataSet &d)
 {
 //    d.robotPosition.robotToField()
 //    DucksActionCommand cmd = DucksActionCommand::walk(d.robotPosition.robotToField(Pose(0, 0, 45*TO_RAD)));

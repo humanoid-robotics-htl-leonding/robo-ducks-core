@@ -7,10 +7,10 @@
 
 #include "print.h"
 
-#include "DuckBallSearchPositionProvider.hpp"
+#include "DucksBallSearchPositionProvider.hpp"
 
 
-DuckBallSearchPositionProvider::DuckBallSearchPositionProvider(const ModuleManagerInterface &manager)
+DucksBallSearchPositionProvider::DucksBallSearchPositionProvider(const ModuleManagerInterface &manager)
 	: Module(manager),
 	  ballSearchMap_(*this),
 	  gameControllerState_(*this),
@@ -48,7 +48,7 @@ DuckBallSearchPositionProvider::DuckBallSearchPositionProvider(const ModuleManag
 	maxSideAngle_() *= TO_RAD;
 }
 
-void DuckBallSearchPositionProvider::cycle()
+void DucksBallSearchPositionProvider::cycle()
 {
 	Chronometer time(debug(), mount_ + ".cycle_time");
 

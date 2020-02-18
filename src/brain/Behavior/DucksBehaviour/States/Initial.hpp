@@ -1,6 +1,6 @@
 #pragma once
 
-DucksActionCommand initial(const DuckDataSet &d)
+DucksActionCommand initial(const DucksDataSet &d)
 {
 	auto command = DucksActionCommand::stand();
 
