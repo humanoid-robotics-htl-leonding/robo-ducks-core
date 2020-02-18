@@ -23,7 +23,7 @@ public:
       /// waiting for the ball to reach the opposite side
       WAITING_FOR_BALL,
       // walks to ball
-      WALK_TO_BALL
+      WALK_TO_POS
   };
   enum KickType
   {
