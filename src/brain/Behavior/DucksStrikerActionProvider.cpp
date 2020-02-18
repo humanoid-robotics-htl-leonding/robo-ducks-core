@@ -52,10 +52,10 @@ void DucksStrikerActionProvider::cycle()
         Vector2f goal = Vector2f(fieldDimensions_->fieldLength/2, 0);
         Vector2f goalToBall =  ball - goal;
         Vector2f goalToBallNormalized = goalToBall.normalized();
-        Vector2f ballToRobotDistanceX = goalToBallNormalized * 0.1;
+        Vector2f ballToRobotDistanceY = goalToBallNormalized * 0.2;
         Vector2f ballToGoal = -goalToBall;
-        Vector2f ballToRobotDistanceY = Vector2f(ballToGoal.y(), -ballToGoal.x()).normalized() * 0.006;
-        Vector2f kickPosition = goal + goalToBall + ballToRobotDistanceX + ballToRobotDistanceY;
+        Vector2f ballToRobotDistanceX = Vector2f(ballToGoal.y(), -ballToGoal.x()).normalized() * 0.07;
+        Vector2f kickPosition = goal + goalToBall + ballToRobotDistanceY + ballToRobotDistanceX;
         strikerAction_->kickPose = Pose(kickPosition, std::atan2(goalToBall.y(), ballToGoal.x()));
         strikerAction_->action = DucksStrikerAction::Action::WALK_TO_BALL;
         float difference = (robotPosition_->pose.position - kickPosition).norm();
