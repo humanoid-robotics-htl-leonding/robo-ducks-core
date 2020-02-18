@@ -174,10 +174,7 @@ void MotionFilePlayer::precompile()
   stiffnesses_.clear();
   stiffnessTimes_.clear();
 
-  angles_.reserve(position.size());
-  angleTimes_.reserve(position.size());
-  stiffnesses_.reserve(stiffness.size());
-  stiffnessTimes_.reserve(stiffness.size());
+
 
   for (auto& pos : position)
   {
@@ -187,22 +184,50 @@ void MotionFilePlayer::precompile()
   {
     relTimeSSum += stiff.time;
   }
+    if(relTimeASum < header.time){
+        angles_.reserve(position.size()+1);
+        angleTimes_.reserve(position.size()+1);
+
+    }
+    else {
+        angles_.reserve(position.size());
+        angleTimes_.reserve(position.size());
+
+    }
+    if(relTimeSSum < header.time){
+
+        stiffnesses_.reserve(stiffness.size()+1);
+        stiffnessTimes_.reserve(stiffness.size()+1);
+    }
+    else {
+
+        stiffnesses_.reserve(stiffness.size());
+        stiffnessTimes_.reserve(stiffness.size());
+    }
+
 
   int time = 0;
   for (auto& pos : position)
   {
-    time += (pos.time * header.time) / relTimeASum;
+    time += pos.time;
 
     angleTimes_.push_back(time);
     angles_.push_back(pos.parameters);
+  }
+  if(relTimeASum < header.time){
+      angleTimes_.push_back(header.time);
+      angles_.push_back(position.at(position.size()-1).parameters);
   }
 
   time = 0;
   for (auto& stiff : stiffness)
   {
-    time += (stiff.time * header.time) / relTimeSSum;
-
-    stiffnessTimes_.push_back(time);
+      time += stiff.time;
+      stiffnessTimes_.push_back(time);
     stiffnesses_.push_back(stiff.parameters);
   }
+    if(relTimeSSum < header.time){
+        angleTimes_.push_back(header.time);
+        angles_.push_back(stiffness.at(stiffness.size()-1).parameters);
+    }
 }

@@ -9,7 +9,7 @@
 
 #include "MotionFile.hpp"
 
-
+//TODO test and adapt all motion files
 class MotionFilePlayer : private MotionFile
 {
 public:

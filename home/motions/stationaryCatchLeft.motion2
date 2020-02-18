@@ -28,7 +28,7 @@
             24,
             25
         ],
-        "time": 800,
+        "time": 4000,
         "title": "stationaryCatchLeft",
         "version": "2.0"
     },
@@ -126,7 +126,7 @@
                 1,
                 1
             ],
-            "time": 3999
+            "time": 4000
         }
     ]
 }

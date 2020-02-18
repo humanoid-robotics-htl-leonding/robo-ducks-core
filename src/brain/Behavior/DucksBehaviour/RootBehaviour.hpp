@@ -5,6 +5,8 @@
 
 DucksActionCommand rootBehavior(const DuckDataSet &d)
 {
-	DucksActionCommand state = chooseState(d);
-	return state;
+    if(d.cycleInfo.startTime-d.buttonData.lastChestButtonSinglePress <50){
+        return DucksActionCommand::keeper(MotionKeeper::MK_TAKE_LEFT);
+    }
+    return DucksActionCommand::stand();
 }
