@@ -11,6 +11,7 @@
 #include <Data/FieldDimensions.hpp>
 #include <Data/TeamObstacleData.hpp>
 #include <Data/TeamBallModel.hpp>
+#include <Data/Desperation.hpp>
 
 class DucksStrikerActionProvider : public Module<DucksStrikerActionProvider, Brain>
 {
@@ -32,6 +33,7 @@ private:
 	const Dependency<RobotPosition> robotPosition_;
 	const Dependency<TeamBallModel> teamBallModel_;
 	const Dependency<TeamObstacleData> teamObstacleData_;
+	const Dependency<Desperation> desperation_;
 
 	Production<DucksStrikerAction> strikerAction_;
 };

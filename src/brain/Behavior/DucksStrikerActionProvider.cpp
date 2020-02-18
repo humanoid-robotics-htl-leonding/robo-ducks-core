@@ -10,6 +10,7 @@ DucksStrikerActionProvider::DucksStrikerActionProvider(const ModuleManagerInterf
 	, robotPosition_(*this)
 	, teamBallModel_(*this)
     , teamObstacleData_(*this)
+    , desperation_(*this)
 	, strikerAction_(*this)
 {
 
@@ -17,6 +18,11 @@ DucksStrikerActionProvider::DucksStrikerActionProvider(const ModuleManagerInterf
 
 void DucksStrikerActionProvider::cycle()
 {
+    if(desperation_->lookAtBallUrgency >= 1) {
+        strikerAction_->valid = false;
+        return;
+    }
+
 /*	auto goalPos = Vector2f (fieldDimensions_->fieldLength/2, 0);
 	auto ballPos = robotPosition_->robotToField(ballState_->position);
 
@@ -42,21 +48,21 @@ void DucksStrikerActionProvider::cycle()
     // std::cout << "" << absoluteBallPosition.x() << " " << absoluteBallPosition.y() << std::endl;
 
     if (absoluteBallPosition.x() >= 0) {
-        auto ball = teamBallModel_->position;
-        auto targetPos = Vector2f(fieldDimensions_->fieldLength/2, 0);
-        Vector2f targetToBall =  ball - targetPos;
-        targetToBall.normalize();
-        targetToBall *= 0.2;
-        targetToBall += ball;
-        Vector2f xDistance = Vector2f(targetToBall.y(), -1 * targetToBall.x()).normalized() * 0.06;
-        targetToBall = targetToBall + xDistance;
-        strikerAction_->kickPose = Pose(targetToBall, 0);
-        strikerAction_->action = DucksStrikerAction::WALK_TO_BALL;
-        float difference = (robotPosition_->pose.position - targetToBall).norm();
-        float rotationDifference = robotPosition_->pose.orientation - std::atan2(targetToBall.y(), targetToBall.x());
+        Vector2f ball = teamBallModel_->position;
+        Vector2f goal = Vector2f(fieldDimensions_->fieldLength/2, 0);
+        Vector2f goalToBall =  ball - goal;
+        Vector2f goalToBallNormalized = goalToBall.normalized();
+        Vector2f ballToRobotDistanceX = goalToBallNormalized * 0.1;
+        Vector2f ballToGoal = -goalToBall;
+        Vector2f ballToRobotDistanceY = Vector2f(ballToGoal.y(), -ballToGoal.x()).normalized() * 0.006;
+        Vector2f kickPosition = goal + goalToBall + ballToRobotDistanceX + ballToRobotDistanceY;
+        strikerAction_->kickPose = Pose(kickPosition, std::atan2(goalToBall.y(), ballToGoal.x()));
+        strikerAction_->action = DucksStrikerAction::Action::WALK_TO_BALL;
+        float difference = (robotPosition_->pose.position - kickPosition).norm();
+        float rotationDifference = robotPosition_->pose.orientation - strikerAction_->kickPose.orientation;
 
-        if (difference <= 0.1 && rotationDifference <= 0.1){
-            strikerAction_->action = DucksStrikerAction::KICK_INTO_GOAL;
+        if(difference <= 0.1 && rotationDifference <= 0.1) {
+            strikerAction_->action = DucksStrikerAction::Action::KICK_INTO_GOAL;
             strikerAction_->kickType = DucksStrikerAction::KickType::KICK;
             strikerAction_->kickable = BallUtils::Kickable::LEFT;
         }
