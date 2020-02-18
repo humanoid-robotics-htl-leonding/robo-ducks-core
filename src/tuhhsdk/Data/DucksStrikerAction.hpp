@@ -23,14 +23,16 @@ public:
       /// waiting for the ball to reach the opposite side
       WAITING_FOR_BALL,
       // walks to ball
-      WALK_TO_POS
+      WALK_TO_POS,
+      // dribble to position
+      DRIBBLE_TO_POS
   };
   enum KickType
   {
       /// kicks the ball
       KICK = 0,
       /// don't kick
-      NONE = 1
+      NONE = 1,
   };
   /// true if this struct is valid
   bool valid = false;

@@ -14,6 +14,10 @@ DucksActionCommand roleStriker(const DuckDataSet &d)
                 return walkTo(d.strikerAction.kickPose, d);
             case DucksStrikerAction::Action::KICK_INTO_GOAL:
                 return kickBall(d, d.strikerAction);
+            case DucksStrikerAction::Action::WAITING_FOR_BALL:
+                return walkTo(d.strikerAction.kickPose, d /*,WalkMode::DRIBBLE*/);
+            case DucksStrikerAction::Action::DRIBBLE_TO_POS:
+                return walkTo(d.strikerAction.kickPose, d, WalkMode::DRIBBLE);
             default:
                 Log(LogLevel::WARNING) << "Invalid Striker Action";
         }
@@ -21,7 +25,7 @@ DucksActionCommand roleStriker(const DuckDataSet &d)
 //    d.robotPosition.robotToField()
 //    DucksActionCommand cmd = DucksActionCommand::walk(d.robotPosition.robotToField(Pose(0, 0, 45*TO_RAD)));
 
-//	auto sa = d.strikerAction;
+//	auto sa = d.strikerAcction;
 //
 //	if (sa.valid) {
 //		switch (sa.type) {
