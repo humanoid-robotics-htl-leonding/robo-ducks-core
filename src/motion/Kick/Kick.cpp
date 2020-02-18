@@ -303,7 +303,8 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
 
         if (kickAngle == coneMeasurements_().sideKickAngle){
             //TODO test with real robot
-
+            kickBallAngles[JOINTS::L_ANKLE_PITCH] = 40.0*TO_RAD;
+            std::cout<<"kickBall-LAnklePitch: "<<kickBallAngles[JOINTS::L_ANKLE_PITCH]/TO_RAD<<std::endl;
         }
     }
 
@@ -350,7 +351,8 @@ void Kick::resetInterpolators(const KickParameters &kickParameters, const Vector
         retractFootAngles[JOINTS::L_ANKLE_PITCH]=retractAdjustments_().shortDistanceStraightLeftAnklePitch;
         retractFootAngles[JOINTS::L_HIP_PITCH] =retractAdjustments_().shortDistanceStraightLeftHipPitch;
         if (kickAngle == coneMeasurements_().sideKickAngle){
-
+            retractFootAngles[JOINTS::L_ANKLE_PITCH]=0.0*TO_RAD;
+            retractFootAngles[JOINTS::L_HIP_PITCH] =-80.0*TO_RAD;
         }
     }
 
