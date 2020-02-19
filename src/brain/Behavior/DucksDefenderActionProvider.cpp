@@ -46,7 +46,7 @@ void DucksDefenderActionProvider::cycle()
 
 	bool keeperExists = false;
 	for (auto role : playingRoles_->playerRoles) {
-		if (role == PlayingRole::KEEPER) {
+		if (role == PlayingRole::KEEPER || role == PlayingRole::REPLACEMENT_KEEPER) {
 			keeperExists = true;
 		}
 	}
@@ -112,7 +112,7 @@ void DucksDefenderActionProvider::defend() {
 
 	Vector2f scaledMoveDist = moveDist.cwiseProduct(Vector2f(1.0, 0.5));
 
-	float urgency = std::min(0., moveDist.norm() / (fieldLengthHalf - defenderX));
+	float urgency = moveDist.norm() / (fieldLengthHalf - defenderX);
 
 	if (scaledMoveDist.norm() < defendThreshold_()) {
 		defenderAction_->type = DucksDefenderAction::Type::DEFEND;
