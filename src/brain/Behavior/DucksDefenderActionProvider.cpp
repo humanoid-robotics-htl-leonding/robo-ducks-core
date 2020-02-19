@@ -44,8 +44,15 @@ void DucksDefenderActionProvider::cycle()
 
 	defenderAction_->valid = true;
 
+	bool keeperExists = false;
+	for (auto role : playingRoles_->playerRoles) {
+		if (role == PlayingRole::KEEPER) {
+			keeperExists = true;
+		}
+	}
+
 	if (gameControllerState_->gameState == GameState::PLAYING) {
-		if (teamBallModel_->position.x() >= kickZoneX_() || worldState_->ballInPenaltyArea) {
+		if (teamBallModel_->position.x() >= kickZoneX_() || (worldState_->ballInPenaltyArea && keeperExists)) {
 			defend();
 		} else if (teamBallModel_->position.x() >= dribbleZoneX_()) {
 			kick();
