@@ -44,8 +44,8 @@ void DucksDefenderActionProvider::cycle()
 
 	defenderAction_->valid = true;
 
-	if (true || gameControllerState_->gameState == GameState::PLAYING) {
-		if (teamBallModel_->position.x() >= kickZoneX_()) {
+	if (gameControllerState_->gameState == GameState::PLAYING) {
+		if (teamBallModel_->position.x() >= kickZoneX_() || worldState_->ballInPenaltyArea) {
 			defend();
 		} else if (teamBallModel_->position.x() >= dribbleZoneX_()) {
 			kick();
@@ -60,7 +60,9 @@ void DucksDefenderActionProvider::defend() {
 	auto fieldWidthHalf = fieldDimensions_->fieldWidth / 2.;
 	auto goalWidthHalf = fieldDimensions_->goalInnerWidth / 2. + fieldDimensions_->goalPostDiameter / 2.;
 
-	auto defenderX = std::min<float>(teamBallModel_->position.x() - 0.5, kickZoneX_());
+	auto defenderX = worldState_->ballInPenaltyArea ?
+			std::min<float>(teamBallModel_->position.x() - 0.5, kickZoneX_()) :
+			        kickZoneX_();
 
 	auto leftDangerZoneBorderEnd = Vector2f(defenderX, fieldWidthHalf);
 	auto leftGoalPost = Vector2f(-fieldLengthHalf, goalWidthHalf);
@@ -84,7 +86,9 @@ void DucksDefenderActionProvider::defend() {
 				doubleDefenderFocalY_() :
 				-doubleDefenderFocalY_();
 	} else {
-		focal.y() = 0;
+		focal.y() = worldState_->ballInPenaltyArea ?
+				doubleDefenderFocalY_() :
+				0;
 	}
 
 	auto ballToFocal = Line<float>(teamBallModel_->position, focal);
