@@ -35,7 +35,7 @@ void DucksKeeperActionProvider::cycle() {
         return;
     }
 
-    float robotRadius = 0.3;
+    float robotRadius = 0.15;
 
     float goalX = -fieldDimensions_->fieldLength / 2;
 //    auto goalUpperPost = fieldDimensions_->goalInnerWidth / 2;

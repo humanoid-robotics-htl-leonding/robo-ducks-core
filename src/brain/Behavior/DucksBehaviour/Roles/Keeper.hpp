@@ -2,5 +2,9 @@
 
 DucksActionCommand roleKeeper(const DuckDataSet &d)
 {
-	return DucksActionCommand::stand().invalidate();
+    if(d.keeperAction.action.valid){
+        return walkTo(d.keeperAction.action.pose, d);
+    }
+
+    return DucksActionCommand::stand().invalidate();
 }
