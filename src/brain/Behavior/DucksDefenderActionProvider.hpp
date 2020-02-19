@@ -31,13 +31,20 @@ public:
 	void cycle();
 
 private:
-	void defend()
+	void defend();
 	void kick();
 	void dribble();
+	void findRelevantTeamPlayers(const TeamPlayer*& keeper,
+			const TeamPlayer*& replacementKeeper,
+			const TeamPlayer*& supportStriker,
+			const TeamPlayer*& otherDefender) const;
 
-	const Parameter<float> defaultDefenderX_;
-	const Parameter<float> ballFocalPointYshift_;
-	const Parameter<float> maxDeflectBallDistance_;
+	const Parameter<float> doubleDefenderFocalY_;
+	const Parameter<float> kickZoneX_;
+	const Parameter<float> dribbleZoneX_;
+	const Parameter<float> defendThreshold_;
+	const Parameter<float> kickThreshold_;
+	const Parameter<float> dribbleThreshold_;
 
 	const Dependency<FieldDimensions> fieldDimensions_;
 	const Dependency<GameControllerState> gameControllerState_;

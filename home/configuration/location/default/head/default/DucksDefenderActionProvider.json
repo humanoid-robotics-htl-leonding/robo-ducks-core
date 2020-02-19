@@ -1,5 +1,8 @@
 {
-  "defaultDefenderX": -1.5,
-  "maxDeflectBallDistance": 0.5,
-  "ballFocalPointYShift": 0
+  "doubleDefenderFocalY": 1.0,
+  "kickZoneX": -1.0,
+  "dribbleZoneX": -1.5,
+  "defendThreshold": 1.0,
+  "kickThreshold": 0.05,
+  "dribbleThreshold": 0.01
 }
