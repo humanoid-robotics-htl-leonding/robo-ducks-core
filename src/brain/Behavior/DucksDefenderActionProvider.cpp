@@ -129,7 +129,11 @@ void DucksDefenderActionProvider::kick() {
 	findRelevantTeamPlayers(keeper, replacementKeeper, supportStriker, otherDefender);
 
 	if (otherDefender != nullptr) {
-		auto otherMoveDist = (defenderAction_->targetPose.position - otherDefender->pose.position);
+		auto otherTargetY = teamBallModel_->position.y() <= otherDefender->pose.position.y() ?
+						   teamBallModel_->position.y() + 0.07 :
+						   teamBallModel_->position.y() - 0.07;
+		auto otherTarget = Vector2f(targetX, otherTargetY);
+		auto otherMoveDist = (otherTarget - otherDefender->pose.position);
 		if (otherMoveDist.norm() < moveDist.norm()) {
 			defend();
 			return;
