@@ -41,6 +41,7 @@
   "JointCommandSender" : true,
   "Keeper" : true,
   "KeeperActionProvider" : true,
+  "DucksKeeperActionProvider" : true,
   "Kick" : true,
   "KickConfigurationProvider" : true,
   "Kneeler" : true,
