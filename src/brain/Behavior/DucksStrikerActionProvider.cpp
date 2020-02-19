@@ -60,16 +60,13 @@ void DucksStrikerActionProvider::cycle()
             Vector2f ballToRobotDistanceY = Vector2f(ballToGoal.y(), -ballToGoal.x()).normalized() * 0.07;
             Vector2f kickPosition = ball + ballToRobotDistanceY + ballToRobotDistanceX;
             Vector2f kickPositionToGoal = goal - kickPosition;
-
-            float rotationAngle = std::atan2(ballToRobotDistanceY.y(), ballToRobotDistanceY.x());
-            rotationAngle = (rotationAngle <0) ? rotationAngle + 2* M_PI : rotationAngle;
-            std::cout<< "rotationAngle: "<<rotationAngle <<std::endl;
-
-            Rotation2Df rotationMatrix(rotationAngle);
-            Vector2f rotatedTargetVector = rotationMatrix.toRotationMatrix()*kickPositionToGoal;
-
             float kickPoseAngle = std::atan2(ballToGoal.y(), ballToGoal.x());
             kickPoseAngle = (kickPoseAngle <0) ? kickPoseAngle + 2* M_PI : kickPoseAngle;
+
+            Rotation2Df rotationMatrix(-kickPoseAngle);
+            Vector2f rotatedTargetVector = rotationMatrix.toRotationMatrix()*kickPositionToGoal;
+
+
             strikerAction_->kickPose = Pose(kickPosition,kickPoseAngle);
             strikerAction_->action = DucksStrikerAction::Action::WALK_TO_POS;
             float difference = (robotPosition_->pose.position - kickPosition).norm();
@@ -81,8 +78,6 @@ void DucksStrikerActionProvider::cycle()
                 strikerAction_->kickType = DucksStrikerAction::KickType::KICK;
                 strikerAction_->kickable = BallUtils::Kickable::LEFT;
                 strikerAction_->target = rotatedTargetVector;
-                std::cout<< "kickPoseAngle: "<<kickPoseAngle <<std::endl;
-                std::cout << "target: "<< rotatedTargetVector.y() << " " <<rotatedTargetVector.x()<<std::endl;
 
             }
         } else if (isSurrounded()) {

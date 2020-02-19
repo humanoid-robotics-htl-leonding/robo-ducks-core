@@ -2,9 +2,7 @@
 
 DucksActionCommand kickBall(const DuckDataSet &d, const DucksStrikerAction &sa)
 {
-    std::cout << "source: "<< d.ballState.position.y() << " " <<d.ballState.position.x()<<std::endl;
-
-    return DucksActionCommand::kick(d.ballState.position,
+    return DucksActionCommand::kick(d.ballState.position, //ballState.position is not good here, a new StrikerAction.kickSource or something like that would be useful, rotated like StrikerAction.target
                                sa.target);  // TODO Wrong Kick Type (use SA)
 }
 
