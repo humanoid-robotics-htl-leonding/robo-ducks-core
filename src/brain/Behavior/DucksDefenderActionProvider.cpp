@@ -118,7 +118,7 @@ void DucksDefenderActionProvider::defend() {
 		defenderAction_->type = DucksDefenderAction::Type::DEFEND;
 	}
 	else {
-		defenderAction_->type = DucksDefenderAction::Type::MOVEDIRECT;
+		defenderAction_->type = DucksDefenderAction::Type::MOVE;
 	}
 
 	if (desperation_->lookAtBallUrgency > urgency) {
