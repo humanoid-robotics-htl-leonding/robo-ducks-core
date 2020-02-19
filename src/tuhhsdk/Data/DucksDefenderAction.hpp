@@ -4,17 +4,19 @@
 #include "Tools/Math/Eigen.hpp"
 #include "Tools/Math/Pose.hpp"
 
-class DucksDefendingPosition: public DataType<DucksDefendingPosition>
+class DucksDefenderAction: public DataType<DucksDefenderAction>
 {
 public:
 	/// the name of this DataType
-	DataTypeName name = "DucksDefendingPosition";
+	DataTypeName name = "DucksDefenderAction";
 	/// whether the playing position is valid
 
 	enum Type
 	{
 		MOVE,
-		DEFEND
+		MOVEDIRECT,
+		DEFEND,
+		KICK
 	};
 
 	bool valid = false;

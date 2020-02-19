@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Data/Desperation.hpp>
-#include "Data/DucksDefendingPosition.hpp"
+#include "Data/DucksDefenderAction.hpp"
+#include "Data/Desperation.hpp"
 #include "Data/FieldDimensions.hpp"
 #include "Data/GameControllerState.hpp"
 #include "Data/ObstacleData.hpp"
@@ -31,7 +31,11 @@ public:
 	void cycle();
 
 private:
-	const Parameter<float> ballFocalPointDepth_;
+	void defend()
+	void kick();
+	void dribble();
+
+	const Parameter<float> defaultDefenderX_;
 	const Parameter<float> ballFocalPointYshift_;
 	const Parameter<float> maxDeflectBallDistance_;
 
@@ -44,6 +48,6 @@ private:
 	const Dependency<TeamPlayers> teamPlayers_;
 	const Dependency<Desperation> desperation_;
 	const Dependency<WorldState> worldState_;
-	Production<DucksDefendingPosition> defendingPosition_;
+	Production<DucksDefenderAction> defenderAction_;
 
 };

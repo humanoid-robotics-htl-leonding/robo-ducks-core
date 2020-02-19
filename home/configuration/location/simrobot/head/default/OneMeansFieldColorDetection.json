@@ -2,11 +2,11 @@
   "thresholdUV": 15,
   "thresholdY": 1.75,
   "initialGuessTop": [
-    122,
-    115
+    89,
+    79
   ],
   "initialGuessBottom": [
-    117,
-    114
+    89,
+    79
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "ballFocalPointDepth": 0.5,
+  "defaultDefenderX": -1.5,
   "maxDeflectBallDistance": 0.5,
   "ballFocalPointYShift": 0
 }
