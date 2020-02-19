@@ -130,6 +130,32 @@ namespace Geometry
     return true;
   }
 
+    template <typename T>
+    bool getIntersectionWithVerticalLine(const Vector2<T>& linePoint1, const Vector2<T>& linePoint2,
+                         T verticalLineX,
+                         Vector2<T>& intersection)
+    {
+        T deltaX = linePoint1.x() - linePoint2.x();
+        if(deltaX == 0){
+            return false;
+        }
+
+        T deltaY = linePoint1.y() - linePoint2.y();
+
+        T verticalLineY = linePoint1.y() - (deltaY/deltaX)*(linePoint1.x() - verticalLineX);
+        intersection.x() = verticalLineX;
+        intersection.y() = verticalLineY;
+        return true;
+    }
+
+    template <typename T>
+    bool getIntersectionWithVerticalLine(const Line<T>& line1,
+                                         T verticalLineX,
+                                         Vector2<T>& intersection)
+    {
+        return getIntersectionWithVerticalLine(line1.p1, line1.p2, verticalLineX, intersection);
+    }
+
   /**
    * @brief getIntersection calculates the intersection between two infinite straight lines
    * @param line1 an infinite straight line

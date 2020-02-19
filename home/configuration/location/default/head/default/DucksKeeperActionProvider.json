@@ -1,2 +1,8 @@
 {
+  "robotDiameter": 0.3,
+  "keeperMaxX": -3,
+  "keeperMinX": -4,
+  "segmentCount": 20,
+  "shadowCastSpeed": 0.005,
+  "shadowResolveSpeed": 0.05
 }
