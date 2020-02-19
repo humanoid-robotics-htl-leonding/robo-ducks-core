@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Data/PlayerConfiguration.hpp>
 #include "Data/BallState.hpp"
 #include "Data/CycleInfo.hpp"
 #include "Data/FieldDimensions.hpp"
@@ -47,6 +48,8 @@ private:
     const Dependency<TeamPlayers> teamPlayers_;
     /// a reference to the world state
     const Dependency<WorldState> worldState_;
+    /// a reference to the world state
+    const Dependency<PlayerConfiguration> playerConfiguration_;
 
     /// a reference to the striker action
     Production<KeeperAction> keeperAction_;
