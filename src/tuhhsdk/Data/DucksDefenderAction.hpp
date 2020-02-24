@@ -13,15 +13,17 @@ public:
 
 	enum Type
 	{
-		MOVE,
-		MOVEDIRECT,
+		WALK,
+		WALK_WITH_ORIENTATION,
+		WALKDIRECT,
+		WALKDIRECT_WITH_ORIENTATION,
 		DEFEND,
 		KICK
 	};
 
 	bool valid = false;
 	Pose targetPose = Pose(Vector2f(0, 0), 0);
-	Type type = Type::MOVE;
+	Type type = Type::WALK;
 
 	/**
 	 * @brief invalidates the position

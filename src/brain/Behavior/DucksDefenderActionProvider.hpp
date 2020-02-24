@@ -34,10 +34,8 @@ private:
 	void defend();
 	void kick();
 	void dribble();
-	void findRelevantTeamPlayers(const TeamPlayer*& keeper,
-			const TeamPlayer*& replacementKeeper,
-			const TeamPlayer*& supportStriker,
-			const TeamPlayer*& otherDefender) const;
+	void findOtherDefender(const TeamPlayer*& otherDefender) const;
+	void findKeeper(const TeamPlayer*& keeper) const;
 
 	const Parameter<float> doubleDefenderFocalY_;
 	const Parameter<float> kickZoneX_;

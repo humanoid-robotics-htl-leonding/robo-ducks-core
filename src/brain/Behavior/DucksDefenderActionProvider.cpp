@@ -42,17 +42,15 @@ void DucksDefenderActionProvider::cycle()
 {
 	Chronometer time(debug(), mount_ + ".cycle_time");
 
-	defenderAction_->valid = true;
-
-	bool keeperExists = false;
-	for (auto role : playingRoles_->playerRoles) {
-		if (role == PlayingRole::KEEPER || role == PlayingRole::REPLACEMENT_KEEPER) {
-			keeperExists = true;
-		}
-	}
+	defenderAction_->valid = false;
 
 	if (gameControllerState_->gameState == GameState::PLAYING) {
-		if (teamBallModel_->position.x() >= kickZoneX_() || (worldState_->ballInPenaltyArea && keeperExists)) {
+		defenderAction_->valid = true;
+
+		const TeamPlayer *keeper = nullptr;
+		findKeeper(keeper);
+
+		if (teamBallModel_->position.x() >= kickZoneX_() || (worldState_->ballInPenaltyArea && keeper != nullptr)) {
 			defend();
 		} else if (teamBallModel_->position.x() >= dribbleZoneX_()) {
 			kick();
@@ -68,8 +66,8 @@ void DucksDefenderActionProvider::defend() {
 	auto goalWidthHalf = fieldDimensions_->goalInnerWidth / 2. + fieldDimensions_->goalPostDiameter / 2.;
 
 	auto defenderX = worldState_->ballInPenaltyArea ?
-			std::min<float>(teamBallModel_->position.x() - 0.5, kickZoneX_()) :
-			        kickZoneX_();
+			kickZoneX_() :
+			std::min<float>(teamBallModel_->position.x() - 0.5, kickZoneX_());
 
 	auto leftDangerZoneBorderEnd = Vector2f(defenderX, fieldWidthHalf);
 	auto leftGoalPost = Vector2f(-fieldLengthHalf, goalWidthHalf);
@@ -84,9 +82,9 @@ void DucksDefenderActionProvider::defend() {
 
 	Vector2f focal;
 	Geometry::getIntersection(dangerZoneBorder, middleLineLong, focal);
-	const TeamPlayer *keeper = nullptr, *replacementKeeper = nullptr, *supportStriker = nullptr,
-			*otherDefender = nullptr;
-	findRelevantTeamPlayers(keeper, replacementKeeper, supportStriker, otherDefender);
+
+	const TeamPlayer *otherDefender = nullptr;
+	findOtherDefender(otherDefender);
 
 	if (otherDefender != nullptr) {
 		focal.y() = otherDefender->pose.position.y() < robotPosition_->pose.position.y() ?
@@ -118,7 +116,7 @@ void DucksDefenderActionProvider::defend() {
 		defenderAction_->type = DucksDefenderAction::Type::DEFEND;
 	}
 	else {
-		defenderAction_->type = DucksDefenderAction::Type::MOVE;
+		defenderAction_->type = DucksDefenderAction::Type::WALK;
 	}
 
 	if (desperation_->lookAtBallUrgency > urgency) {
@@ -127,6 +125,9 @@ void DucksDefenderActionProvider::defend() {
 }
 
 void DucksDefenderActionProvider::kick() {
+	const TeamPlayer *otherDefender = nullptr;
+	findOtherDefender(otherDefender);
+
 	auto targetX = teamBallModel_->position.x() - 0.20;
 	auto targetY = teamBallModel_->position.y() <= robotPosition_->pose.position.y() ?
 				   teamBallModel_->position.y() + 0.07 :
@@ -134,10 +135,6 @@ void DucksDefenderActionProvider::kick() {
 	defenderAction_->targetPose = Pose(targetX, targetY);
 
 	Vector2f moveDist = (defenderAction_->targetPose.position - robotPosition_->pose.position);
-
-	const TeamPlayer *keeper = nullptr, *replacementKeeper = nullptr, *supportStriker = nullptr,
-			*otherDefender = nullptr;
-	findRelevantTeamPlayers(keeper, replacementKeeper, supportStriker, otherDefender);
 
 	if (otherDefender != nullptr) {
 		auto otherTargetY = teamBallModel_->position.y() <= otherDefender->pose.position.y() ?
@@ -160,7 +157,7 @@ void DucksDefenderActionProvider::kick() {
 	if (scaledMoveDist.norm() < kickThreshold_()) {
 		defenderAction_->type = DucksDefenderAction::Type::KICK;
 	} else {
-		defenderAction_->type = DucksDefenderAction::Type::MOVE;
+		defenderAction_->type = DucksDefenderAction::Type::WALK;
 	}
 
 	if (desperation_->lookAtBallUrgency > urgency) {
@@ -175,9 +172,8 @@ void DucksDefenderActionProvider::dribble() {
 
 	Vector2f moveDist = (targetPose.position - robotPosition_->pose.position);
 
-	const TeamPlayer *keeper = nullptr, *replacementKeeper = nullptr, *supportStriker = nullptr,
-			*otherDefender = nullptr;
-	findRelevantTeamPlayers(keeper, replacementKeeper, supportStriker, otherDefender);
+	const TeamPlayer *otherDefender = nullptr;
+	findOtherDefender(otherDefender);
 
 	if (otherDefender != nullptr) {
 		auto otherMoveDist = (defenderAction_->targetPose.position - otherDefender->pose.position);
@@ -198,10 +194,10 @@ void DucksDefenderActionProvider::dribble() {
 		(abs(teamBallModel_->position.y() - robotPosition_->pose.position.y()) < 0.1 && teamBallModel_->position.x() > robotPosition_->pose.position.x())) {
 		defenderAction_->targetPose =
 				Pose(teamBallModel_->position.x(), teamBallModel_->position.y());
-		defenderAction_->type = DucksDefenderAction::Type::MOVEDIRECT;
+		defenderAction_->type = DucksDefenderAction::Type::WALKDIRECT_WITH_ORIENTATION;
 	} else {
 		defenderAction_->targetPose = targetPose;
-		defenderAction_->type = DucksDefenderAction::Type::MOVE;
+		defenderAction_->type = DucksDefenderAction::Type::WALK;
 	}
 
 	if (desperation_->lookAtBallUrgency > urgency) {
@@ -209,32 +205,32 @@ void DucksDefenderActionProvider::dribble() {
 	}
 }
 
-void DucksDefenderActionProvider::findRelevantTeamPlayers(const TeamPlayer*& keeper,
-														const TeamPlayer*& replacementKeeper,
-														const TeamPlayer*& supportStriker,
-														const TeamPlayer*& otherDefender) const
+void DucksDefenderActionProvider::findOtherDefender(const TeamPlayer*& otherDefender) const
 {
 	for (auto& player : teamPlayers_->players)
 	{
-		if (player.penalized)
-		{
+		if (player.penalized) {
 			continue;
 		}
-		if (player.currentlyPerformingRole == PlayingRole::KEEPER)
-		{
-			keeper = &player;
-		}
-		else if (player.currentlyPerformingRole == PlayingRole::REPLACEMENT_KEEPER)
-		{
-			replacementKeeper = &player;
-		}
-		else if (player.currentlyPerformingRole == PlayingRole::SUPPORT_STRIKER)
-		{
-			supportStriker = &player;
-		}
+
 		if (player.currentlyPerformingRole == PlayingRole::DEFENDER)
 		{
 			otherDefender = &player;
+		}
+	}
+}
+
+void DucksDefenderActionProvider::findKeeper(const TeamPlayer*& keeper) const
+{
+	for (auto& player : teamPlayers_->players)
+	{
+		if (player.penalized) {
+			continue;
+		}
+
+		if (player.currentlyPerformingRole == PlayingRole::KEEPER || player.currentlyPerformingRole == PlayingRole::REPLACEMENT_KEEPER)
+		{
+			keeper = &player;
 		}
 	}
 }
