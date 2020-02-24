@@ -266,7 +266,7 @@ set(NAO6_HEADERS
   Hardware/Nao/v6/Nao6Interface.hpp
   Hardware/Nao/v6/Nao6Camera.hpp
   ${NAO_HEADERS}
-  )
+        Tools/Math/CircleFitter.cpp Tools/Math/CircleFitter.hpp)
 
 set(QT_WEBSOCKET_SOURCES
   Hardware/QtWebsocket/main.cpp

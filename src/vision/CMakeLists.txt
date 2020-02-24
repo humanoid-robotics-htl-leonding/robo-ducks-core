@@ -21,6 +21,7 @@ set(HEADERS
   Modules/RobotDetection/RobotDetection.hpp
   Modules/RobotProjection/RobotProjectionProvider.hpp
   Modules/SlidingWindows/SlidingWindowProvider.hpp
+        Modules/MiddleCircleDetection/MiddleCircleDetection.hpp
   print.hpp
 )
 
@@ -43,7 +44,7 @@ set(SOURCES
   Modules/RobotDetection/RobotDetection.cpp
   Modules/RobotProjection/RobotProjectionProvider.cpp
   Modules/SlidingWindows/SlidingWindowProvider.cpp
-)
+        Modules/MiddleCircleDetection/MiddleCircleDetection.cpp)
 
 
 add_library(${PROJECT_NAME} OBJECT ${SOURCES} ${HEADERS})

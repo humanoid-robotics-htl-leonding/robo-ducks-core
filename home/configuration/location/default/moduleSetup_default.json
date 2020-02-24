@@ -44,6 +44,7 @@
   "LabelProvider" : false,
   "LandmarkFilter" : true,
   "LineDetection" : true,
+  "MiddleCircleDetection": true,
   "MotionDispatcher" : true,
   "MotionPlanner" : true,
   "MotionSleep" : false,
