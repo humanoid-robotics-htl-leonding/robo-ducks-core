@@ -54,15 +54,49 @@
     "mediumDistanceBoundary":3.1,
     "maximumRadius":4.0,
     "hammerDistanceBoundary":5.0,
-    "maximumAngle": 16.7,
-    "sideDirectionBoundary":5.7,
+    "maximumAngle": 70.0,
+    "sideDirectionBoundary":15.0,
     "minimalAngle": 0.0,
     "shortKickDistance": 1.75,
     "mediumKickDistance": 2.65,
     "longKickDistance": 3.55,
     "hammerKickDistance": 5,
     "centerKickAngle":0.0,
-    "sideKickAngle":30.0
+    "sideKickAngle":45.0
+  },
+  "kickAdjustments":
+  {
+    //longDistanceStraight
+    "longDistanceStraightLeftAnklePitch": -65.0,
+    //longDistanceSide
+    //mediumDistanceStraight
+    "mediumDistanceStraightLeftAnklePitch": -40.0,
+    //mediumDistanceSide
+    //shortDistanceStraight
+    "shortDistanceStraightLeftAnklePitch": -60.0,
+    "shortDistanceStraightLeftKneePitch": 8.0,
+    "shortDistanceStraightLeftHipPitch": -42.0
+    //shortDistanceSide
+
+  },
+  "retractAdjustments":
+  {
+    //longDistanceStraight
+    "longDistanceStraightLeftAnklePitch": -10.0,
+    "longDistanceStraightLeftKneePitch": 60.0,
+    "longDistanceStraightLeftHipPitch": -60.0,
+    //longDistanceSide
+    //mediumDistanceStraight
+    "mediumDistanceStraightLeftAnklePitch": -10.0,
+    "mediumDistanceStraightLeftKneePitch": 60.0,
+    "mediumDistanceStraightLeftHipPitch": -60.0,
+    //mediumDistanceSide
+    //shortDistanceStraight
+    "shortDistanceStraightLeftAnklePitch": -10.0,
+    "shortDistanceStraightLeftKneePitch": 60.0,
+    "shortDistanceStraightLeftHipPitch": -60.0
+    //shortDistanceSide
+
   },
   "gyroLowPassRatio" : 0.8,
   "gyroForwardBalanceFactor" : 0.08,
