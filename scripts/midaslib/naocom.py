@@ -20,18 +20,18 @@ base_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__
 project_base_dir = os.path.abspath(os.path.join(base_dir, ".."))
 ssh_key_path = os.path.join(base_dir, 'files', 'ssh_key')
 ssh_standard_args = [
-    "-o", "UserKnownHostsFile=/dev/null",
-    "-o", "StrictHostKeyChecking=no",
+    "-o", "\"UserKnownHostsFile=/dev/null\"",
+    "-o", "\"StrictHostKeyChecking=no\"",
     # "-o", "LogLevel=quiet",
     "-o", "ConnectTimeout=5",
     "-i", f"{ssh_key_path}"
 ]
 
 
-def subprocess_run(command):
+def subprocess_run(command, shell=False):
     logging.info(" ".join(command))
     # return subprocess.run(command, shell=False).returncode
-    popen = subprocess.Popen(command, shell=False)
+    popen = subprocess.Popen(command, shell=shell)
 
     def signal_handler(sign, frame):
         print(f"Signal {sign} was sent to running process.")
@@ -84,7 +84,7 @@ def rsync(source, destination, delete=False):
         destination
     ]
     print(" ".join(command))
-    return subprocess_run(" ".join(command))
+    return subprocess_run(" ".join(command), True)
 
 
 def ssh_command_old(address, user, command):
@@ -98,6 +98,8 @@ def ssh_command(address, user, command: List[str]):
     ssh = spur.SshShell(
         hostname=address,
         username=user,
+        load_system_host_keys=False,
+        missing_host_key=spur.ssh.MissingHostKey.accept,
         private_key_file=os.path.join(base_dir, 'files', 'ssh_key')
     )
 
