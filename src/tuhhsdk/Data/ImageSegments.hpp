@@ -216,6 +216,29 @@ public:
     reinitialized = true;
   }
 
+    bool verticalSegmentAt(Vector2i point, Segment &out_segment) const {
+
+        VerticalScanline nearest = verticalScanlines[0];
+        double nearestDist = abs(point.x() - verticalScanlines[0].pos);
+        for (int i = 0; i < numVerticalScanlines; ++i) {
+            double currentDist = abs(point.x() - verticalScanlines[i].pos);
+            if(currentDist < nearestDist){
+                nearestDist=currentDist;
+                nearest=verticalScanlines[i];
+            }
+        }
+
+
+        for (auto segment:nearest.segments){
+            if(segment.start.y() <= point.y() && point.y() <= segment.end.y()){
+                out_segment=segment;
+                return true;
+            }
+        }
+        return false;
+  }
+
+
   // TODO: Prealocation (init) for horizontal scanlines
 
   /**

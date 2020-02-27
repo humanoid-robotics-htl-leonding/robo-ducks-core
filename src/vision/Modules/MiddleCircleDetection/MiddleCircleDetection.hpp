@@ -8,6 +8,7 @@
 
 #include "Data/CameraMatrix.hpp"
 #include "Data/FilteredSegments.hpp"
+#include "Data/ImageSegments.hpp"
 #include "Data/ImageData.hpp"
 #include "Data/FieldDimensions.hpp"
 #include "Data/CircleData.hpp"
@@ -35,6 +36,7 @@ private:
     /// robot divides the playground with horizontal and
     /// vertical lines
     const Dependency<FilteredSegments> filteredSegments_;
+    const Dependency<ImageSegments> imageSegments_;
     /// the minimum number of points in a middle circle segment
     const Parameter<unsigned int> minSegmentLength_;
     /// the maximum number of points in a middle circle segment
@@ -65,11 +67,18 @@ private:
     CircleFitter circleFitter_;
     void initCorrectCircle();
 
-    bool CircleIsValid(int iterationAmount, Circle<double> circle);
+    bool CircleIsValid(int iterationAmount, Circle<float> circle);
 
-    int ControlCircleBorder();
+    double GetVectorDistancefi(Vector2f firstVec, Vector2i secondVec);
+    double GetVectorDistanceff(Vector2f firstVec, Vector2f secondVec);
 
-    void UpdateCircleBorderPoints(Circle<double> circle);
+    double ControlCircleBorder(Circle<float> circle);
+
+    void GenerateCircleSurroundPoints(Circle<float> circle);
+
+    void PixelToRobot(VecVector2i screenPoints, VecVector2f &planePoints);
 
     VecVector2f circleBorderPoints_;
+
+    double point2PointDistance(Vector2i first, Vector2i second);
 };
