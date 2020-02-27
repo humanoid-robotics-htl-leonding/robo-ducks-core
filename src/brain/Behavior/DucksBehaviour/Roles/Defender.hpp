@@ -1,6 +1,6 @@
 #pragma once
 
-DucksActionCommand roleDefender(const DuckDataSet &d)
+DucksActionCommand roleDefender(const DucksDataSet &d)
 {
 	auto defenderAction = d.defendingPosition;
 

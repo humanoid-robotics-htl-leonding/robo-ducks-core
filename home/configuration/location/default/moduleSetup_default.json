@@ -7,10 +7,10 @@
   "DucksBallSearchMapManager" : true,
 
   "BallSearchPositionProvider" : false,
-  "DuckBallSearchPositionProvider" : true,
+  "DucksBallSearchPositionProvider" : true,
 
   "BehaviorModule" : false,
-  "DuckBehaviorModule" : true,
+  "DucksBehaviorModule" : true,
   "DucksDesperationProvider": true,
   "BishopPositionProvider" : true,
   "BodyDamageProvider" : true,
@@ -61,8 +61,12 @@
   "PenaltyKeeperActionProvider" : true,
   "PenaltySpotDetection" : true,
   "PenaltyStrikerActionProvider" : true,
+
   "PlayingRoleProvider" : false,
   "DucksPlayingRoleProvider" : true,
+
+  "DucksBallPredictor": true,
+
   "Point" : true,
   "Poser" : true,
   "Projection" : true,

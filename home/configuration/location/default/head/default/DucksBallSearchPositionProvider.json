@@ -16,7 +16,10 @@
 	],
 	"stepBackThreshold": 0.5,
 	"maxSearchSideAngle": 50,
-
+	"comfortableSearchSideAngle": 40,
+	"minComfortableProbability": 5,
+	"maxComfortableUrgency": 0.5,
+	"maxNoTurnUrgency": 0.8,
 	"desperationThreshold": 5,
 	"desperationReduction": 10,
 	"desperationMax": 30

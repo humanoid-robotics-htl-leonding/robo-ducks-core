@@ -5,6 +5,7 @@
 #include <Data/DuckBallSearchPosition.hpp>
 #include <Data/BallState.hpp>
 #include <queue>
+#include <Data/Desperation.hpp>
 
 #include "Framework/Module.hpp"
 
@@ -22,17 +23,17 @@
 
 class Brain;
 
-class DuckBallSearchPositionProvider: public Module<DuckBallSearchPositionProvider, Brain>
+class DucksBallSearchPositionProvider: public Module<DucksBallSearchPositionProvider, Brain>
 {
 public:
 	/// the name of this module
-	ModuleName name = "DuckBallSearchPositionProvider";
+	ModuleName name = "DucksBallSearchPositionProvider";
 
 	/**
-	 * @brief DuckBallSearchPositionProvider The constructor
+	 * @brief DucksBallSearchPositionProvider The constructor
 	 * @param manager Reference to the ModuleManagerInterface (e.g. brain)
 	 */
-	explicit DuckBallSearchPositionProvider(const ModuleManagerInterface &manager);
+	explicit DucksBallSearchPositionProvider(const ModuleManagerInterface &manager);
 
 	void cycle() override;
 
@@ -48,6 +49,7 @@ private:
 	const Dependency<FieldDimensions> fieldDimensions_;
 	const Dependency<JointSensorData> jointSensorData_;
 	const Dependency<CycleInfo> cycleInfo_;
+	const Dependency<Desperation> desperation_;
 
 	// TODO: These two parameters are needed by both, MapManager and PositionProvider.
 	/// The minimum distance to a ball search position (you can not find a ball when you are standing
@@ -66,8 +68,16 @@ private:
 	const Parameter<Vector2f> stepBackValue_;
 	const Parameter<float> stepBackThreshold_;
 
-	//Maximum angle the search position may have to the nao without turning
+	// Maximum angle the search position may have to the nao without turning
 	Parameter<float> maxSideAngle_;
+	// Maxmum angle that is comfortable to look at (E.g without obstructing bottom camera with shoulders)
+	Parameter<float> comfortableSideAngle_;
+    // Minimum Probability that a comfortable cell must have to still be accepted
+	Parameter<float> minComfortableProbability_;
+	// Maximum value of lookAtBallUrgency to allow comfortable decisions
+	Parameter<float> maxComfortableUrgency_;
+	// Maximum value of lookAtBallUrgency to allow decisions without turning
+	Parameter<float> maxNoTurnUrgency_;
 
 	/// The position to look for a ball.
 	Production<DuckBallSearchPosition> searchPosition_;
@@ -79,6 +89,9 @@ private:
 
 	float standingOnCooldown_;
 
-	Vector2f oldSearchPosition_;
-	float oldSearchProbability_;
+    ProbCell const* oldSearchPosition_;
+
+	bool iWantToLookAt(const Vector2f& point);
+
+    ProbCell const* snackPositionToLookAt();
 };

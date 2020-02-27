@@ -1,12 +1,12 @@
 #pragma once
 
-DucksActionCommand kickBall(const DuckDataSet &d, const DucksStrikerAction &sa)
+DucksActionCommand kickBall(const DucksDataSet &d, const DucksStrikerAction &sa)
 {
     return DucksActionCommand::kick(d.ballState.position, //ballState.position is not good here, a new StrikerAction.kickSource or something like that would be useful, rotated like StrikerAction.target
                                sa.target);  // TODO Wrong Kick Type (use SA)
 }
 
-DucksActionCommand roleStriker(const DuckDataSet &d)
+DucksActionCommand roleStriker(const DucksDataSet &d)
 {
     if (d.strikerAction.valid) {
         switch (d.strikerAction.action) {
