@@ -89,5 +89,5 @@ private:
 
     bool aimingForMyGoal(float orientation);
 
-    bool ballInKickRange(float orientation);
+    bool ballInKickRange();
 };

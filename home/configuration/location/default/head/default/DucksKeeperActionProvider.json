@@ -5,5 +5,5 @@
   "segmentCount": 20,
   "shadowCastSpeed": 0.005,
   "shadowResolveSpeed": 0.05,
-  "keeperBallKickDistance": 0.04
+  "keeperBallKickDistance": 0.4
 }

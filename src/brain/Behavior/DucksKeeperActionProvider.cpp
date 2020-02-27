@@ -11,16 +11,16 @@
 
 DucksKeeperActionProvider::DucksKeeperActionProvider(const ModuleManagerInterface& manager)
       : Module(manager)
-      , shadowCastSpeed_(*this, "shadowCastSpeed")
-      , shadowResolveSpeed_(*this, "shadowResolveSpeed")
+      , shadowCastSpeed_(*this, "shadowCastSpeed", []{})
+      , shadowResolveSpeed_(*this, "shadowResolveSpeed", []{})
       , robotDiameter_(*this, "robotDiameter")
-      , keeperMaxX_(*this, "keeperMaxX")
-      , keeperMinX_(*this, "keeperMinX")
+      , keeperMaxX_(*this, "keeperMaxX", []{})
+      , keeperMinX_(*this, "keeperMinX", []{})
       , segmentCount_(*this, "segmentCount", [this]{
           goalShadow_.clear();
           goalShadow_.resize(segmentCount_());
       })
-      , keeperBallKickDistance_(*this, "keeperBallKickDistance")
+      , keeperBallKickDistance_(*this, "keeperBallKickDistance", []{})
       , cycleInfo_(*this)
       , ballState_(*this)
       , fieldDimensions_(*this)
@@ -46,6 +46,13 @@ void DucksKeeperActionProvider::cycle() {
     if (gameControllerState_->gameState != GameState::PLAYING) {
         return;
     }
+
+
+    if(ballInKickRange()){
+    	keeperAction_->action = KeeperAction::Action(KeeperAction::Type::KICK_AWAY);
+    	return;
+    }
+
 
     //=== 1 Cast shadows on the Goal (Ball is the light source and robots obstruct its light)
     float goalX = -fieldDimensions_->fieldLength / 2;
@@ -103,14 +110,6 @@ void DucksKeeperActionProvider::cycle() {
     // * find fitting default maxDistanceToBall
     // * kick ball in correct direction
 
-    auto orient = robotPosition_->pose.orientation;
-
-    // Is ball in kick-range && in front of me && i am looking towards enemy goal
-    if(ballInKickRange(orient) && !aimingForMyGoal(orient)){
-        //keeperAction_->action = KeeperAction::Action(KeeperAction::Type::KICK_TO_TEAMMATE, Pose(bestPosition->position, 0));
-        keeperAction_->action = KeeperAction::Action(KeeperAction::Type::KICK_AWAY);
-    }
-
     debug().update(mount_ + ".largestSegment", largestSegment);
     debug().update(mount_ + ".proposed", proposedPositions_);
     debug().update(mount_ + ".shadow", goalShadow_);
@@ -126,20 +125,23 @@ bool DucksKeeperActionProvider::aimingForMyGoal(float orientation){
     return false;
 }
 
-bool DucksKeeperActionProvider::ballInKickRange(float orientation){
+bool DucksKeeperActionProvider::ballInKickRange(){
     //todo:
     // * ball in range
     // * aiming for ball
 
 
-    auto maxDistanceToBall = keeperBallKickDistance_; //float
+    auto maxDistanceToBall = keeperBallKickDistance_(); //float
     auto ballPos = teamBallModel_->position; //Vector2f
     auto playerPos = robotPosition_->pose.position; //Vector2f
 
     auto distanceBetweenBallAndPlayer = (ballPos - playerPos).norm();
 
+    debug().update(mount_+".distance", distanceBetweenBallAndPlayer);
+    debug().update(mount_+".maxBall", maxDistanceToBall);
 
-    return false;
+	return distanceBetweenBallAndPlayer < maxDistanceToBall;
+
 }
 
 void DucksKeeperActionProvider::calculateBestKeeperPositionFor(const Vector2f &segmentLowerPoint, const Vector2f &segmentMiddlePoint) {
