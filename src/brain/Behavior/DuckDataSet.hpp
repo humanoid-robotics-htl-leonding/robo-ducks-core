@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Data/DucksStrikerAction.hpp>
 #include "Data/DuckBallSearchPosition.hpp"
 #include "Data/BallState.hpp"
 #include "Data/BishopPosition.hpp"
@@ -19,7 +20,6 @@
 #include "Data/ReplacementKeeperAction.hpp"
 #include "Data/RobotPosition.hpp"
 #include "Data/SetPosition.hpp"
-#include "Data/StrikerAction.hpp"
 #include "Data/SupportingPosition.hpp"
 #include "Data/TeamBallModel.hpp"
 #include "Data/TeamPlayers.hpp"
@@ -69,7 +69,7 @@ struct DuckDataSet
           const RobotPosition& rp, const BodyPose& bp, const PlayerConfiguration& pc,
           const PlayingRoles& pr, const MotionState& ms, const HeadMotionOutput& hmo,
           const TeamBallModel& tbm, const TeamPlayers& tps, const FieldDimensions& fd,
-          const StrikerAction& sa, const PenaltyStrikerAction& ps, const KeeperAction& ka,
+          const DucksStrikerAction& sa, const PenaltyStrikerAction& ps, const KeeperAction& ka,
           const PenaltyKeeperAction& pa, const CycleInfo& ci, const SetPosition& sp,
           const DucksDefenderAction& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
           const ReplacementKeeperAction& rk, const ButtonData& bd, const WorldState& ws,
@@ -135,7 +135,7 @@ struct DuckDataSet
   /// a reference to the field dimensions
   const FieldDimensions& fieldDimensions;
   /// a reference to the striker action
-  const StrikerAction& strikerAction;
+  const DucksStrikerAction& strikerAction;
   /// a reference to the penalty striker action
   const PenaltyStrikerAction& penaltyStrikerAction;
   /// a reference to the keeper action
