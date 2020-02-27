@@ -227,7 +227,7 @@ void MotionFilePlayer::precompile()
     stiffnesses_.push_back(stiff.parameters);
   }
     if(relTimeSSum < header.time){
-        angleTimes_.push_back(header.time);
-        angles_.push_back(stiffness.at(stiffness.size()-1).parameters);
+        stiffnessTimes_.push_back(header.time);
+        stiffnesses_.push_back(stiffness.at(stiffness.size()-1).parameters);
     }
 }

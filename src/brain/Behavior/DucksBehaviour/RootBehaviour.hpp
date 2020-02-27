@@ -7,7 +7,6 @@
 DucksActionCommand rootBehavior(const DuckDataSet &d)
 {
     //TODO check all motion files if they still work
-    //TODO jumpingCatch extend second arm
     //TODO stationaryCatch find Foot Balance
     //TODO buttcatch check if penetrable
     //TODO flip fixed jumping and stationaryCatch
