@@ -20,6 +20,7 @@ DucksKeeperActionProvider::DucksKeeperActionProvider(const ModuleManagerInterfac
           goalShadow_.clear();
           goalShadow_.resize(segmentCount_());
       })
+      , keeperBallKickDistance_(*this, "keeperBallKickDistance")
       , cycleInfo_(*this)
       , ballState_(*this)
       , fieldDimensions_(*this)
@@ -91,17 +92,54 @@ void DucksKeeperActionProvider::cycle() {
         }
     }
 
-    // === Lastly get the position with the hightest score.
+    // === Lastly get the position with the highest score.
     auto bestPosition = std::max_element(proposedPositions_.cbegin(), proposedPositions_.cend(), [](const ProposedPosition& a, const ProposedPosition& b){return a.score < b.score;});
 
     keeperAction_->action = KeeperAction::Action(KeeperAction::Type::BLOCK_GOAL, Pose(bestPosition->position, 0));
 
+    // === kick when ball in range
+    //todo:
+    // * add range to parameters
+    // * find fitting default maxDistanceToBall
+    // * kick ball in correct direction
 
+    auto orient = robotPosition_->pose.orientation;
+
+    // Is ball in kick-range && in front of me && i am looking towards enemy goal
+    if(ballInKickRange(orient) && !aimingForMyGoal(orient)){
+        //keeperAction_->action = KeeperAction::Action(KeeperAction::Type::KICK_TO_TEAMMATE, Pose(bestPosition->position, 0));
+        keeperAction_->action = KeeperAction::Action(KeeperAction::Type::KICK_AWAY);
+    }
 
     debug().update(mount_ + ".largestSegment", largestSegment);
     debug().update(mount_ + ".proposed", proposedPositions_);
     debug().update(mount_ + ".shadow", goalShadow_);
     debug().update(mount_ + ".largestSegmentBegin", largestSegmentBegin);
+}
+
+
+
+bool DucksKeeperActionProvider::aimingForMyGoal(float orientation){
+    if(orientation == 5.0){
+        return false;
+    }
+    return false;
+}
+
+bool DucksKeeperActionProvider::ballInKickRange(float orientation){
+    //todo:
+    // * ball in range
+    // * aiming for ball
+
+
+    auto maxDistanceToBall = keeperBallKickDistance_; //float
+    auto ballPos = teamBallModel_->position; //Vector2f
+    auto playerPos = robotPosition_->pose.position; //Vector2f
+
+    auto distanceBetweenBallAndPlayer = (ballPos - playerPos).norm();
+
+
+    return false;
 }
 
 void DucksKeeperActionProvider::calculateBestKeeperPositionFor(const Vector2f &segmentLowerPoint, const Vector2f &segmentMiddlePoint) {
