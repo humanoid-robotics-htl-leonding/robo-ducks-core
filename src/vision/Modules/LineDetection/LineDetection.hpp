@@ -97,8 +97,8 @@ private:
   const Parameter<int> maxDistFromLine_;
   /// the minimum number of points per line
   const Parameter<unsigned int> minNumberOfPointsOnLine_;
-  /// the minimum allowed length of a line
-  const Parameter<float> minPixelLength_;
+  /// the minimum allowed length of vertical segments
+  const Parameter<float> minPixelLengthVertical_;
   /// whether the daylight filter should be used
   const Parameter<bool> useDaylightFilter_;
   /// whether the projected segment size should be checked
@@ -107,6 +107,8 @@ private:
   const Parameter<float> maxProjectedLineSegmentLength_;
   /// lower threshold to classify more illuminated areas as field
   const Parameter<double> daylightThreshold_;
+  /// the minimum allowed length of horizontal segments
+  const Parameter<float> minPixelLengthHorizontal_;
   /// a reference to the image
   const Dependency<ImageData> imageData_;
   /// a reference to the camera matrix
@@ -115,7 +117,7 @@ private:
   const Dependency<FilteredSegments> filteredSegments_;
   /// the detected lines for other modules
   Production<LineData> lineData_;
-  // line points for debug puroposes
+  /// line points for debug puroposes
   VecVector2i debugLinePoints_;
   /// candidate points on lines
   VecVector2i linePoints_;
