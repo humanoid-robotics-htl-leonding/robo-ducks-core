@@ -73,7 +73,7 @@ private:
 	const Dependency<HeadMotionOutput> headMotionOutput_;
 	const Dependency<TeamBallModel> teamBallModel_;
 	const Dependency<TeamPlayers> teamPlayers_;
-	const Dependency<BallSearchPosition> ballSearchPosition_;
+	const Dependency<DuckBallSearchPosition> ballSearchPosition_;
 	const Dependency<FieldDimensions> fieldDimensions_;
 	const Dependency<StrikerAction> strikerAction_;
 	const Dependency<PenaltyStrikerAction> penaltyStrikerAction_;
@@ -82,7 +82,7 @@ private:
 	const Dependency<PenaltyKeeperAction> penaltyKeeperAction_;
 	const Dependency<CycleInfo> cycleInfo_;
 	const Dependency<SetPosition> setPosition_;
-	const Dependency<DefendingPosition> defendingPosition_;
+	const Dependency<DucksDefendingPosition> defendingPosition_;
 	const Dependency<BishopPosition> bishopPosition_;
 	const Dependency<SupportingPosition> supportingPosition_;
 	const Dependency<ReplacementKeeperAction> replacementKeeperAction_;
@@ -97,7 +97,7 @@ private:
 	Production<ThoughtControlRequest> thoughtControlRequest_;
 
 	/// the last action command that was computed by the behavior
-	ActionCommand actionCommand_;
+	DucksActionCommand actionCommand_;
 	/// Thoughts
 	Thoughts thoughts_;
 	/// the data set/bundle that is passed to the behavior

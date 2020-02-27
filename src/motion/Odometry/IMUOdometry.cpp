@@ -7,6 +7,7 @@ IMUOdometry::IMUOdometry(const ModuleManagerInterface& manager)
   : Module(manager)
   , sensorFusion_(*this)
   , walkingEngineWalkOutput_(*this)
+  , cycleInfo_(*this)
   , imuSensorData_(*this)
   , bodyRotationData_(*this)
   , odometryData_(*this)
@@ -16,9 +17,11 @@ IMUOdometry::IMUOdometry(const ModuleManagerInterface& manager)
 
 void IMUOdometry::cycle()
 {
-  sensorFusion_.update(imuSensorData_->gyroscope, imuSensorData_->accelerometer);
+  sensorFusion_.update(imuSensorData_->gyroscope, imuSensorData_->accelerometer, cycleInfo_->cycleTime);
 
   Vector3f rpy = sensorFusion_.getOrientation();
+  debug().update(mount_ + ".Gyro", imuSensorData_->gyroscope);
+  debug().update(mount_ + ".Accelerometer", imuSensorData_->accelerometer);
   debug().update(mount_ + ".Orientation", rpy);
 
   accumulatedOdometry_.orientation = rpy.z();

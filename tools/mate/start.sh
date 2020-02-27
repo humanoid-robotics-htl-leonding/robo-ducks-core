@@ -47,7 +47,12 @@ source ${CONDA_LIB}
 conda activate MateEnv
 echo "Starting Mate with python at: '$(which python)'"
 echo "======="
-python ./run.py
-MATE_EXIT=$?
-echo "Mathe finished with exit code ${MATE_EXIT}"
+
+MATE_EXIT=1
+while [[ ${MATE_EXIT} -ne 0 ]]; do
+    python ./run.py
+    MATE_EXIT=$?
+    echo "Mathe finished with exit code ${MATE_EXIT}"
+done
+
 exit ${MATE_EXIT}

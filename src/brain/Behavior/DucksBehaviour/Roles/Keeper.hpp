@@ -1,6 +1,6 @@
 #pragma once
 
-ActionCommand roleKeeper(const DuckDataSet &d)
+DucksActionCommand roleKeeper(const DuckDataSet &d)
 {
-	return ActionCommand::stand();
+	return DucksActionCommand::stand().invalidate();
 }

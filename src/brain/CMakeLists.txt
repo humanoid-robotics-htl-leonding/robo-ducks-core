@@ -5,22 +5,27 @@ project(Brain)
 set(HEADERS
   print.h
   Behavior/ActionCommand.hpp
+  Behavior/DucksActionCommand.hpp
   Behavior/BehaviorModule.hpp
   Behavior/DuckBehaviorModule.hpp
   Behavior/BehaviorParameters.hpp
   Behavior/BishopPositionProvider.hpp
   Behavior/DefendingPositionProvider.hpp
+        Behavior/DucksDefenderActionProvider.hpp
   Behavior/DataSet.hpp
   Behavior/BallSearchMapManager.hpp
+  Behavior/DucksBallSearchMapManager.hpp
   Behavior/HeadPositionProvider.hpp
   Behavior/BallSearchPositionProvider.hpp
   Behavior/KeeperActionProvider.hpp
   Behavior/PenaltyKeeperActionProvider.hpp
   Behavior/PlayingRoleProvider.hpp
+  Behavior/DucksPlayingRoleProvider.hpp
   Behavior/ReplacementKeeperActionProvider.hpp
   Behavior/SetPositionProvider.hpp
   Behavior/StrikerActionProvider.hpp
   Behavior/DucksStrikerActionProvider.hpp
+  Behavior/DucksDesperationProvider.hpp
   Behavior/PenaltyStrikerActionProvider.hpp
   Behavior/SupportingPositionProvider.hpp
   Behavior/TimeToReachBallProvider.hpp
@@ -86,6 +91,7 @@ set(HEADERS
   Modules/HeadOffModule/HeadOffModule.hpp
   SPLNetwork/BHULKsHelper.hpp
   SPLNetwork/HULKsMessage.hpp
+  SPLNetwork/DucksMessage.hpp
   SPLNetwork/SPLNetworkService.hpp
   SPLNetwork/SPLMessageReceiver.hpp
   SPLNetwork/SPLMessageTransmitter.hpp
@@ -95,19 +101,24 @@ set(HEADERS
 
 set(SOURCES
   Behavior/BallSearchMapManager.cpp
+  Behavior/DucksBallSearchMapManager.cpp
   Behavior/BallSearchPositionProvider.cpp
+  Behavior/DuckBallSearchPositionProvider.cpp
   Behavior/BehaviorModule.cpp
   Behavior/DuckBehaviorModule.cpp
   Behavior/BishopPositionProvider.cpp
   Behavior/DefendingPositionProvider.cpp
+        Behavior/DucksDefenderActionProvider.cpp
   Behavior/HeadPositionProvider.cpp
   Behavior/KeeperActionProvider.cpp
   Behavior/PenaltyKeeperActionProvider.cpp
   Behavior/PlayingRoleProvider.cpp
+  Behavior/DucksPlayingRoleProvider.cpp
   Behavior/ReplacementKeeperActionProvider.cpp
   Behavior/SetPositionProvider.cpp
   Behavior/StrikerActionProvider.cpp
   Behavior/DucksStrikerActionProvider.cpp
+  Behavior/DucksDesperationProvider.cpp
   Behavior/PenaltyStrikerActionProvider.cpp
   Behavior/SupportingPositionProvider.cpp
   Behavior/TimeToReachBallProvider.cpp
@@ -141,9 +152,12 @@ set(SOURCES
   Modules/TeamPlayersAugmenter/TeamPlayersAugmenter.cpp
   Modules/HeadOffModule/HeadOffModule.cpp
   SPLNetwork/HULKsMessage.cpp
+  SPLNetwork/DucksMessage.cpp
   SPLNetwork/SPLNetworkService.cpp
   SPLNetwork/SPLMessageReceiver.cpp
+  SPLNetwork/DucksSPLMessageReceiver.cpp
   SPLNetwork/SPLMessageTransmitter.cpp
+  SPLNetwork/DucksSPLMessageTransmitter.cpp
   Brain.cpp
   BrainThread.cpp
   print.cpp

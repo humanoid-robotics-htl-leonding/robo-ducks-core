@@ -17,7 +17,12 @@ HeadOffModule::HeadOffModule(const ModuleManagerInterface &manager)
 
 void HeadOffModule::cycle()
 {
-	assert(!headOffModule_shutDown);
+//	assert(!headOffModule_shutDown);
+	if(headOffModule_shutDown){
+		std::cout << "HeadoffModule is giving the Nao a stroke." << std::endl;
+		std::cout.flush();
+		exit(0);
+	}
 
 	if (lastCycle) {
 		headOffModule_shutDown = true;

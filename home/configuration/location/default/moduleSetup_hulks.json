@@ -3,5 +3,25 @@
   "DucksStrikerActionProvider" : false,
 
   "BehaviorModule" : true,
-  "DuckBehaviorModule" : false
+  "DuckBehaviorModule" : false,
+
+  "BallSearchPositionProvider" : true,
+  "DuckBallSearchPositionProvider" : false,
+
+  "DucksSPLMessageReceiver" : false,
+  "SPLMessageReceiver" : true,
+
+  "DucksSPLMessageTransmitter" : false,
+  "SPLMessageTransmitter" : true,
+
+  "DefendingPositionProvider" : true,
+  "DucksDefenderActionProvider" : false,
+
+  "BallSearchMapManager" : true,
+  "DucksBallSearchMapManager" : false,
+  
+  "PlayingRoleProvider" : true,
+  "DucksPlayingRoleProvider" : false,
+
+  "DucksDesperationProvider": false
 }

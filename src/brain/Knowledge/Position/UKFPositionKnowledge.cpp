@@ -302,6 +302,8 @@ void UKFPositionKnowledge::measurementUpdate()
       poseHypothesis.updateWithPenaltyArea(penaltyArea, cameraMatrix_->camera2ground,
                                            ignorePenaltyAreasWithoutOrientation_());
     }
+
+    poseHypothesis.updateWithSetOfIntersections(landmarkModel_->intersections, cameraMatrix_->camera2ground);
   }
 }
 
