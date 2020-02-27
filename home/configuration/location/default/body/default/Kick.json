@@ -54,15 +54,15 @@
     "mediumDistanceBoundary":3.1,
     "maximumRadius":4.0,
     "hammerDistanceBoundary":5.0,
-    "maximumAngle": 45.0,
-    "sideDirectionBoundary":5.7,
+    "maximumAngle": 70.0,
+    "sideDirectionBoundary":15.0,
     "minimalAngle": 0.0,
     "shortKickDistance": 1.75,
     "mediumKickDistance": 2.65,
     "longKickDistance": 3.55,
     "hammerKickDistance": 5,
     "centerKickAngle":0.0,
-    "sideKickAngle":30.0
+    "sideKickAngle":45.0
   },
   "kickAdjustments":
   {
