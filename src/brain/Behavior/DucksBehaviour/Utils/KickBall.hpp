@@ -7,7 +7,7 @@
  * @param targetPos Where to kick to
  * @return
  */
-DucksActionCommand kick(const DuckDataSet& d, const Vector2f& targetPos){
+DucksActionCommand kick(const DucksDataSet& d, const Vector2f& targetPos){
 
 	Vector2f goalToBall = d.teamBallModel.position - targetPos;
 	float orientation = std::atan2(-goalToBall.y(), -goalToBall.x());
