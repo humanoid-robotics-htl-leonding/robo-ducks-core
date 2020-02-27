@@ -1,7 +1,19 @@
 @import '~@angular/material/theming';
 
+$header-height: 48px;
+$connection-form-height: 7.5%;
+
+.connection-form{
+  height: $connection-form-height;
+  position: relative;
+  top: 0px;
+  left: 0px;
+}
+
 .nao-tab{
   height: 100%;
+  padding: 5px;
+  box-sizing: border-box;
 }
 
 .bottom-controls{
@@ -16,6 +28,14 @@
   transition: height linear 0.5s;
   transition-delay: 0.2s;
   z-index: 10;
+
+  &:hover{
+    overflow: visible;
+    height: 350px;
+    .bottom-fab{
+      right: 0%;
+    }
+  }
 }
 
 .bottom-fab{
@@ -28,10 +48,26 @@
   transition: right ease-out 0.3s;
 }
 
-.bottom-controls:hover{
+.nao-content{
   overflow: visible;
-  height: 350px;
-  .bottom-fab{
-    right: 0%;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 100% - $connection-form-height;
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  grid-template-columns: repeat(10, 1fr);
+  gap: 5px;
+}
+
+.nao-element{
+  border-radius: 4px;
+  @include mat-elevation-transition;
+  @include mat-elevation(1);
+
+  background-color: grey;
+
+  &:hover{
+    @include mat-elevation(8);
+    background-color: green;
   }
 }

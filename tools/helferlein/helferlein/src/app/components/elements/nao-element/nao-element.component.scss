@@ -1,0 +1,29 @@
+@import '~@angular/material/theming';
+
+
+%nao-element{
+  border-radius: 4px;
+  @include mat-elevation-transition;
+  @include mat-elevation(1);
+
+  // &:hover{
+  //   @include mat-elevation(8);
+  // }
+}
+
+.lg-nao-element{
+  @extend %nao-element;
+  height: 100%;
+  width: 100%;
+}
+
+.centered-button-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.centered-button{
+
+}

@@ -17,6 +17,7 @@ import { EcoFabSpeedDialModule } from '@ecodev/fab-speed-dial';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { NaoComponent } from './components/nao/nao.component';
 import { NaoTabComponent } from './components/nao-tab/nao-tab.component';
@@ -57,7 +58,8 @@ import { NaoConfigComponent } from './components/elements/nao-config/nao-config.
     EcoFabSpeedDialModule,
     MatSlideToggleModule,
     MatTooltipModule,
-    MatGridListModule
+    MatGridListModule,
+    MatMenuModule
   ],
   providers: [],
   bootstrap: [AppComponent]

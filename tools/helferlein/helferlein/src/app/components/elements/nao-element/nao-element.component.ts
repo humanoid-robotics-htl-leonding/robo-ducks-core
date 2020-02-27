@@ -9,43 +9,49 @@ import { NaoConnector } from 'src/app/model/nao-connector';
 export const CONTAINER_DATA = new InjectionToken<{}>('CONTAINER_DATA');
 
 @Component({
-  selector: 'app-nao-element',
+  selector: 'nao-element',
   templateUrl: './nao-element.component.html',
   styleUrls: ['./nao-element.component.scss']
 })
 export class NaoElementComponent implements OnInit {
 
-  @Input() type = 'text';
+  @Input() type = null;
   @Input() connector: NaoConnector;
   portal;
 
   constructor(private injector: Injector) { }
 
   ngOnInit(): void {
-    switch(this.type){
-      case 'text':{
-        this.portal = new ComponentPortal<NaoTextComponent>(NaoTextComponent, null, this.getElementInjector());
-        break;
-      }
-      case 'image':{
-        this.portal = new ComponentPortal<NaoImageComponent>(NaoImageComponent, null, this.getElementInjector());
-        break;
-      }
-      case 'map':{
-        this.portal = new ComponentPortal<NaoMapComponent>(NaoMapComponent, null, this.getElementInjector());
-        break;
-      }
-      case 'config':{
-        this.portal = new ComponentPortal<NaoConfigComponent>(NaoConfigComponent, null, this.getElementInjector());
-        break;
-      }
+    if(this.type){
+      this.summonElement(this.type);
     }
   }
 
-  getElementInjector(): PortalInjector{
+  getElementInjector(): PortalInjector {
     const injectorTokens = new WeakMap();
     injectorTokens.set(CONTAINER_DATA, this.connector);
     return new PortalInjector(this.injector, injectorTokens);
   }
 
+  summonElement(type: string){
+    switch (type) {
+      case 'text': {
+        this.portal = new ComponentPortal<NaoTextComponent>(NaoTextComponent, null, this.getElementInjector());
+        break;
+      }
+      case 'image': {
+        this.portal = new ComponentPortal<NaoImageComponent>(NaoImageComponent, null, this.getElementInjector());
+        break;
+      }
+      case 'map': {
+        this.portal = new ComponentPortal<NaoMapComponent>(NaoMapComponent, null, this.getElementInjector());
+        break;
+      }
+      case 'config': {
+        this.portal = new ComponentPortal<NaoConfigComponent>(NaoConfigComponent, null, this.getElementInjector());
+        break;
+      }
+    }
+    this.type = type;
+  }
 }

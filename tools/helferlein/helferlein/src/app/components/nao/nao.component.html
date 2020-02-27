@@ -20,19 +20,28 @@
   </div>
 
   <div class="nao-content">
-    <mat-grid-list cols="10">
+    <!-- <mat-grid-list cols="10" [gutterSize]="'10px'">
       <mat-grid-tile *ngFor="let element of elements"
       [colspan]="element.colspan" [rowspan]="element.rowspan">
-        <app-nao-element [type]="element.type" [connector]="connector"></app-nao-element>
+      <app-nao-element [type]="element.type" [connector]="connector" class="nao-element">
+      </app-nao-element>
       </mat-grid-tile>
-    </mat-grid-list>
+    </mat-grid-list> -->
+
+    <nao-element *ngFor="let element of elements" [type]="element.type"
+      [connector]="connector"
+      [style.grid-row-start]="element.rowStart"
+      [style.grid-row-end]="element.rowEnd"
+      [style.grid-column-start]="element.colStart"
+      [style.grid-column-end]="element.colEnd"
+    ></nao-element>
   </div>
 
   <div class="bottom-controls"
   (mouseenter)="addFab.open=true" (mouseleave)="addFab.open=false">
     <div class="bottom-fab">
-      <eco-fab-speed-dial #addFab [direction]="up">
-        <eco-fab-speed-dial-trigger [spin]="true">
+      <eco-fab-speed-dial #addFab direction="up">
+        <eco-fab-speed-dial-trigger spin="true">
           <button mat-fab color="primary" (click)="doAction('trigger')">
             <mat-icon class="spin180">add</mat-icon>
           </button>
