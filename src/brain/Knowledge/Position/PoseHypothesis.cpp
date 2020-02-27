@@ -776,39 +776,25 @@ void PoseHypothesis::updateWithXXIntersections(const LandmarkModel::Intersection
 
 void PoseHypothesis::updateWithGoal(const LandmarkModel::Goal& goal,
 		const KinematicMatrix& cam2ground) {
-	const Pose associatedL = Pose(
+	const Pose associated = Pose(
 			fieldDimensions_.fieldLength / 2,
-			fieldDimensions_.goalInnerWidth / 2 + fieldDimensions_.goalPostDiameter / 2,
+			0,
 			M_PI);
-	const Pose associatedR = Pose(
-			associatedL.position.x(),
-			-associatedL.position.y(),
-			associatedL.orientation);
-	const Pose observationPose1L = associatedL * Pose(goal.left, goal.orientation).inverse();
-	const Pose observationPose2L = Pose(-observationPose1L.position, Angle::normalized(observationPose1L.orientation + M_PI));
-	const auto updateL = Angle::angleDiff(observationPose1L.orientation, stateMean_.z()) <
-						 Angle::angleDiff(observationPose2L.orientation, stateMean_.z())
-						 ? Vector3f(observationPose1L.position.x(), observationPose1L.position.y(),
-									observationPose1L.orientation)
-						 : Vector3f(observationPose2L.position.x(), observationPose2L.position.y(),
-									observationPose2L.orientation);
-	const auto covL =
-			computePoseCovFromFullPoseFeature(goal.left, updateL.z(), cam2ground);
-	poseSensorUpdate(updateL, covL);
-	const Pose observationPose1R = associatedR * Pose(goal.right, goal.orientation).inverse();
-	const Pose observationPose2R = Pose(-observationPose1R.position, Angle::normalized(observationPose1R.orientation + M_PI));
-	const auto updateR = Angle::angleDiff(observationPose1R.orientation, stateMean_.z()) <
-						 Angle::angleDiff(observationPose2R.orientation, stateMean_.z())
-						 ? Vector3f(observationPose1R.position.x(), observationPose1R.position.y(),
-									observationPose1R.orientation)
-						 : Vector3f(observationPose2R.position.x(), observationPose2R.position.y(),
-									observationPose2R.orientation);
-	const auto covR =
-			computePoseCovFromFullPoseFeature(goal.right, updateR.z(), cam2ground);
-	std::cerr << updateL.x() << "/" << updateL.y() << "/" << updateL.z() << std::endl;
-	std::cerr << updateR.x() << "/" << updateR.y() << "/" << updateR.z() << std::endl;
-	std::cerr << std::endl;
-	poseSensorUpdate(updateR, covR);
+	Vector2f goalMid = (goal.left + goal.right) / 2;
+	const Pose observationPose1 = associated * Pose(goalMid, goal.orientation).inverse();
+	const Pose observationPose2 = Pose(-observationPose1.position, Angle::normalized(observationPose1.orientation + M_PI));
+	const auto update = Angle::angleDiff(observationPose1.orientation, stateMean_.z()) <
+						 Angle::angleDiff(observationPose2.orientation, stateMean_.z())
+						 ? Vector3f(observationPose1.position.x(), observationPose1.position.y(),
+									observationPose1.orientation)
+						 : Vector3f(observationPose2.position.x(), observationPose2.position.y(),
+									observationPose2.orientation);
+	const auto cov =
+			computePoseCovFromFullPoseFeature(goalMid, update.z(), cam2ground);
+	poseSensorUpdate(update, cov);
+
+	std::cerr << goalMid.x() << "/" << goalMid.y() << std::endl;
+	std::cerr << update.x() << "/" << update.y() << "/" << update.z() << std::endl;
 }
 
 void PoseHypothesis::lineSensorUpdate(const Line<float>& relativeLine, const Vector3f& refPose,

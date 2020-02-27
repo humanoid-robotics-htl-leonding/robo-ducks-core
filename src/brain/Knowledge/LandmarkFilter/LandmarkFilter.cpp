@@ -215,7 +215,6 @@ void LandmarkFilter::assembleGoals()
         	rightPost = post1->position;
         }
 		float orientation = std::atan2(leftPost.x() - rightPost.x(), rightPost.y() - leftPost.y());
-        std::cerr << orientation << std::endl;
         landmarkModel_->goals.emplace_back(leftPost, rightPost, true, orientation);
       }
     }
