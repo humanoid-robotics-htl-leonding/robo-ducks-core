@@ -24,14 +24,14 @@ ssh_standard_args = [
     "-o", "StrictHostKeyChecking=no",
     # "-o", "LogLevel=quiet",
     "-o", "ConnectTimeout=5",
-    "-i", f"'{ssh_key_path}'"
+    "-i", f"{ssh_key_path}"
 ]
 
 
 def subprocess_run(command):
-    # logging.info(" ".join(command))
+    logging.info(" ".join(command))
     # return subprocess.run(command, shell=False).returncode
-    popen = subprocess.Popen(command, shell=True)
+    popen = subprocess.Popen(command, shell=False)
 
     def signal_handler(sign, frame):
         print(f"Signal {sign} was sent to running process.")
