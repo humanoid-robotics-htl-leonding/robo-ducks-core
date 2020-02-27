@@ -2,5 +2,5 @@
 
 DucksActionCommand started(const DucksDataSet &d)
 {
-	return DucksActionCommand::stand();
+	return DucksActionCommand::penalized();
 }

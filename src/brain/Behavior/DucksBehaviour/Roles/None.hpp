@@ -2,5 +2,5 @@
 
 DucksActionCommand roleNone(const DucksDataSet &d)
 {
-	return DucksActionCommand::kneel().invalidate();
+	return DucksActionCommand::penalized().invalidate();
 }

@@ -2,5 +2,5 @@
 
 DucksActionCommand roleBishop(const DucksDataSet &d)
 {
-	return DucksActionCommand::kneel().invalidate();
+	return DucksActionCommand::stand().invalidate();
 }

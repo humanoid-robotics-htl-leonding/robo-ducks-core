@@ -10,8 +10,9 @@ DucksActionCommand roleDefender(const DucksDataSet &d)
 		WalkMode mode;
 		switch (defenderAction.type) {
 			case DucksDefenderAction::Type::DEFEND:
-				mode = WalkMode::DIRECT_WITH_ORIENTATION;
-				return walkTo(defenderAction.targetPose, d, mode);
+//				mode = WalkMode::DIRECT_WITH_ORIENTATION;
+//				return walkTo(defenderAction.targetPose, d, mode);
+				return DucksActionCommand::stand();
 			case DucksDefenderAction::Type::WALK:
 				mode = WalkMode::PATH;
 				return walkTo(defenderAction.targetPose, d, mode);
@@ -34,5 +35,5 @@ DucksActionCommand roleDefender(const DucksDataSet &d)
 		Log(LogLevel::WARNING) << "I am defender but no valid DefenderAction was supplied";
 	}
 
-	return DucksActionCommand::kneel().invalidate();
+	return DucksActionCommand::stand().invalidate();
 }

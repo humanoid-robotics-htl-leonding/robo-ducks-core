@@ -11,7 +11,7 @@
    "exposure" : 6500,
    "focus" : 0,
    "fps" : 30,
-   "gain" : 25,
+   "gain" : 50,
    "hue" : 0,
    "registerAddr": 0,
    "registerWrite": false,
