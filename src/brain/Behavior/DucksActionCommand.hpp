@@ -815,6 +815,7 @@ public:
 	 * @brief kick creates a kick action command
 	 * @param ball_position the (relative) position where the kick should assume the ball to be
 	 * @param ball_target the (relative) position where the ball should end up
+	 * @param forceHammer Use Hulks kick instead of RoboDucks kick (Weil er donn draufhämmert!)
 	 * @param kickType the type of kick
 	 * @return a kick action command
 	 */

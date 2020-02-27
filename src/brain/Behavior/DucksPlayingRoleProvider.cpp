@@ -85,8 +85,9 @@ void PRP::cycle()
 	//Most simple playing role assignment.
 
 	PlayingRole roles[] = {
+		PlayingRole::KEEPER,
+        PlayingRole::DEFENDER,
 		PlayingRole::STRIKER,
-		PlayingRole::DEFENDER,
 		PlayingRole::NONE
 	};
 	int index = 0;

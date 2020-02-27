@@ -23,5 +23,8 @@
   "PlayingRoleProvider" : true,
   "DucksPlayingRoleProvider" : false,
 
+  "KeeperActionProvider" : true,
+  "DucksKeeperActionProvider" : false,
+
   "DucksDesperationProvider": false
 }
