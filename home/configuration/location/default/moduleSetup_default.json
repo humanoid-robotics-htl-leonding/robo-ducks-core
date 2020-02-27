@@ -40,7 +40,10 @@
   "JointCalibrationProvider" : true,
   "JointCommandSender" : true,
   "Keeper" : true,
-  "KeeperActionProvider" : true,
+
+  "KeeperActionProvider" : false,
+  "DucksKeeperActionProvider" : true,
+
   "Kick" : true,
   "KickConfigurationProvider" : true,
   "Kneeler" : true,
