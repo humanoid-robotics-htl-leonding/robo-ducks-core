@@ -30,7 +30,8 @@ public:
 		TEAM_BALL_MODEL = 1,
 		I_AM_ON_IT = 2,
 		SEARCHING = 3,
-		SEARCH_WALK = 4
+		SEARCH_WALK = 4,
+		SEARCH_TURN = 5,
 	};
 
 	/// the name of this DataType
@@ -73,13 +74,13 @@ public:
 		value = Uni::Value(Uni::ValueType::OBJECT);
 		value["pose"] << pose;
 		value["searchPosition"] << searchPosition;
-		value["suggestedSearchPositions"] << suggestedSearchPositions;
 		value["ownSearchPoseValid"] << ownSearchPoseValid;
-		value["suggestedSearchPositionsValid"] << suggestedSearchPositionValid;
 		value["availableForSearch"] << availableForSearch;
 		value["localMostWisePlayerNumber"] << localMostWisePlayerNumber;
 		value["globalMostWisePlayerNumber"] << globalMostWisePlayerNumber;
 		value["reason"] << static_cast<int>(reason);
+		value["suggestedSearchPositions"] << suggestedSearchPositions;
+		value["suggestedSearchPositionsValid"] << suggestedSearchPositionValid;
 	}
 
 	void fromValue(const Uni::Value &value) override
@@ -87,13 +88,13 @@ public:
 		int readNumber;
 		value["pose"] >> pose;
 		value["searchPosition"] >> searchPosition;
-		value["suggestedSearchPositions"] >> suggestedSearchPositions;
 		value["ownSearchPoseValid"] >> ownSearchPoseValid;
-		value["suggestedSearchPositionsValid"] >> suggestedSearchPositionValid;
 		value["availableForSearch"] >> availableForSearch;
 		value["localMostWisePlayerNumber"] >> localMostWisePlayerNumber;
 		value["globalMostWisePlayerNumber"] >> globalMostWisePlayerNumber;
 		value["reason"] >> readNumber;
 		reason = static_cast<Reason>(readNumber);
+		value["suggestedSearchPositionsValid"] >> suggestedSearchPositionValid;
+		value["suggestedSearchPositions"] >> suggestedSearchPositions;
 	}
 };

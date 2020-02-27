@@ -82,7 +82,7 @@ private:
 	const Dependency<PenaltyKeeperAction> penaltyKeeperAction_;
 	const Dependency<CycleInfo> cycleInfo_;
 	const Dependency<SetPosition> setPosition_;
-	const Dependency<DefendingPosition> defendingPosition_;
+	const Dependency<DucksDefendingPosition> defendingPosition_;
 	const Dependency<BishopPosition> bishopPosition_;
 	const Dependency<SupportingPosition> supportingPosition_;
 	const Dependency<ReplacementKeeperAction> replacementKeeperAction_;
@@ -97,7 +97,7 @@ private:
 	Production<ThoughtControlRequest> thoughtControlRequest_;
 
 	/// the last action command that was computed by the behavior
-	ActionCommand actionCommand_;
+	DucksActionCommand actionCommand_;
 	/// Thoughts
 	Thoughts thoughts_;
 	/// the data set/bundle that is passed to the behavior

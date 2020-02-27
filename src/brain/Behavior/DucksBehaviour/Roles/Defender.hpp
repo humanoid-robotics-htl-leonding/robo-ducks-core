@@ -1,6 +1,14 @@
 #pragma once
 
-ActionCommand roleDefender(const DuckDataSet &d)
+DucksActionCommand roleDefender(const DuckDataSet &d)
 {
-	return ActionCommand::kneel();
+	auto defenderAction = d.defendingPosition;
+
+
+	if(defenderAction.valid){
+		auto command = walkTo(defenderAction.targetPose, d);
+		return command;
+	}
+
+	return DucksActionCommand::kneel().invalidate();
 }

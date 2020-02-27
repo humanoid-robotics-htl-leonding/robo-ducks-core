@@ -26,7 +26,7 @@ BallDetectionNeuralNet::BallDetectionNeuralNet(const ModuleManagerInterface& man
 
   , imageData_(*this)
   , cameraMatrix_(*this)
-  , imageSegments_(*this)
+  , filteredSegments_(*this)
   , fieldBorder_(*this)
   , fieldDimensions_(*this)
   , gameControllerState_(*this)
@@ -474,72 +474,64 @@ std::vector<Circle<int>> BallDetectionNeuralNet::getSeeds()
 {
   std::vector<Circle<int>> seeds;
   debugSeeds_.clear();
-  for (auto& scanline : imageSegments_->verticalScanlines)
+  for (auto& segment : filteredSegments_->vertical)
   {
-    unsigned long regionCount = scanline.segments.size();
-    for (unsigned int i = 0; i < regionCount; i++)
-    {
-      if (scanline.segments[i].ycbcr422.y1_ > seedDark_())
-      {
-        continue;
-      }
-      if (!fieldBorder_->isInsideField(scanline.segments[i].start))
-      {
-        continue;
-      }
-      const Vector2i seed = (scanline.segments[i].start + scanline.segments[i].end) / 2;
-      int pixelRadius = 0;
-      cameraMatrix_->getPixelRadius(imageData_->image422.size, seed,
-                                    fieldDimensions_->ballDiameter / 2, pixelRadius);
+	  if (segment->ycbcr422.y1_ > seedDark_())
+	  {
+		  continue;
+	  }
+	  const Vector2i seed = (segment->start + segment->end) / 2;
+	  int pixelRadius = 0;
+	  cameraMatrix_->getPixelRadius(imageData_->image422.size, seed,
+									fieldDimensions_->ballDiameter / 2, pixelRadius);
 
-      const float regionSize =
-          static_cast<float>(scanline.segments[i].end.y() - scanline.segments[i].start.y()) /
-          pixelRadius;
-      if (regionSize < seedRadiusRatioMin_() || regionSize > seedRadiusRatioMax_())
-      {
-        continue;
-      }
-      const std::array<Vector2i, 8> directions = {
-          {{-1, -2}, {0, -2}, {1, -2}, {-1, 0}, {1, 0}, {-1, 2}, {0, 2}, {1, 2}}};
+	  const float regionSize =
+			  static_cast<float>(segment->end.y() - segment->start.y()) /
+			  pixelRadius;
+	  if (regionSize < seedRadiusRatioMin_() || regionSize > seedRadiusRatioMax_())
+	  {
+		  continue;
+	  }
+	  const std::array<Vector2i, 8> directions = {
+			  {{-1, -2}, {0, -2}, {1, -2}, {-1, 0}, {1, 0}, {-1, 2}, {0, 2}, {1, 2}}};
 
-      int seedY = imageData_->image422[seed].y1_;
-      bool allBrighter = true;
-      int score = 0;
-      for (auto& d : directions)
-      {
-        // Move from seed into direction * pixelRadius * (10/25)
-        // 10/25 is a well working magic number
-        // 422 conversion is done by multiplying d.y with two (see above) and dividing the magic
-        // number
-        const Vector2i& point = seed + (d * pixelRadius * 5 / 25);
-        if (!imageData_->image422.isInside(point))
-        {
-          continue;
-        }
-        const int pointY = imageData_->image422[point].y1_;
-        if (pointY - seedY < seedBrightMin_())
-        {
-          allBrighter = false;
-          break;
-        }
-        if (pointY - seedY > seedBright_())
-        {
-          score++;
-        }
-      }
+	  int seedY = imageData_->image422[seed].y1_;
+	  bool allBrighter = true;
+	  int score = 0;
+	  for (auto& d : directions)
+	  {
+		  // Move from seed into direction * pixelRadius * (10/25)
+		  // 10/25 is a well working magic number
+		  // 422 conversion is done by multiplying d.y with two (see above) and dividing the magic
+		  // number
+		  const Vector2i& point = seed + (d * pixelRadius * 5 / 25);
+		  if (!imageData_->image422.isInside(point))
+		  {
+			  continue;
+		  }
+		  const int pointY = imageData_->image422[point].y1_;
+		  if (pointY - seedY < seedBrightMin_())
+		  {
+			  allBrighter = false;
+			  break;
+		  }
+		  if (pointY - seedY > seedBright_())
+		  {
+			  score++;
+		  }
+	  }
 
-      if (!allBrighter)
-      {
-        continue;
-      }
+	  if (!allBrighter)
+	  {
+		  continue;
+	  }
 
-      if (score < seedBrightScore_())
-      {
-        continue;
-      }
-      seeds.emplace_back(seed, pixelRadius);
-      debugSeeds_.emplace_back(seed, pixelRadius);
-    }
+	  if (score < seedBrightScore_())
+	  {
+		  continue;
+	  }
+	  seeds.emplace_back(seed, pixelRadius);
+	  debugSeeds_.emplace_back(seed, pixelRadius);
   }
   return seeds;
 }
