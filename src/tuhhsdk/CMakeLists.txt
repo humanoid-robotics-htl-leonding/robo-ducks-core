@@ -69,8 +69,8 @@ set(TUHHSDK_HEADERS
   Data/CircleData.hpp
   Data/CycleInfo.hpp
   Data/DefendingPosition.hpp
+        Data/DucksDefenderAction.hpp
   Data/Desperation.hpp
-  Data/DucksDefendingPosition.hpp
  # Data/EyeLEDRequest.hpp
   Data/FallManagerOutput.hpp
   Data/FieldBorder.hpp
