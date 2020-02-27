@@ -6,7 +6,7 @@
 #include "Data/BodyPose.hpp"
 #include "Data/ButtonData.hpp"
 #include "Data/CycleInfo.hpp"
-#include "Data/DucksDefendingPosition.hpp"
+#include "Data/DucksDefenderAction.hpp"
 #include "Data/FieldDimensions.hpp"
 #include "Data/GameControllerState.hpp"
 #include "Data/HeadMotionOutput.hpp"
@@ -19,7 +19,7 @@
 #include "Data/ReplacementKeeperAction.hpp"
 #include "Data/RobotPosition.hpp"
 #include "Data/SetPosition.hpp"
-#include "Data/StrikerAction.hpp"
+#include "Data/DucksStrikerAction.hpp"
 #include "Data/SupportingPosition.hpp"
 #include "Data/TeamBallModel.hpp"
 #include "Data/TeamPlayers.hpp"
@@ -69,9 +69,9 @@ struct DucksDataSet
 			   const RobotPosition& rp, const BodyPose& bp, const PlayerConfiguration& pc,
 			   const PlayingRoles& pr, const MotionState& ms, const HeadMotionOutput& hmo,
 			   const TeamBallModel& tbm, const TeamPlayers& tps, const FieldDimensions& fd,
-			   const StrikerAction& sa, const PenaltyStrikerAction& ps, const KeeperAction& ka,
+			   const DucksStrikerAction& sa, const PenaltyStrikerAction& ps, const KeeperAction& ka,
 			   const PenaltyKeeperAction& pa, const CycleInfo& ci, const SetPosition& sp,
-			   const DucksDefendingPosition& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
+			   const DucksDefenderAction& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
 			   const ReplacementKeeperAction& rk, const ButtonData& bd, const WorldState& ws,
 			   const KickConfigurationData& kcd, const DuckBallSearchPosition& bsp, const HeadPositionData& hpd,
 			   Thoughts& thdat,
@@ -135,7 +135,7 @@ struct DucksDataSet
   /// a reference to the field dimensions
   const FieldDimensions& fieldDimensions;
   /// a reference to the striker action
-  const StrikerAction& strikerAction;
+  const DucksStrikerAction& strikerAction;
   /// a reference to the penalty striker action
   const PenaltyStrikerAction& penaltyStrikerAction;
   /// a reference to the keeper action
@@ -147,7 +147,7 @@ struct DucksDataSet
   /// a reference to the set position
   const SetPosition& setPosition;
   /// a reference to the defending position
-  const DucksDefendingPosition& defendingPosition;
+  const DucksDefenderAction& defendingPosition;
   /// a reference to the bishop position
   const BishopPosition& bishopPosition;
   /// a reference to the supporting position
