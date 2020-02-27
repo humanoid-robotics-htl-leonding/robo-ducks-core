@@ -3,6 +3,7 @@
 //
 #pragma once
 
+
 DucksActionCommand rootBehavior(const DuckDataSet &d)
 {
     //TODO check all motion files if they still work
@@ -10,8 +11,8 @@ DucksActionCommand rootBehavior(const DuckDataSet &d)
     //TODO stationaryCatch find Foot Balance
     //TODO buttcatch check if penetrable
     //TODO flip fixed jumping and stationaryCatch
-    if(d.cycleInfo.startTime-d.buttonData.lastChestButtonSinglePress <50){
-        return DucksActionCommand::keeper(MotionKeeper::MK_TAKE_LEFT);
+    if(d.cycleInfo.startTime -d.buttonData.lastChestButtonSinglePress <3000 &&(double)d.cycleInfo.startTime>5000){
+        return DucksActionCommand::keeper(MotionKeeper::MK_JUMP_RIGHT);
     }
     return DucksActionCommand::stand();
 }
