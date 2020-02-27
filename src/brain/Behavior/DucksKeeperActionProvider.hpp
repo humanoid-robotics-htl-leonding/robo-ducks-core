@@ -39,6 +39,7 @@ private:
     const Parameter<float> keeperMaxX_;
     const Parameter<float> keeperMinX_;
     const Parameter<int> segmentCount_;
+    const Parameter<float> keeperBallKickDistance_;
 
     /// cycle info needed to check if team mate is aleady near the ball
     const Dependency<CycleInfo> cycleInfo_;
@@ -85,4 +86,8 @@ private:
     void calculateBestKeeperPositionFor(const Vector2f& segmentLowerPoint, const Vector2f& segmentMiddlePoint);
 
     bool robotIntersectsRayToSegment(const Vector2f& segment);
+
+    bool aimingForMyGoal(float orientation);
+
+    bool ballInKickRange();
 };
