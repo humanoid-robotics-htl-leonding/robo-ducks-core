@@ -3,6 +3,7 @@
 #include "Data/DucksDefenderAction.hpp"
 #include "Data/Desperation.hpp"
 #include "Data/FieldDimensions.hpp"
+#include "Data/FieldZones.hpp"
 #include "Data/GameControllerState.hpp"
 #include "Data/ObstacleData.hpp"
 #include "Data/PlayingRoles.hpp"
@@ -38,13 +39,12 @@ private:
 	void findKeeper(const TeamPlayer*& keeper) const;
 
 	const Parameter<float> doubleDefenderFocalY_;
-	const Parameter<float> kickZoneX_;
-	const Parameter<float> dribbleZoneX_;
 	const Parameter<float> defendThreshold_;
 	const Parameter<float> kickThreshold_;
 	const Parameter<float> dribbleThreshold_;
 
 	const Dependency<FieldDimensions> fieldDimensions_;
+	const Dependency<FieldZones> fieldZones_;
 	const Dependency<GameControllerState> gameControllerState_;
 	const Dependency<ObstacleData> obstacleData_;
 	const Dependency<PlayingRoles> playingRoles_;
