@@ -792,9 +792,6 @@ void PoseHypothesis::updateWithGoal(const LandmarkModel::Goal& goal,
 	const auto cov =
 			computePoseCovFromFullPoseFeature(goalMid, update.z(), cam2ground);
 	poseSensorUpdate(update, cov);
-
-	std::cerr << goalMid.x() << "/" << goalMid.y() << std::endl;
-	std::cerr << update.x() << "/" << update.y() << "/" << update.z() << std::endl;
 }
 
 void PoseHypothesis::lineSensorUpdate(const Line<float>& relativeLine, const Vector3f& refPose,
