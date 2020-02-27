@@ -9,5 +9,6 @@
       8,
       8
    ],
+   "samplePointDistance" : 0.01,
    "numScanlines" : 160
 }
