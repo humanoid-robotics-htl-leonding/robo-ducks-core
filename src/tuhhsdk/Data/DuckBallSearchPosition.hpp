@@ -55,9 +55,6 @@ public:
 	/// smallest player number)
 	unsigned int globalMostWisePlayerNumber = 0;
 
-	float desperation = 0;
-	bool desperate = false;
-
 	Reason reason = Reason::OWN_CAMERA;
 
 	void reset() override
@@ -70,7 +67,6 @@ public:
 		}
 		ownSearchPoseValid = false;
 		availableForSearch = false;
-		desperate = false;
 	}
 
 	void toValue(Uni::Value &value) const override
@@ -83,8 +79,6 @@ public:
 		value["localMostWisePlayerNumber"] << localMostWisePlayerNumber;
 		value["globalMostWisePlayerNumber"] << globalMostWisePlayerNumber;
 		value["reason"] << static_cast<int>(reason);
-		value["desperation"] << desperation;
-		value["desperate"] << desperate;
 		value["suggestedSearchPositions"] << suggestedSearchPositions;
 		value["suggestedSearchPositionsValid"] << suggestedSearchPositionValid;
 	}
@@ -100,8 +94,6 @@ public:
 		value["globalMostWisePlayerNumber"] >> globalMostWisePlayerNumber;
 		value["reason"] >> readNumber;
 		reason = static_cast<Reason>(readNumber);
-		value["desperation"] >> desperation;
-		value["desperate"] >> desperate;
 		value["suggestedSearchPositionsValid"] >> suggestedSearchPositionValid;
 		value["suggestedSearchPositions"] >> suggestedSearchPositions;
 	}

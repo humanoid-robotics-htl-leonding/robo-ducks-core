@@ -95,6 +95,11 @@ public:
     position = -calculateGlobalOrientation(position);
     return *this;
   }
+
+  Pose oriented(float newOrientation) const{
+  	return Pose(this->position, newOrientation);
+  }
+
   /**
    * @brief inverse computes the inverse but does not overwrite the existing object
    * @return a pose that behaves like the inverse

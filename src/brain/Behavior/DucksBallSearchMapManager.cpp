@@ -191,7 +191,7 @@ void DucksBallSearchMapManager::updateMap()
 		  ballSearchMap_->cellFromPosition(Vector2f(-fieldLength_/6*1., -fieldWidth_/4)).probability += 0.01;
 		  ballSearchMap_->cellFromPosition(Vector2f(-fieldLength_/6*2., -fieldWidth_/4)).probability += 0.01;
 		  ballSearchMap_->cellFromPosition(Vector2f(-fieldLength_/6*2., fieldWidth_/4)).probability += 0.01;
-		  nextGuessAllowedTime_ = cycleInfo_->startTime + 5000;
+		  nextGuessAllowedTime_ = cycleInfo_->startTime + 20000;
 	  }
   }
   if(teamBallModel_->found){

@@ -5,6 +5,7 @@ project(Brain)
 set(HEADERS
   print.h
   Behavior/ActionCommand.hpp
+  Behavior/DucksActionCommand.hpp
   Behavior/BehaviorModule.hpp
   Behavior/DuckBehaviorModule.hpp
   Behavior/BehaviorParameters.hpp
@@ -24,6 +25,7 @@ set(HEADERS
   Behavior/SetPositionProvider.hpp
   Behavior/StrikerActionProvider.hpp
   Behavior/DucksStrikerActionProvider.hpp
+  Behavior/DucksDesperationProvider.hpp
   Behavior/PenaltyStrikerActionProvider.hpp
   Behavior/SupportingPositionProvider.hpp
   Behavior/TimeToReachBallProvider.hpp
@@ -116,6 +118,7 @@ set(SOURCES
   Behavior/SetPositionProvider.cpp
   Behavior/StrikerActionProvider.cpp
   Behavior/DucksStrikerActionProvider.cpp
+  Behavior/DucksDesperationProvider.cpp
   Behavior/PenaltyStrikerActionProvider.cpp
   Behavior/SupportingPositionProvider.cpp
   Behavior/TimeToReachBallProvider.cpp

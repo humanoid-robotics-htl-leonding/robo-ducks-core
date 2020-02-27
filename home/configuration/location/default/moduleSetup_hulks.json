@@ -21,5 +21,7 @@
   "DucksBallSearchMapManager" : false,
   
   "PlayingRoleProvider" : true,
-  "DucksPlayingRoleProvider" : false
+  "DucksPlayingRoleProvider" : false,
+
+  "DucksDesperationProvider": false
 }
