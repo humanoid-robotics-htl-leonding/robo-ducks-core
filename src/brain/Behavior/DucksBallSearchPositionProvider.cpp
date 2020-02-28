@@ -33,6 +33,7 @@ DucksBallSearchPositionProvider::DucksBallSearchPositionProvider(const ModuleMan
 	  maxSideAngle_(*this, "maxSearchSideAngle", [this] { maxSideAngle_() *= TO_RAD; }),
 	  comfortableSideAngle_(*this, "comfortableSearchSideAngle", [this] { comfortableSideAngle_() *= TO_RAD; }),
       minComfortableProbability_(*this, "minComfortableProbability"),
+      minProbability_(*this, "minProbability"),
       maxComfortableUrgency_(*this, "maxComfortableUrgency"),
       maxNoTurnUrgency_(*this, "maxNoTurnUrgency"),
 	  searchPosition_(*this),
@@ -192,10 +193,10 @@ ProbCell const* DucksBallSearchPositionProvider::snackPositionToLookAt() {
         fieldSearchPositionIterator = hardSearchPositionIterator;
     }
 
-    if(!thisIsValid){
-        return oldSearchPosition_;
-    }else{
-        oldSearchPosition_ = (*fieldSearchPositionIterator);
-        return *fieldSearchPositionIterator;
-    }
+
+	if (thisIsValid && (*fieldSearchPositionIterator)->probability >= minProbability_()) {
+		//Then Accept the new position
+		oldSearchPosition_ = (*fieldSearchPositionIterator);
+	} // Else remain at the old position
+	return oldSearchPosition_;
 }
