@@ -11,6 +11,7 @@
 #include <Data/DucksBallPrediction.hpp>
 #include <Data/TeamBallModel.hpp>
 #include <Data/FieldDimensions.hpp>
+#include <Data/Desperation.hpp>
 
 class DucksBallPredictor : public Module<DucksBallPredictor, Brain>
 {
@@ -24,6 +25,7 @@ public:
 private:
 	const Dependency<TeamBallModel> teamBallModel_;
 	const Dependency<FieldDimensions> fieldDimensions_;
+	const Dependency<Desperation> desperation_;
 
 	Production<DucksBallPrediction> prediction_;
 
