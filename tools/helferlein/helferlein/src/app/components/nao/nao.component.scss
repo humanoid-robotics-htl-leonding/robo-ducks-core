@@ -56,18 +56,5 @@ $connection-form-height: 7.5%;
   display: grid;
   grid-template-rows: repeat(6, 1fr);
   grid-template-columns: repeat(10, 1fr);
-  gap: 5px;
-}
-
-.nao-element{
-  border-radius: 4px;
-  @include mat-elevation-transition;
-  @include mat-elevation(1);
-
-  background-color: grey;
-
-  &:hover{
-    @include mat-elevation(8);
-    background-color: green;
-  }
+  gap: 10px;
 }

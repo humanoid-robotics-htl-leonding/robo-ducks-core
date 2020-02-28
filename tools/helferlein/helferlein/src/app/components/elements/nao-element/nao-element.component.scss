@@ -1,5 +1,6 @@
 @import '~@angular/material/theming';
 
+$header-height: 10%;
 
 %nao-element{
   border-radius: 4px;
@@ -26,4 +27,36 @@
 
 .centered-button{
 
+}
+
+.element-portal-container{
+  width: 100%;
+  height: 100%;
+  // display: grid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.element-grid{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.element-portal{
+}
+
+.element-header{
+  height: 15px;
+}
+
+.close-element-button{
+  float: right;
+  padding-right: 4px;
+  width: 15px;
+  height: 15px;
+  box-sizing: content-box;
+  cursor: pointer;
 }
