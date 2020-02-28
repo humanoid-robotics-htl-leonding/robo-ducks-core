@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
+import { NaoConnector } from 'src/app/model/nao-connector';
+import { CONTAINER_DATA } from 'src/app/app.component';
 
 @Component({
   selector: 'app-nao-text',
@@ -7,9 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NaoTextComponent implements OnInit {
 
+  @Inject(CONTAINER_DATA) public connector: NaoConnector;
+
   constructor() { }
 
   ngOnInit(): void {
+
   }
 
 }

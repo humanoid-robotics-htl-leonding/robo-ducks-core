@@ -5,8 +5,7 @@ import { NaoTextComponent } from '../nao-text/nao-text.component';
 import { NaoMapComponent } from '../nao-map/nao-map.component';
 import { NaoConfigComponent } from '../nao-config/nao-config.component';
 import { NaoConnector } from 'src/app/model/nao-connector';
-
-export const CONTAINER_DATA = new InjectionToken<{}>('CONTAINER_DATA');
+import { CONTAINER_DATA } from 'src/app/app.component';
 
 @Component({
   selector: 'nao-element',

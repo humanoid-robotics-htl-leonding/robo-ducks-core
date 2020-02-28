@@ -1,1 +1,3 @@
-<p>nao-text works!</p>
+<div *ngIf="connector && connector.messages.length > 0">
+  {{connector.messages[connector.messages.length-1]}}
+</div>

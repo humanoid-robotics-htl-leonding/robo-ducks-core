@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, InjectionToken } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -8,3 +8,5 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'helferlein';
 }
+
+export const CONTAINER_DATA = new InjectionToken<{}>('CONTAINER_DATA');

@@ -3,13 +3,12 @@ import { DebugMessage } from './debug-message';
 import { DebugMessageType } from './message-type.enum';
 import { Sink } from 'ts-binary';
 import { NaoService } from '../service/nao.service';
-import { ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectorRef, Output, EventEmitter, Injectable } from '@angular/core';
 declare var electron: any;
 const net = electron.remote.require('net');
 
 export class NaoConnector {
 
-  checksum = 0;
   address = '';
   port = 12441;
   status = 'New';
