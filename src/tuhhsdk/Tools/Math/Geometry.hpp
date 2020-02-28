@@ -4,6 +4,7 @@
 #include "ConvexPolygon.hpp"
 #include "Line.hpp"
 #include "Plane.hpp"
+#include "Rectangle.hpp"
 
 namespace Geometry
 {
@@ -130,6 +131,37 @@ namespace Geometry
     return true;
   }
 
+  /**
+   * @author Erik Mayrhofer
+   * @tparam T
+   * @param line1Point1
+   * @param line1Point2
+   * @param line2Point1
+   * @param line2Point2
+   * @param intersection
+   * @return If the lines intersect
+   */
+  template<typename T>
+  bool getIntersectionWithLineSegment(const Vector2<T>& line1Point1, const Vector2<T>& line1Point2,
+									  const Vector2<T>& line2Point1, const Vector2<T>& line2Point2,
+									  Vector2<T>& intersection)
+  {
+	if(!getIntersection(line1Point1, line1Point2, line2Point1, line2Point2, intersection)){
+		return false;
+	}
+	return (
+			intersection.x() > std::min<T>(line1Point1.x(), line1Point2.x()) &&
+			intersection.x() < std::max<T>(line1Point1.x(), line1Point2.x()) &&
+			intersection.x() > std::min<T>(line2Point1.x(), line2Point2.x()) &&
+			intersection.x() < std::max<T>(line2Point1.x(), line2Point2.x())
+		);
+  }
+
+  template<typename T>
+  bool getIntersectionWithLineSegment(const Line<T>& line1, const Line<T>& line2, Vector2<T>& intersection){
+	return getIntersectionWithLineSegment(line1.p1, line1.p2, line2.p1, line2.p2, intersection);
+  }
+
     template <typename T>
     bool getIntersectionWithVerticalLine(const Vector2<T>& linePoint1, const Vector2<T>& linePoint2,
                          T verticalLineX,
@@ -168,6 +200,42 @@ namespace Geometry
   {
     return getIntersection(line1.p1, line1.p2, line2.p1, line2.p2, intersection);
   }
+
+
+	/**
+	 * Intersects a Rectangle and a Line
+	 * @tparam T
+	 * @param rectangle
+	 * @param line
+	 * @param outIntersectionOne
+	 * @param outIntersectionTwo
+	 * @return The number of Intersections
+	 */
+	template<typename T>
+	int getIntersection(const Rectangle<T>& rectangle, const Line<T>& line, Vector2<T>& outIntersectionOne, Vector2<T>& outIntersectionTwo){
+		Line<T> lines[] = {
+			Line<T>(rectangle.topLeft, Vector2<T>(rectangle.bottomRight.x(), rectangle.topLeft.y())),
+			Line<T>(Vector2<T>(rectangle.topLeft.y(), rectangle.bottomRight.x()), rectangle.bottomRight),
+			Line<T>(rectangle.bottomRight, Vector2<T>(rectangle.topLeft.x(), rectangle.bottomRight.y())),
+			Line<T>(Vector2<T>(rectangle.topLeft.x(), rectangle.bottomRight.y()), rectangle.topLeft)
+		};
+
+		int intersections = 0;
+		Vector2<T> intersection = {0, 0};
+		for(int i = 0; i < 4 && intersections < 2; i++){
+			if(getIntersectionWithLineSegment(lines[i], line, intersection)){
+				if(intersections == 0){
+					outIntersectionOne.x() = intersection.x();
+					outIntersectionOne.y() = intersection.y();
+				}else{
+					outIntersectionTwo.x() = intersection.x();
+					outIntersectionTwo.y() = intersection.y();
+				}
+				intersections += 1;
+			}
+		}
+		return intersections;
+	}
 
   /**
    * @brief getSquaredLineDistance returns the shortest distance between a point and an infinite

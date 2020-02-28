@@ -76,6 +76,7 @@ set(TUHHSDK_HEADERS
   Data/FieldBorder.hpp
   Data/FieldColor.hpp
   Data/FieldDimensions.hpp
+  Data/FieldZones.hpp
   Data/FilteredSegments.hpp
   Data/FSRSensorData.hpp
   Data/GameControllerState.hpp

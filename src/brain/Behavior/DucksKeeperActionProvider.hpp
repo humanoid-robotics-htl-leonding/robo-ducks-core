@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Data/PlayerConfiguration.hpp>
+#include <Data/FieldZones.hpp>
 #include "Data/BallState.hpp"
 #include "Data/CycleInfo.hpp"
 #include "Data/FieldDimensions.hpp"
@@ -41,6 +42,7 @@ private:
     const Parameter<int> segmentCount_;
     const Parameter<float> keeperBallKickDistance_;
 
+    const Dependency<FieldZones> fieldZones_;
     /// cycle info needed to check if team mate is aleady near the ball
     const Dependency<CycleInfo> cycleInfo_;
     /// a reference to the ball state

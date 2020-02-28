@@ -21,6 +21,7 @@ DucksKeeperActionProvider::DucksKeeperActionProvider(const ModuleManagerInterfac
           goalShadow_.resize(segmentCount_());
       })
       , keeperBallKickDistance_(*this, "keeperBallKickDistance", []{})
+      , fieldZones_(*this)
       , cycleInfo_(*this)
       , ballState_(*this)
       , fieldDimensions_(*this)
@@ -166,10 +167,12 @@ void DucksKeeperActionProvider::calculateBestKeeperPositionFor(const Vector2f &s
 
     Vector2f proposedPosition = ballToGoalieScaled + teamBallModel_->position;
 
-    if(proposedPosition.x() > keeperMaxX_()){
-        Geometry::getIntersectionWithVerticalLine(centerLine, keeperMaxX_(), proposedPosition);
-    }else if(proposedPosition.x() < keeperMinX_()){
-        Geometry::getIntersectionWithVerticalLine(centerLine, keeperMinX_(), proposedPosition);
+    Vector2f truePosition = {0, 0};
+    Vector2f nope = {0, 0};
+    int intersections = Geometry::getIntersection(Rectangle<float>(fieldZones_->keeperFrom, fieldZones_->keeperTo), Line<float>(proposedPosition, Vector2f(fieldZones_->keeperFrom.x()+0.01, segmentMiddlePoint.y())), truePosition, nope);
+    if(intersections > 0){
+    	assert(intersections == 1);
+    	proposedPosition = truePosition;
     }
 
     proposedPositions_.emplace_back(proposedPosition, segmentWidth);
