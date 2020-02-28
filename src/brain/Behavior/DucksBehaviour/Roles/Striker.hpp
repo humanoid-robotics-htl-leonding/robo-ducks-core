@@ -15,7 +15,7 @@ DucksActionCommand roleStriker(const DuckDataSet &d)
             case DucksStrikerAction::Action::KICK_INTO_GOAL:
                 return kickBall(d, d.strikerAction);
             case DucksStrikerAction::Action::WAITING_FOR_BALL:
-                return walkTo(d.strikerAction.kickPose, d /*,WalkMode::DRIBBLE*/);
+                return walkTo(d.strikerAction.kickPose, d);
             case DucksStrikerAction::Action::DRIBBLE_TO_POS:
                 return walkTo(d.strikerAction.kickPose, d, WalkMode::DRIBBLE);
             default:
