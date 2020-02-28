@@ -7,6 +7,7 @@ DucksBallPredictor::DucksBallPredictor(const ModuleManagerInterface &manager)
 	: Module(manager)
 	, teamBallModel_(*this)
 	, fieldDimensions_(*this)
+	, desperation_(*this)
 
 	, prediction_(*this)
 
@@ -61,7 +62,8 @@ void DucksBallPredictor::forecast() {
 
 	std::chrono::steady_clock::time_point cursor = thisCycle_;
 
-	float certainty = 1;
+	float certainty = 1-(desperation_->lookAtBallUrgency);
+	certainty *= certainty;
 
 	prediction_->forecast[0].position = thisCycleModel_.position_;
 	prediction_->forecast[0].velocity = thisCycleModel_.velocity_;
