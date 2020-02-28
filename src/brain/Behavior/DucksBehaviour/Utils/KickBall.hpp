@@ -4,7 +4,7 @@
  * Automatically walks behind ball and tries to kick into the desired Position
  * @author Simon Holzapfel
  * @param d
- * @param targetPos Where to kick to
+ * @param targetPos Where to kick to (absolute coordinates)
  * @return
  */
 DucksActionCommand kick(const DucksDataSet& d, const Vector2f& targetPos){

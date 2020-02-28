@@ -26,7 +26,7 @@ DucksActionCommand roleDefender(const DucksDataSet &d)
 				mode = WalkMode::DIRECT_WITH_ORIENTATION;
 				return walkTo(defenderAction.targetPose, d, mode);
 			case DucksDefenderAction::Type::KICK:
-				return DucksActionCommand::kick(d.ballState.position, Vector2f(1, 0));
+				return kick(d, defenderAction.targetPose.position);
 			default:
 				return DucksActionCommand::stand().invalidate();
 		}

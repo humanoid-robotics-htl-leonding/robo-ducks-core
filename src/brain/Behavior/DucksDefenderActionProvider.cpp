@@ -48,7 +48,6 @@ void DucksDefenderActionProvider::cycle()
 		findKeeper(keeper);
 
 		if (fieldZones_->isInsideDefenderDribble(teamBallModel_->position) && !(fieldZones_->isInsideKeeper(teamBallModel_->position) && keeper != nullptr)) {
-			std::cerr << "drib" << std::endl;
 			dribble();
 		} else if (fieldZones_->isInsideDefenderKick(teamBallModel_->position)) {
 			kick();
@@ -59,15 +58,11 @@ void DucksDefenderActionProvider::cycle()
 }
 
 void DucksDefenderActionProvider::defend() {
-	auto fieldLengthHalf = fieldDimensions_->fieldLength / 2.;
-	auto fieldWidthHalf = fieldDimensions_->fieldWidth / 2.;
-	auto goalWidthHalf = fieldDimensions_->goalInnerWidth / 2. + fieldDimensions_->goalPostDiameter / 2.;
+	float fieldLengthHalf = fieldDimensions_->fieldLength / 2.;
+	float fieldWidthHalf = fieldDimensions_->fieldWidth / 2.;
+	float goalWidthHalf = fieldDimensions_->goalInnerWidth / 2. + fieldDimensions_->goalPostDiameter / 2.;
 
-	auto kickFromX = fieldZones_->defenderKickFrom.x();
-
-	auto defenderX = fieldZones_->isInsideKeeper(teamBallModel_->position) ?
-					 kickFromX :
-					std::min<float>(teamBallModel_->position.x() - 0.5, kickFromX);
+	auto defenderX = fieldZones_->defenderKickFrom.x();
 
 	auto leftDangerZoneBorderEnd = Vector2f(defenderX, fieldWidthHalf);
 	auto leftGoalPost = Vector2f(-fieldLengthHalf, goalWidthHalf);
@@ -88,12 +83,14 @@ void DucksDefenderActionProvider::defend() {
 
 	if (otherDefender != nullptr) {
 		focal.y() = otherDefender->pose.position.y() < robotPosition_->pose.position.y() ?
-				doubleDefenderFocalY_() :
-				-doubleDefenderFocalY_();
+					doubleDefenderFocalY_() :
+					-doubleDefenderFocalY_();
 	} else {
 		focal.y() = worldState_->ballInPenaltyArea ?
-				doubleDefenderFocalY_() :
-				0;
+						teamBallModel_->position.y() < robotPosition_->pose.position.y() ?
+						doubleDefenderFocalY_() :
+						-doubleDefenderFocalY_() :
+					0;
 	}
 
 	auto ballToFocal = Line<float>(teamBallModel_->position, focal);
@@ -102,6 +99,10 @@ void DucksDefenderActionProvider::defend() {
 	Geometry::getIntersection(ballToFocal, defenderXLine, suggestedIntersectPosition);
 
 	auto ballToSuggested = teamBallModel_->position - suggestedIntersectPosition;
+
+	suggestedIntersectPosition.y() = std::max(
+			-fieldLengthHalf,
+			std::min(fieldLengthHalf, suggestedIntersectPosition.y()));
 
 	defenderAction_->targetPose =
 			Pose(suggestedIntersectPosition, std::atan2(ballToSuggested.y(), ballToSuggested.x()));
@@ -128,35 +129,21 @@ void DucksDefenderActionProvider::kick() {
 	const TeamPlayer *otherDefender = nullptr;
 	findOtherDefender(otherDefender);
 
-	auto targetX = teamBallModel_->position.x() - 0.20;
-	auto targetY = teamBallModel_->position.y() <= robotPosition_->pose.position.y() ?
-				   teamBallModel_->position.y() + 0.07 :
-				   teamBallModel_->position.y() - 0.07;
-	defenderAction_->targetPose = Pose(targetX, targetY);
-
-	Vector2f moveDist = (defenderAction_->targetPose.position - robotPosition_->pose.position);
+	Vector2f ballDist = teamBallModel_->position - robotPosition_->pose.position;
 
 	if (otherDefender != nullptr) {
-		auto otherTargetY = teamBallModel_->position.y() <= otherDefender->pose.position.y() ?
-						   teamBallModel_->position.y() + 0.07 :
-						   teamBallModel_->position.y() - 0.07;
-		auto otherTarget = Vector2f(targetX, otherTargetY);
-		auto otherMoveDist = (otherTarget - otherDefender->pose.position);
-		if (otherMoveDist.norm() < moveDist.norm()) {
+		auto otherBallDist = teamBallModel_->position - otherDefender->pose.position;
+		if (otherBallDist.norm() < otherBallDist.norm()) {
 			defend();
 			return;
 		}
 	}
 
-	Vector2f scaledMoveDist = moveDist.cwiseProduct(Vector2f(1.0, 0.5));
+	float urgency = ballDist.norm() / (fieldZones_->defenderKickFrom - fieldZones_->defenderKickTo).norm();
 
-	float urgency = moveDist.squaredNorm() / (fieldZones_->defenderKickFrom - fieldZones_->defenderKickTo).squaredNorm();
+	defenderAction_->type = DucksDefenderAction::Type::KICK;
 
-	if (scaledMoveDist.norm() < kickThreshold_()) {
-		defenderAction_->type = DucksDefenderAction::Type::KICK;
-	} else {
-		defenderAction_->type = DucksDefenderAction::Type::WALK;
-	}
+	defenderAction_->targetPose = Pose(0, robotPosition_->pose.position.y());
 
 	if (desperation_->lookAtBallUrgency > urgency) {
 		defenderAction_->valid = false;
