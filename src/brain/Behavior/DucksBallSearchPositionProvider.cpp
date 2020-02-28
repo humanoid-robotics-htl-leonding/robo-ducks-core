@@ -33,6 +33,7 @@ DucksBallSearchPositionProvider::DucksBallSearchPositionProvider(const ModuleMan
 	  maxSideAngle_(*this, "maxSearchSideAngle", [this] { maxSideAngle_() *= TO_RAD; }),
 	  comfortableSideAngle_(*this, "comfortableSearchSideAngle", [this] { comfortableSideAngle_() *= TO_RAD; }),
       minComfortableProbability_(*this, "minComfortableProbability"),
+      minProbability_(*this, "minProbability"),
       maxComfortableUrgency_(*this, "maxComfortableUrgency"),
       maxNoTurnUrgency_(*this, "maxNoTurnUrgency"),
 	  searchPosition_(*this),
@@ -54,15 +55,15 @@ void DucksBallSearchPositionProvider::cycle()
 	debug().update(mount_+".testPose", Pose(0, 0, 0));
 	//1. === Implement "Look At Ball" (Erik Mayrhofer)
 
-	// If we see the ball on our own, look at it.
 	if (ballState_->age < 1.0 && ballState_->confident) {
+		//== CASE 1 If we see the ball on our own, look at it.
 		auto ballPos = ballState_->position + ballState_->velocity*cycleInfo_->cycleTime;
 		searchPosition_->searchPosition = robotPosition_->robotToField(ballPos);
 		searchPosition_->ownSearchPoseValid = true;
 		searchPosition_->reason = DuckBallSearchPosition::Reason::OWN_CAMERA;
 		standingOnCooldown_ = 0;
-		//If we don't see the ball on our own, look at where our team thinks the ball is. Maybe we can find it there.
 	}else if(teamBallModel_->found && teamBallModel_->insideField){
+		//== CASE 2 If we don't see the ball on our own, look at where our team thinks the ball is. Maybe we can find it there.
 		standingOnCooldown_ = 0;
 		auto ballPos = teamBallModel_->position + teamBallModel_->velocity*cycleInfo_->cycleTime;
 		searchPosition_->searchPosition = ballPos;
@@ -73,12 +74,13 @@ void DucksBallSearchPositionProvider::cycle()
             searchPosition_->ownSearchPoseValid = false;
         }
 	}
-	//3. == Scan Field
 	else{
-
+		//3. == Scan Field
         //3.1 Get a position to look at
         auto probCell = snackPositionToLookAt();
         if(probCell != nullptr){
+        	//== CASE 3 We have a valid position on the ballsearchmap to look at.
+
             //3.2 Look at snacked position
             searchPosition_->searchPosition = probCell->position;
             searchPosition_->reason = DuckBallSearchPosition::Reason::SEARCHING;
@@ -96,9 +98,10 @@ void DucksBallSearchPositionProvider::cycle()
                 searchPosition_->reason = DuckBallSearchPosition::Reason::SEARCH_WALK;
             }
         }
+        //TODO CASE 4 Look Around
 	}
 
-	//2. === If ball rolls to the side, then turn
+	//2. === If ball rolls to the side, then turn (if walking... so that if we are already walking, we dont look at death)
 	if(searchPosition_->reason != DuckBallSearchPosition::Reason::SEARCH_WALK){
 		auto localSearchPosition = robotPosition_->fieldToRobot(searchPosition_->searchPosition);
 		auto angleToSearchPosition = std::atan2(localSearchPosition.y(), localSearchPosition.x());
@@ -192,10 +195,10 @@ ProbCell const* DucksBallSearchPositionProvider::snackPositionToLookAt() {
         fieldSearchPositionIterator = hardSearchPositionIterator;
     }
 
-    if(!thisIsValid){
-        return oldSearchPosition_;
-    }else{
-        oldSearchPosition_ = (*fieldSearchPositionIterator);
-        return *fieldSearchPositionIterator;
-    }
+
+	if (thisIsValid && (*fieldSearchPositionIterator)->probability >= minProbability_()) {
+		//Then Accept the new position
+		oldSearchPosition_ = (*fieldSearchPositionIterator);
+	} // Else remain at the old position
+	return oldSearchPosition_;
 }

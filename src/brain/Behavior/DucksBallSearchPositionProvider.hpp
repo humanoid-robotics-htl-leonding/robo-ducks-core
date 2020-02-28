@@ -72,8 +72,10 @@ private:
 	Parameter<float> maxSideAngle_;
 	// Maxmum angle that is comfortable to look at (E.g without obstructing bottom camera with shoulders)
 	Parameter<float> comfortableSideAngle_;
-    // Minimum Probability that a comfortable cell must have to still be accepted
+    // Minimum Probability that a comfortable cell must have to still be accepted (if no comfortable cells over this value are found, then switch to uncomfortable cells)
 	Parameter<float> minComfortableProbability_;
+	// Maximum value of lookAtBallUrgency to allow comfortable decisions
+	Parameter<float> minProbability_;
 	// Maximum value of lookAtBallUrgency to allow comfortable decisions
 	Parameter<float> maxComfortableUrgency_;
 	// Maximum value of lookAtBallUrgency to allow decisions without turning
