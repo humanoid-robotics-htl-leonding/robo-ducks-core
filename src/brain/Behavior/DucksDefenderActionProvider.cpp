@@ -47,7 +47,7 @@ void DucksDefenderActionProvider::cycle()
 		const TeamPlayer *keeper = nullptr;
 		findKeeper(keeper);
 
-		if (fieldZones_->isInsideDefenderDribble(teamBallModel_->position) && !(worldState_->ballInPenaltyArea && keeper != nullptr)) {
+		if (fieldZones_->isInsideDefenderDribble(teamBallModel_->position) && !(fieldZones_->isInsideKeeper(teamBallModel_->position) && keeper != nullptr)) {
 			std::cerr << "drib" << std::endl;
 			dribble();
 		} else if (fieldZones_->isInsideDefenderKick(teamBallModel_->position)) {
@@ -65,7 +65,7 @@ void DucksDefenderActionProvider::defend() {
 
 	auto kickFromX = fieldZones_->defenderKickFrom.x();
 
-	auto defenderX = worldState_->ballInPenaltyArea ?
+	auto defenderX = fieldZones_->isInsideKeeper(teamBallModel_->position) ?
 					 kickFromX :
 					std::min<float>(teamBallModel_->position.x() - 0.5, kickFromX);
 

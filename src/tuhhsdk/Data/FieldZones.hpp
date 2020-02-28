@@ -19,6 +19,10 @@ public:
 	Vector2f defenderDribbleFrom = {0, 0};
 	/// the to coordinates of the defender dribble zone
 	Vector2f defenderDribbleTo = {0, 0};
+
+	Vector2f keeperFrom = {0, 0};
+	Vector2f keeperTo = {0, 0};
+
 	/**
 	 * @brief reset does nothing
 	 */
@@ -52,6 +56,16 @@ public:
 				(position.y() <= defenderDribbleFrom.y() && position.y() >= defenderDribbleTo.y()));
 	}
 
+	bool isInsideKeeper(const Vector2f& position) const
+	{
+		return ((position.x() >= keeperFrom.x() && position.x() <= keeperTo.x()) ||
+				(position.x() <= keeperFrom.x() && position.x() >= keeperTo.x())) &&
+			   ((position.y() >= keeperFrom.y() && position.y() <= keeperTo.y()) ||
+				(position.y() <= keeperFrom.y() && position.y() >= keeperTo.y()));
+	}
+
+
+
 	virtual void toValue(Uni::Value& value) const
 	{
 		value = Uni::Value(Uni::ValueType::OBJECT);
@@ -59,6 +73,8 @@ public:
 		value["defenderKickTo"] << defenderKickTo;
 		value["defenderDribbleFrom"] << defenderDribbleFrom;
 		value["defenderDribbleTo"] << defenderDribbleTo;
+		value["keeperFrom"] << keeperFrom;
+		value["keeperTo"] << keeperTo;
 	}
 
 	virtual void fromValue(const Uni::Value& value)
@@ -67,6 +83,8 @@ public:
 		value["defenderKickTo"] >> defenderKickTo;
 		value["defenderDribbleFrom"] >> defenderDribbleFrom;
 		value["defenderDribbleTo"] >> defenderDribbleTo;
+		value["keeperFrom"] >> keeperFrom;
+		value["keeperTo"] >> keeperTo;
 	}
 
 	/**
@@ -87,6 +105,11 @@ public:
 
 		group["from"] >> defenderDribbleFrom;
 		group["to"] >> defenderDribbleTo;
+
+		group = config.get("tuhhSDK.FieldZones", "keeper");
+
+		group["from"] >> keeperFrom;
+		group["to"] >> keeperTo;
 	}
 };
 
