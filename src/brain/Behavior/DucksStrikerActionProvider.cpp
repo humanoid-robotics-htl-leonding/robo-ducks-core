@@ -27,7 +27,7 @@ void DucksStrikerActionProvider::cycle()
     auto absoluteBallPosition = teamBallModel_->position;
     strikerAction_->valid = true;
 
-    if (robotPosition_->pose.position.x() > 0) {
+    if (robotPosition_->pose.position.x() >= 0) { // is in enemy half
         if (absoluteBallPosition.x() >= 0 && teamBallModel_->found) {
             Vector2f ball = teamBallModel_->position;
             Vector2f goal = Vector2f(fieldDimensions_->fieldLength / 2, 0);
@@ -75,30 +75,31 @@ void DucksStrikerActionProvider::cycle()
             isSurrounded();
         }
     }
-    else if (robotPosition_->pose.position.x() < 0) {
+    else { // is in own half
         if (ballState_->found) {
             Vector2f robotToBall = teamBallModel_->position - robotPosition_->pose.position;
             float rotationDifference = robotPosition_->pose.orientation - std::atan2(robotToBall.y(), robotToBall.x());
             isSurrounded();
 
-            if (!(robotToBall.norm() <= 0.5 && rotationDifference <= 0.5 && ballState_->found)) {
+            const int distanceToChangeAction = 1;
+            bool isInSecond = false;
+            bool isInFirst = false;
+            if (!(robotToBall.norm() <= distanceToChangeAction && rotationDifference <= 0.5)) { // robotToBall.norm() >  1 || rotationDifference > 0.5
                 strikerAction_->kickPose = Pose(teamBallModel_->position, std::atan2(robotToBall.y(), robotToBall.x()));
                 strikerAction_->action = DucksStrikerAction::Action::WALK_TO_POS;
                 isSurrounded();
+                isInFirst = true;
+            } else {
+//            if (robotToBall.norm() <= distanceToChangeAction && rotationDifference <= 0.5) {
+                //std::cout << "dribble to Goal" << std::endl;
+                strikerAction_->action = DucksStrikerAction::Action::DRIBBLE_TO_POS;
+                // Vector2f robotToGoal = Vector2f(fieldDimensions_->fieldLength / 2, 0) - robotPosition_->pose.position;
+                Vector2f goalPos = Vector2f(fieldDimensions_->fieldLength / 2, 0);
+                strikerAction_->kickPose = Pose(goalPos, 0);
+                isInSecond = true;
             }
-            else if (robotToBall.norm() <= 0.5 && rotationDifference <= 0.5 && ballState_->found) {
-                if (robotToBall.norm() <= 0.2 && rotationDifference <= 0.5 && ballState_->found) {
-                    //std::cout << "dribble to Goal" << std::endl;
-                    strikerAction_->action = DucksStrikerAction::Action::DRIBBLE_TO_POS;
-                    Vector2f
-                        robotToGoal = Vector2f(fieldDimensions_->fieldLength / 2, 0) - robotPosition_->pose.position;
-                    Vector2f goalPos = Vector2f(fieldDimensions_->fieldLength / 2, 0);
-                    strikerAction_->kickPose = Pose(goalPos, std::atan2(robotToGoal.y(), robotToGoal.x()));
-                }
-                else {
-                    //std::cout << "nope" << std::endl;
-                }
-            }
+            if (isInFirst && isInSecond)
+                std::cout << "Hui in olle" << std::endl;
         }
     }
 }
