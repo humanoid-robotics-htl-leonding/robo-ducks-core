@@ -15,10 +15,6 @@ DucksDefenderActionProvider::DucksDefenderActionProvider(const ModuleManagerInte
 	: Module(manager),
 	  doubleDefenderFocalY_(*this, "doubleDefenderFocalY", []
 	  {}),
-	  kickZoneX_(*this, "kickZoneX", []
-	  {}),
-	  dribbleZoneX_(*this, "dribbleZoneX", []
-	  {}),
 	  defendThreshold_(*this, "defendThreshold", []
 	  {}),
 	  kickThreshold_(*this, "kickThreshold", []
@@ -26,6 +22,7 @@ DucksDefenderActionProvider::DucksDefenderActionProvider(const ModuleManagerInte
 	  dribbleThreshold_(*this, "dribbleThreshold", []
 	  {}),
 	  fieldDimensions_(*this),
+	  fieldZones_(*this),
 	  gameControllerState_(*this),
 	  obstacleData_(*this),
 	  playingRoles_(*this),
@@ -50,12 +47,13 @@ void DucksDefenderActionProvider::cycle()
 		const TeamPlayer *keeper = nullptr;
 		findKeeper(keeper);
 
-		if (teamBallModel_->position.x() >= kickZoneX_() || (worldState_->ballInPenaltyArea && keeper != nullptr)) {
-			defend();
-		} else if (teamBallModel_->position.x() >= dribbleZoneX_()) {
+		if (fieldZones_->isInsideDefenderDribble(teamBallModel_->position) && !(worldState_->ballInPenaltyArea && keeper != nullptr)) {
+			std::cerr << "drib" << std::endl;
+			dribble();
+		} else if (fieldZones_->isInsideDefenderKick(teamBallModel_->position)) {
 			kick();
 		} else {
-			dribble();
+			defend();
 		}
 	}
 }
@@ -65,9 +63,11 @@ void DucksDefenderActionProvider::defend() {
 	auto fieldWidthHalf = fieldDimensions_->fieldWidth / 2.;
 	auto goalWidthHalf = fieldDimensions_->goalInnerWidth / 2. + fieldDimensions_->goalPostDiameter / 2.;
 
+	auto kickFromX = fieldZones_->defenderKickFrom.x();
+
 	auto defenderX = worldState_->ballInPenaltyArea ?
-			kickZoneX_() :
-			std::min<float>(teamBallModel_->position.x() - 0.5, kickZoneX_());
+					 kickFromX :
+					std::min<float>(teamBallModel_->position.x() - 0.5, kickFromX);
 
 	auto leftDangerZoneBorderEnd = Vector2f(defenderX, fieldWidthHalf);
 	auto leftGoalPost = Vector2f(-fieldLengthHalf, goalWidthHalf);
@@ -150,9 +150,7 @@ void DucksDefenderActionProvider::kick() {
 
 	Vector2f scaledMoveDist = moveDist.cwiseProduct(Vector2f(1.0, 0.5));
 
-	float urgency = moveDist.squaredNorm() /
-			  (fieldDimensions_->fieldWidth * fieldDimensions_->fieldWidth +
-					  (kickZoneX_() - dribbleZoneX_()) * (kickZoneX_() - dribbleZoneX_()));
+	float urgency = moveDist.squaredNorm() / (fieldZones_->defenderKickFrom - fieldZones_->defenderKickTo).squaredNorm();
 
 	if (scaledMoveDist.norm() < kickThreshold_()) {
 		defenderAction_->type = DucksDefenderAction::Type::KICK;
