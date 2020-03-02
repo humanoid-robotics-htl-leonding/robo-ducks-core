@@ -82,7 +82,7 @@ private:
 	const Dependency<PenaltyKeeperAction> penaltyKeeperAction_;
 	const Dependency<CycleInfo> cycleInfo_;
 	const Dependency<SetPosition> setPosition_;
-	const Dependency<DucksDefendingPosition> defendingPosition_;
+	const Dependency<DucksDefenderAction> defendingPosition_;
 	const Dependency<BishopPosition> bishopPosition_;
 	const Dependency<SupportingPosition> supportingPosition_;
 	const Dependency<ReplacementKeeperAction> replacementKeeperAction_;

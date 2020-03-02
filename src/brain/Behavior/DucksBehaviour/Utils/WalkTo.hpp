@@ -3,7 +3,7 @@
 //
 #pragma once
 
-DucksActionCommand walkTo(const Pose &fieldPose, const DuckDataSet &d, WalkMode mode = WalkMode::DIRECT)
+DucksActionCommand walkTo(const Pose &fieldPose, const DuckDataSet &d, const WalkMode mode = WalkMode::DIRECT)
 {
 	auto localPose = d.robotPosition.fieldToRobot(fieldPose);
 	if (localPose.position.norm() > 0.05 || std::abs(localPose.orientation) > 5*TO_RAD) { //todo HYSCHTEREESSCHHEEE
