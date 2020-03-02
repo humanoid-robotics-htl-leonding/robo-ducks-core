@@ -77,7 +77,7 @@ void SensorFusion::updateGyroBias(const Vector3d& extGyro, const Vector3d& extAc
 
   if (steady_state)
   {
-    gyro_bias_ = gyro_bias_alpha_() * (extGyro - gyro_bias_);
+    gyro_bias_ += gyro_bias_alpha_() * (extGyro - gyro_bias_);
   }
 
   gyro_prev_ = extGyro;
