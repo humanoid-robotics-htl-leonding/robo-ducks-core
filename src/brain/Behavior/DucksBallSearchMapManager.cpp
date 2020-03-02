@@ -93,7 +93,7 @@ void DucksBallSearchMapManager::updateMap()
     integrateRobotKnowledge(*player);
   }
   for(const auto& i : ballPrediction_->forecast){
-	  ballSearchMap_->cellFromPosition(i.position).probability += 0.01f*i.certainty;
+	  ballSearchMap_->cellFromPosition(i.position).probability += 0.001f*i.certainty;
   }
 
   const auto rows = static_cast<uint8_t>(ballSearchMap_->rowsCount_);
