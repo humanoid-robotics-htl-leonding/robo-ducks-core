@@ -6,7 +6,7 @@
 DucksActionCommand walkTo(const Pose &fieldPose, const DuckDataSet &d, const WalkMode mode = WalkMode::DIRECT)
 {
 	auto localPose = d.robotPosition.fieldToRobot(fieldPose);
-	if (localPose.position.norm() > 0.05 || std::abs(localPose.orientation) > 5*TO_RAD) { //todo HYSCHTEREESSCHHEEE
+	if (!d.robotPosition.pose.isNear(fieldPose)) { //todo HYSCHTEREESSCHHEEE
 		return DucksActionCommand::walk(localPose, mode, Velocity(1.0, 1.0, true));
 	}
 	else {
