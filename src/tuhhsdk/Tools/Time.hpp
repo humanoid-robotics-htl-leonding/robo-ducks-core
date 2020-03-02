@@ -37,6 +37,12 @@ static inline std::uint64_t getThreadTime()
 class TimePoint
 {
 public:
+	template <typename Clock, typename Duration>
+	static TimePoint from_std_time_point(std::chrono::time_point<Clock, Duration> point){
+		uint64_t epoch_time = std::chrono::duration_cast<std::chrono::duration<uint64_t, std::chrono::milliseconds::period>>(point.time_since_epoch()).count();
+		return TimePoint(epoch_time - TimePoint::getBaseTime());
+	}
+
     /**
      * @brief Creates a TimePoint at time "time", assumes "time" to be time since boot in ms.
      * @param time the time in ms

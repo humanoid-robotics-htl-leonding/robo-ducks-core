@@ -26,6 +26,7 @@ DucksBallSearchMapManager::DucksBallSearchMapManager(const ModuleManagerInterfac
   , robotPosition_(*this)
   , teamPlayers_(*this)
   , teamBallModel_(*this)
+  , ballPrediction_(*this)
   , ballSearchMap_(*this)
   , fieldWidth_(fieldDimensions_->fieldWidth)
   , fieldLength_(fieldDimensions_->fieldLength)
@@ -90,6 +91,9 @@ void DucksBallSearchMapManager::updateMap()
   for (const auto& player : allPlayers_)
   {
     integrateRobotKnowledge(*player);
+  }
+  for(const auto& i : ballPrediction_->forecast){
+	  ballSearchMap_->cellFromPosition(i.position).probability += 0.01f*i.certainty;
   }
 
   const auto rows = static_cast<uint8_t>(ballSearchMap_->rowsCount_);
@@ -242,10 +246,14 @@ void DucksBallSearchMapManager::integrateRobotKnowledge(const TeamPlayer& player
   // Vote cell up if there is a ball in it.
   if (ballAge < maxBallAge_())
   {
-    ProbCell& cellWithBall = ballSearchMap_->cellFromPosition(player.pose * player.ballPosition);
-    cellWithBall.probability =
-        std::max(minProbOnUpvote_(), cellWithBall.probability * confidentBallMultiplier_());
+  	ProbCell& cellWithBall = ballSearchMap_->cellFromPosition(player.pose * player.ballPosition);
+	cellWithBall.probability = std::max(minProbOnUpvote_(), cellWithBall.probability * confidentBallMultiplier_());
     cellWithBall.age = 0;
+//    for(double seconds = 0; seconds < 10.; seconds+=0.05){
+//		ProbCell& cellWithProjectedBall = ballSearchMap_->cellFromPosition(player.pose * (player.ballPosition + player.ballVelocity*seconds));
+//		cellWithProjectedBall.probability += (10.-seconds)/100.;
+//    }
+//    debug().update(mount_+".playerProject"+std::to_string(player.playerNumber), player.pose * (player.ballPosition + player.ballVelocity*2.));
   }
   else
   {

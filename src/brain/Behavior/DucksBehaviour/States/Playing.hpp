@@ -16,7 +16,7 @@
  * @return
  */
 
-DucksActionCommand playing(const DuckDataSet &d)
+DucksActionCommand playing(const DucksDataSet &d)
 {
 	auto command = roles(d);
 
@@ -37,7 +37,7 @@ DucksActionCommand playing(const DuckDataSet &d)
 				command = walkTo(d.robotPosition.pose.oriented(d.ballSearchPosition.pose.orientation), d)
 					.combineBodyWalkType(WalkMode::DIRECT_WITH_ORIENTATION);
 			}else{
-				command = DucksActionCommand::stand();
+//				command = DucksActionCommand::stand();
 			}
 		}
 
