@@ -46,7 +46,7 @@ class WlanCommand(Command):
             self.nao.execute(["sh", "-c", f"echo '{line}' | sudo tee -a /etc/wpa_supplicant.conf"])
 
         self.nao.execute(["sh", "-c", f"sudo wpa_passphrase {args.ssid} {password} | sudo tee -a /etc/wpa_supplicant.conf"])
-        self.nao.execute("sudo wpa_supplicant -B -D wext -i wlan0 -c /etc/wpa_supplicant.conf".split(' '))
+        self.nao.execute("sudo wpa_supplicant -B -D nl80211 -i wlan0 -c /etc/wpa_supplicant.conf".split(' '))
         logging.info("Done... ")
         time.sleep(1)
         self.nao.execute("iw wlan0 link".split(' '))
