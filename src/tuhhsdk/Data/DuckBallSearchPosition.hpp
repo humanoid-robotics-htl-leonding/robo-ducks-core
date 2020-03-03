@@ -32,6 +32,7 @@ public:
 		SEARCHING = 3,
 		SEARCH_WALK = 4,
 		SEARCH_TURN = 5,
+		LOOK_AROUND = 6
 	};
 
 	/// the name of this DataType

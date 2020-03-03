@@ -76,8 +76,8 @@ private:
 	Parameter<float> minComfortableProbability_;
 	// Maximum value of lookAtBallUrgency to allow comfortable decisions
 	Parameter<float> minProbability_;
-	// Maximum value of lookAtBallUrgency to allow comfortable decisions
-	Parameter<float> maxComfortableUrgency_;
+	// Minimum value of Urgency to allow Uncomfortable Decision
+	Parameter<float> minUncomfortableUrgency_;
 	// Maximum value of lookAtBallUrgency to allow decisions without turning
 	Parameter<float> maxNoTurnUrgency_;
 
@@ -96,4 +96,11 @@ private:
 	bool iWantToLookAt(const Vector2f& point);
 
     ProbCell const* snackPositionToLookAt();
+
+    bool generateBallSearchPositionWithPolicies(DuckBallSearchPosition& position);
+
+    bool policyOwnCamera(DuckBallSearchPosition& position);
+    bool policyTeamModel(DuckBallSearchPosition& position);
+    bool policyBallSearchMap(DuckBallSearchPosition& position);
+    bool policyLookAround(DuckBallSearchPosition& position);
 };

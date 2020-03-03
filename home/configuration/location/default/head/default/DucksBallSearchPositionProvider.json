@@ -19,7 +19,7 @@
 	"comfortableSearchSideAngle": 40,
 	"minComfortableProbability": 5,
 	"minProbability": 1,
-	"maxComfortableUrgency": 0.5,
+	"minUncomfortableUrgency": 0.5,
 	"maxNoTurnUrgency": 0.8,
 	"desperationThreshold": 5,
 	"desperationReduction": 10,

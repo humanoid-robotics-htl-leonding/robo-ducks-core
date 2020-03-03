@@ -32,10 +32,10 @@ DucksBallSearchPositionProvider::DucksBallSearchPositionProvider(const ModuleMan
 	  stepBackThreshold_(*this, "stepBackThreshold"),
 	  maxSideAngle_(*this, "maxSearchSideAngle", [this] { maxSideAngle_() *= TO_RAD; }),
 	  comfortableSideAngle_(*this, "comfortableSearchSideAngle", [this] { comfortableSideAngle_() *= TO_RAD; }),
-      minComfortableProbability_(*this, "minComfortableProbability"),
-      minProbability_(*this, "minProbability"),
-      maxComfortableUrgency_(*this, "maxComfortableUrgency"),
-      maxNoTurnUrgency_(*this, "maxNoTurnUrgency"),
+	  minComfortableProbability_(*this, "minComfortableProbability"),
+	  minProbability_(*this, "minProbability"),
+	  minUncomfortableUrgency_(*this, "minUncomfortableUrgency"),
+	  maxNoTurnUrgency_(*this, "maxNoTurnUrgency"),
 	  searchPosition_(*this),
 	  fieldLength_(fieldDimensions_->fieldLength),
 	  fieldWidth_(fieldDimensions_->fieldWidth),
@@ -50,69 +50,29 @@ void DucksBallSearchPositionProvider::cycle()
 {
 	Chronometer time(debug(), mount_ + ".cycle_time");
 
+	DuckBallSearchPosition pos;
 
+	bool valid = generateBallSearchPositionWithPolicies(pos);
+	if(!valid) Log(LogLevel::WARNING) << "Could not generate valid BallSearchPosition";
 
-	debug().update(mount_+".testPose", Pose(0, 0, 0));
-	//1. === Implement "Look At Ball" (Erik Mayrhofer)
-
-	if (ballState_->age < 1.0 && ballState_->confident) {
-		//== CASE 1 If we see the ball on our own, look at it.
-		auto ballPos = ballState_->position + ballState_->velocity*cycleInfo_->cycleTime;
-		searchPosition_->searchPosition = robotPosition_->robotToField(ballPos);
-		searchPosition_->ownSearchPoseValid = true;
-		searchPosition_->reason = DuckBallSearchPosition::Reason::OWN_CAMERA;
-		standingOnCooldown_ = 0;
-	}else if(teamBallModel_->found && teamBallModel_->insideField){
-		//== CASE 2 If we don't see the ball on our own, look at where our team thinks the ball is. Maybe we can find it there.
-		standingOnCooldown_ = 0;
-		auto ballPos = teamBallModel_->position + teamBallModel_->velocity*cycleInfo_->cycleTime;
-		searchPosition_->searchPosition = ballPos;
-		searchPosition_->ownSearchPoseValid = true;
-		searchPosition_->reason = DuckBallSearchPosition::Reason::TEAM_BALL_MODEL;
-
-        if(!iWantToLookAt(searchPosition_->searchPosition)){
-            searchPosition_->ownSearchPoseValid = false;
-        }
-	}
-	else{
-		//3. == Scan Field
-        //3.1 Get a position to look at
-        auto probCell = snackPositionToLookAt();
-        if(probCell != nullptr){
-        	//== CASE 3 We have a valid position on the ballsearchmap to look at.
-
-            //3.2 Look at snacked position
-            searchPosition_->searchPosition = probCell->position;
-            searchPosition_->reason = DuckBallSearchPosition::Reason::SEARCHING;
-            searchPosition_->ownSearchPoseValid=true;
-
-            //3.3 If position is too far away.... walk to it.
-            auto localSearchPosition = robotPosition_->fieldToRobot(searchPosition_->searchPosition);
-            if(localSearchPosition.norm() > maxBallDetectionRange_()){
-                Vector2f posToRobot = probCell->position - robotPosition_->pose.position;
-                posToRobot.normalize();
-                auto targetWalkPos = probCell->position - posToRobot * inspectBallRange_();
-                auto angle = Angle::normalized(std::atan2(posToRobot.y(), posToRobot.x()));
-
-                searchPosition_->pose = Pose(targetWalkPos, angle);
-                searchPosition_->reason = DuckBallSearchPosition::Reason::SEARCH_WALK;
-            }
-        }
-        //TODO CASE 4 Look Around
+	if(desperation_->lookAtBallUrgency < minUncomfortableUrgency_()){ //Don't allow incomfortable Decisions
+		if(!iWantToLookAt(pos.searchPosition)){ // But this position is uncomfortable
+			Log(LogLevel::WARNING) << "LookAtBallUrgency is not high enough to allow uncomfortable positions, but this position was uncomfortable";
+		}
 	}
 
 	//2. === If ball rolls to the side, then turn (if walking... so that if we are already walking, we dont look at death)
-	if(searchPosition_->reason != DuckBallSearchPosition::Reason::SEARCH_WALK){
-		auto localSearchPosition = robotPosition_->fieldToRobot(searchPosition_->searchPosition);
-		auto angleToSearchPosition = std::atan2(localSearchPosition.y(), localSearchPosition.x());
-		if(std::abs(angleToSearchPosition) > maxSideAngle_()) {
-			Vector2f posToRobot = searchPosition_->searchPosition - robotPosition_->pose.position;
-			auto angle = Angle::normalized(std::atan2(posToRobot.y(), posToRobot.x()));
-
-			searchPosition_->pose = Pose(robotPosition_->pose.position, angle);
-			searchPosition_->reason = DuckBallSearchPosition::Reason::SEARCH_TURN;
-		}
-	}
+//	if(searchPosition_->reason != DuckBallSearchPosition::Reason::SEARCH_WALK){
+//		auto localSearchPosition = robotPosition_->fieldToRobot(searchPosition_->searchPosition);
+//		auto angleToSearchPosition = std::atan2(localSearchPosition.y(), localSearchPosition.x());
+//		if(std::abs(angleToSearchPosition) > maxSideAngle_()) {
+//			Vector2f posToRobot = searchPosition_->searchPosition - robotPosition_->pose.position;
+//			auto angle = Angle::normalized(std::atan2(posToRobot.y(), posToRobot.x()));
+//
+//			searchPosition_->pose = Pose(robotPosition_->pose.position, angle);
+//			searchPosition_->reason = DuckBallSearchPosition::Reason::SEARCH_TURN;
+//		}
+//	}
 
 	//2. === Step Back
 //	auto distVec = teamBallModel_->position - robotPosition_->pose.position;
@@ -127,13 +87,12 @@ void DucksBallSearchPositionProvider::cycle()
 //		searchPosition_->ownSearchPoseValid = true;
 //		searchPosition_->reason = DuckBallSearchPosition::Reason::I_AM_ON_IT;
 //		searchPosition_->pose = robotPosition_->robotToField(Pose(stepBackValue_(), 0));
-//		//TODO Dont run out of field.
 //	}
 }
 
 bool DucksBallSearchPositionProvider::iWantToLookAt(const Vector2f &point) {
 
-    if(desperation_->lookAtBallUrgency < maxComfortableUrgency_()) { // Comfortable mode
+    if(desperation_->lookAtBallUrgency < minUncomfortableUrgency_()) { // Comfortable mode
         return this->robotPosition_->pose.frustrumContainsPoint(point, comfortableSideAngle_());
     }else if (desperation_->lookAtBallUrgency < maxNoTurnUrgency_()) { // Hard mode
         return this->robotPosition_->pose.frustrumContainsPoint(point, maxSideAngle_());
@@ -201,4 +160,67 @@ ProbCell const* DucksBallSearchPositionProvider::snackPositionToLookAt() {
 		oldSearchPosition_ = (*fieldSearchPositionIterator);
 	} // Else remain at the old position
 	return oldSearchPosition_;
+}
+bool DucksBallSearchPositionProvider::policyOwnCamera(DuckBallSearchPosition &position)
+{
+	//== CASE 1 If we see the ball on our own, look at it.
+	auto ballPos = ballState_->position + ballState_->velocity*cycleInfo_->cycleTime;
+	position.searchPosition = robotPosition_->robotToField(ballPos);
+	position.ownSearchPoseValid = true;
+	position.reason = DuckBallSearchPosition::Reason::OWN_CAMERA;
+	standingOnCooldown_ = 0;
+}
+bool DucksBallSearchPositionProvider::policyTeamModel(DuckBallSearchPosition &position)
+{
+	//== CASE 2 If we don't see the ball on our own, look at where our team thinks the ball is. Maybe we can find it there.
+	standingOnCooldown_ = 0;
+	auto ballPos = teamBallModel_->position + teamBallModel_->velocity*cycleInfo_->cycleTime;
+	position.searchPosition = ballPos;
+	position.ownSearchPoseValid = true;
+	position.reason = DuckBallSearchPosition::Reason::TEAM_BALL_MODEL;
+
+	if(!iWantToLookAt(searchPosition_->searchPosition)){
+		position.ownSearchPoseValid = false;
+	}
+}
+bool DucksBallSearchPositionProvider::policyBallSearchMap(DuckBallSearchPosition &position)
+{
+	//3. == Scan Field
+	//3.1 Get a position to look at
+	auto probCell = snackPositionToLookAt();
+	if(probCell != nullptr){
+		//== CASE 3 We have a valid position on the ballsearchmap to look at.
+
+		//3.2 Look at snacked position
+		position.searchPosition = probCell->position;
+		position.reason = DuckBallSearchPosition::Reason::SEARCHING;
+		position.ownSearchPoseValid=true;
+
+		//3.3 If position is too far away.... walk to it.
+		auto localSearchPosition = robotPosition_->fieldToRobot(searchPosition_->searchPosition);
+		if(localSearchPosition.norm() > maxBallDetectionRange_()){
+			Vector2f posToRobot = probCell->position - robotPosition_->pose.position;
+			posToRobot.normalize();
+			auto targetWalkPos = probCell->position - posToRobot * inspectBallRange_();
+			auto angle = Angle::normalized(std::atan2(posToRobot.y(), posToRobot.x()));
+
+			position.pose = Pose(targetWalkPos, angle);
+			position.reason = DuckBallSearchPosition::Reason::SEARCH_WALK;
+		}
+	}
+}
+bool DucksBallSearchPositionProvider::policyLookAround(DuckBallSearchPosition &position)
+{
+	position.reason == DuckBallSearchPosition::Reason::LOOK_AROUND;
+	return false;
+}
+bool DucksBallSearchPositionProvider::generateBallSearchPositionWithPolicies(DuckBallSearchPosition &position)
+{
+	if(policyOwnCamera(position)) return true;
+	if(policyTeamModel(position)) return true;
+	if(policyBallSearchMap(position)) return true;
+	if(policyLookAround(position)) return true;
+
+	position.ownSearchPoseValid = false;
+	return false;
 }
