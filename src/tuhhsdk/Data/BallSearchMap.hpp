@@ -51,6 +51,13 @@ struct ProbCell : public Uni::From, public Uni::To
     value.at(2) >> position.x();
     value.at(3) >> position.y();
   }
+
+  static bool probability_comparator(const ProbCell* a, const ProbCell* b){
+  	return a->probability < b->probability;
+  }
+  static bool probability_comparator_desc(const ProbCell* a, const ProbCell* b){
+  	return a->probability > b->probability;
+  }
 };
 
 class BallSearchMap : public DataType<BallSearchMap>

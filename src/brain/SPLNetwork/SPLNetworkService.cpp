@@ -92,7 +92,9 @@ SPLNetworkService::~SPLNetworkService()
 
 void SPLNetworkService::cycle()
 {
-  {
+    print("Cycling Network", LogLevel::DEBUG);
+
+    {
     std::lock_guard<std::mutex> lg(lock_);
     splNetworkData_->messages = messages_;
     messages_.clear();
@@ -109,7 +111,8 @@ void SPLNetworkService::registerForReceive()
 
 void SPLNetworkService::onSocketReceive(const boost::system::error_code& error, std::size_t bytesTransferred)
 {
-  TimePoint receivedTime = TimePoint::getCurrentTime();
+    print("received network", LogLevel::DEBUG);
+    TimePoint receivedTime = TimePoint::getCurrentTime();
   if (!error)
   {
     print("Received team message", LogLevel::DEBUG);
@@ -159,7 +162,8 @@ void SPLNetworkService::sendMessage(const SPLStandardMessage& message)
       foreignEndpoint_, [msg](const boost::system::error_code& error, std::size_t) {
         if (error)
         {
-          print("Error sending team message", LogLevel::ERROR);
+          print("Error sending team message: ", LogLevel::ERROR);
+          print(error.message(), LogLevel::ERROR);
         }
       });
 }

@@ -1,6 +1,6 @@
 #include "Debug.h"
 #include "Subscription.h"
-
+#include "../../print.h"
 
 Debug::Debug()
 {
@@ -12,6 +12,8 @@ Debug::Debug()
 
 void Debug::subscribe(const std::string& key)
 {
+  print("Debug subscribe to '" + key + "'", LogLevel::DEBUG);
+
   bool subscriptionSuccessful = false;
   for (auto& debugSourceIt : debugSources_)
   {
@@ -24,6 +26,7 @@ void Debug::subscribe(const std::string& key)
 
   if (!subscriptionSuccessful)
   {
+    print("Subscription was not successfull... Enqueuing", LogLevel::DEBUG);
     auto entry = outstandingSubscriptions_.find(key);
     if (entry == outstandingSubscriptions_.end())
     {
@@ -35,6 +38,8 @@ void Debug::subscribe(const std::string& key)
 
 void Debug::unsubscribe(const std::string& key)
 {
+  print("Debug unsubscribed from '" + key + "'", LogLevel::DEBUG);
+
   auto entry = outstandingSubscriptions_.find(key);
   if (entry != outstandingSubscriptions_.end())
   {
@@ -64,10 +69,12 @@ void Debug::resolveOutstandingSubscriptions()
       {
         subscription->second.fetch_sub(1);
         subscriptionSuccessful = true;
+        print("Successfully resolved enqueued subscription to: '" + subscription->first + "'", LogLevel::DEBUG);
         break;
       }
     }
 
+    //Move forward in the for-loop. Needed because we are modifying the underlying collection
     if (subscriptionSuccessful && subscription->second.load() == 0)
     {
       subscription = outstandingSubscriptions_.erase(subscription);

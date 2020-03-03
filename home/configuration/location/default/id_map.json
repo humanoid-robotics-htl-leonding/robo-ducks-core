@@ -1,9 +1,59 @@
 {
 	"idmap.nao": [
 		{
-			"bodyid": "####",
-			"headid": "####",
-			"name": "robotName"
+			"bodyid": "0964",
+			"headid": "3195",
+			"name": "Judy"
+		},
+		{
+			"bodyid": "0180",
+			"headid": "0206",
+			"name": "Ana"
+		},
+		{
+			"bodyid": "0214",
+			"headid": "222",
+			"name": "Tom"
+		},
+		{
+			"bodyid": "1899",
+			"headid": "2972",
+			"name": "Luc"
+		},
+		{
+			"bodyid": "0085",
+			"headid": "86",
+			"name": "Eve"
+		},
+		{
+			"bodyid": "0061",
+			"headid": "67",
+			"name": "Bob"
+		},
+		{
+			"bodyid": "P0000073A07S94E00048",
+			"headid": "P0000074A05S94E00036",
+			"name": "Margaret"
+		},
+		{
+			"bodyid": "P0000073A05S88M00001",
+			"headid": "P0000074A03S88F00030",
+			"name": "Alex"
+		},
+		{
+			"bodyid": "P0000073A05S88M00017",
+			"headid": "P0000074A03S88M00016",
+			"name": "Lou"
+		},
+		{
+			"bodyid": "P0000073B00S8A800013",
+			"headid": "P0000074A04S8A900014",
+			"name": "Grace"
+		},
+		{
+			"bodyid": "P0000073B00S8A800026",
+			"headid": "P0000074A04S8AE00008",
+			"name": "Donald"
 		}
 	]
 }

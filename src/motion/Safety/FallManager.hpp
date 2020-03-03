@@ -59,12 +59,13 @@ private:
   Interpolator catchFrontInterpolator_;
   /// the catch front interpolation duration
   const Parameter<unsigned int> catchFrontDuration_;
+  const float fallPreparationMovementDuration_ = 30.0;
   /// the catch front hip pitch
   Parameter<float> catchFrontHipPitch_;
   /// motion file for kneeing
   MotionFilePlayer kneeDown_;
   /// time that the fall prevention motion needs (milliseconds)
-  int timerClock_;
+  //int timerClock_;
   /// the last fall manager output
   std::vector<float> lastAngles_;
 };

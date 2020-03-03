@@ -29,10 +29,6 @@ public:
   };
   enum KickType
   {
-    /// forward kick
-    FORWARD,
-    /// side kick
-    SIDE,
     /// the gentle in-walk
     IN_WALK_GENTLE,
     /// the strong in-walk
@@ -40,7 +36,7 @@ public:
     /// don't kick
     NONE
   };
-  /// true iff this struct is valid
+  /// true if this struct is valid
   bool valid = false;
   /// the type of the action
   Type type = Type::DRIBBLE;

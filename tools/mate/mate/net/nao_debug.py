@@ -22,6 +22,7 @@ class NaoDebugProtocol(NaoProtocol):
         self.receive_length = 16
 
     def data_received(self, data):
+        print("Received debug data")
         length_to_parse = min(self.receive_length, len(data))
         if self.read_header:
             self.header_buffer = self.header_buffer + data[0:length_to_parse]
@@ -55,19 +56,22 @@ class NaoDebugProtocol(NaoProtocol):
         data = data[length_to_parse:]
         if len(data):
             self.data_received(data)
+        for callback in self.any_msg_subscribors.values():
+            callback()
 
     def handle_message(self, message: netutils.DebugMessage):
+        print("Handling debug message")
         if message.type == netutils.DebugMsgType.list:
             data = json.loads(message.body)
             for d in data["keys"]:
                 parsed = netutils.DebugMessage.parse_data(d)
                 self.data[parsed.key] = parsed
             if self.msg_type_subscribors.get(netutils.DebugMsgType.list):
-                for callback in self.msg_type_subscribors[
-                    netutils.DebugMsgType.list].values():
+                for callback in self.msg_type_subscribors[netutils.DebugMsgType.list].values():
                     callback()
 
         if message.type == netutils.DebugMsgType.update:
+            print("Type update")
             data = json.loads(message.body)
             for d in data:
                 parsed = netutils.DebugMessage.parse_data(d)
@@ -77,6 +81,7 @@ class NaoDebugProtocol(NaoProtocol):
                     callback(parsed_copy)
 
         if message.type == netutils.DebugMsgType.image:
+            print("Type image")
             key, width, height, data = netutils.DebugMessage.get_image(
                 message.body)
             parsed = DebugImage(key, width, height, data)

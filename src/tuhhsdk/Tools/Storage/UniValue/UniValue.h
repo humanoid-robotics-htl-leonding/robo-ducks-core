@@ -15,6 +15,8 @@
 
 #include "Tools/Math/Eigen.hpp"
 
+
+
 namespace Uni
 {
   enum class ValueType : uint8_t
@@ -36,6 +38,7 @@ namespace Uni
   public:
     typedef std::map<std::string, Value> valuesMap_t;
     typedef std::vector<Value> valuesList_t;
+    using valuesVector_t = valuesList_t;
 
     Value(ValueType = ValueType::NIL);
     Value(int32_t);
@@ -45,6 +48,8 @@ namespace Uni
     explicit Value(const std::string&);
     explicit Value(const char*);
     Value(const To&);
+    //Existence guessed by Obyoxar to avoid deprecation-warning
+    Value(const Value&);
 
     Value& operator[](const char*);
     Value& operator[](const std::string&);
@@ -74,12 +79,18 @@ namespace Uni
     valuesMap_t::iterator objectEnd();
     valuesList_t::iterator listBegin();
     valuesList_t::iterator listEnd();
+    valuesVector_t::iterator vectorBegin();
+    valuesVector_t::iterator vectorEnd();
 
-    // const versions
+      // const versions
     valuesMap_t::const_iterator objectBegin() const;
     valuesMap_t::const_iterator objectEnd() const;
     valuesList_t::const_iterator listBegin() const;
     valuesList_t::const_iterator listEnd() const;
+    valuesVector_t::const_iterator vectorBegin() const;
+    valuesVector_t::const_iterator vectorEnd() const;
+
+
 
     valuesList_t::size_type size() const;
     void reserve(valuesList_t::size_type size);
@@ -141,11 +152,11 @@ inline void operator<<(Uni::Value& out, const uint64_t in)
 {
   out = Uni::Value((int)in);
 }
+
 inline void operator>>(const Uni::Value& in, double& out)
 {
   out = in.asDouble();
 }
-
 inline void operator<<(Uni::Value& out, const double in)
 {
   out = Uni::Value(in);

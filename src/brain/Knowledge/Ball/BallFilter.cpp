@@ -92,7 +92,7 @@ void BallFilter::cycle()
     ballState_->moved = false;
     ballState_->confident = false;
     ballState_->timeWhenBallLost = timeWhenBallLost_;
-    ballState_->timeWhenLastSeen = 0;
+    ballState_->timeWhenLastSeen = TimePoint();
   }
   else
   {
@@ -139,6 +139,8 @@ void BallFilter::predict()
                                   [this](const BallMode& mode) {
                                     // The more measurements there are for a mode, the longer it is
                                     // allowed to stay in the filter.
+
+                                    //Keep Ballmodes of last 5sec, delete rest
                                     return cycleInfo_->getTimeDiff(mode.lastUpdate) >
                                            (mode.measurements < 10
                                                 ? static_cast<float>(mode.measurements) / 2.f
@@ -167,6 +169,7 @@ void BallFilter::predict()
     // m*dv = m*ddx = F, where F is the friction force and m is the mass of the ball
     // F = m * mu, mu = 0.1 (friction parameter to be determined by experiments)
     // -> dv = F / m * dt = mu * dt
+    //TODO Redo Experiments
     float vel = mode.movingEquivalent.dx.norm();
     if (vel <= numOfRestingDeccelerationSteps_() * frictionDeceleration_ * dt)
     {

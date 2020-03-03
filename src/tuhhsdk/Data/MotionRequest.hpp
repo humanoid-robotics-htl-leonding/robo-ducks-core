@@ -94,23 +94,23 @@ struct KickData : public Uni::To, public Uni::From
 {
   Vector2f ballDestination;
   Vector2f ballSource;
-  KickType kickType = KickType::FORWARD;
+  bool forceHammer;
 
   virtual void toValue(Uni::Value& value) const
   {
     value = Uni::Value(Uni::ValueType::OBJECT);
     value["ballDestination"] << ballDestination;
     value["ballSource"] << ballSource;
-    value["kickType"] << static_cast<int>(kickType);
+    value["forceHammer"] << forceHammer;
+
   }
 
   virtual void fromValue(const Uni::Value& value)
   {
     value["ballDestination"] >> ballDestination;
     value["ballSource"] >> ballSource;
-    int readNumber = 0;
-    value["kickType"] >> readNumber;
-    kickType = static_cast<KickType>(readNumber);
+    value["forceHammer"] >> forceHammer;
+
   }
 };
 
@@ -213,6 +213,7 @@ public:
     STAND_UP,
     /// the robot holds its angles at activation of the motion
     HOLD,
+    KNEEL,
     /// the number of motions
     NUM
   };
@@ -274,7 +275,7 @@ public:
     return bodyMotion == BodyMotion::DEAD || bodyMotion == BodyMotion::WALK ||
            bodyMotion == BodyMotion::KICK || bodyMotion == BodyMotion::PENALIZED ||
            bodyMotion == BodyMotion::KEEPER || bodyMotion == BodyMotion::STAND_UP ||
-           bodyMotion == BodyMotion::HOLD;
+           bodyMotion == BodyMotion::HOLD || bodyMotion == BodyMotion ::KNEEL;
   }
   /**
    * @brief usesHead indicates whether the body motion uses the head in a way that it can't be used
@@ -285,7 +286,8 @@ public:
   {
     return bodyMotion == BodyMotion::DEAD || bodyMotion == BodyMotion::KICK ||
            bodyMotion == BodyMotion::PENALIZED || bodyMotion == BodyMotion::KEEPER ||
-           bodyMotion == BodyMotion::STAND_UP || bodyMotion == BodyMotion::HOLD;
+           bodyMotion == BodyMotion::STAND_UP || bodyMotion == BodyMotion::HOLD
+           || bodyMotion == BodyMotion ::KNEEL;
   }
 
   virtual void toValue(Uni::Value& value) const

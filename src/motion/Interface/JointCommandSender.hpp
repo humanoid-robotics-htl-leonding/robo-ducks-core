@@ -41,7 +41,7 @@ private:
   const Dependency<MotionActivation> motionActivation_;
   /// a reference to the fall manager output
   const Dependency<FallManagerOutput> fallManagerOutput_;
-  /// a reference to the head motion output
+    /// a reference to the head motion output
   const Dependency<HeadMotionOutput> headMotionOutput_;
   /// a reference to the keeper output
   const Dependency<KeeperOutput> keeperOutput_;

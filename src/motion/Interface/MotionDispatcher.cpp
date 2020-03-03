@@ -51,6 +51,7 @@ void MotionDispatcher::cycle()
             walkingEngineWalkOutput_->safeExit) ||
            (lastActiveMotion_ == MotionRequest::BodyMotion::KICK && kickOutput_->safeExit) ||
            lastActiveMotion_ == MotionRequest::BodyMotion::PENALIZED ||
+           lastActiveMotion_ == MotionRequest::BodyMotion::KNEEL ||
            (lastActiveMotion_ == MotionRequest::BodyMotion::KEEPER && keeperOutput_->safeExit) ||
            (lastActiveMotion_ == MotionRequest::BodyMotion::STAND_UP && standUpOutput_->safeExit) ||
            lastActiveMotion_ == MotionRequest::BodyMotion::HOLD)

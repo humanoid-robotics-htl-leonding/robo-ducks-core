@@ -127,6 +127,7 @@ AlivenessTransmitter::~AlivenessTransmitter() {}
 
 void AlivenessTransmitter::startTransmitting()
 {
+  print("Start Aliveness Transmitter", LogLevel::INFO);
   if (!isTransmittingStarted_)
   {
     isTransmittingStarted_ = true;

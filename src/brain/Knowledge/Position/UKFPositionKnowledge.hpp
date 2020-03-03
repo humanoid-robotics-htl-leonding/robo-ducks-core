@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <Framework/Module.hpp>
+#include <Data/ThoughtControlRequest.hpp>
 
 #include "Data/BodyPose.hpp"
 #include "Data/CameraMatrix.hpp"
@@ -118,6 +119,8 @@ private:
   /// the current camera image to figure out whether the lines were recoreded by the top or bottom
   /// camera
   const Dependency<ImageData> imageData_;
+
+  const Reference<ThoughtControlRequest> thoughtControlRequest_; //TODO Does this create a race condition?????
 
   /// the robot position that is estimated by this module
   // TODO: as soon as the particle filter is deprecated one can add the cov estimation and number of

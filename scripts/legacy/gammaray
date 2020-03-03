@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+
+import argparse, subprocess, os, sys, logging, time
+from enum import Enum
+
+
+
+
+if __name__ == "__main__":
+    param_parser = argparse.ArgumentParser(
+        "Gammary Script to setup a NAO for hulks code base")
+    # param_parser.add_argument(
+    #     "nao_number", type=int, help="the number the NAO should get (considered v6 if nao_number >= 20)")
+    param_parser.add_argument("address", help="connect to the NAO via a special ip address")
+    param_parser.add_argument(
+        "--wait",
+        "-w",
+        action="store_true",
+        default=False,
+        help= "Not available for V6! Wait until the NAO is reachable after reboot instead of quitting"
+    )
+    param_parser.add_argument(
+        "--sysroot-only",
+        "-s",
+        action="store_true",
+        default=False,
+        help="only install the sysroot")
+    param_parser.add_argument(
+        "--skip-sysroot",
+        action="store_true",
+        default=False,
+        help="skip installing the sysroot")
+    param_parser.add_argument(
+        "--purge", "-p", help="remove all existing sysroots on the NAO")
+
+    args = param_parser.parse_args()
+
+    logging.basicConfig(
+        format='%(levelname)s:%(message)s', level=logging.DEBUG)
+    logging.info("Running Gammaray Script")
+
+    # nao_version = determine_nao_version(args.nao_number)
+
+    # if nao_version == NaoVersion.V5:
+    #     logging.info("Determined Nao version V5")
+    #     logging.info("Running V5 Gammaray")
+    #     old_gammaray_cmd = [base_dir() + "/lib/gammarayV5"]
+    #     old_gammaray_cmd.extend(sys.argv[1:])
+    #     subprocess.run(old_gammaray_cmd)
+    #     exit(0)
+
+    # if args.address:
+    nao_address = args.address
+    # else:
+    #     nao_address = get_nao_address(args.nao_number)

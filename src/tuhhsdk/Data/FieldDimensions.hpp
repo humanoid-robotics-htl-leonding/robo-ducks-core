@@ -6,7 +6,6 @@
 #include "Modules/Configuration/Configuration.h"
 #include "Tools/Math/Eigen.hpp"
 
-
 class FieldDimensions : public DataType<FieldDimensions>
 {
 public:
@@ -149,3 +148,5 @@ public:
     group["diameter"] >> ballDiameter;
   }
 };
+
+

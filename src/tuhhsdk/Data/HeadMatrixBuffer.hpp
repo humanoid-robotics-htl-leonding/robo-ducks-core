@@ -7,6 +7,7 @@
 #include "Tools/Time.hpp"
 
 
+
 struct HeadMatrixWithTimestamp : public Uni::To, public Uni::From
 {
   /// a matrix describing the transformation from the head coordinate system to the torso coordinate
@@ -88,3 +89,4 @@ public:
     value["valid"] >> valid;
   }
 };
+

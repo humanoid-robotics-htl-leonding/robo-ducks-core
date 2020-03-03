@@ -4,6 +4,7 @@
 #include "BHULKsHelper.hpp"
 #include "HULKsMessage.hpp"
 #include "SPLMessageReceiver.hpp"
+#include "print.h"
 
 SPLMessageReceiver::SPLMessageReceiver(const ModuleManagerInterface& manager)
   : Module(manager)

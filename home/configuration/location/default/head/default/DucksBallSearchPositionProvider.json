@@ -1,0 +1,27 @@
+{
+	"minBallDetectionRange" : 0.2,
+	"inspectBallRange" : 1.8,
+	"maxBallDetectionRange" : 2.0,
+	"maxAgeValueContribution": 10000.0,
+	"probabilityWeight": 1000000.0,
+	"voronoiSeeds" : [
+		[[0, 0]],
+		[[0.5, 0], [-0.5, 0]],
+		[[0.5, 0], [-0.5, 0.5], [-0.5, -0.5]],
+		[[0.5, 0], [0, 0], [-0.5, 0.5], [-0.5, -0.5]],
+		[[0.5, 0], [0, 0], [-0.5, 0.5], [-0.5, -0.5], [-0.4, 0]]
+	],
+	"stepBackValue": [
+		-0.2, 0
+	],
+	"stepBackThreshold": 0.5,
+	"maxSearchSideAngle": 50,
+	"comfortableSearchSideAngle": 40,
+	"minComfortableProbability": 5,
+	"minProbability": 1,
+	"maxComfortableUrgency": 0.5,
+	"maxNoTurnUrgency": 0.8,
+	"desperationThreshold": 5,
+	"desperationReduction": 10,
+	"desperationMax": 30
+}

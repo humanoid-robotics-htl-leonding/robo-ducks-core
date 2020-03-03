@@ -848,6 +848,7 @@ void LandmarkFilter::sendDebugImage()
     Vector2i pixelCoordsCenter;
     Vector2i pixelCoordsLineP1;
     Vector2i pixelCoordsLineP2;
+    Vector2i pixelCoordsIntersection;
 
     // draw center circle
     for (auto& centerCircle : landmarkModel_->centerCircles)
@@ -915,6 +916,10 @@ void LandmarkFilter::sendDebugImage()
       pixelCoordsLineP1 = Image422::get444From422Vector(pixelCoordsLineP1);
       pixelCoordsLineP2 = Image422::get444From422Vector(pixelCoordsLineP2);
       image.line(pixelCoordsLineP1, pixelCoordsLineP2, color);
+
+      cameraMatrix_->robotToPixel(intersection.position, pixelCoordsIntersection);
+      pixelCoordsIntersection = Image422::get444From422Vector(pixelCoordsIntersection);
+      image.cross(pixelCoordsIntersection, 5, Color::BLUE);
     }
     debug().sendImage(mount_ + "." + imageData_->identification + "_image", image);
   }

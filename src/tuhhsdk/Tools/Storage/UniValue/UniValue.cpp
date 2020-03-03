@@ -74,6 +74,13 @@ namespace Uni
     }
   }
 
+  //Implementation guessed by obyoxar based on copy-assignment
+  Value::Value(const Value& other)
+  : value_(other.value_)
+  , type_(other.type_){
+    //TODO something should be done if other.type_ is NIL
+  }
+
   Value& Value::operator[](const char* key)
   {
     if (type_ == ValueType::NIL)
@@ -316,6 +323,16 @@ namespace Uni
     return boost::get<valuesList_t>(value_).begin();
   }
 
+  Value::valuesList_t::const_iterator Value::vectorBegin() const
+  {
+      return listBegin();
+  }
+
+  Value::valuesList_t::iterator Value::vectorBegin()
+  {
+      return listBegin();
+  }
+
   Value::valuesList_t::const_iterator Value::listEnd() const
   {
     if (type_ != ValueType::ARRAY)
@@ -331,4 +348,14 @@ namespace Uni
                                "is only useful for arrays (value was not)");
     return boost::get<valuesList_t>(value_).end();
   }
+
+    Value::valuesList_t::const_iterator Value::vectorEnd() const
+    {
+        return listEnd();
+    }
+
+    Value::valuesList_t::iterator Value::vectorEnd()
+    {
+        return listEnd();
+    }
 }

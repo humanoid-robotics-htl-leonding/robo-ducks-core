@@ -10,14 +10,16 @@
 #include "Data/FieldBorder.hpp"
 #include "Data/FieldColor.hpp"
 #include "Data/FieldDimensions.hpp"
+#include "Data/FilteredSegments.hpp"
 #include "Data/GameControllerState.hpp"
 #include "Data/ImageData.hpp"
-#include "Data/ImageSegments.hpp"
 #include "Framework/Module.hpp"
 #include "Tools/Math/Circle.hpp"
 #include "Tools/Math/Eigen.hpp"
 
+
 class Brain;
+
 
 class BallDetectionNeuralNet : public Module<BallDetectionNeuralNet, Brain>
 {
@@ -141,7 +143,7 @@ private:
 
   const Dependency<ImageData> imageData_;
   const Dependency<CameraMatrix> cameraMatrix_;
-  const Dependency<ImageSegments> imageSegments_;
+  const Dependency<FilteredSegments> filteredSegments_;
   const Dependency<FieldBorder> fieldBorder_;
   const Dependency<FieldDimensions> fieldDimensions_;
   const Dependency<GameControllerState> gameControllerState_;
@@ -160,3 +162,4 @@ private:
   /// circles that should be drawn into the debug image
   std::vector<DebugCircle> debugCircles_;
 };
+

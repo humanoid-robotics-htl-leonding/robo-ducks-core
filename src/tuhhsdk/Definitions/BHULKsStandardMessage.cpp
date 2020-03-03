@@ -27,13 +27,13 @@ namespace B_HULKs
 
   int Obstacle::sizeOfObstacle()
   {
-    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 9, "The constructor is not adjusted for the current message version");
+    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 10, "The constructor is not adjusted for the current message version");
     return 5;
   }
 
   void Obstacle::write(void*& data, uint32_t timestamp) const
   {
-    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 9, "The constructor is not adjusted for the current message version");
+    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 10, "The constructor is not adjusted for the current message version");
 #ifndef NDEBUG
     const void* const begin = data; //just for length check
 #endif // NDEBUG
@@ -51,7 +51,7 @@ namespace B_HULKs
 
   void Obstacle::read(const void*& data, uint32_t timestamp)
   {
-    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 9, "The constructor is not adjusted for the current message version");
+    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 10, "The constructor is not adjusted for the current message version");
     const int16_t center0Struct = readVal<const int16_t>(data);
     const int16_t center1Struct = readVal<const int16_t>(data);
 
@@ -103,16 +103,23 @@ namespace B_HULKs
       gst.type = static_cast<CompetitionType>(competitionType);
       gst.gameState = static_cast<GameState>(gameState);
     }
- 
+
+
+    /*
+     * ======================== ============= =======================
+     * ======================== OWN TEAM INFO =======================
+     * ======================== ============= =======================
+     */
+
   OwnTeamInfo::OwnTeamInfo() :
     timestampWhenReceived(0)
   {
-    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 9, "The constructor is not adjusted for the current message version");
+    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 10, "The constructor is not adjusted for the current message version");
   }
 
   int OwnTeamInfo::sizeOfOwnTeamInfo() const
   {
-    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 9, "The constructor is not adjusted for the current message version");
+    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 10, "The method is not adjusted for the current message version");
 
     return 1 //timestampWhenReceived
            + sizeof packetNumber
@@ -126,7 +133,7 @@ namespace B_HULKs
 
   void OwnTeamInfo::write(void*& data, uint32_t timestamp) const
   {
-    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 9, "The constructor is not adjusted for the current message version");
+    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 10, "The method is not adjusted for the current message version");
 
 #ifndef NDEBUG
     const void* const begin = data; //just for length check
@@ -136,13 +143,14 @@ namespace B_HULKs
     writeVal<uint8_t>(data, packetNumber);
 
     state.write(data);
-    if (state.gameState == static_cast<uint16_t>(GameState::PLAYING) && state.setPlay != static_cast<uint16_t>(SetPlay::NONE)) {
-      writeVal<uint8_t>(data, dropInTeam);
-    } else {
+//    if (state.gameState == static_cast<uint16_t>(GameState::PLAYING) && state.setPlay != static_cast<uint16_t>(SetPlay::NONE)) { TODO LEGACY CODE
+//      writeVal<uint8_t>(data, dropInTeam);
+//    } else {
       writeVal<uint8_t>(data, kickingTeam);
-    }
+//    }
 
-    writeVal<uint16_t>(data, static_cast<uint16_t>(std::min(63u, 1u + dropInTime) >> 1 << 11 | (secsRemaining & 0x3FF) << 1 | (secondaryTime >> 8 & 1)));
+//    writeVal<uint16_t>(data, static_cast<uint16_t>(std::min(63u, 1u + dropInTime) >> 1 << 11 | (secsRemaining & 0x3FF) << 1 | (secondaryTime >> 8 & 1)));
+    writeVal<uint16_t>(data, static_cast<uint16_t>(std::min(63u, 1u + 0) >> 1 << 11 | (secsRemaining & 0x3FF) << 1 | (secondaryTime >> 8 & 1))); //TODO LEGACY CODE (0)
     writeVal<uint16_t>(data, static_cast<uint16_t>(secondaryTime));
 
     uint16_t scorePlusIsPenalized = score;
@@ -155,7 +163,7 @@ namespace B_HULKs
 
   void OwnTeamInfo::read(const void*& data, uint32_t timestamp)
   {
-    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 9, "The constructor is not adjusted for the current message version");
+    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 10, "The constructor is not adjusted for the current message version");
 
     timestampWhenReceived = timestamp - (readVal<const uint8_t>(data) << 8);
     if(timestamp - timestampWhenReceived == 0xFF00)
@@ -165,16 +173,16 @@ namespace B_HULKs
 
     state.read(data);
 
-    if (state.gameState == static_cast<uint16_t>(GameState::PLAYING) && state.setPlay != static_cast<uint16_t>(SetPlay::NONE)) {
-      dropInTeam = readVal<const int8_t>(data);
-    }
-    else
-    {
+//    if (state.gameState == static_cast<uint16_t>(GameState::PLAYING) && state.setPlay != static_cast<uint16_t>(SetPlay::NONE)) { TODO LEGACY CODE
+//      dropInTeam = readVal<const int8_t>(data);
+//    }
+//    else
+//    {
       kickingTeam= readVal<const int8_t>(data);
-    }
+//    }
 
     const uint16_t timeStruct = readVal<const int16_t>(data);
-    dropInTime = static_cast<uint16_t>(timeStruct >> 11 << 1);
+//    dropInTime = static_cast<uint16_t>(timeStruct >> 11 << 1);
     secsRemaining = static_cast<uint16_t>((timeStruct >> 1) & 0x3FF);
     secondaryTime = readVal<uint16_t>(data);
 
@@ -184,6 +192,12 @@ namespace B_HULKs
     for(unsigned i = 0; i < BHULKS_STANDARD_MESSAGE_MAX_NUM_OF_PLAYERS; ++i, runner >>= 1)
       playersArePenalized[i] = (runner & scorePenaltyStruct) != 0;
   }
+
+  /*
+   * =============================================
+   * ============ BHULKS STANDARD MESSAGE ========
+   * =============================================
+   */
 
   BHULKsStandardMessage::BHULKsStandardMessage() :
     version(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION),
@@ -208,7 +222,7 @@ namespace B_HULKs
     requestsNTPMessage(false),
     ntpMessages()
   {
-    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 9, "The constructor is not adjusted for the current message version");
+    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 10, "The constructor is not adjusted for the current message version");
 
     const char* init = BHULKS_STANDARD_MESSAGE_STRUCT_HEADER;
     for(unsigned int i = 0; i < sizeof(header); ++i)
@@ -221,7 +235,7 @@ namespace B_HULKs
 
   int BHULKsStandardMessage::sizeOfBHULKsMessage() const
   {
-    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 9, "This method is not adjusted for the current message version");
+    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 10, "This method is not adjusted for the current message version");
 
     return sizeof header
            + sizeof version
@@ -244,7 +258,7 @@ namespace B_HULKs
 
   bool BHULKsStandardMessage::read(const void* data)
   {
-    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 9, "This method is not adjusted for the current message version");
+    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 10, "This method is not adjusted for the current message version");
 
 #ifndef NDEBUG
     const void* const begin = data; //just for length check
@@ -333,7 +347,7 @@ namespace B_HULKs
 #define CUT_TO_PLUS_MINUS(value, positiveRange) std::max(std::min( (value), positiveRange), -positiveRange)
   void BHULKsStandardMessage::write(void* data) const
   {
-    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 9, "This method is not adjusted for the current message version");
+    static_assert(BHULKS_STANDARD_MESSAGE_STRUCT_VERSION == 10, "This method is not adjusted for the current message version");
 
 #ifndef NDEBUG
     const void* const begin = data; //just for length check

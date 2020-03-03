@@ -60,7 +60,7 @@ private:
   std::string hash(const std::string& mount, const std::string& key);
 
   mount_map_t mountPts_;
-  const std::string basePath_;
+  const std::string basePath_; //example: home/configuration/
   std::string naoHeadName_;
   std::string naoBodyName_;
   std::string locationName_;

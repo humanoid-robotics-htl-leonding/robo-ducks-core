@@ -24,11 +24,14 @@
 #include "Data/TeamBallModel.hpp"
 #include "Data/TeamPlayers.hpp"
 #include "Data/WorldState.hpp"
+#include "Data/PenaltyStrikerAction.hpp"
+#include "Data/PenaltyKeeperAction.hpp"
 #include "Framework/Module.hpp"
 
 #include "ActionCommand.hpp"
 #include "BehaviorParameters.hpp"
 
+class Thoughts;
 
 struct DataSet
 {
@@ -70,7 +73,8 @@ struct DataSet
           const PenaltyKeeperAction& pa, const CycleInfo& ci, const SetPosition& sp,
           const DefendingPosition& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
           const ReplacementKeeperAction& rk, const ButtonData& bd, const WorldState& ws,
-          const KickConfigurationData& kcd, const BallSearchPosition& bsp, const HeadPositionData& hpd, const ActionCommand& lac)
+          const KickConfigurationData& kcd, const BallSearchPosition& bsp, const HeadPositionData& hpd,
+          const ActionCommand& lac)
     : parameters(module)
     , gameControllerState(gcs)
     , ballState(bs)

@@ -5,7 +5,11 @@
 #include "Tools/Storage/UniValue/UniConvertible.hpp"
 #include <sstream>
 
+
+
+
 /// Representation of Kinematic Information
+
 /**
  * This class represents a KinematicMatrix
  * A KinematicMatrix is represented by a 3x3 RotationMatrix (rotM) and a Vector3 (posV)\n
@@ -172,6 +176,14 @@ public:
   bool operator==(const KinematicMatrix& other) const
   {
     return (rotM.isApprox(other.rotM) && posV.isApprox(other.posV));
+  }
+
+  // Functionality guessed by Obyoxar based on equality and *= operator to fix deprecation warning
+  KinematicMatrix& operator=(const KinematicMatrix& other)
+  {
+    this->posV = other.posV;
+    this->rotM = other.rotM;
+    return *this;
   }
 
   /** comparison of another KinematicMatrix to this one

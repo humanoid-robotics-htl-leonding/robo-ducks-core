@@ -2,6 +2,10 @@
 /.vs/*
 /cmake-build-*
 
+
+#Visual Studio Code
+.vscode/*
+
 CMakeLists.txt.user
 CMakeSettings.json
 settings.json
@@ -23,3 +27,11 @@ install_manifest.txt
 *.bt
 *.pyc
 .DS_Store
+
+cmake-build-*/
+
+toolchain/hulks*
+toolchain/naoqi*
+.idea
+
+*.bz2

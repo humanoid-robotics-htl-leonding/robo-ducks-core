@@ -1,5 +1,7 @@
 #pragma once
 
+//#warning Using Hulks Behaviour is deprecated
+
 #include "Modules/NaoProvider.h"
 
 #include "ActionCommand.hpp"
@@ -13,6 +15,7 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
+namespace hulks{
 #include "BehaviorUnits/Head/CameraCalibration.hpp"
 #include "BehaviorUnits/Head/LookAround.hpp"
 #include "BehaviorUnits/Head/LookForward.hpp"
@@ -42,6 +45,7 @@
 #include "BehaviorUnits/GameStates/Finished.hpp"
 #include "BehaviorUnits/NotPenalized.hpp"
 #include "BehaviorUnits/RootBehavior.hpp"
+}
 
 #ifdef __clang__
 #pragma clang diagnostic pop

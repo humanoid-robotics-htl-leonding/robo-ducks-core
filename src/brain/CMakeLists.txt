@@ -5,20 +5,29 @@ project(Brain)
 set(HEADERS
   print.h
   Behavior/ActionCommand.hpp
+  Behavior/DucksActionCommand.hpp
   Behavior/BehaviorModule.hpp
+        Behavior/DucksBehaviorModule.hpp
   Behavior/BehaviorParameters.hpp
   Behavior/BishopPositionProvider.hpp
   Behavior/DefendingPositionProvider.hpp
+        Behavior/DucksDefenderActionProvider.hpp
   Behavior/DataSet.hpp
   Behavior/BallSearchMapManager.hpp
+  Behavior/DucksBallSearchMapManager.hpp
   Behavior/HeadPositionProvider.hpp
   Behavior/BallSearchPositionProvider.hpp
   Behavior/KeeperActionProvider.hpp
+  Behavior/DucksKeeperActionProvider.hpp
   Behavior/PenaltyKeeperActionProvider.hpp
   Behavior/PlayingRoleProvider.hpp
+  Behavior/DucksPlayingRoleProvider.hpp
   Behavior/ReplacementKeeperActionProvider.hpp
   Behavior/SetPositionProvider.hpp
   Behavior/StrikerActionProvider.hpp
+  Behavior/DucksStrikerActionProvider.hpp
+  Behavior/DucksDesperationProvider.hpp
+  Behavior/DucksTimeToReachBallProvider.hpp
   Behavior/PenaltyStrikerActionProvider.hpp
   Behavior/SupportingPositionProvider.hpp
   Behavior/TimeToReachBallProvider.hpp
@@ -53,6 +62,7 @@ set(HEADERS
   Behavior/BehaviorUnits/Skills/WalkBehindBallAndDribble.hpp
   Behavior/BehaviorUnits/Skills/WalkToPose.hpp
   Behavior/WorldStateProvider.hpp
+        Behavior/Thoughts.hpp
   Interface/AudioReceiver.hpp
   Interface/AudioPlayer.hpp
   GameController/GameController.hpp
@@ -60,6 +70,8 @@ set(HEADERS
   Knowledge/Ball/BallFilter.hpp
   Knowledge/Ball/FakeBallProvider.hpp
   Knowledge/Ball/TeamBallFilter.hpp
+        Knowledge/Ball/DucksBallPredictor.hpp
+
   Knowledge/LandmarkFilter/LandmarkFilter.hpp
   Knowledge/Position/FakeRobotPoseProvider.hpp
   Knowledge/Position/UKFPositionKnowledge.hpp
@@ -76,11 +88,14 @@ set(HEADERS
   Modules/HeadDamageProvider/HeadDamageProvider.hpp
   Modules/MotionPlanning/MotionPlanner.hpp
   Modules/WhistleDetection/WhistleDetection.hpp
+  Modules/WhistleDetection/FakeWhistleDetection.hpp
   Modules/ReplayRecorder/ReplayRecorder.hpp
   Modules/OdometryOffsetProvider/OdometryOffsetProvider.hpp
   Modules/TeamPlayersAugmenter/TeamPlayersAugmenter.hpp
+  Modules/HeadOffModule/HeadOffModule.hpp
   SPLNetwork/BHULKsHelper.hpp
   SPLNetwork/HULKsMessage.hpp
+  SPLNetwork/DucksMessage.hpp
   SPLNetwork/SPLNetworkService.hpp
   SPLNetwork/SPLMessageReceiver.hpp
   SPLNetwork/SPLMessageTransmitter.hpp
@@ -90,21 +105,32 @@ set(HEADERS
 
 set(SOURCES
   Behavior/BallSearchMapManager.cpp
+  Behavior/DucksBallSearchMapManager.cpp
   Behavior/BallSearchPositionProvider.cpp
+        Behavior/DucksBallSearchPositionProvider.cpp
   Behavior/BehaviorModule.cpp
+        Behavior/DucksBehaviorModule.cpp
   Behavior/BishopPositionProvider.cpp
   Behavior/DefendingPositionProvider.cpp
+        Behavior/DucksDefenderActionProvider.cpp
   Behavior/HeadPositionProvider.cpp
+  Behavior/KeeperActionProvider.cpp
+  Behavior/DucksKeeperActionProvider.cpp
   Behavior/KeeperActionProvider.cpp
   Behavior/PenaltyKeeperActionProvider.cpp
   Behavior/PlayingRoleProvider.cpp
+  Behavior/DucksPlayingRoleProvider.cpp
   Behavior/ReplacementKeeperActionProvider.cpp
   Behavior/SetPositionProvider.cpp
   Behavior/StrikerActionProvider.cpp
+  Behavior/DucksStrikerActionProvider.cpp
+  Behavior/DucksDesperationProvider.cpp
+  Behavior/DucksTimeToReachBallProvider.cpp
   Behavior/PenaltyStrikerActionProvider.cpp
   Behavior/SupportingPositionProvider.cpp
   Behavior/TimeToReachBallProvider.cpp
   Behavior/WorldStateProvider.cpp
+        Behavior/Thoughts.cpp
   Interface/AudioReceiver.cpp
   Interface/AudioPlayer.cpp
   GameController/GameController.cpp
@@ -112,6 +138,7 @@ set(SOURCES
   Knowledge/Ball/BallFilter.cpp
   Knowledge/Ball/FakeBallProvider.cpp
   Knowledge/Ball/TeamBallFilter.cpp
+        Knowledge/Ball/DucksBallPredictor.cpp
   Knowledge/LandmarkFilter/LandmarkFilter.cpp
   Knowledge/Position/FakeRobotPoseProvider.cpp
   Knowledge/Position/UKFPositionKnowledge.cpp
@@ -127,17 +154,22 @@ set(SOURCES
   Modules/HeadDamageProvider/HeadDamageProvider.cpp
   Modules/MotionPlanning/MotionPlanner.cpp
   Modules/WhistleDetection/WhistleDetection.cpp
+  Modules/WhistleDetection/FakeWhistleDetection.cpp
   Modules/ReplayRecorder/ReplayRecorder.cpp
   Modules/OdometryOffsetProvider/OdometryOffsetProvider.cpp
   Modules/TeamPlayersAugmenter/TeamPlayersAugmenter.cpp
+  Modules/HeadOffModule/HeadOffModule.cpp
   SPLNetwork/HULKsMessage.cpp
+  SPLNetwork/DucksMessage.cpp
   SPLNetwork/SPLNetworkService.cpp
   SPLNetwork/SPLMessageReceiver.cpp
+  SPLNetwork/DucksSPLMessageReceiver.cpp
   SPLNetwork/SPLMessageTransmitter.cpp
+  SPLNetwork/DucksSPLMessageTransmitter.cpp
   Brain.cpp
   BrainThread.cpp
   print.cpp
-)
+        )
 
 
 add_library(${PROJECT_NAME} OBJECT ${SOURCES} ${HEADERS})

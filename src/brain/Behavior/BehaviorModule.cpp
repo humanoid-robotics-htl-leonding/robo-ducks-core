@@ -1,9 +1,9 @@
+#include <csignal>
 #include "Tools/Chronometer.hpp"
 
 #include "ActionCommand.hpp"
 #include "BehaviorModule.hpp"
 #include "Units.hpp"
-
 
 BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   : Module(manager)
@@ -39,8 +39,12 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
   , replacementKeeperAction_(*this)
   , buttonData_(*this)
   , worldState_(*this)
+  , headOffData_(*this)
   , motionRequest_(*this)
-  , eyeLEDRequest_(*this)
+  , audioRequest_(*this)
+  , playbackData_(*this)
+  , ledRequest_(*this)
+  , thoughtControlRequest_(*this)
   , actionCommand_(ActionCommand::dead())
   , dataSet_(*this, *gameControllerState_, *ballState_, *robotPosition_, *bodyPose_,
              *playerConfiguration_, *playingRoles_, *motionState_, *headMotionOutput_,
@@ -50,7 +54,6 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
              *replacementKeeperAction_, *buttonData_, *worldState_, *kickConfigurationData_,
              *ballSearchPosition_, *headPositionData_, actionCommand_)
 {
-
   {
     // This is needed because callbacks are called asynchronously and a MotionRequest is large
     // enough that it is too dangerous.
@@ -58,22 +61,45 @@ BehaviorModule::BehaviorModule(const ModuleManagerInterface& manager)
     actualRemoteMotionRequest_ = remoteMotionRequest_();
   }
   useRemoteMotionRequest_() = false;
+  print("Behaviour - Init: ", LogLevel::INFO);
+  print(" ==== Behaviour is using HULKs BehaviourModule ==== ", LogLevel::INFO);
 }
 
-void BehaviorModule::cycle()
-{
+void BehaviorModule::cycle() {
   Chronometer time(debug(), mount_ + ".cycle_time");
-  if (gameControllerState_->gameState == GameState::PLAYING &&
-      gameControllerState_->penalty == Penalty::NONE && !bodyPose_->fallen &&
-      useRemoteMotionRequest_())
-  {
+
+  if (
+          useRemoteMotionRequest_() &&
+          gameControllerState_->gameState == GameState::PLAYING &&
+          gameControllerState_->penalty == Penalty::NONE &&
+          !bodyPose_->fallen
+          ) {
     std::lock_guard<std::mutex> lg(actualRemoteMotionRequestLock_);
     *motionRequest_ = actualRemoteMotionRequest_;
-  }
-  else
-  {
-    actionCommand_ = rootBehavior(dataSet_);
+  } else {
+//    thoughts_->pushState(gameControllerState_->gameState)
+
+	  if (headOffData_->shouldDie) {
+		  actionCommand_ = ActionCommand::dead().combineChestLED(ActionCommand::ChestLED::rainbow());
+	  }
+	  else {
+		  actionCommand_ = hulks::rootBehavior(dataSet_);
+	  }
+	  if (headOffData_->shouldDieSignal) {
+		  actionCommand_ = ActionCommand::dead()
+			  .combineChestLED(ActionCommand::ChestLED::red())
+			  .combineAudio(ActionCommand::Audio::audioC5());
+	  }
+	  if(headOffData_->lastCycle) {
+		  actionCommand_ = ActionCommand::dead();
+	  }
     actionCommand_.toMotionRequest(*motionRequest_);
-    actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
+//    actionCommand_.toEyeLEDRequest(*eyeLEDRequest_);
+    actionCommand_.toAudioRequest(*audioRequest_);
+//    actionCommand_.toEarLEDRequest(*earLEDRequest_);
+    actionCommand_.toThoughtControlRequest(*thoughtControlRequest_);
+//    actionCommand_.toChestLEDRequest(*chestLEDRequest_);
+    actionCommand_.toLEDRequest(*ledRequest_);
+    //actionCommand_.toPlaybackData(*playbackData_);
   }
 }

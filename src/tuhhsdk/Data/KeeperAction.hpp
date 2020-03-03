@@ -21,6 +21,8 @@ public:
     BLOCK_GOAL = 1,
     // perform genuflect motion
     GENUFLECT = 2,
+    // Kick ball to best available teammate
+    KICK_AWAY = 3,
   };
 
   // sum all actions the keeper is allowed to perform
