@@ -26,7 +26,7 @@ DucksBehaviorModule::DucksBehaviorModule(const ModuleManagerInterface &manager)
 	  headMotionOutput_(*this),
 	  teamBallModel_(*this),
 	  teamPlayers_(*this),
-	  ballSearchPosition_(*this),
+	  poi_(*this),
 	  fieldDimensions_(*this),
 	  strikerAction_(*this),
 	  penaltyStrikerAction_(*this),
@@ -55,7 +55,7 @@ DucksBehaviorModule::DucksBehaviorModule(const ModuleManagerInterface &manager)
 			   *penaltyStrikerAction_, *keeperAction_, *penaltyKeeperAction_, *cycleInfo_,
 			   *setPosition_, *defendingPosition_, *bishopPosition_, *supportingPosition_,
 			   *replacementKeeperAction_, *buttonData_, *worldState_, *kickConfigurationData_,
-			   *ballSearchPosition_, *headPositionData_, thoughts_, actionCommand_)
+			   *poi_, *headPositionData_, thoughts_, actionCommand_)
 {
 	{
 		// This is needed because callbacks are called asynchronously and a MotionRequest is large

@@ -27,5 +27,6 @@
   "DucksKeeperActionProvider" : false,
 
   "DucksDesperationProvider": false,
-  "DucksBallPredictor": false
+  "DucksBallPredictor": false,
+  "DucksPOIProvider": false,
 }

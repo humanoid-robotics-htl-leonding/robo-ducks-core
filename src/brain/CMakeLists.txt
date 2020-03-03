@@ -22,6 +22,7 @@ set(HEADERS
   Behavior/PenaltyKeeperActionProvider.hpp
   Behavior/PlayingRoleProvider.hpp
   Behavior/DucksPlayingRoleProvider.hpp
+        Behavior/DucksPOIProvider.hpp
   Behavior/ReplacementKeeperActionProvider.hpp
   Behavior/SetPositionProvider.hpp
   Behavior/StrikerActionProvider.hpp
@@ -120,6 +121,7 @@ set(SOURCES
   Behavior/PenaltyKeeperActionProvider.cpp
   Behavior/PlayingRoleProvider.cpp
   Behavior/DucksPlayingRoleProvider.cpp
+        Behavior/DucksPOIProvider.cpp
   Behavior/ReplacementKeeperActionProvider.cpp
   Behavior/SetPositionProvider.cpp
   Behavior/StrikerActionProvider.cpp

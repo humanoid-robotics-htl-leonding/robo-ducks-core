@@ -73,7 +73,7 @@ struct DucksDataSet
 			   const PenaltyKeeperAction& pa, const CycleInfo& ci, const SetPosition& sp,
 			   const DucksDefenderAction& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
 			   const ReplacementKeeperAction& rk, const ButtonData& bd, const WorldState& ws,
-			   const KickConfigurationData& kcd, const DuckBallSearchPosition& bsp, const HeadPositionData& hpd,
+			   const KickConfigurationData& kcd, const DucksPOI& bsp, const HeadPositionData& hpd,
 			   Thoughts& thdat,
 
 			   const DucksActionCommand& lac)
@@ -88,7 +88,7 @@ struct DucksDataSet
     , headMotionOutput(hmo)
     , teamBallModel(tbm)
     , teamPlayers(tps)
-    , ballSearchPosition(bsp)
+    , poi(bsp)
     , fieldDimensions(fd)
     , strikerAction(sa)
     , penaltyStrikerAction(ps)
@@ -131,7 +131,7 @@ struct DucksDataSet
   /// a reference to my homies
   const TeamPlayers& teamPlayers;
   /// a reference to the ball search position
-  const DuckBallSearchPosition& ballSearchPosition;
+  const DucksPOI& poi;
   /// a reference to the field dimensions
   const FieldDimensions& fieldDimensions;
   /// a reference to the striker action

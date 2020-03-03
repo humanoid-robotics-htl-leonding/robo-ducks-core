@@ -9,12 +9,12 @@
 
 namespace Ducks
 {
-  struct BallSearchData
+  struct POIData
   {
     /**
      * @brief Constructor
      */
-    BallSearchData();
+    POIData();
 
     /// The current search position of the sending robot. == Current position if not searching!
     Vector2f currentSearchPosition;
@@ -66,7 +66,7 @@ namespace Ducks
     /// the statuses of the joints
     std::uint8_t jointStatus[JOINTS::JOINTS_MAX];
     /// The ball search data needed and produced by the BallSearchPositionProvider
-    BallSearchData ballSearchData;
+    POIData ballSearchData;
 
     /**
      * The size (bytes) of the hulks message.

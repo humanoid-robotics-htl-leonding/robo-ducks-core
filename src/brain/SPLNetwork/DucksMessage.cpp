@@ -19,12 +19,12 @@ namespace Ducks
     return val;
   }
 
-  BallSearchData::BallSearchData()
+  POIData::POIData()
   {
     currentSearchPosition = Vector2f(0, 0);
   }
 
-  int BallSearchData::sizeOfBallSearchData() const
+  int POIData::sizeOfBallSearchData() const
   {
     // the amount of suggestions sent.
     uint8_t sizeOfSuggestions = sizeof(float) * 2 * MAX_NUM_PLAYERS;
@@ -37,7 +37,7 @@ namespace Ducks
            + 1;                      // availableForSearch
   }
 
-  void BallSearchData::write(void*& data) const
+  void POIData::write(void*& data) const
   {
 #ifndef NDEBUG
     const void* const begin = data; // For size check only.
@@ -70,7 +70,7 @@ namespace Ducks
     assert((reinterpret_cast<const char*>(data) - reinterpret_cast<const char*>(begin)) == sizeOfBallSearchData());
   }
 
-  void BallSearchData::read(const void*& data)
+  void POIData::read(const void*& data)
   {
     currentSearchPosition.x() = readVal<const float>(data);
     currentSearchPosition.y() = readVal<const float>(data);

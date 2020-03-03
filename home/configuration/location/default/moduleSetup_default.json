@@ -7,7 +7,7 @@
   "DucksBallSearchMapManager" : true,
 
   "BallSearchPositionProvider" : false,
-  "DucksBallSearchPositionProvider" : true,
+  "DucksBallSearchPositionProvider" : false,
 
   "BehaviorModule" : false,
   "DucksBehaviorModule" : true,
@@ -64,6 +64,7 @@
 
   "PlayingRoleProvider" : false,
   "DucksPlayingRoleProvider" : true,
+  "DucksPOIProvider": true,
 
   "DucksBallPredictor": true,
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Data/DucksPOI.hpp>
 #include <Data/DucksStrikerAction.hpp>
 #include "Framework/Module.hpp"
 #include "Tools/Time.hpp"
@@ -81,7 +82,7 @@ private:
   /// the ball search map
   const Dependency<BallSearchMap> ballSearchMap_;
   /// the ball search position
-  const Dependency<DuckBallSearchPosition> ballSearchPosition_;
+  const Dependency<DucksPOI> poi_;
   /// the last time when a message was sent
   TimePoint lastTime_;
   /// the last time when a NTP message has been requested
