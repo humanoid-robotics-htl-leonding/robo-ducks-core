@@ -15,7 +15,7 @@ GoalDetection::GoalDetection(const ModuleManagerInterface& manager)
 	, maxTilt_(*this, "maxTilt", [] {})
   , imageData_(*this)
   , cameraMatrix_(*this)
-  , filteredSegments_(*this)
+  , imageSegments_(*this)
   , fieldDimensions_(*this)
   , goalData_(*this)
 {
@@ -23,6 +23,7 @@ GoalDetection::GoalDetection(const ModuleManagerInterface& manager)
 
 void GoalDetection::detectGoalPoints()
 {
+	/*
 	goalPoints_.clear();
 	auto shift = [](int c) { return c >> 1; };
 	for (const auto& segment : filteredSegments_->horizontal)
@@ -35,6 +36,14 @@ void GoalDetection::detectGoalPoints()
 		}
 		goalPoints_.push_back((segment->start + segment->end).unaryExpr(shift));
 	}
+	*/
+    for(const auto& scanline : imageSegments_->verticalScanlines){
+        for (const auto& segment : scanline.segments) {
+            if(segment.startEdgeType ){
+
+            }
+        }
+    }
 }
 
 bool GoalDetection::checkGroup(VecVector2i& group) {
@@ -104,13 +113,13 @@ void GoalDetection::createGoalData() {
 
 void GoalDetection::cycle()
 {
-	if (!filteredSegments_->valid)
+	if (!imageSegments_->valid)
 	{
 		return;
 	}
 	{
 		Chronometer time(debug(), mount_ + "." + imageData_->identification + "_cycle_time");
-		//detectGoalPoints();
+		detectGoalPoints();
 		//bombermanMaxDistanceGrouping();
 		//debugGoalPostGroups_ = goalPostGroups_;
 		//createGoalData();
