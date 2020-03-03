@@ -17,7 +17,9 @@ def touch_step(name):
         def touch_wrapper(self):
             logging.info(f" => Step: {name}")
             func(self)
+
         return touch_wrapper
+
     return touch_decoration
 
 
@@ -40,16 +42,22 @@ class TouchCommand(Command):
         parser.add_argument("--hostname", type=str, default=None, help="Hostname to set the nao to")
         pass
 
-    @touch_step("SSH-Key")
-    def upload_ssh_key(self):
-        self.nao.copy_ssh_key()
+    # @touch_step("SSH-Key")
+    # def upload_ssh_key(self):
+    #     self.nao.copy_ssh_key()
 
     def execute(self, args):
         self.args = args
-        self.nao = nc.Nao(args.address)
+        self.nao = nc.Nao(args.address, sensitive=True)
 
         os.chmod(os.path.join(nc.base_dir, "files", "ssh_key"), stat.S_IRUSR)
-        self.upload_ssh_key()
+        print("Uploading SSHkey...")
+        self.nao.copy_ssh_key()
+        print("Uploaded SSHkey...")
+
+        print("Add sudoers flag")
+        self.nao.add_sudoers()
+        print("Added sudoers flag")
 
         if not args.no_sysroot:
             if args.target not in sysroot_file_names:

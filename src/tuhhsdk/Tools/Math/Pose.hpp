@@ -38,6 +38,19 @@ public:
   {
     return position == other.position && orientation == other.orientation;
   }
+
+  /**
+   * Calculates the distance between the two positions via .norm() and also respects the orientations
+   * @author Simon Holzapfel
+   * @param other The other pose
+   * @param threshold Maximum distance between positions [exclusive]
+   * @param angleThreshold Maxmium angle between orientations [exclusive]
+   * @return true if the distances between the angles and positions are within the respecitve thresholds
+   */
+  bool isNear(const Pose& other, float threshold = 0.1, float angleThreshold = 5 * TO_RAD) const {
+    return (this->position - other.position).norm() < threshold && std::abs(Angle::angleDiff(this->orientation, other.orientation)) < angleThreshold;
+  }
+
   /**
    * @brief operator!= compares this pose to anothe pose
    * @param other another pose

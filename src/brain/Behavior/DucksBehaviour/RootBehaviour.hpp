@@ -5,6 +5,6 @@
 
 DucksActionCommand rootBehavior(const DucksDataSet &d)
 {
-	DucksActionCommand state = chooseState(d);
-	return state;
+    DucksActionCommand state = chooseState(d);
+    return state;
 }
