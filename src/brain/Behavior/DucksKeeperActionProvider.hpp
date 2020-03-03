@@ -37,8 +37,6 @@ private:
     const Parameter<float> shadowCastSpeed_;
     const Parameter<float> shadowResolveSpeed_;
     const Parameter<float> robotDiameter_;
-    const Parameter<float> keeperMaxX_;
-    const Parameter<float> keeperMinX_;
     const Parameter<int> segmentCount_;
     const Parameter<float> keeperBallKickDistance_;
 

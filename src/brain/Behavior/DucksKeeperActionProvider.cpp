@@ -14,8 +14,6 @@ DucksKeeperActionProvider::DucksKeeperActionProvider(const ModuleManagerInterfac
       , shadowCastSpeed_(*this, "shadowCastSpeed", []{})
       , shadowResolveSpeed_(*this, "shadowResolveSpeed", []{})
       , robotDiameter_(*this, "robotDiameter")
-      , keeperMaxX_(*this, "keeperMaxX", []{})
-      , keeperMinX_(*this, "keeperMinX", []{})
       , segmentCount_(*this, "segmentCount", [this]{
           goalShadow_.clear();
           goalShadow_.resize(segmentCount_());
@@ -169,7 +167,7 @@ void DucksKeeperActionProvider::calculateBestKeeperPositionFor(const Vector2f &s
 
     Vector2f truePosition = {0, 0};
     Vector2f nope = {0, 0};
-    int intersections = Geometry::getIntersection(Rectangle<float>(fieldZones_->keeperFrom, fieldZones_->keeperTo), Line<float>(proposedPosition, Vector2f(fieldZones_->keeperFrom.x()+0.01, segmentMiddlePoint.y())), truePosition, nope);
+    int intersections = Geometry::getIntersection(fieldZones_->keeper, Line<float>(proposedPosition, Vector2f(fieldZones_->keeper.topLeft.x()+0.01, segmentMiddlePoint.y())), truePosition, nope);
     if(intersections > 0){
     	assert(intersections == 1);
     	proposedPosition = truePosition;

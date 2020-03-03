@@ -1,6 +1,5 @@
 {
   "doubleDefenderFocalY": 1.0,
-  "defendThreshold": 0.1,
-  "kickThreshold": 0.05,
-  "dribbleThreshold": 0.01
+  "guardY": 0.5,
+  "dribbleThreshold": 0.1
 }

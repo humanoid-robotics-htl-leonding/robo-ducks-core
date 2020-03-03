@@ -5,23 +5,19 @@
 #include "Framework/DataType.hpp"
 #include "Modules/Configuration/Configuration.h"
 #include "Tools/Math/Eigen.hpp"
+#include "Tools/Math/Rectangle.hpp"
 
 class FieldZones : public DataType<FieldZones>
 {
 public:
 	/// the name of this DataType
 	DataTypeName name = "FieldZones";
-	/// the from coordinates of the defender kick zone
-	Vector2f defenderKickFrom = {0, 0};
-	/// the to coordinates of the defender kick zone
-	Vector2f defenderKickTo = {0, 0};
-	/// the from coordinates of the defender dribble zone
-	Vector2f defenderDribbleFrom = {0, 0};
-	/// the to coordinates of the defender dribble zone
-	Vector2f defenderDribbleTo = {0, 0};
-
-	Vector2f keeperFrom = {0, 0};
-	Vector2f keeperTo = {0, 0};
+	/// the defender kick zone
+	Rectangle<float> defenderKick;
+	/// the defender dribble zone
+	Rectangle<float> defenderDribble;
+	/// the keeper zone
+	Rectangle<float> keeper;
 
 	/**
 	 * @brief reset does nothing
@@ -35,33 +31,10 @@ public:
 	 * @param position a position in field coordinates
 	 * @return true if the position is in the defender kick zone
 	 */
-	bool isInsideDefenderKick(const Vector2f& position) const
+	bool isInside(const Vector2f& position, const Rectangle<float>& zone) const
 	{
-		return ((position.x() >= defenderKickFrom.x() && position.x() <= defenderKickTo.x()) ||
-				(position.x() <= defenderKickFrom.x() && position.x() >= defenderKickTo.x())) &&
-			   ((position.y() >= defenderKickFrom.y() && position.y() <= defenderKickTo.y()) ||
-				(position.y() <= defenderKickFrom.y() && position.y() >= defenderKickTo.y()));
-	}
-
-	/**
-	 * @brief isInsideDefenderDribble determines whether a position is in the defender dribble zone
-	 * @param position a position in field coordinates
-	 * @return true if the position is in the defender dribble zone
-	 */
-	bool isInsideDefenderDribble(const Vector2f& position) const
-	{
-		return ((position.x() >= defenderDribbleFrom.x() && position.x() <= defenderDribbleTo.x()) ||
-				(position.x() <= defenderDribbleFrom.x() && position.x() >= defenderDribbleTo.x())) &&
-			   ((position.y() >= defenderDribbleFrom.y() && position.y() <= defenderDribbleTo.y()) ||
-				(position.y() <= defenderDribbleFrom.y() && position.y() >= defenderDribbleTo.y()));
-	}
-
-	bool isInsideKeeper(const Vector2f& position) const
-	{
-		return ((position.x() >= keeperFrom.x() && position.x() <= keeperTo.x()) ||
-				(position.x() <= keeperFrom.x() && position.x() >= keeperTo.x())) &&
-			   ((position.y() >= keeperFrom.y() && position.y() <= keeperTo.y()) ||
-				(position.y() <= keeperFrom.y() && position.y() >= keeperTo.y()));
+		return position.x() >= zone.topLeft.x() && position.x() <= zone.bottomRight.x() &&
+			position.y() >= zone.topLeft.y() && position.y() <= zone.bottomRight.y();
 	}
 
 
@@ -69,22 +42,16 @@ public:
 	virtual void toValue(Uni::Value& value) const
 	{
 		value = Uni::Value(Uni::ValueType::OBJECT);
-		value["defenderKickFrom"] << defenderKickFrom;
-		value["defenderKickTo"] << defenderKickTo;
-		value["defenderDribbleFrom"] << defenderDribbleFrom;
-		value["defenderDribbleTo"] << defenderDribbleTo;
-		value["keeperFrom"] << keeperFrom;
-		value["keeperTo"] << keeperTo;
+		value["defenderKick"] << defenderKick;
+		value["defenderDribble"] << defenderDribble;
+		value["keeper"] << keeper;
 	}
 
 	virtual void fromValue(const Uni::Value& value)
 	{
-		value["defenderKickFrom"] >> defenderKickFrom;
-		value["defenderKickTo"] >> defenderKickTo;
-		value["defenderDribbleFrom"] >> defenderDribbleFrom;
-		value["defenderDribbleTo"] >> defenderDribbleTo;
-		value["keeperFrom"] >> keeperFrom;
-		value["keeperTo"] >> keeperTo;
+		value["defenderKick"] >> defenderKick;
+		value["defenderDribble"] >> defenderDribble;
+		value["keeper"] >> keeper;
 	}
 
 	/**
@@ -96,20 +63,26 @@ public:
 		config.mount("tuhhSDK.FieldZones", "zones.json", ConfigurationType::HEAD);
 
 		// read field parameters
+		Vector2f from;
+		Vector2f to;
+
 		auto group = config.get("tuhhSDK.FieldZones", "defenderKick");
 
-		group["from"] >> defenderKickFrom;
-		group["to"] >> defenderKickTo;
+		group["from"] >> from;
+		group["to"] >> to;
+		defenderKick = Rectangle<float>(from, to);
 
 		group = config.get("tuhhSDK.FieldZones", "defenderDribble");
 
-		group["from"] >> defenderDribbleFrom;
-		group["to"] >> defenderDribbleTo;
+		group["from"] >> from;
+		group["to"] >> to;
+		defenderDribble = Rectangle<float>(from, to);
 
 		group = config.get("tuhhSDK.FieldZones", "keeper");
 
-		group["from"] >> keeperFrom;
-		group["to"] >> keeperTo;
+		group["from"] >> from;
+		group["to"] >> to;
+		keeper = Rectangle<float>(from, to);
 	}
 };
 

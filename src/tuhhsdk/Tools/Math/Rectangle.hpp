@@ -15,7 +15,7 @@ public:
   /**
    * @brief Default constructor, ensures element wise topLeft <= bottomRight.
    */
-  Rectangle(const Vector2<T>& a = Vector2<T>::Zero(), const Vector2<T>& b = Vector2<T>::Zero())
+  explicit Rectangle(const Vector2<T>& a = Vector2<T>::Zero(), const Vector2<T>& b = Vector2<T>::Zero())
     : topLeft(a.cwiseMin(b))
     , bottomRight(a.cwiseMax(b))
   {
@@ -28,6 +28,19 @@ public:
     : topLeft(other.topLeft)
     , bottomRight(other.bottomRight)
   {
+  }
+
+//  void swap(Rectangle& other){
+//  	topLeft.swap(other.topLeft);
+//  	bottomRight.swap(other.bottomRight);
+//  }
+
+  Rectangle& operator=(const Rectangle other){
+  	if(this != &other){
+		bottomRight = other.bottomRight;
+		topLeft = other.topLeft;
+	}
+  	return *this;
   }
 
   /// the top left point of the rectangle
