@@ -35,10 +35,12 @@ private:
 	void defend();
 	void kick();
 	void dribble();
+	void guard();
 	void findOtherDefender(const TeamPlayer*& otherDefender) const;
 	void findKeeper(const TeamPlayer*& keeper) const;
 
 	const Parameter<float> doubleDefenderFocalY_;
+	const Parameter<float> guardY_;
 	const Parameter<float> defendThreshold_;
 	const Parameter<float> kickThreshold_;
 	const Parameter<float> dribbleThreshold_;
