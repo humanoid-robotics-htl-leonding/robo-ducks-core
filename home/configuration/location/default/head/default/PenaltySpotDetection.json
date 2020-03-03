@@ -6,7 +6,7 @@
    "minimumPenaltySpotRadius" : 10,
    "necessarySignificantChromaSpotSeedPoints" : 0,
    "necessarySignificantYSpotSeedPoints" : 0,
-   "requireChromaDiff" : true,
+   "requireChromaDiff" : false,
    "requireFieldColor" : false,
    "significantChromaSpotSeedPointDiff" : 25,
    "significantYSpotSeedPointDiff" : 50,
