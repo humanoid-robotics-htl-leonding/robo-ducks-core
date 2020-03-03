@@ -164,14 +164,18 @@ ProbCell const* DucksBallSearchPositionProvider::snackPositionToLookAt() {
 bool DucksBallSearchPositionProvider::policyOwnCamera(DuckBallSearchPosition &position)
 {
 	//== CASE 1 If we see the ball on our own, look at it.
+	if(!ballState_->found) return false;
 	auto ballPos = ballState_->position + ballState_->velocity*cycleInfo_->cycleTime;
 	position.searchPosition = robotPosition_->robotToField(ballPos);
 	position.ownSearchPoseValid = true;
 	position.reason = DuckBallSearchPosition::Reason::OWN_CAMERA;
 	standingOnCooldown_ = 0;
+	return true;
+
 }
 bool DucksBallSearchPositionProvider::policyTeamModel(DuckBallSearchPosition &position)
 {
+	if(!teamBallModel_->found) return false;
 	//== CASE 2 If we don't see the ball on our own, look at where our team thinks the ball is. Maybe we can find it there.
 	standingOnCooldown_ = 0;
 	auto ballPos = teamBallModel_->position + teamBallModel_->velocity*cycleInfo_->cycleTime;
@@ -188,30 +192,30 @@ bool DucksBallSearchPositionProvider::policyBallSearchMap(DuckBallSearchPosition
 	//3. == Scan Field
 	//3.1 Get a position to look at
 	auto probCell = snackPositionToLookAt();
-	if(probCell != nullptr){
-		//== CASE 3 We have a valid position on the ballsearchmap to look at.
+	if(probCell == nullptr) return false;
 
-		//3.2 Look at snacked position
-		position.searchPosition = probCell->position;
-		position.reason = DuckBallSearchPosition::Reason::SEARCHING;
-		position.ownSearchPoseValid=true;
+	//== CASE 3 We have a valid position on the ballsearchmap to look at.
 
-		//3.3 If position is too far away.... walk to it.
-		auto localSearchPosition = robotPosition_->fieldToRobot(searchPosition_->searchPosition);
-		if(localSearchPosition.norm() > maxBallDetectionRange_()){
-			Vector2f posToRobot = probCell->position - robotPosition_->pose.position;
-			posToRobot.normalize();
-			auto targetWalkPos = probCell->position - posToRobot * inspectBallRange_();
-			auto angle = Angle::normalized(std::atan2(posToRobot.y(), posToRobot.x()));
+	//3.2 Look at snacked position
+	position.searchPosition = probCell->position;
+	position.reason = DuckBallSearchPosition::Reason::SEARCHING;
+	position.ownSearchPoseValid=true;
 
-			position.pose = Pose(targetWalkPos, angle);
-			position.reason = DuckBallSearchPosition::Reason::SEARCH_WALK;
-		}
+	//3.3 If position is too far away.... walk to it.
+	auto localSearchPosition = robotPosition_->fieldToRobot(searchPosition_->searchPosition);
+	if(localSearchPosition.norm() > maxBallDetectionRange_()){
+		Vector2f posToRobot = probCell->position - robotPosition_->pose.position;
+		posToRobot.normalize();
+		auto targetWalkPos = probCell->position - posToRobot * inspectBallRange_();
+		auto angle = Angle::normalized(std::atan2(posToRobot.y(), posToRobot.x()));
+
+		position.pose = Pose(targetWalkPos, angle);
+		position.reason = DuckBallSearchPosition::Reason::SEARCH_WALK;
 	}
 }
 bool DucksBallSearchPositionProvider::policyLookAround(DuckBallSearchPosition &position)
 {
-	position.reason == DuckBallSearchPosition::Reason::LOOK_AROUND;
+	position.reason = DuckBallSearchPosition::Reason::LOOK_AROUND;
 	return false;
 }
 bool DucksBallSearchPositionProvider::generateBallSearchPositionWithPolicies(DuckBallSearchPosition &position)
