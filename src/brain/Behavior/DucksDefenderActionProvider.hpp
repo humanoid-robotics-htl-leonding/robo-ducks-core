@@ -41,8 +41,6 @@ private:
 
 	const Parameter<float> doubleDefenderFocalY_;
 	const Parameter<float> guardY_;
-	const Parameter<float> defendThreshold_;
-	const Parameter<float> kickThreshold_;
 	const Parameter<float> dribbleThreshold_;
 
 	const Dependency<FieldDimensions> fieldDimensions_;
