@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Data/DucksBallPrediction.hpp>
 #include "Framework/Module.hpp"
 
 #include "Data/BallSearchMap.hpp"
@@ -61,6 +62,7 @@ private:
   const Dependency<RobotPosition> robotPosition_;
   const Dependency<TeamPlayers> teamPlayers_;
   const Dependency<TeamBallModel> teamBallModel_;
+  const Dependency<DucksBallPrediction> ballPrediction_;
 
   Production<BallSearchMap> ballSearchMap_;
 

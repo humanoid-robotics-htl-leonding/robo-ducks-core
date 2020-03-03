@@ -4,11 +4,12 @@
  * Automatically walks behind ball and tries to kick into the desired Position
  * @author Simon Holzapfel
  * @param d
- * @param targetPos Where to kick to
+ * @param targetPos Where to kick to (absolute coordinates)
  * @return
  */
-DucksActionCommand kick(const DuckDataSet& d, const Vector2f& targetPos){
+DucksActionCommand kick(const DucksDataSet& d, const Vector2f& targetPos){
 
+	//TODO USE BALLSTATE HERE INSTEAD OF TEAMBALLMODEL
 	Vector2f goalToBall = d.teamBallModel.position - targetPos;
 	float orientation = std::atan2(-goalToBall.y(), -goalToBall.x());
 
@@ -28,11 +29,11 @@ DucksActionCommand kick(const DuckDataSet& d, const Vector2f& targetPos){
 
 	if(currentRobotPosition.isNear(globalTargetRobotPosition, 0.045)) {
 		return DucksActionCommand::kick(d.robotPosition.fieldToRobot(d.teamBallModel.position),
-										d.robotPosition.fieldToRobot(targetPos));
+										d.robotPosition.fieldToRobot(targetPos)).combineLeftEarLED(DucksActionCommand::EarLED::brightness(1.0));
 	}else{
 		return DucksActionCommand::walk(
 			d.robotPosition.fieldToRobot(globalTargetRobotPosition),
-			WalkMode::WALK_BEHIND_BALL);
+			WalkMode::WALK_BEHIND_BALL).combineLeftEarLED(DucksActionCommand::EarLED::loading());
 	}
 
 }

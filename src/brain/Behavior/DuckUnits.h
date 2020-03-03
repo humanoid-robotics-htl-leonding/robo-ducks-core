@@ -3,8 +3,8 @@
 //
 #pragma once
 
-#include "ActionCommand.hpp"
-#include "DuckDataSet.hpp"
+#include "DucksActionCommand.hpp"
+#include "DucksDataSet.hpp"
 
 #ifdef __clang__
 #pragma clang diagnostic push
