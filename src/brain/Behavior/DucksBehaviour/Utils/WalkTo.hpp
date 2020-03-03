@@ -3,7 +3,7 @@
 //
 #pragma once
 
-DucksActionCommand walkTo(const Pose &fieldPose, const DuckDataSet &d, const WalkMode mode = WalkMode::DIRECT)
+DucksActionCommand walkTo(const Pose &fieldPose, const DucksDataSet &d, const WalkMode mode = WalkMode::DIRECT)
 {
 	auto localPose = d.robotPosition.fieldToRobot(fieldPose);
 	if (!d.robotPosition.pose.isNear(fieldPose)) { //todo HYSCHTEREESSCHHEEE
