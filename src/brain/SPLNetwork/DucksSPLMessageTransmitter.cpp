@@ -186,30 +186,31 @@ void DucksSPLMessageTransmitter::cycle()
     // ========= BALL SEARCH DATA ============
     Ducks::POIData& poiData = ducksmsg.ballSearchData;
 
-	  poiData.currentSearchPosition = ballSearchPosition_->searchPosition;
-	  poiData.availableForSearch = ballSearchPosition_->availableForSearch;
+	  poiData.currentSearchPosition = poi_->position;
+	  poiData.availableForSearch = false;
+	  //TODO POI
     // std::cout << static_cast<int>(msg.playerNum) << "T is available for search " <<
     // (poiData.availableForSearch ? "True" : "False") << std::endl;
 
-    assert(ballSearchPosition_->suggestedSearchPositionValid.size() == MAX_NUM_PLAYERS &&
-           "suggestion valid flag array size mismatch");
-	  poiData.positionSuggestionsValidity = 0;
-    // Set the valid bit for every position suggestion.
-    for (uint8_t i = 0; i < MAX_NUM_PLAYERS; i++)
-    {
-		poiData.positionSuggestionsValidity |=
-          ballSearchPosition_->suggestedSearchPositionValid[i] << i;
-    }
-
-    poiData.positionSuggestions.resize(MAX_NUM_PLAYERS);
-    for (unsigned int i = 0; i < ballSearchPosition_->suggestedSearchPositions.size(); i++)
-    {
-		poiData.positionSuggestions[i] = ballSearchPosition_->suggestedSearchPositions[i];
-    }
-
+//    assert(ballSearchPosition_->suggestedSearchPositionValid.size() == MAX_NUM_PLAYERS &&
+//           "suggestion valid flag array size mismatch");
+//	  poiData.positionSuggestionsValidity = 0;
+//    // Set the valid bit for every position suggestion.
+//    for (uint8_t i = 0; i < MAX_NUM_PLAYERS; i++)
+//    {
+//		poiData.positionSuggestionsValidity |=
+//          ballSearchPosition_->suggestedSearchPositionValid[i] << i;
+//    }
+//
+//    poiData.positionSuggestions.resize(MAX_NUM_PLAYERS);
+//    for (unsigned int i = 0; i < ballSearchPosition_->suggestedSearchPositions.size(); i++)
+//    {
+//		poiData.positionSuggestions[i] = ballSearchPosition_->suggestedSearchPositions[i];
+//    }
+//
 	  poiData.timestampBallSearchMapUnreliable =
         ballSearchMap_->timestampBallSearchMapUnreliable_.getSystemTime();
-	  poiData.mostWisePlayerNumber = ballSearchPosition_->localMostWisePlayerNumber;
+//	  poiData.mostWisePlayerNumber = ballSearchPosition_->localMostWisePlayerNumber;
 
 
 
