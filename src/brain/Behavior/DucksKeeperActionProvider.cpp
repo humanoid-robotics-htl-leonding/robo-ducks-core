@@ -14,8 +14,6 @@ DucksKeeperActionProvider::DucksKeeperActionProvider(const ModuleManagerInterfac
       , shadowCastSpeed_(*this, "shadowCastSpeed", []{})
       , shadowResolveSpeed_(*this, "shadowResolveSpeed", []{})
       , robotDiameter_(*this, "robotDiameter")
-      , keeperMaxX_(*this, "keeperMaxX", []{})
-      , keeperMinX_(*this, "keeperMinX", []{})
       , segmentCount_(*this, "segmentCount", [this]{
           goalShadow_.clear();
           goalShadow_.resize(segmentCount_());
