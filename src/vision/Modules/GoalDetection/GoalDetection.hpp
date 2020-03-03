@@ -3,7 +3,7 @@
 #include "Framework/Module.hpp"
 
 #include "Data/CameraMatrix.hpp"
-#include "Data/FilteredSegments.hpp"
+#include "Data/ImageSegments.hpp"
 #include "Data/ImageData.hpp"
 #include "Data/FieldDimensions.hpp"
 #include "Data/GoalData.hpp"
@@ -69,8 +69,8 @@ private:
 	const Dependency<ImageData> imageData_;
 	/// a reference to the camera matrix
 	const Dependency<CameraMatrix> cameraMatrix_;
-  	/// a reference to the filtered segments
-	const Dependency<FilteredSegments> filteredSegments_;
+  	/// a reference to the image segments
+	const Dependency<ImageSegments> imageSegments_;
   	/// a reference to the field dimensions
 	const Dependency<FieldDimensions> fieldDimensions_;
 	/// the detected goal posts for other modules

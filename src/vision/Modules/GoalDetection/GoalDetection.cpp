@@ -15,7 +15,7 @@ GoalDetection::GoalDetection(const ModuleManagerInterface& manager)
 	, maxTilt_(*this, "maxTilt", [] {})
   , imageData_(*this)
   , cameraMatrix_(*this)
-  , filteredSegments_(*this)
+  , imageSegments_(*this)
   , fieldDimensions_(*this)
   , goalData_(*this)
 {
@@ -23,6 +23,7 @@ GoalDetection::GoalDetection(const ModuleManagerInterface& manager)
 
 void GoalDetection::detectGoalPoints()
 {
+	/*
 	goalPoints_.clear();
 	auto shift = [](int c) { return c >> 1; };
 	for (const auto& segment : filteredSegments_->horizontal)
@@ -35,6 +36,17 @@ void GoalDetection::detectGoalPoints()
 		}
 		goalPoints_.push_back((segment->start + segment->end).unaryExpr(shift));
 	}
+	*/
+	goalPoints_.clear();
+    for(const auto& scanline : imageSegments_->verticalScanlines){
+        for (const auto& segment : scanline.segments) {
+			if(segment.startEdgeType == EdgeType::BORDER && segment.endEdgeType == EdgeType::FALLING &&
+			   static_cast<unsigned int>(segment.scanPoints) > minSegmentLength_() &&
+			   static_cast<unsigned int>(segment.scanPoints) < maxSegmentLength_()) {
+				goalPoints_.push_back(segment.end);
+			}
+        }
+    }
 }
 
 bool GoalDetection::checkGroup(VecVector2i& group) {
@@ -104,13 +116,13 @@ void GoalDetection::createGoalData() {
 
 void GoalDetection::cycle()
 {
-	if (!filteredSegments_->valid)
+	if (!imageSegments_->valid)
 	{
 		return;
 	}
 	{
 		Chronometer time(debug(), mount_ + "." + imageData_->identification + "_cycle_time");
-		//detectGoalPoints();
+		detectGoalPoints();
 		//bombermanMaxDistanceGrouping();
 		//debugGoalPostGroups_ = goalPostGroups_;
 		//createGoalData();
@@ -125,14 +137,8 @@ void GoalDetection::sendImagesForDebug()
 	if (debug().isSubscribed(mount))
 	{
 		Image image(imageData_->image422.to444Image());
-		for (const auto& group : debugGoalPostGroups_)
-		{
-			for (const auto& point : group) {
+		for (const auto& point : goalPoints_) {
 				image.circle(Image422::get444From422Vector(point), 2, Color::RED);
-			}
-		}
-		for (const auto& point : debugGoalPoints_) {
-			image.cross(Image422::get444From422Vector(point), 5, Color::BLUE);
 		}
 		debug().sendImage(mount_ + "." + imageData_->identification + "_image_goals", image);
 	}
