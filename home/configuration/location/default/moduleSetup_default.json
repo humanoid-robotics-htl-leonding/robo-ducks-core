@@ -7,10 +7,10 @@
   "DucksBallSearchMapManager" : true,
 
   "BallSearchPositionProvider" : false,
-  "DuckBallSearchPositionProvider" : true,
+  "DucksBallSearchPositionProvider" : true,
 
   "BehaviorModule" : false,
-  "DuckBehaviorModule" : true,
+  "DucksBehaviorModule" : true,
   "DucksDesperationProvider": true,
   "BishopPositionProvider" : true,
   "BodyDamageProvider" : true,
@@ -40,7 +40,10 @@
   "JointCalibrationProvider" : true,
   "JointCommandSender" : true,
   "Keeper" : true,
-  "KeeperActionProvider" : true,
+
+  "KeeperActionProvider" : false,
+  "DucksKeeperActionProvider" : true,
+
   "Kick" : true,
   "KickConfigurationProvider" : true,
   "Kneeler" : true,
@@ -58,8 +61,12 @@
   "PenaltyKeeperActionProvider" : true,
   "PenaltySpotDetection" : true,
   "PenaltyStrikerActionProvider" : true,
+
   "PlayingRoleProvider" : false,
   "DucksPlayingRoleProvider" : true,
+
+  "DucksBallPredictor": true,
+
   "Point" : true,
   "Poser" : true,
   "Projection" : true,
@@ -89,7 +96,8 @@
   "TeamBallFilter" : true,
   "TeamObstacleFilter" : true,
   "TeamPlayersAugmenter" : true,
-  "TimeToReachBallProvider" : true,
+  "TimeToReachBallProvider" : false,
+  "DucksTimeToReachBallProvider" : true,
   "UKFPositionKnowledge" : true,
   "UNSW2014Generator" : true,
   "WalkManager" : true,

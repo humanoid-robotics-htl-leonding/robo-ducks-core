@@ -1,4 +1,6 @@
 {
+   "exposure" : 4000,
+   "gain" : 120,
    "autoExposure" : 1,
    "autoFocus" : 0,
    "autoHue" : 1,
@@ -8,10 +10,8 @@
    "contrast" : 255,
    "enableDigitalEffects": false,
    "enableAWBBias": false,
-   "exposure" : 10000,
    "focus" : 25,
    "fps" : 30,
-   "gain" : 15,
    "hue" : 0,
    "registerAddr": 0,
    "registerWrite": false,

@@ -69,13 +69,14 @@ set(TUHHSDK_HEADERS
   Data/CircleData.hpp
   Data/CycleInfo.hpp
   Data/DefendingPosition.hpp
+        Data/DucksDefenderAction.hpp
   Data/Desperation.hpp
-  Data/DucksDefendingPosition.hpp
  # Data/EyeLEDRequest.hpp
   Data/FallManagerOutput.hpp
   Data/FieldBorder.hpp
   Data/FieldColor.hpp
   Data/FieldDimensions.hpp
+  Data/FieldZones.hpp
   Data/FilteredSegments.hpp
   Data/FSRSensorData.hpp
   Data/GameControllerState.hpp
@@ -126,6 +127,7 @@ set(TUHHSDK_HEADERS
   Data/StandUpOutput.hpp
   Data/StandUpResult.hpp
   Data/StrikerAction.hpp
+  Data/DucksStrikerAction.hpp
   Data/SupportingPosition.hpp
   Data/TeamBallModel.hpp
   Data/TeamObstacleData.hpp

@@ -2,10 +2,10 @@
 #include "Tools/Chronometer.hpp"
 
 #include "ActionCommand.hpp"
-#include "DuckBehaviorModule.hpp"
+#include "DucksBehaviorModule.hpp"
 #include "DuckUnits.h"
 
-DuckBehaviorModule::DuckBehaviorModule(const ModuleManagerInterface &manager)
+DucksBehaviorModule::DucksBehaviorModule(const ModuleManagerInterface &manager)
 	: Module(manager),
 	  remoteMotionRequest_(*this, "remoteMotionRequest",
 						   [this]
@@ -68,7 +68,7 @@ DuckBehaviorModule::DuckBehaviorModule(const ModuleManagerInterface &manager)
 	print(" ==== Behaviour is using RoboDucks BehaviourModule ==== ", LogLevel::INFO);
 }
 
-void DuckBehaviorModule::cycle()
+void DucksBehaviorModule::cycle()
 {
 	Chronometer time(debug(), mount_ + ".cycle_time");
 

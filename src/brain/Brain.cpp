@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 #include "Data/FieldDimensions.hpp"
+#include "Data/FieldZones.hpp"
 #include "Data/PlayerConfiguration.hpp"
 
 #ifdef ITTNOTIFY_FOUND
@@ -25,6 +26,8 @@ Brain::Brain(const std::vector<Sender*>& senders, const std::vector<Receiver*>& 
     getDatabase().produce(typeid(PlayerConfiguration));
     getDatabase().get<FieldDimensions>().init(configuration());
     getDatabase().produce(typeid(FieldDimensions));
+    getDatabase().get<FieldZones>().init(configuration());
+    getDatabase().produce(typeid(FieldZones));
   }
   catch (const std::exception& e)
   {
