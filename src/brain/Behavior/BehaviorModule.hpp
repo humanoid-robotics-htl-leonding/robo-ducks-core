@@ -3,7 +3,6 @@
 #include <mutex>
 #include <Data/HeadOffData.hpp>
 #include <Brain.hpp>
-#include <Data/DucksPOI.hpp>
 #include "Data/BallSearchPosition.hpp"
 #include "Data/BallState.hpp"
 #include "Data/BishopPosition.hpp"
@@ -73,7 +72,7 @@ private:
     const Dependency<HeadMotionOutput> headMotionOutput_;
     const Dependency<TeamBallModel> teamBallModel_;
     const Dependency<TeamPlayers> teamPlayers_;
-    const Dependency<DucksPOI> poi_;
+    const Dependency<BallSearchPosition> ballSearchPosition_;
     const Dependency<FieldDimensions> fieldDimensions_;
     const Dependency<StrikerAction> strikerAction_;
     const Dependency<PenaltyStrikerAction> penaltyStrikerAction_;
