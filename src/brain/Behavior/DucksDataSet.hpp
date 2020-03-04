@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Data/DuckBallSearchPosition.hpp"
+#include "Data/DucksPOI.hpp"
 #include "Data/BallState.hpp"
 #include "Data/BishopPosition.hpp"
 #include "Data/BodyPose.hpp"

@@ -20,6 +20,22 @@ DucksActionCommand playing(const DucksDataSet &d)
 {
 	auto command = roles(d);
 
+	auto robotPos = d.robotPosition.fieldToRobot(d.poi.position);
+	auto robotSpacePos = Vector3f(robotPos.x(), robotPos.y(), 0.0);
+	command.combineHead(DucksActionCommand::Head::lookAt(robotSpacePos, 1.0, 1.0));
+
+	if(!command.body().valid()) {
+
+	}
+
+	switch(d.poi.evaluation){
+		case DucksPOI::Evaluation::NONE: command.combineLeftLED(DucksActionCommand::EyeLED::green()); break;
+		case DucksPOI::Evaluation::UNCOMFORATBLE: command.combineLeftLED(DucksActionCommand::EyeLED::red()); break;
+		default: command.combineLeftLED(DucksActionCommand::EyeLED::white());
+	}
+
+	command.combineLeftLED(DucksActionCommand::EyeLED::green());
+
 	//Implement looking at poi
 	// -- left LED Red -> We see the ball.
 	// -- left LED Pink -> We look at where our team sees the ball.
