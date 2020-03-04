@@ -131,7 +131,7 @@ void LineDetection::detectLinePoints() {
     bool LineDetection::checkLength(const VecVector2i &linePoints) const {
         assert(minNumberOfPointsOnLine_() >= 2); /// Otherwise the orthogonal projection can fail
         if ((static_cast<unsigned int>(linePoints.size()) < minNumberOfPointsOnLine_()) ||
-            ((linePoints.front() - linePoints.back()).norm() < minPixelLengthVertical_()
+            ((linePoints.front() - linePoints.back()).norm() < minPixelLengthVertical_())||
             ((linePoints.front() - linePoints_.back()).norm() < minPixelLengthHorizontal_())) {
             return false;
         }
