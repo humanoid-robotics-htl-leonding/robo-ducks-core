@@ -297,18 +297,18 @@ void PoseHypothesis::updateWithCenterCircle(const LandmarkModel::CenterCircle& c
   if (centerCircle.hasOrientation)
   {
     // find the most plausible pose that explains the center circle observeration
-    const Pose observationPose1 =
+    const Pose observationOwn =
         Pose(centerCircle.position, Angle::normalized(centerCircle.orientation)).inverse();
-    const Pose observationPose2 =
-        Pose(-observationPose1.position, Angle::normalized(observationPose1.orientation + M_PI));
+    const Pose observationOpponent =
+			Pose(-centerCircle.position, Angle::normalized(centerCircle.orientation + M_PI)).inverse();
     // a pose update is performed with the observation pose, that differs less in orientation since
     // the orientation is very reliable thanks to the imu-sensorfusion
-    const auto update = Angle::angleDiff(observationPose1.orientation, stateMean_.z()) <
-                                Angle::angleDiff(observationPose2.orientation, stateMean_.z())
-                            ? Vector3f(observationPose1.position.x(), observationPose1.position.y(),
-                                       observationPose1.orientation)
-                            : Vector3f(observationPose2.position.x(), observationPose2.position.y(),
-                                       observationPose2.orientation);
+    const auto update = Angle::angleDiff(observationOwn.orientation, stateMean_.z()) <
+                                Angle::angleDiff(observationOpponent.orientation, stateMean_.z())
+                            ? Vector3f(observationOwn.position.x(), observationOwn.position.y(),
+									   observationOwn.orientation)
+                            : Vector3f(observationOpponent.position.x(), observationOpponent.position.y(),
+									   observationOpponent.orientation);
     // compute the covariance from the error model of the camera pose
     const auto cov =
         computePoseCovFromFullPoseFeature(centerCircle.position, update.z(), cam2ground);
@@ -329,22 +329,21 @@ void PoseHypothesis::updateWithPenaltyArea(const LandmarkModel::PenaltyArea& rel
 {
   if (relativePenaltyArea.hasOrientation)
   {
-    const auto opponentPenaltySpotPosition = Vector2f(
-        fieldDimensions_.fieldLength / 2 - fieldDimensions_.fieldPenaltyMarkerDistance, 0.f);
+    const Pose opponentPenaltySpot(fieldInfo_.opponentPenaltyArea.position, fieldInfo_.opponentPenaltyArea.orientation);
+    const Pose ownPenaltySpot(fieldInfo_.ownPenaltyArea.position, fieldInfo_.ownPenaltyArea.orientation);
     // find the most plausible pose that explains the penalty area observeration
-    const Pose observationPose1 =
-        Pose(opponentPenaltySpotPosition) *
+    const Pose observationOwn = opponentPenaltySpot *
         Pose(relativePenaltyArea.position, relativePenaltyArea.orientation).inverse();
-    const Pose observationPose2 =
-        Pose(-observationPose1.position, Angle::normalized(observationPose1.orientation + M_PI));
+    const Pose observationOpponent = opponentPenaltySpot *
+									 Pose(relativePenaltyArea.position, relativePenaltyArea.orientation).inverse();
     // a pose update is performed with the observation pose, that differs less in orientation since
     // the orientation is very reliable thanks to the imu-sensorfusion
-    const auto update = Angle::angleDiff(observationPose1.orientation, stateMean_.z()) <
-                                Angle::angleDiff(observationPose2.orientation, stateMean_.z())
-                            ? Vector3f(observationPose1.position.x(), observationPose1.position.y(),
-                                       observationPose1.orientation)
-                            : Vector3f(observationPose2.position.x(), observationPose2.position.y(),
-                                       observationPose2.orientation);
+    const auto update = Angle::angleDiff(observationOwn.orientation, stateMean_.z()) <
+                                Angle::angleDiff(observationOpponent.orientation, stateMean_.z())
+                            ? Vector3f(observationOwn.position.x(), observationOwn.position.y(),
+									   observationOwn.orientation)
+                            : Vector3f(observationOpponent.position.x(), observationOpponent.position.y(),
+									   observationOpponent.orientation);
     // compute the covariance from the error model of the camera pose
     const auto cov =
         computePoseCovFromFullPoseFeature(relativePenaltyArea.position, update.z(), cam2ground);
@@ -356,12 +355,11 @@ void PoseHypothesis::updateWithPenaltyArea(const LandmarkModel::PenaltyArea& rel
     // the absolute position of the penalty spot when projected from the curren state mean
     Vector2f projectedPenaltySpot = getPoseMean() * relativePenaltySpot;
     // find out with penalty spot this was in the world
-    assert(fieldInfo_.penaltySpots.size() == 2);
     Vector2f associatedPenaltySpot =
-        (fieldInfo_.penaltySpots[0] - projectedPenaltySpot).squaredNorm() <
-                (fieldInfo_.penaltySpots[1] - projectedPenaltySpot).squaredNorm()
-            ? fieldInfo_.penaltySpots[0]
-            : fieldInfo_.penaltySpots[1];
+        (fieldInfo_.ownPenaltyArea.position - projectedPenaltySpot).squaredNorm() <
+                (fieldInfo_.opponentPenaltyArea.position - projectedPenaltySpot).squaredNorm()
+            ? fieldInfo_.ownPenaltyArea.position
+            : fieldInfo_.opponentPenaltyArea.position;
     // compute the covariance matrix of the point feature for the update
     const auto cov = projectionMeasurementModel_.computePointCovFromPositionFeature(
         relativePenaltySpot, cam2ground);
@@ -384,20 +382,20 @@ void PoseHypothesis::updateWithSetOfIntersections(const std::vector<LandmarkMode
 
 				auto intersection1 = *it;
 				auto intersection2 = *ti;
-				switch(intersection1.intersectionType) {
+				switch(intersection1.type) {
 
-					case LandmarkModel::Intersection::IntersectionType::LINTERSECTION:
-						switch(intersection2.intersectionType) {
+					case LandmarkModel::Intersection::Type::L:
+						switch(intersection2.type) {
 
-							case LandmarkModel::Intersection::IntersectionType::LINTERSECTION:
+							case LandmarkModel::Intersection::Type::L:
 								updateWithLLIntersections(intersection1, intersection2, cam2ground);
 								break;
 
-							case LandmarkModel::Intersection::IntersectionType::TINTERSECTION:
+							case LandmarkModel::Intersection::Type::T:
 								updateWithLTIntersections(intersection1, intersection2, cam2ground);
 								break;
 
-							case LandmarkModel::Intersection::IntersectionType::XINTERSECTION:
+							case LandmarkModel::Intersection::Type::X:
 								break;
 
 							default:
@@ -405,18 +403,18 @@ void PoseHypothesis::updateWithSetOfIntersections(const std::vector<LandmarkMode
 						}
 						break;
 
-					case LandmarkModel::Intersection::IntersectionType::TINTERSECTION:
-						switch(intersection2.intersectionType) {
+					case LandmarkModel::Intersection::Type::T:
+						switch(intersection2.type) {
 
-							case LandmarkModel::Intersection::IntersectionType::LINTERSECTION:
+							case LandmarkModel::Intersection::Type::L:
 								updateWithLTIntersections(intersection2, intersection1, cam2ground);
 								break;
 
-							case LandmarkModel::Intersection::IntersectionType::TINTERSECTION:
+							case LandmarkModel::Intersection::Type::T:
 								updateWithTTIntersections(intersection1, intersection2, cam2ground);
 								break;
 
-							case LandmarkModel::Intersection::IntersectionType::XINTERSECTION:
+							case LandmarkModel::Intersection::Type::X:
 								updateWithTXIntersections(intersection1, intersection2, cam2ground);
 								break;
 
@@ -425,17 +423,17 @@ void PoseHypothesis::updateWithSetOfIntersections(const std::vector<LandmarkMode
 						}
 						break;
 
-					case LandmarkModel::Intersection::IntersectionType::XINTERSECTION:
-						switch(intersection2.intersectionType) {
+					case LandmarkModel::Intersection::Type::X:
+						switch(intersection2.type) {
 
-							case LandmarkModel::Intersection::IntersectionType::LINTERSECTION:
+							case LandmarkModel::Intersection::Type::L:
 								break;
 
-							case LandmarkModel::Intersection::IntersectionType::TINTERSECTION:
+							case LandmarkModel::Intersection::Type::T:
 								updateWithTXIntersections(intersection2, intersection1, cam2ground);
 								break;
 
-							case LandmarkModel::Intersection::IntersectionType::XINTERSECTION:
+							case LandmarkModel::Intersection::Type::X:
 								updateWithXXIntersections(intersection1, intersection2, cam2ground);
 								break;
 
@@ -776,19 +774,17 @@ void PoseHypothesis::updateWithXXIntersections(const LandmarkModel::Intersection
 
 void PoseHypothesis::updateWithGoal(const LandmarkModel::Goal& goal,
 		const KinematicMatrix& cam2ground) {
-	const Pose associated = Pose(
-			fieldDimensions_.fieldLength / 2,
-			0,
-			M_PI);
+	const Pose ownGoal((fieldInfo_.ownGoal.left + fieldInfo_.ownGoal.right) / 2, fieldInfo_.ownGoal.orientation);
+	const Pose opponentGoal((fieldInfo_.opponentGoal.left + fieldInfo_.opponentGoal.right) / 2, fieldInfo_.opponentGoal.orientation);
 	Vector2f goalMid = (goal.left + goal.right) / 2;
-	const Pose observationPose1 = associated * Pose(goalMid, goal.orientation).inverse();
-	const Pose observationPose2 = Pose(-observationPose1.position, Angle::normalized(observationPose1.orientation + M_PI));
-	const auto update = Angle::angleDiff(observationPose1.orientation, stateMean_.z()) <
-						 Angle::angleDiff(observationPose2.orientation, stateMean_.z())
-						 ? Vector3f(observationPose1.position.x(), observationPose1.position.y(),
-									observationPose1.orientation)
-						 : Vector3f(observationPose2.position.x(), observationPose2.position.y(),
-									observationPose2.orientation);
+	const Pose observationOwn = ownGoal * Pose(goalMid, goal.orientation).inverse();
+	const Pose observationOpponent = opponentGoal * Pose(goalMid, goal.orientation).inverse();
+	const auto update = Angle::angleDiff(observationOwn.orientation, stateMean_.z()) <
+						 Angle::angleDiff(observationOpponent.orientation, stateMean_.z())
+						 ? Vector3f(observationOwn.position.x(), observationOwn.position.y(),
+									observationOwn.orientation)
+						 : Vector3f(observationOpponent.position.x(), observationOpponent.position.y(),
+									observationOpponent.orientation);
 	const auto cov =
 			computePoseCovFromFullPoseFeature(goalMid, update.z(), cam2ground);
 	poseSensorUpdate(update, cov);

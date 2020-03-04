@@ -189,17 +189,17 @@ public:
   struct Intersection : public Uni::To, public Uni::From
   {
     // TODO: comments!
-    enum class IntersectionType
+    enum class Type
     {
       UNDEFINED,
-      XINTERSECTION,
-      TINTERSECTION,
-      LINTERSECTION
+      X,
+      T,
+      L
     };
 
     Intersection()
     {
-      intersectionType = IntersectionType::UNDEFINED;
+      type = Type::UNDEFINED;
       intersectionOnLine1 = false;
       intersectionOnLine2 = false;
       position = {0, 0};
@@ -208,7 +208,7 @@ public:
       usedLineIds = {};
     }
 
-    IntersectionType intersectionType;
+    Type type;
     bool intersectionOnLine1;
     bool intersectionOnLine2;
     Vector2f position;
@@ -216,11 +216,11 @@ public:
     float orientation;
     std::vector<size_t> usedLineIds;
 
-    Intersection(const IntersectionType intersectionType, const bool intersectionOnLine1,
+    Intersection(const Type type, const bool intersectionOnLine1,
                  const bool intersectionOnLine2, const Vector2f& position,
                  const bool hasOrientation, const float orientation,
                  const std::vector<size_t>& usedLineIds)
-      : intersectionType(intersectionType)
+      : type(type)
       , intersectionOnLine1(intersectionOnLine1)
       , intersectionOnLine2(intersectionOnLine2)
       , position(position)
@@ -236,7 +236,7 @@ public:
     {
       value = Uni::Value(Uni::ValueType::OBJECT);
       value["position"] << position;
-      value["intersectionType"] << static_cast<int>(intersectionType);
+      value["type"] << static_cast<int>(type);
       value["hasOrientation"] << hasOrientation;
       value["orientation"] << orientation;
       value["usedLineIds"] << usedLineIds;
@@ -248,9 +248,9 @@ public:
     virtual void fromValue(const Uni::Value& value)
     {
       value["position"] >> position;
-      int intersectionTypeInt = 0;
-      value["intersectionType"] >> intersectionTypeInt;
-      intersectionType = static_cast<IntersectionType>(intersectionTypeInt);
+      int typeInt = 0;
+      value["type"] >> typeInt;
+      type = static_cast<Type>(typeInt);
       value["hasOrientation"] >> hasOrientation;
       value["orientation"] >> orientation;
       value["usedLineIds"] >> usedLineIds;
