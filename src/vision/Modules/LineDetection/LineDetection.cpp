@@ -1,5 +1,4 @@
 #include <cmath>
-#include <cmath>
 
 #include "LineDetection.hpp"
 
