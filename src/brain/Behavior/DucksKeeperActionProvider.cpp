@@ -47,7 +47,7 @@ void DucksKeeperActionProvider::cycle() {
         return;
     }
 
-
+    //=== 0 Kick Ball away if in range
     if(ballInKickRange()){
     	keeperAction_->action = KeeperAction::Action(KeeperAction::Type::KICK_AWAY);
     	return;
@@ -116,24 +116,15 @@ void DucksKeeperActionProvider::cycle() {
     debug().update(mount_ + ".largestSegmentBegin", largestSegmentBegin);
 }
 
-
-
-bool DucksKeeperActionProvider::aimingForMyGoal(float orientation){
-    if(orientation == 5.0){
-        return false;
-    }
-    return false;
-}
-
 bool DucksKeeperActionProvider::ballInKickRange(){
     //todo:
     // * ball in range
     // * aiming for ball
 
 
-    auto maxDistanceToBall = keeperBallKickDistance_(); //float
-    auto ballPos = teamBallModel_->position; //Vector2f
-    auto playerPos = robotPosition_->pose.position; //Vector2f
+    float maxDistanceToBall = keeperBallKickDistance_();
+    Vector2f ballPos = teamBallModel_->position; //Vector2f
+    Vector2f playerPos = robotPosition_->pose.position; //Vector2f
 
     auto distanceBetweenBallAndPlayer = (ballPos - playerPos).norm();
 

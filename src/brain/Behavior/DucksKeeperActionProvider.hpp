@@ -87,7 +87,5 @@ private:
 
     bool robotIntersectsRayToSegment(const Vector2f& segment);
 
-    bool aimingForMyGoal(float orientation);
-
     bool ballInKickRange();
 };
