@@ -652,7 +652,7 @@ void PoseHypothesis::updateWithTTIntersections(const LandmarkModel::Intersection
 	Pose associatedT2;
 	bool found = false;
 	float distance = (intersection1.position - intersection2.position).norm();
-	if (abs(orientationDiff) < intersectionOrientationThreshold_()) {
+	if (orientationDiff < intersectionOrientationThreshold_()) {
 		if (abs(distance - fieldDimensions_.fieldPenaltyAreaWidth) < intersectionDistanceThreshold_()) {
 			if (intersection1.position.y() > intersection2.position.y()) {
 				// Inside of field
@@ -772,6 +772,26 @@ void PoseHypothesis::updateWithXXIntersections(const LandmarkModel::Intersection
 				projectionMeasurementModel_.computePointCovFromPositionFeature(intersection2.position, cam2ground);
 		fieldPointUpdate(intersection2.position, associatedX2, covX2);
 	}
+}
+
+void PoseHypothesis::updateWithGoal(const LandmarkModel::Goal& goal,
+		const KinematicMatrix& cam2ground) {
+	const Pose associated = Pose(
+			fieldDimensions_.fieldLength / 2,
+			0,
+			M_PI);
+	Vector2f goalMid = (goal.left + goal.right) / 2;
+	const Pose observationPose1 = associated * Pose(goalMid, goal.orientation).inverse();
+	const Pose observationPose2 = Pose(-observationPose1.position, Angle::normalized(observationPose1.orientation + M_PI));
+	const auto update = Angle::angleDiff(observationPose1.orientation, stateMean_.z()) <
+						 Angle::angleDiff(observationPose2.orientation, stateMean_.z())
+						 ? Vector3f(observationPose1.position.x(), observationPose1.position.y(),
+									observationPose1.orientation)
+						 : Vector3f(observationPose2.position.x(), observationPose2.position.y(),
+									observationPose2.orientation);
+	const auto cov =
+			computePoseCovFromFullPoseFeature(goalMid, update.z(), cam2ground);
+	poseSensorUpdate(update, cov);
 }
 
 void PoseHypothesis::lineSensorUpdate(const Line<float>& relativeLine, const Vector3f& refPose,

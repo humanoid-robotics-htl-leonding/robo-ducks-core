@@ -27,6 +27,8 @@ public:
     {
       left = {0, 0};
       right = {0, 0};
+		hasOrientation = false;
+		orientation = 0.f;
     }
 
     /**
@@ -34,15 +36,21 @@ public:
      * @param left the left post of the goal
      * @param right the right post of the goal
      */
-    Goal(const Vector2f& left, const Vector2f& right)
+    Goal(const Vector2f& left, const Vector2f& right, const bool hasOrientation, const float& orientation)
       : left(left)
       , right(right)
+      , hasOrientation(hasOrientation)
+      , orientation(orientation)
     {
     }
     /// relative position of the left post
     Vector2f left;
     /// relative position of the right post
     Vector2f right;
+	  /// the bool signifies whether the orientation is valid, float is the
+	  /// angle between the nao's x axis and a line from the center of the goal to the penalty spot
+	  bool hasOrientation;
+	  float orientation;
 
     /**
      * @see function in DataType
@@ -52,6 +60,8 @@ public:
       value = Uni::Value(Uni::ValueType::OBJECT);
       value["left"] << left;
       value["right"] << right;
+      value["hasOrientation"] << hasOrientation;
+      value["orientation"] << orientation;
     }
 
     /**
@@ -61,6 +71,8 @@ public:
     {
       value["left"] >> left;
       value["right"] >> right;
+      value["hasOrientation"] >> hasOrientation;
+      value["orientation"] >> orientation;
     }
   };
 

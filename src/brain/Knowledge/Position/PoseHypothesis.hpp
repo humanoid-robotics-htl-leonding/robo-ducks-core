@@ -151,6 +151,9 @@ public:
 								   const LandmarkModel::Intersection& intersection2,
 								   const KinematicMatrix& cam2ground);
 
+	void updateWithGoal(const LandmarkModel::Goal& goal,
+			const KinematicMatrix& cam2ground);
+
   /**
    * @brief updateWithPenaltyArea updates this hypothesis with a penalty area. This will
    * perform a fieldmark update
@@ -314,4 +317,5 @@ protected:
    */
   bool computeCircleCenterFromCandidates(const std::vector<Vector2f>& centerPointCandidates_,
                                          Vector2f& result) const;
+
 };

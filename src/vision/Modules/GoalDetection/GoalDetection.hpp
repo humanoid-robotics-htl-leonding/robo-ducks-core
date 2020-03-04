@@ -3,9 +3,9 @@
 #include "Framework/Module.hpp"
 
 #include "Data/CameraMatrix.hpp"
-#include "Data/FilteredSegments.hpp"
+#include "Data/FieldBorder.hpp"
+#include "Data/ImageSegments.hpp"
 #include "Data/ImageData.hpp"
-#include "Data/FieldDimensions.hpp"
 #include "Data/GoalData.hpp"
 
 class Brain;
@@ -69,14 +69,14 @@ private:
 	const Dependency<ImageData> imageData_;
 	/// a reference to the camera matrix
 	const Dependency<CameraMatrix> cameraMatrix_;
+	/// a reference to the field border
+	const Dependency<FieldBorder> fieldBorder_;
   	/// a reference to the filtered segments
-	const Dependency<FilteredSegments> filteredSegments_;
-  	/// a reference to the field dimensions
-	const Dependency<FieldDimensions> fieldDimensions_;
+	const Dependency<ImageSegments> imageSegments_;
 	/// the detected goal posts for other modules
   	Production<GoalData> goalData_;
-  	/// goal point groups for debug purposes
-	std::vector<VecVector2i> debugGoalPostGroups_;
+  	/// goal post candidates for debug purposes
+	VecVector2i debugPoints_;
 	/// goal post points for debug purposes
 	VecVector2i debugGoalPoints_;
   	/// candidate points

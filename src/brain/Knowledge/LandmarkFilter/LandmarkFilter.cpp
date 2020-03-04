@@ -202,14 +202,20 @@ void LandmarkFilter::assembleGoals()
       float dist = (post1->position - post2->position).norm();
       if (std::abs(dist - optimalGoalPostDistance_) < maxGoalPostDistanceDeviation_())
       {
+      	Vector2f leftPost;
+      	Vector2f rightPost;
         if (post1->position.y() > post2->position.y())
         {
-          landmarkModel_->goals.emplace_back(post1->position, post2->position);
+        	leftPost = post1->position;
+        	rightPost = post2->position;
         }
         else
         {
-          landmarkModel_->goals.emplace_back(post2->position, post1->position);
+        	leftPost = post2->position;
+        	rightPost = post1->position;
         }
+		float orientation = std::atan2(leftPost.x() - rightPost.x(), rightPost.y() - leftPost.y());
+        landmarkModel_->goals.emplace_back(leftPost, rightPost, true, orientation);
       }
     }
   }
@@ -849,6 +855,8 @@ void LandmarkFilter::sendDebugImage()
     Vector2i pixelCoordsLineP1;
     Vector2i pixelCoordsLineP2;
     Vector2i pixelCoordsIntersection;
+    Vector2i pixelCoordsLeftPost;
+    Vector2i pixelCoordsRightPost;
 
     // draw center circle
     for (auto& centerCircle : landmarkModel_->centerCircles)
@@ -921,6 +929,16 @@ void LandmarkFilter::sendDebugImage()
       pixelCoordsIntersection = Image422::get444From422Vector(pixelCoordsIntersection);
       image.cross(pixelCoordsIntersection, 5, Color::BLUE);
     }
+
+	  // draw goal posts
+	  for (auto& goal : landmarkModel_->goals) {
+		  cameraMatrix_->robotToPixel(goal.left, pixelCoordsLeftPost);
+		  cameraMatrix_->robotToPixel(goal.right, pixelCoordsRightPost);
+		  pixelCoordsLeftPost = Image422::get444From422Vector(pixelCoordsLeftPost);
+		  pixelCoordsRightPost = Image422::get444From422Vector(pixelCoordsRightPost);
+		  image.line(pixelCoordsLeftPost, pixelCoordsRightPost, Color::RED);
+	  }
+
     debug().sendImage(mount_ + "." + imageData_->identification + "_image", image);
   }
 }
