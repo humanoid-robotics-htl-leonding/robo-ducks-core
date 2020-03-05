@@ -200,8 +200,8 @@ public:
     Intersection()
     {
       type = Type::UNDEFINED;
-      intersectionOnLine1 = false;
-      intersectionOnLine2 = false;
+      onLine1 = false;
+      onLine2 = false;
       position = {0, 0};
       hasOrientation = false;
       orientation = 0.f;
@@ -209,20 +209,20 @@ public:
     }
 
     Type type;
-    bool intersectionOnLine1;
-    bool intersectionOnLine2;
+    bool onLine1;
+    bool onLine2;
     Vector2f position;
     bool hasOrientation;
     float orientation;
     std::vector<size_t> usedLineIds;
 
-    Intersection(const Type type, const bool intersectionOnLine1,
-                 const bool intersectionOnLine2, const Vector2f& position,
+    Intersection(const Type type, const bool onLine1,
+                 const bool online2, const Vector2f& position,
                  const bool hasOrientation, const float orientation,
                  const std::vector<size_t>& usedLineIds)
       : type(type)
-      , intersectionOnLine1(intersectionOnLine1)
-      , intersectionOnLine2(intersectionOnLine2)
+      , onLine1(onLine1)
+      , onLine2(online2)
       , position(position)
       , hasOrientation(hasOrientation)
       , orientation(orientation)

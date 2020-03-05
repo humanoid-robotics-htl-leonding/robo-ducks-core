@@ -595,15 +595,15 @@ std::vector<LandmarkModel::Intersection> LandmarkFilter::constructIntersections(
       dotProductLine2 = line2vec1.dot(line2vec2);
 
       // if dotProductLine is negative the intersection point lies on the line
-      intersection.intersectionOnLine1 = (dotProductLine1 < 0.f);
-      intersection.intersectionOnLine2 = (dotProductLine2 < 0.f);
+      intersection.onLine1 = (dotProductLine1 < 0.f);
+      intersection.onLine2 = (dotProductLine2 < 0.f);
 
       // define the type of intersection
-      if (intersection.intersectionOnLine1 && intersection.intersectionOnLine2)
+      if (intersection.onLine1 && intersection.onLine2)
       {
         intersection.type = IntersectionType::X;
       }
-      else if (intersection.intersectionOnLine1 || intersection.intersectionOnLine2)
+      else if (intersection.onLine1 || intersection.onLine2)
       {
         intersection.type = IntersectionType::T;
       }
@@ -653,47 +653,47 @@ bool LandmarkFilter::checkIntersection(LandmarkModel::Intersection& intersection
     if (minDistSquaredLine1 < squaredMinIntersectionOverlap_)
     {
       intersection.type = IntersectionType::T;
-      intersection.intersectionOnLine1 = false;
+      intersection.onLine1 = false;
     }
     else if (minDistSquaredLine2 < squaredMinIntersectionOverlap_)
     {
       intersection.type = IntersectionType::T;
-      intersection.intersectionOnLine2 = false;
+      intersection.onLine2 = false;
     }
   }
 
   // check if there is enough overlap for a T section
   if (intersection.type == IntersectionType::T)
   {
-    if (intersection.intersectionOnLine1)
+    if (intersection.onLine1)
     {
       // degrade to L intersection
       if (minDistSquaredLine1 < squaredMinIntersectionOverlap_)
       {
         intersection.type = IntersectionType::L;
-        intersection.intersectionOnLine1 = false;
+        intersection.onLine1 = false;
       }
     }
-    else if (intersection.intersectionOnLine2)
+    else if (intersection.onLine2)
     {
       // degrade to L intersection
       if (minDistSquaredLine2 < squaredMinIntersectionOverlap_)
       {
         intersection.type = IntersectionType::L;
-        intersection.intersectionOnLine2 = false;
+        intersection.onLine2 = false;
       }
     }
   }
 
   // check the length between the line ends and the intersection point
-  if (!intersection.intersectionOnLine1)
+  if (!intersection.onLine1)
   {
     if (minDistSquaredLine1 > squaredMaxIntersectionDistance_)
     {
       return false;
     }
   }
-  if (!intersection.intersectionOnLine2)
+  if (!intersection.onLine2)
   {
     if (minDistSquaredLine2 > squaredMaxIntersectionDistance_)
     {
@@ -729,7 +729,7 @@ LandmarkFilter::findIntersectionOrientation(const LandmarkModel::Intersection& i
      *     | <- orientation vector
      */
     case IntersectionType::T:
-      if (intersection.intersectionOnLine1)
+      if (intersection.onLine1)
       {
         if ((intersection.position - line2.p1).squaredNorm() >
             (intersection.position - line2.p2).squaredNorm())
@@ -741,7 +741,7 @@ LandmarkFilter::findIntersectionOrientation(const LandmarkModel::Intersection& i
           orientationVec = line2.p2 - line2.p1;
         }
       }
-      else if (intersection.intersectionOnLine2)
+      else if (intersection.onLine2)
       {
         if ((intersection.position - line1.p1).squaredNorm() >
             (intersection.position - line1.p2).squaredNorm())
