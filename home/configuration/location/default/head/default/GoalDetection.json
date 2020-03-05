@@ -1,5 +1,5 @@
 {
   "maxDistanceOfNeighbors": 5,
   "minPointsInGroup": 3,
-  "minSegmentLength": 50
+  "minSegmentLength": 30
 }
