@@ -46,6 +46,7 @@ private:
 	const Dependency<TeamBallModel> teamBallModel_;
 	const Dependency<Desperation> desperation_;
 	const Dependency<RobotPosition> robotPosition_;
+	const Dependency<FieldDimensions> fieldDimensions_;
 	const Dependency<BallSearchMap> ballSearchMap_;
 
 	Production<DucksPOI> interestingPOI_;

@@ -24,6 +24,7 @@ public:
 	enum Type {
 		INVALID = 0,
 		BALL_CANDIDATE = 1,
+		LANDMARK = 2,
 		NUM_TYPES
 	};
 

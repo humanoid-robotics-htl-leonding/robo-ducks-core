@@ -2,6 +2,7 @@
 // Created by obyoxar on 03/03/2020.
 //
 
+#include <Knowledge/Position/FieldInfo.hpp>
 #include "DucksPOIProvider.hpp"
 
 
@@ -10,6 +11,7 @@ DucksPOIProvider::DucksPOIProvider(const ModuleManagerInterface &manager)
 	, teamBallModel_(*this)
 	, desperation_(*this)
 	, robotPosition_(*this)
+	, fieldDimensions_(*this)
 	, ballSearchMap_(*this)
 
 	, interestingPOI_(*this)
@@ -30,6 +32,7 @@ void DucksPOIProvider::cycle()
 
 void DucksPOIProvider::gatherPOIs()
 {
+	FieldInfo info(*fieldDimensions_);
 	pois_.clear();
 	// == Integrate TeamBallModel ==
 	if(teamBallModel_->found){
@@ -49,6 +52,15 @@ void DucksPOIProvider::gatherPOIs()
 
 	// ==
 	//TODO FieldInfo Yeeten
+	for(const auto& i : info.intersections){
+		float importance = 0;
+		if(i.type == LandmarkModel::Intersection::Type::T){
+			importance = 10.0;
+		}else if(i.type == LandmarkModel::Intersection::Type::X){
+			importance = 20.0;
+		}
+		proposePosition(i.position, DucksPOI::Type::LANDMARK, POI_KNOWN_INTEREST(importance));
+	}
 
 	// ==
 
@@ -58,6 +70,7 @@ void DucksPOIProvider::gatherPOIs()
 }
 void DucksPOIProvider::votePOIs()
 {
+
 	std::sort(pois_.begin(), pois_.end(), [](const DucksPOI& a,const DucksPOI& b) -> bool {return a.score > b.score;});
 
 	debug().update(mount_+".pois", pois_);
@@ -70,54 +83,42 @@ void DucksPOIProvider::votePOIs()
 	);
 
 
-	if(!currentPOIDeath_.hasPassed()){
-
+	if(currentPOIDeath_.hasPassed()){
+		for(const auto & p : pois_){
+			if(p.type != currentPOI_.type){
+				updateMostInterestingPOI(p);
+				if(p.type == DucksPOI::Type::BALL_CANDIDATE){
+					currentPOIDeath_ = TimePoint::getCurrentTime() + 2000.0;
+				}else{
+					currentPOIDeath_ = TimePoint::getCurrentTime() + 1000.0;
+				}
+				break;
+			}
+		}
+	}else {
 		auto meToCurrent = currentPOI_.position - robotPosition_->pose.position;
 		float currentAngle = std::atan2(meToCurrent.y(), meToCurrent.x());
 
-		for(const auto & p : pois_){
-			if(p.evaluation == DucksPOI::Evaluation::UNCOMFORATBLE){
+		for (const auto &p : pois_) {
+			if (p.evaluation == DucksPOI::Evaluation::UNCOMFORATBLE) {
 				continue;
 			}
 
 			auto meToNew = (p.position - robotPosition_->pose.position);
 			float newAngle = std::atan2(meToNew.y(), meToNew.x());
 
-			if(Angle::angleDiff(currentAngle, newAngle) < 10.0*TO_RAD){
+			if (Angle::angleDiff(currentAngle, newAngle) < 10.0 * TO_RAD) {
 				updateMostInterestingPOI(p);
 				return;
 			}
 		}
+		updateMostInterestingPOI(currentPOI_);
 	}
-
-
-	auto oldCurrentPoi = currentPOI_;
-	bool found = false;
-
-	for(const auto & p : pois_){
-		if(!liesWithinCooldown(p.position) || p.type != currentPOI_.type){
-			std::cout << "Got new POI" << std::endl;
-			updateMostInterestingPOI(p);
-			found = true;
-			currentPOIDeath_ = TimePoint::getCurrentTime() + 1000.0;
-			break;
-		}else{
-			std::cout << "Cooldown discard" << std::endl;
-		}
-	}
-
-	assert(found);
-
-	if(found && (oldCurrentPoi.score < POI_KNOWN_NEED(0))){
-		cooldowns_.emplace_back(oldCurrentPoi, TimePoint::getCurrentTime()+1100.0);
-	}
-
-
-//	updateMostInterestingPOI(pois_[0]);
 }
 
 void DucksPOIProvider::updateMostInterestingPOI(const DucksPOI &newMostInterestingPOI)
 {
+	currentPOI_ = newMostInterestingPOI;
 	interestingPOI_->position = newMostInterestingPOI.position;
 	interestingPOI_->score = newMostInterestingPOI.score;
 	interestingPOI_->type = newMostInterestingPOI.type;
