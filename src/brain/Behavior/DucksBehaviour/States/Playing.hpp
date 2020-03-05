@@ -16,7 +16,7 @@
  * @return
  */
 
-DucksActionCommand playing(const DuckDataSet &d)
+DucksActionCommand playing(const DucksDataSet &d)
 {
 	auto command = roles(d);
 

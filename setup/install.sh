@@ -18,18 +18,14 @@ sudo apt install libglew-dev -y
 sudo apt install libfftw3-dev -y
 sudo apt install libeigen3-dev -y
 sudo apt install libboost-all-dev -y
+sudo apt install portaudio19-dev -y
 
 echo "Install SANPs\n\n"
 sudo snap install gitkraken
 sudo snap install code --classic
-#sudo snap install clion --classic -y 
 
 echo "Build Simrobot\n\n"
 cd ..
 work=$(pwd)
 echo $work
-$work/tools/SimRobot/build_simrobot -j 8
-
-echo "Start SNAPs\n\n"
-snap run gitkraken&
-snap run code&
+$work/tools/SimRobot/build_simrobot -j 4

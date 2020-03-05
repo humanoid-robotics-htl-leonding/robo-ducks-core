@@ -19,7 +19,7 @@
 #include "Data/ReplacementKeeperAction.hpp"
 #include "Data/RobotPosition.hpp"
 #include "Data/SetPosition.hpp"
-#include "Data/StrikerAction.hpp"
+#include "Data/DucksStrikerAction.hpp"
 #include "Data/SupportingPosition.hpp"
 #include "Data/TeamBallModel.hpp"
 #include "Data/TeamPlayers.hpp"
@@ -33,7 +33,7 @@
 
 class Thoughts;
 
-struct DuckDataSet
+struct DucksDataSet
 {
   /**
    * @brief DataSet constructs a DataSet from references to the database
@@ -65,18 +65,18 @@ struct DuckDataSet
    * @param hpd a reference to the head position data
    * @param lac a reference to the last action command
    */
-  DuckDataSet(const ModuleBase& module, const GameControllerState& gcs, const BallState& bs,
-          const RobotPosition& rp, const BodyPose& bp, const PlayerConfiguration& pc,
-          const PlayingRoles& pr, const MotionState& ms, const HeadMotionOutput& hmo,
-          const TeamBallModel& tbm, const TeamPlayers& tps, const FieldDimensions& fd,
-          const StrikerAction& sa, const PenaltyStrikerAction& ps, const KeeperAction& ka,
-          const PenaltyKeeperAction& pa, const CycleInfo& ci, const SetPosition& sp,
-          const DucksDefenderAction& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
-          const ReplacementKeeperAction& rk, const ButtonData& bd, const WorldState& ws,
-          const KickConfigurationData& kcd, const DuckBallSearchPosition& bsp, const HeadPositionData& hpd,
-          Thoughts& thdat,
+  DucksDataSet(const ModuleBase& module, const GameControllerState& gcs, const BallState& bs,
+			   const RobotPosition& rp, const BodyPose& bp, const PlayerConfiguration& pc,
+			   const PlayingRoles& pr, const MotionState& ms, const HeadMotionOutput& hmo,
+			   const TeamBallModel& tbm, const TeamPlayers& tps, const FieldDimensions& fd,
+			   const DucksStrikerAction& sa, const PenaltyStrikerAction& ps, const KeeperAction& ka,
+			   const PenaltyKeeperAction& pa, const CycleInfo& ci, const SetPosition& sp,
+			   const DucksDefenderAction& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
+			   const ReplacementKeeperAction& rk, const ButtonData& bd, const WorldState& ws,
+			   const KickConfigurationData& kcd, const DuckBallSearchPosition& bsp, const HeadPositionData& hpd,
+			   Thoughts& thdat,
 
-          const DucksActionCommand& lac)
+			   const DucksActionCommand& lac)
     : parameters(module)
     , gameControllerState(gcs)
     , ballState(bs)
@@ -135,7 +135,7 @@ struct DuckDataSet
   /// a reference to the field dimensions
   const FieldDimensions& fieldDimensions;
   /// a reference to the striker action
-  const StrikerAction& strikerAction;
+  const DucksStrikerAction& strikerAction;
   /// a reference to the penalty striker action
   const PenaltyStrikerAction& penaltyStrikerAction;
   /// a reference to the keeper action

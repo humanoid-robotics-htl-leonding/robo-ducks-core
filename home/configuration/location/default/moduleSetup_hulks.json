@@ -3,10 +3,10 @@
   "DucksStrikerActionProvider" : false,
 
   "BehaviorModule" : true,
-  "DuckBehaviorModule" : false,
+  "DucksBehaviorModule" : false,
 
   "BallSearchPositionProvider" : true,
-  "DuckBallSearchPositionProvider" : false,
+  "DucksBallSearchPositionProvider" : false,
 
   "DucksSPLMessageReceiver" : false,
   "SPLMessageReceiver" : true,
@@ -26,5 +26,6 @@
   "KeeperActionProvider" : true,
   "DucksKeeperActionProvider" : false,
 
-  "DucksDesperationProvider": false
+  "DucksDesperationProvider": false,
+  "DucksBallPredictor": false
 }

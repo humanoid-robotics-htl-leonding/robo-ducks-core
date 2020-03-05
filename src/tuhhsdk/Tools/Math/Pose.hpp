@@ -114,6 +114,24 @@ public:
   	return Pose(this->position, newOrientation);
   }
 
+    /**
+   * Returns if a fieldPoint lies in this poses' frustrum. The frustrum is a cone
+   * between orientation-frustrumOpeningAngle and orientation+frustrumOpeningAngle
+   * @param fieldPoint In global coordinates
+   * @param frustrumOpeningAngle The allowed angle to both sides of the orientation
+   * @return Whether the fieldPoint lies within the frustrum
+   * @author Erik Mayrhofer
+   */
+    bool frustrumContainsPoint(const Vector2f& fieldPoint, float frustrumOpeningAngle) const{
+        auto robotToPoint = fieldPoint - position;
+        auto robotOrientation = orientation;
+        auto robotToPointAngle = std::atan2(robotToPoint.y(), robotToPoint.x());
+
+        float angleDiff = std::abs(Angle::angleDiff(robotOrientation, robotToPointAngle));
+
+        return angleDiff < frustrumOpeningAngle;
+    }
+
   /**
    * @brief inverse computes the inverse but does not overwrite the existing object
    * @return a pose that behaves like the inverse

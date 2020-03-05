@@ -12,7 +12,7 @@
  * @param d
  * @return
  */
-DucksActionCommand chooseState(const DuckDataSet &d)
+DucksActionCommand chooseState(const DucksDataSet &d)
 {
 	if (d.gameControllerState.penalty != Penalty::NONE) {
 		return penalized(d).combineChestLED(DucksActionCommand::ChestLED::red());
@@ -45,6 +45,6 @@ DucksActionCommand chooseState(const DuckDataSet &d)
 		case GameState::SET: return set(d).combineChestLED(DucksActionCommand::ChestLED::yellow());
 		case GameState::PLAYING: return playing(d).combineChestLED(DucksActionCommand::ChestLED::green());
 		case GameState::FINISHED: return started(d).combineChestLED(DucksActionCommand::ChestLED::white());
-		default: return DucksActionCommand::kneel();
+		default: return DucksActionCommand::penalized();
 	}
 }

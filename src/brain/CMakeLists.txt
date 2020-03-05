@@ -7,7 +7,7 @@ set(HEADERS
   Behavior/ActionCommand.hpp
   Behavior/DucksActionCommand.hpp
   Behavior/BehaviorModule.hpp
-  Behavior/DuckBehaviorModule.hpp
+        Behavior/DucksBehaviorModule.hpp
   Behavior/BehaviorParameters.hpp
   Behavior/BishopPositionProvider.hpp
   Behavior/DefendingPositionProvider.hpp
@@ -27,6 +27,7 @@ set(HEADERS
   Behavior/StrikerActionProvider.hpp
   Behavior/DucksStrikerActionProvider.hpp
   Behavior/DucksDesperationProvider.hpp
+  Behavior/DucksTimeToReachBallProvider.hpp
   Behavior/PenaltyStrikerActionProvider.hpp
   Behavior/SupportingPositionProvider.hpp
   Behavior/TimeToReachBallProvider.hpp
@@ -69,6 +70,8 @@ set(HEADERS
   Knowledge/Ball/BallFilter.hpp
   Knowledge/Ball/FakeBallProvider.hpp
   Knowledge/Ball/TeamBallFilter.hpp
+        Knowledge/Ball/DucksBallPredictor.hpp
+
   Knowledge/LandmarkFilter/LandmarkFilter.hpp
   Knowledge/Position/FakeRobotPoseProvider.hpp
   Knowledge/Position/UKFPositionKnowledge.hpp
@@ -104,9 +107,9 @@ set(SOURCES
   Behavior/BallSearchMapManager.cpp
   Behavior/DucksBallSearchMapManager.cpp
   Behavior/BallSearchPositionProvider.cpp
-  Behavior/DuckBallSearchPositionProvider.cpp
+        Behavior/DucksBallSearchPositionProvider.cpp
   Behavior/BehaviorModule.cpp
-  Behavior/DuckBehaviorModule.cpp
+        Behavior/DucksBehaviorModule.cpp
   Behavior/BishopPositionProvider.cpp
   Behavior/DefendingPositionProvider.cpp
         Behavior/DucksDefenderActionProvider.cpp
@@ -122,6 +125,7 @@ set(SOURCES
   Behavior/StrikerActionProvider.cpp
   Behavior/DucksStrikerActionProvider.cpp
   Behavior/DucksDesperationProvider.cpp
+  Behavior/DucksTimeToReachBallProvider.cpp
   Behavior/PenaltyStrikerActionProvider.cpp
   Behavior/SupportingPositionProvider.cpp
   Behavior/TimeToReachBallProvider.cpp
@@ -134,6 +138,7 @@ set(SOURCES
   Knowledge/Ball/BallFilter.cpp
   Knowledge/Ball/FakeBallProvider.cpp
   Knowledge/Ball/TeamBallFilter.cpp
+        Knowledge/Ball/DucksBallPredictor.cpp
   Knowledge/LandmarkFilter/LandmarkFilter.cpp
   Knowledge/Position/FakeRobotPoseProvider.cpp
   Knowledge/Position/UKFPositionKnowledge.cpp
@@ -164,7 +169,7 @@ set(SOURCES
   Brain.cpp
   BrainThread.cpp
   print.cpp
-)
+        )
 
 
 add_library(${PROJECT_NAME} OBJECT ${SOURCES} ${HEADERS})
