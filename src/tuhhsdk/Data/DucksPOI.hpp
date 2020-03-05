@@ -25,6 +25,7 @@ public:
 		INVALID = 0,
 		BALL_CANDIDATE = 1,
 		LANDMARK = 2,
+		GUESS = 3,
 		NUM_TYPES
 	};
 

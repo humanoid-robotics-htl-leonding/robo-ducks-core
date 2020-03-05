@@ -4,6 +4,7 @@
 
 #include <Knowledge/Position/FieldInfo.hpp>
 #include "DucksPOIProvider.hpp"
+#include <random>
 
 
 DucksPOIProvider::DucksPOIProvider(const ModuleManagerInterface &manager)
@@ -20,6 +21,10 @@ DucksPOIProvider::DucksPOIProvider(const ModuleManagerInterface &manager)
 	, startedLookingAtPOI_()
 
 	, pois_(10)
+
+	, currentPOI_()
+	, currentPOIDeath_(0)
+
 {
 
 }
@@ -34,9 +39,25 @@ void DucksPOIProvider::gatherPOIs()
 {
 	FieldInfo info(*fieldDimensions_);
 	pois_.clear();
+
+//	double ms = (double)TimePoint::getCurrentTime();
+//	double angle = ms/1000.0 * M_PI;
+//	float x = std::cos(angle);
+//	float y = std::sin(angle);
+//	proposePosition(Vector2f(x, y)*2.f + robotPosition_->pose.position, DucksPOI::Type::INVALID, 10000.0);
+//	return;
+
 	// == Integrate TeamBallModel ==
+
 	if(teamBallModel_->found){
-		proposePosition(teamBallModel_->position, DucksPOI::Type::BALL_CANDIDATE, POI_KNOWN_INTEREST(0.f));
+		float val = POI_KNOWN_INTEREST(0.f);
+		if(teamBallModel_->ballType == TeamBallModel::BallType::RULE){
+			val = POI_KNOWN_INTEREST(30);
+		}else if(teamBallModel_->ballType == TeamBallModel::BallType::TEAM){
+			val = POI_KNOWN_INTEREST(20);
+		}
+		proposePosition(teamBallModel_->position, DucksPOI::Type::BALL_CANDIDATE, val);
+
 	}
 
 	// == Integrate BallMap
@@ -63,7 +84,15 @@ void DucksPOIProvider::gatherPOIs()
 	}
 
 	// ==
+	for(int i = 0; i < 5; i++){
+		double randX = (static_cast<float>(std::rand())/RAND_MAX);
+		double randY = (static_cast<float>(std::rand())/RAND_MAX);
 
+		proposePosition({
+			fieldDimensions_->fieldLength*randX,
+			fieldDimensions_->fieldWidth*randY
+		}, DucksPOI::Type::GUESS, POI_RANDOM_GUESS(0));
+	}
 
 
 
@@ -82,8 +111,8 @@ void DucksPOIProvider::votePOIs()
 	cooldowns_.end()
 	);
 
-
 	if(currentPOIDeath_.hasPassed()){
+		std::cout << "Has Passed" << std::endl;
 		for(const auto & p : pois_){
 			if(p.type != currentPOI_.type){
 				updateMostInterestingPOI(p);
@@ -95,25 +124,26 @@ void DucksPOIProvider::votePOIs()
 				break;
 			}
 		}
-	}else {
-		auto meToCurrent = currentPOI_.position - robotPosition_->pose.position;
-		float currentAngle = std::atan2(meToCurrent.y(), meToCurrent.x());
-
-		for (const auto &p : pois_) {
-			if (p.evaluation == DucksPOI::Evaluation::UNCOMFORATBLE) {
-				continue;
-			}
-
-			auto meToNew = (p.position - robotPosition_->pose.position);
-			float newAngle = std::atan2(meToNew.y(), meToNew.x());
-
-			if (Angle::angleDiff(currentAngle, newAngle) < 10.0 * TO_RAD) {
-				updateMostInterestingPOI(p);
-				return;
-			}
-		}
-		updateMostInterestingPOI(currentPOI_);
+		return;
 	}
+
+	auto meToCurrent = currentPOI_.position - robotPosition_->pose.position;
+	float currentAngle = std::atan2(meToCurrent.y(), meToCurrent.x());
+
+	for (const auto &p : pois_) {
+		if (p.evaluation == DucksPOI::Evaluation::UNCOMFORATBLE) {
+			continue;
+		}
+
+		auto meToNew = (p.position - robotPosition_->pose.position);
+		float newAngle = std::atan2(meToNew.y(), meToNew.x());
+
+		if (Angle::angleDiff(currentAngle, newAngle) < 10.0 * TO_RAD) {
+			updateMostInterestingPOI(p);
+			return;
+		}
+	}
+	updateMostInterestingPOI(currentPOI_);
 }
 
 void DucksPOIProvider::updateMostInterestingPOI(const DucksPOI &newMostInterestingPOI)
