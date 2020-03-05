@@ -35,7 +35,7 @@ DucksBallSearchPositionProvider::DucksBallSearchPositionProvider(const ModuleMan
 	  minComfortableProbability_(*this, "minComfortableProbability"),
 	  minProbability_(*this, "minProbability"),
 	  minUncomfortableUrgency_(*this, "minUncomfortableUrgency"),
-	  maxNoTurnUrgency_(*this, "maxNoTurnUrgency"),
+	  minTurnUrgency_(*this, "minTurnUrgency"),
 	  searchPosition_(*this),
 	  fieldLength_(fieldDimensions_->fieldLength),
 	  fieldWidth_(fieldDimensions_->fieldWidth),
@@ -48,6 +48,7 @@ DucksBallSearchPositionProvider::DucksBallSearchPositionProvider(const ModuleMan
 
 void DucksBallSearchPositionProvider::cycle()
 {
+	searchPosition_->reset();
 	Chronometer time(debug(), mount_ + ".cycle_time");
 
 	DuckBallSearchPosition pos;
@@ -59,6 +60,22 @@ void DucksBallSearchPositionProvider::cycle()
 		if(!iWantToLookAt(pos.searchPosition)){ // But this position is uncomfortable
 			Log(LogLevel::WARNING) << "LookAtBallUrgency is not high enough to allow uncomfortable positions, but this position was uncomfortable";
 		}
+	}
+
+	searchPosition_->ownSearchPoseValid = valid;
+	if(valid){
+		searchPosition_->pose = pos.pose;
+		searchPosition_->reason = pos.reason;
+		searchPosition_->searchPosition = pos.searchPosition;
+	}
+
+	auto robotOrientation = robotPosition_->pose.orientation;
+	auto robotToPointAngle = std::atan2(robotPosition_->pose.position.y(), robotPosition_->pose.position.x());
+	float angleDiff = std::abs(Angle::angleDiff(robotOrientation, robotToPointAngle));
+	debug().update(mount_+".angle", angleDiff);
+
+	if(desperation_->lookAtBallUrgency > minTurnUrgency_){
+		
 	}
 
 	//2. === If ball rolls to the side, then turn (if walking... so that if we are already walking, we dont look at death)
@@ -121,6 +138,10 @@ ProbCell const* DucksBallSearchPositionProvider::snackPositionToLookAt() {
             //Other Team Player is closer
             if((teamPlayer->pose.position - positionUnderInspection).norm() < myDistance){
                 thisIsValid = false;
+                if(!searchPosition_->suggestedSearchPositionValid[teamPlayer->playerNumber]){
+					searchPosition_->suggestedSearchPositions[teamPlayer->playerNumber] = positionUnderInspection;
+					searchPosition_->suggestedSearchPositionValid[teamPlayer->playerNumber] = true;
+				}
                 break;
             }
             //TODO Other Team Player is investigating same are and i am not significantly closer to the area
@@ -145,7 +166,7 @@ ProbCell const* DucksBallSearchPositionProvider::snackPositionToLookAt() {
     }
 
     if(fieldSearchPositionIterator != list.cend()){
-        debug().update(mount_+".comfortable", (*fieldSearchPositionIterator));
+//        debug().update(mount_+".comfortable", (*fieldSearchPositionIterator));
     }
     if(
             fieldSearchPositionIterator == list.cend() ||
@@ -186,6 +207,7 @@ bool DucksBallSearchPositionProvider::policyTeamModel(DuckBallSearchPosition &po
 	if(!iWantToLookAt(searchPosition_->searchPosition)){
 		position.ownSearchPoseValid = false;
 	}
+	return true;
 }
 bool DucksBallSearchPositionProvider::policyBallSearchMap(DuckBallSearchPosition &position)
 {
@@ -212,11 +234,24 @@ bool DucksBallSearchPositionProvider::policyBallSearchMap(DuckBallSearchPosition
 		position.pose = Pose(targetWalkPos, angle);
 		position.reason = DuckBallSearchPosition::Reason::SEARCH_WALK;
 	}
+	return true;
 }
 bool DucksBallSearchPositionProvider::policyLookAround(DuckBallSearchPosition &position)
 {
 	position.reason = DuckBallSearchPosition::Reason::LOOK_AROUND;
-	return false;
+	double periodDuration = 2000.0;
+	double amplitude = 40*TO_RAD;
+	double distance = 0.5;
+	double time = ((double) TimePoint::getCurrentTime())/periodDuration*2*M_PI;
+	double angle = sin(time)*amplitude;
+
+	double x = cos(angle);
+	double y = sin(angle);
+
+	position.searchPosition = robotPosition_->robotToField(Vector2f(x*distance, y*distance));
+	position.ownSearchPoseValid = true;
+
+	return true;
 }
 bool DucksBallSearchPositionProvider::generateBallSearchPositionWithPolicies(DuckBallSearchPosition &position)
 {

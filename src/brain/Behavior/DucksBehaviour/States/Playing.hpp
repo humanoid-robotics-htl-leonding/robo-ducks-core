@@ -63,7 +63,7 @@ DucksActionCommand playing(const DucksDataSet &d)
 				command.combineLeftLED(DucksActionCommand::EyeLED::yellow());
 				break;
 			case DuckBallSearchPosition::LOOK_AROUND:
-				command.combineLeftEarLED(DucksActionCommand::EyeLED::green());
+				command.combineLeftLED(DucksActionCommand::EyeLED::green());
 			default: break;
 		}
 

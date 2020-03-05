@@ -79,7 +79,7 @@ private:
 	// Minimum value of Urgency to allow Uncomfortable Decision
 	Parameter<float> minUncomfortableUrgency_;
 	// Maximum value of lookAtBallUrgency to allow decisions without turning
-	Parameter<float> maxNoTurnUrgency_;
+	Parameter<float> minTurnUrgency_;
 
 	/// The position to look for a ball.
 	Production<DuckBallSearchPosition> searchPosition_;
