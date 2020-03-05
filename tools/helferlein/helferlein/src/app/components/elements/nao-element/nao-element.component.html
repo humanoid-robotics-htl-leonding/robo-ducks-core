@@ -1,0 +1,35 @@
+<div class="lg-nao-element">
+  <div *ngIf="portal" class="element-portal-container">
+    <div class="element-grid">
+      <div class="element-header">
+        <!-- <button mat-flat-button class="close-element-button" (click)="portal = null"> -->
+          <mat-icon style="font-size: 15px;" class="close-element-button" (click)="portal = null">close</mat-icon>
+        <!-- </button> -->
+      </div>
+      <ng-template [cdkPortalOutlet]="portal" class="element-portal"></ng-template>
+    </div>
+  </div>
+  <div *ngIf="!portal" class="centered-button-container">
+    <button mat-icon-button class="centered-button" [matMenuTriggerFor]="addMenu">
+      <mat-icon>add</mat-icon>
+    </button>
+    <mat-menu yPosition="above" #addMenu="matMenu">
+      <button mat-menu-item (click)="summonElement('text')">
+        <mat-icon>subject</mat-icon>
+        <span>Text</span>
+      </button>
+      <button mat-menu-item (click)="summonElement('map')">
+        <mat-icon>map</mat-icon>
+        <span>Map</span>
+      </button>
+      <button mat-menu-item (click)="summonElement('config')">
+        <mat-icon>settings</mat-icon>
+        <span>Config</span>
+      </button>
+      <button mat-menu-item (click)="summonElement('image')">
+        <mat-icon>image</mat-icon>
+        <span>Image</span>
+      </button>
+    </mat-menu>
+  </div>
+</div>
