@@ -146,13 +146,13 @@ FieldInfo::FieldInfo(const FieldDimensions& fieldDimensions)
   ownGoal.left = Vector2f(-fieldLength / 2, -goalPostDistance / 2);
   ownGoal.right = Vector2f(-fieldLength / 2, goalPostDistance / 2);
   ownGoal.hasOrientation = true;
-  ownGoal.orientation = M_PI;
+  ownGoal.orientation = 0;
 
   // opponent goal
 	opponentGoal.left = Vector2f(fieldLength / 2, goalPostDistance / 2);
   opponentGoal.right = Vector2f(fieldLength / 2, -goalPostDistance / 2);
   ownGoal.hasOrientation = true;
-  opponentGoal.orientation = 0;
+  opponentGoal.orientation = M_PI;
 
   // own penalty area
   ownPenaltyArea.position = Vector2f(-fieldLength / 2 + fieldDimensions.fieldPenaltyMarkerDistance, 0.f);
