@@ -189,40 +189,40 @@ public:
   struct Intersection : public Uni::To, public Uni::From
   {
     // TODO: comments!
-    enum class IntersectionType
+    enum class Type
     {
       UNDEFINED,
-      XINTERSECTION,
-      TINTERSECTION,
-      LINTERSECTION
+      X,
+      T,
+      L
     };
 
     Intersection()
     {
-      intersectionType = IntersectionType::UNDEFINED;
-      intersectionOnLine1 = false;
-      intersectionOnLine2 = false;
+      type = Type::UNDEFINED;
+      onLine1 = false;
+      onLine2 = false;
       position = {0, 0};
       hasOrientation = false;
       orientation = 0.f;
       usedLineIds = {};
     }
 
-    IntersectionType intersectionType;
-    bool intersectionOnLine1;
-    bool intersectionOnLine2;
+    Type type;
+    bool onLine1;
+    bool onLine2;
     Vector2f position;
     bool hasOrientation;
     float orientation;
     std::vector<size_t> usedLineIds;
 
-    Intersection(const IntersectionType intersectionType, const bool intersectionOnLine1,
-                 const bool intersectionOnLine2, const Vector2f& position,
+    Intersection(const Type type, const bool onLine1,
+                 const bool online2, const Vector2f& position,
                  const bool hasOrientation, const float orientation,
                  const std::vector<size_t>& usedLineIds)
-      : intersectionType(intersectionType)
-      , intersectionOnLine1(intersectionOnLine1)
-      , intersectionOnLine2(intersectionOnLine2)
+      : type(type)
+      , onLine1(onLine1)
+      , onLine2(online2)
       , position(position)
       , hasOrientation(hasOrientation)
       , orientation(orientation)
@@ -236,7 +236,7 @@ public:
     {
       value = Uni::Value(Uni::ValueType::OBJECT);
       value["position"] << position;
-      value["intersectionType"] << static_cast<int>(intersectionType);
+      value["type"] << static_cast<int>(type);
       value["hasOrientation"] << hasOrientation;
       value["orientation"] << orientation;
       value["usedLineIds"] << usedLineIds;
@@ -248,9 +248,9 @@ public:
     virtual void fromValue(const Uni::Value& value)
     {
       value["position"] >> position;
-      int intersectionTypeInt = 0;
-      value["intersectionType"] >> intersectionTypeInt;
-      intersectionType = static_cast<IntersectionType>(intersectionTypeInt);
+      int typeInt = 0;
+      value["type"] >> typeInt;
+      type = static_cast<Type>(typeInt);
       value["hasOrientation"] >> hasOrientation;
       value["orientation"] >> orientation;
       value["usedLineIds"] >> usedLineIds;

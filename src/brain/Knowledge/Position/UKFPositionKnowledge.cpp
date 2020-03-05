@@ -46,7 +46,7 @@ UKFPositionKnowledge::UKFPositionKnowledge(const ModuleManagerInterface& manager
   , thoughtControlRequest_(*this)
   , robotPosition_(*this)
   , lastPose_()
-  , fieldInfo_(*playerConfiguration_, *fieldDimensions_)
+  , fieldInfo_(*fieldDimensions_)
   , positionProvider_(*this, fieldInfo_, *gameControllerState_, *playerConfiguration_,
                       *landmarkModel_, *fieldDimensions_)
   , poseHypotheses_()
@@ -292,9 +292,9 @@ void UKFPositionKnowledge::measurementUpdate()
     {
       // ignore penalty areas / penalty spots in penalty shoot out if the
       // projected position from the current state mean is too far off the
-      // expected position (penlatySpot[1] is the penalty spot of the opponent)
+      // expected position
       if (gameControllerState_->gamePhase == GamePhase::PENALTYSHOOT &&
-          (poseHypothesis.getPoseMean() * penaltyArea.position - fieldInfo_.penaltySpots[1])
+          (poseHypothesis.getPoseMean() * penaltyArea.position - fieldInfo_.opponentPenaltyArea.position)
                   .norm() > maxPSOPenaltySpotAssociationDistance_())
       {
         continue;
