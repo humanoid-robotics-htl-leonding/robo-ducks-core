@@ -19,11 +19,16 @@ public:
     void cycle();
 
 private:
+	bool headOffModule_shutDown = false;
+	bool lastCycle = false;
     const Dependency<ButtonData> buttonData_;
     const Dependency<CycleInfo> cycleInfo_;
     Production<HeadOffData> headOffData_;
 
-    TimePoint pressStarted = 0;
+    TimePoint pressStarted = TimePoint();
+
+    int shutdownTime = 3000;
+    int signalLength = 200;
 };
 
 

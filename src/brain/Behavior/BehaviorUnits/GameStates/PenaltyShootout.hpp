@@ -7,10 +7,9 @@ ActionCommand penaltyShootoutStriker(const DataSet& d)
   if (d.penaltyStrikerAction.valid)
   {
     return walkToBallAndKick(d, d.penaltyStrikerAction.kickPose, d.penaltyStrikerAction.kickable,
-                             d.penaltyStrikerAction.target, false, Velocity(0.5f, 0.5f, true),
-                             d.penaltyStrikerAction.kickType)
+                             d.penaltyStrikerAction.target, false, Velocity(0.5f, 0.5f, true))
         .combineHead(trackBall(d))
-        .combineLeftLED(ActionCommand::EyeLED::EyeLED());
+        .combineLeftLED(ActionCommand::EyeLED::red());
   }
   else
   {
@@ -27,26 +26,26 @@ ActionCommand penaltyKeeper(const DataSet& d)
   switch (d.penaltyKeeperAction.type)
   {
     case PenaltyKeeperAction::Type::GENUFLECT:
-      return ActionCommand::keeper(MK_TAKE_FRONT).combineLeftLED(ActionCommand::EyeLED::EyeLED());
+      return ActionCommand::keeper(MK_TAKE_FRONT).combineLeftLED(ActionCommand::EyeLED::green());
     case PenaltyKeeperAction::Type::JUMP_LEFT:
-      return ActionCommand::keeper(MK_JUMP_LEFT).combineLeftLED(ActionCommand::EyeLED::EyeLED());
+      return ActionCommand::keeper(MK_JUMP_LEFT).combineLeftLED(ActionCommand::EyeLED::red());
     case PenaltyKeeperAction::Type::JUMP_RIGHT:
-      return ActionCommand::keeper(MK_JUMP_RIGHT).combineLeftLED(ActionCommand::EyeLED::EyeLED());
+      return ActionCommand::keeper(MK_JUMP_RIGHT).combineLeftLED(ActionCommand::EyeLED::yellow());
     case PenaltyKeeperAction::Type::WAIT:
     default:
-      return ActionCommand::stand().combineLeftLED(ActionCommand::EyeLED::EyeLED());
+      return ActionCommand::stand().combineLeftLED(ActionCommand::EyeLED::lightblue());
   }
-  return ActionCommand::stand().combineLeftLED(ActionCommand::EyeLED::EyeLED());
+  return ActionCommand::stand().combineLeftLED(ActionCommand::EyeLED::lightblue());
 }
 
 ActionCommand penaltyShootoutPlaying(const DataSet& d)
 {
   if (d.gameControllerState.kickingTeam)
   {
-    return penaltyShootoutStriker(d).combineRightLED(ActionCommand::EyeLED::EyeLED());
+    return penaltyShootoutStriker(d).combineRightLED(ActionCommand::EyeLED::red());
   }
   else
   {
-    return penaltyKeeper(d).combineRightLED(ActionCommand::EyeLED::EyeLED());
+    return penaltyKeeper(d).combineRightLED(ActionCommand::EyeLED::blue());
   }
 }

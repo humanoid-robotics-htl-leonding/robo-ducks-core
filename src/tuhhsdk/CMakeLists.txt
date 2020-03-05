@@ -5,6 +5,7 @@ project(tuhh)
 set(TUHHSDK_SOURCES
   Data/MirrorableMotionOutput.cpp
   Definitions/BHULKsStandardMessage.cpp
+        Definitions/DucksStandardMessage.cpp
   Definitions/keys.cpp
   Framework/Database.cpp
   Framework/DebugDatabase.cpp
@@ -68,11 +69,14 @@ set(TUHHSDK_HEADERS
   Data/CircleData.hpp
   Data/CycleInfo.hpp
   Data/DefendingPosition.hpp
+        Data/DucksDefenderAction.hpp
+  Data/Desperation.hpp
  # Data/EyeLEDRequest.hpp
   Data/FallManagerOutput.hpp
   Data/FieldBorder.hpp
   Data/FieldColor.hpp
   Data/FieldDimensions.hpp
+  Data/FieldZones.hpp
   Data/FilteredSegments.hpp
   Data/FSRSensorData.hpp
   Data/GameControllerState.hpp
@@ -110,7 +114,7 @@ set(TUHHSDK_HEADERS
   Data/PlayingRoles.hpp
   Data/PointOutput.hpp
   Data/RawTeamPlayers.hpp
-  Data/ReplayData.hpp
+#  Data/ReplayData.hpp
   Data/PoserOutput.hpp
   Data/RobotData.hpp
   Data/RobotKinematics.hpp
@@ -123,6 +127,7 @@ set(TUHHSDK_HEADERS
   Data/StandUpOutput.hpp
   Data/StandUpResult.hpp
   Data/StrikerAction.hpp
+  Data/DucksStrikerAction.hpp
   Data/SupportingPosition.hpp
   Data/TeamBallModel.hpp
   Data/TeamObstacleData.hpp
@@ -136,6 +141,7 @@ set(TUHHSDK_HEADERS
   Data/HeadOffData.hpp
   Data/ThoughtControlRequest.hpp
         Definitions/BHULKsStandardMessage.h
+        Definitions/DucksStandardMessage.h
   Definitions/keys.h
   Definitions/RoboCupGameControlData.h
   Definitions/SPLStandardMessage.h
@@ -220,24 +226,53 @@ set(TUHHSDK_HEADERS
 )
 
 set(NAO_SOURCES
-  Hardware/Nao/main.cpp
-  Hardware/Nao/NaoAudio.cpp
-  Hardware/Nao/NaoCamera.cpp
-  Hardware/Nao/NaoFakeData.cpp
-  Hardware/Nao/NaoInterface.cpp
-  Hardware/Nao/SMO.cpp
+  Hardware/Nao/common/main.cpp
+  Hardware/Nao/common/NaoAudio.cpp
+  Hardware/Nao/common/NaoCamera.cpp
+  Hardware/Nao/common/NaoFakeData.cpp
+  Hardware/Nao/common/BatteryDisplay.cpp
+  Hardware/Nao/common/SMO.cpp
+  Hardware/Nao/common/NaoCamera.cpp
+  Hardware/Nao/common/NaoAudio.cpp
   ${TUHHSDK_SOURCES}
 )
 
 set(NAO_HEADERS
-  Hardware/Nao/NaoAudio.hpp
-  Hardware/Nao/NaoCamera.hpp
-  Hardware/Nao/NaoCameraCommon.hpp
-  Hardware/Nao/NaoFakeData.hpp
-  Hardware/Nao/NaoInterface.hpp
-  Hardware/Nao/SMO.h
+  Hardware/Nao/common/NaoAudio.hpp
+  Hardware/Nao/common/NaoCamera.hpp
+  Hardware/Nao/common/NaoCameraCommon.hpp
+  Hardware/Nao/common/NaoFakeData.hpp
+  Hardware/Nao/v6/Nao6Interface.hpp
+  Hardware/Nao/common/SMO.h
+  Hardware/Nao/common/NaoCamera.hpp
+  Hardware/Nao/common/NaoAudio.hpp
   ${TUHHSDK_HEADERS}
 )
+
+
+set(NAO5_SOURCES
+  Hardware/Nao/v5/NaoInterface.cpp
+  Hardware/Nao/v5/Nao5Camera.cpp
+  ${NAO_SOURCES}
+  )
+
+set(NAO5_HEADERS
+  Hardware/Nao/v5/NaoInterface.hpp
+  Hardware/Nao/v5/Nao5Camera.hpp
+  ${NAO_HEADERS}
+  )
+
+set(NAO6_SOURCES
+  Hardware/Nao/v6/Nao6Interface.cpp
+  Hardware/Nao/v6/Nao6Camera.cpp
+  ${NAO_SOURCES}
+  )
+
+set(NAO6_HEADERS
+  Hardware/Nao/v6/Nao6Interface.hpp
+  Hardware/Nao/v6/Nao6Camera.hpp
+  ${NAO_HEADERS}
+  )
 
 set(QT_WEBSOCKET_SOURCES
   Hardware/QtWebsocket/main.cpp
@@ -252,29 +287,30 @@ set(QT_WEBSOCKET_HEADERS
   ${TUHHSDK_HEADERS}
 )
 
-set(REPLAY_SOURCES
-  Hardware/Replay/lodepng.cpp
-  Hardware/Replay/main.cpp
-  Hardware/Replay/ReplayAudio.cpp
-  Hardware/Replay/ReplayCamera.cpp
-  Hardware/Replay/ReplayFakeData.cpp
-  Hardware/Replay/ReplayInterface.cpp
-  ${TUHHSDK_SOURCES}
-)
-
-set(REPLAY_HEADERS
-  Hardware/Replay/lodepng.h
-  Hardware/Replay/ReplayAudio.hpp
-  Hardware/Replay/ReplayCamera.hpp
-  Hardware/Replay/ReplayFakeData.hpp
-  Hardware/Replay/ReplayInterface.hpp
-  ${TUHHSDK_HEADERS}
-)
+#set(REPLAY_SOURCES
+#  Hardware/Replay/lodepng.cpp
+#  Hardware/Replay/main.cpp
+#  Hardware/Replay/ReplayAudio.cpp
+#  Hardware/Replay/ReplayCamera.cpp
+#  Hardware/Replay/ReplayFakeData.cpp
+#  Hardware/Replay/ReplayInterface.cpp
+#  ${TUHHSDK_SOURCES}
+#)
+#
+#set(REPLAY_HEADERS
+#  Hardware/Replay/lodepng.h
+#  Hardware/Replay/ReplayAudio.hpp
+#  Hardware/Replay/ReplayCamera.hpp
+#  Hardware/Replay/ReplayFakeData.hpp
+#  Hardware/Replay/ReplayInterface.hpp
+#  ${TUHHSDK_HEADERS}
+#)
 
 set(SIMROBOT_SOURCES
   Hardware/SimRobot/HULKsMenu.cpp
   Hardware/SimRobot/main.cpp
-  Hardware/SimRobot/SimRobotAudio.cpp
+  Hardware/SimRobot/SimRobotPortAudio.cpp # TODO Support SimRobotNoAudio.cpp
+  Hardware/SimRobot/SimRobotNoAudio.cpp # TODO Support SimRobotNoAudio.cpp
   Hardware/SimRobot/SimRobotAdapter.cpp
   Hardware/SimRobot/SimRobotAdapterAdapter.cpp
   Hardware/SimRobot/SimRobotCamera.cpp
@@ -285,7 +321,8 @@ set(SIMROBOT_SOURCES
 
 set(SIMROBOT_HEADERS
   Hardware/SimRobot/HULKsMenu.hpp
-  Hardware/SimRobot/SimRobotAudio.hpp
+  Hardware/SimRobot/SimRobotPortAudio.hpp  # TODO Support SimRobotNoAudio.cpp
+  Hardware/SimRobot/SimRobotNoAudio.hpp  # TODO Support SimRobotNoAudio.cpp
   Hardware/SimRobot/SimRobotAdapter.hpp
   Hardware/SimRobot/SimRobotAdapterAdapter.hpp
   Hardware/SimRobot/SimRobotCamera.hpp
@@ -306,34 +343,50 @@ endif(NOT NAO)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 if(NAO)
-  add_executable(${PROJECT_NAME}Nao ${NAO_SOURCES} ${NAO_HEADERS} $<TARGET_OBJECTS:Brain> $<TARGET_OBJECTS:Vision> $<TARGET_OBJECTS:Motion>)
+
+  if(NAO_V5)
+    add_executable(${PROJECT_NAME}Nao ${NAO5_SOURCES} ${NAO5_HEADERS} $<TARGET_OBJECTS:Brain> $<TARGET_OBJECTS:Vision> $<TARGET_OBJECTS:Motion>)
+  elseif(NAO_V6)
+    add_executable(${PROJECT_NAME}Nao ${NAO6_SOURCES} ${NAO6_HEADERS} $<TARGET_OBJECTS:Brain> $<TARGET_OBJECTS:Vision> $<TARGET_OBJECTS:Motion>)
+  else()
+    message(FATAL_ERROR "Neither V5 nor V6 were specified")
+  endif(NAO_V5)
+
+
+#  add_executable(${PROJECT_NAME}Nao ${NAO_SOURCES} ${NAO_HEADERS} $<TARGET_OBJECTS:Brain> $<TARGET_OBJECTS:Vision> $<TARGET_OBJECTS:Motion>)
   target_include_directories(${PROJECT_NAME}Nao SYSTEM PUBLIC ${TUHH_DEPS_INCLUDE_DIRECTORIES})
   target_link_libraries(${PROJECT_NAME}Nao ${TUHH_DEPS_LIBRARIES})
 
-  if(NAOLIB)
+  if(NAOLIB AND NAO_V5)
     # subtarget for tuhhALModule as external project because it needs a
     # different toolchain
     include(ExternalProject)
     ExternalProject_Add(${PROJECT_NAME}ALModule
-      SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Hardware/Nao
-      DOWNLOAD_COMMAND ""
-      UPDATE_COMMAND ""
-      CMAKE_ARGS
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-        -DOPTIMIZE_FOR_TARGET=ATOM
-        -DTOOLCHAIN_DIR=${TOOLCHAIN_DIR}
-      BUILD_ALWAYS 1
-      INSTALL_COMMAND
-        ${CMAKE_COMMAND} -E copy lib${PROJECT_NAME}ALModule.so ${CMAKE_CURRENT_BINARY_DIR})
+            SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Hardware/Nao/v5
+            DOWNLOAD_COMMAND ""
+            UPDATE_COMMAND ""
+            CMAKE_ARGS
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DOPTIMIZE_FOR_TARGET=ATOM
+            -DTOOLCHAIN_DIR=${TOOLCHAIN_DIR}
+            BUILD_ALWAYS 1
+            INSTALL_COMMAND
+            ${CMAKE_COMMAND} -E copy lib${PROJECT_NAME}ALModule.so ${CMAKE_CURRENT_BINARY_DIR})
     add_dependencies(${PROJECT_NAME}Nao ${PROJECT_NAME}ALModule)
-  endif(NAOLIB)
+  endif(NAOLIB AND NAO_V5)
 
   assign_source_group(${NAO_SOURCES} ${NAO_HEADERS})
 
   if(NOT WIN32)
-    add_custom_target(postBuildHook ALL
-      COMMAND ../../../../../scripts/linkBuild -t nao -b ${CMAKE_BUILD_TYPE}
-      DEPENDS ${PROJECT_NAME}Nao)
+    if(NAO_V5)
+      add_custom_target(postBuildHook ALL
+              COMMAND ../../../../../scripts/linkBuild -t nao5 -b ${CMAKE_BUILD_TYPE}
+              DEPENDS ${PROJECT_NAME}Nao)
+    elseif(NAO_V6)
+      add_custom_target(postBuildHook ALL
+              COMMAND ../../../../../scripts/linkBuild -t nao6 -b ${CMAKE_BUILD_TYPE}
+              DEPENDS ${PROJECT_NAME}Nao)
+    endif(NAO_V5)
   endif(NOT WIN32)
 endif(NAO)
 
@@ -392,10 +445,10 @@ if(SIMROBOT)
 
 endif(SIMROBOT)
 
-if(REPLAY)
-  add_executable(${PROJECT_NAME}Replay ${REPLAY_SOURCES} ${REPLAY_HEADERS} $<TARGET_OBJECTS:Brain> $<TARGET_OBJECTS:Vision> $<TARGET_OBJECTS:Motion>)
-  target_include_directories(${PROJECT_NAME}Replay SYSTEM PUBLIC ${TUHH_DEPS_INCLUDE_DIRECTORIES})
-  target_link_libraries(${PROJECT_NAME}Replay ${TUHH_DEPS_LIBRARIES})
-
-  assign_source_group(${REPLAY_SOURCES} ${REPLAY_HEADERS})
-endif(REPLAY)
+#if(REPLAY)
+#  add_executable(${PROJECT_NAME}Replay ${REPLAY_SOURCES} ${REPLAY_HEADERS} $<TARGET_OBJECTS:Brain> $<TARGET_OBJECTS:Vision> $<TARGET_OBJECTS:Motion>)
+#  target_include_directories(${PROJECT_NAME}Replay SYSTEM PUBLIC ${TUHH_DEPS_INCLUDE_DIRECTORIES})
+#  target_link_libraries(${PROJECT_NAME}Replay ${TUHH_DEPS_LIBRARIES})
+#
+#  assign_source_group(${REPLAY_SOURCES} ${REPLAY_HEADERS})
+#endif(REPLAY)

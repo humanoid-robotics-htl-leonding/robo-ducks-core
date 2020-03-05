@@ -1,0 +1,31 @@
+{
+  "StrikerActionProvider" : true,
+  "DucksStrikerActionProvider" : false,
+
+  "BehaviorModule" : true,
+  "DucksBehaviorModule" : false,
+
+  "BallSearchPositionProvider" : true,
+  "DucksBallSearchPositionProvider" : false,
+
+  "DucksSPLMessageReceiver" : false,
+  "SPLMessageReceiver" : true,
+
+  "DucksSPLMessageTransmitter" : false,
+  "SPLMessageTransmitter" : true,
+
+  "DefendingPositionProvider" : true,
+  "DucksDefenderActionProvider" : false,
+
+  "BallSearchMapManager" : true,
+  "DucksBallSearchMapManager" : false,
+  
+  "PlayingRoleProvider" : true,
+  "DucksPlayingRoleProvider" : false,
+
+  "KeeperActionProvider" : true,
+  "DucksKeeperActionProvider" : false,
+
+  "DucksDesperationProvider": false,
+  "DucksBallPredictor": false
+}

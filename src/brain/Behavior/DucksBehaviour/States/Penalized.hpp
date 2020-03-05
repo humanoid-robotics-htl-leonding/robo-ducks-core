@@ -1,5 +1,6 @@
 #pragma once
 
-ActionCommand penalized(const DataSet& d){
-  return ActionCommand::kneel().combineLeftLED(ActionCommand::EyeLED::colors(1.0, 0.0, 0.0));
+DucksActionCommand penalized(const DucksDataSet &d)
+{
+	return DucksActionCommand::penalized().combineLeftLED(DucksActionCommand::EyeLED::colors(1.0, 0.0, 0.0));
 }

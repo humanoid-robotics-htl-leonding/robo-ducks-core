@@ -1,5 +1,6 @@
 #pragma once
 
-ActionCommand set(const DataSet& d){
-  return ActionCommand::stand();
+DucksActionCommand set(const DucksDataSet &d)
+{
+	return DucksActionCommand::stand();
 }

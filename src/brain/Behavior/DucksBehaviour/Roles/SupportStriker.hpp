@@ -1,5 +1,6 @@
 #pragma once
 
-ActionCommand roleSupportStriker(const DataSet& d){
-  return ActionCommand::kneel();
+DucksActionCommand roleSupportStriker(const DucksDataSet &d)
+{
+	return DucksActionCommand::stand().invalidate();
 }

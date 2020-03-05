@@ -129,6 +129,7 @@ private:
   const Parameter<std::array<int, 2>> edgeThresholdHorizontal_;
   const Parameter<std::array<int, 2>> edgeThresholdVertical_;
   const Parameter<int> numScanlines_;
+  const Parameter<float> samplePointDistance_;
   const Parameter<bool> drawEdges_;
 
   const Dependency<ImageData> imageData_;

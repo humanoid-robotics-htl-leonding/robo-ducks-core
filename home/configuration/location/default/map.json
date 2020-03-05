@@ -3,11 +3,11 @@
         "length": 5.24,
         "width": 3.38,
         "lineWidth": 0.06,
-        "penaltyMarkerSize": 0.06,
+        "penaltyMarkerSize": 0.1,
         "penaltyMarkerDistance": 0.73,
         "penaltyAreaLength": 0.39,
         "penaltyAreaWidth": 1.0,
-        "centerCircleDiameter": 0.81,
+        "centerCircleDiameter": 0.8,
         "borderStripWidth": 0.28,
         "throwInLineLength": 4.0,
         "throwInLineSpacing": 0.26

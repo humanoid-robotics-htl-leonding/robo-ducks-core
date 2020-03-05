@@ -127,6 +127,21 @@ public:
   void updateWithCenterCircle(const LandmarkModel::CenterCircle& centerCircle,
                               const KinematicMatrix& cam2ground,
                               const bool ignoreCirclePerceptsNearGoalSupport);
+
+  void updateWithSetOfIntersections(const std::vector<LandmarkModel::Intersection>& intersections,
+  		const KinematicMatrix& cam2ground);
+
+  void updateWithIntersectionPair(const LandmarkModel::Intersection& intersection1,
+  		const LandmarkModel::Intersection& intersection2,
+  		const KinematicMatrix& cam2ground);
+
+  	void updateWithIntersection(const LandmarkModel::Intersection& intersection,
+  			const LandmarkModel::Intersection& associated,
+  			const KinematicMatrix& cam2ground);
+
+	void updateWithGoal(const LandmarkModel::Goal& goal,
+			const KinematicMatrix& cam2ground);
+
   /**
    * @brief updateWithPenaltyArea updates this hypothesis with a penalty area. This will
    * perform a fieldmark update
@@ -175,6 +190,10 @@ protected:
   const Parameter<float> evalLowPassGain_;
   /// the fraction of the evalError determined by reciprocal assocation fraction
   const Parameter<float> evalAssocationFraction_;
+  /// the threshold of the intersection distance checks
+  const Parameter<float> intersectionDistanceThreshold_;
+	/// the threshold of the intersection orientation checks
+	const Parameter<float> intersectionOrientationThreshold_;
   /// the base variance of measurements (added to every error propagation)
   Parameter<Vector3f> measurementBaseVariance_;
   /// the basic deviation of the camera matrix roll poitch an yaw in deg
@@ -286,4 +305,5 @@ protected:
    */
   bool computeCircleCenterFromCandidates(const std::vector<Vector2f>& centerPointCandidates_,
                                          Vector2f& result) const;
+
 };

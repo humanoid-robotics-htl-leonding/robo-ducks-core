@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+import argparse
+import logging
+import sys
+
+from midaslib.commands.compile import CompileCommand
+from midaslib.commands.copy import CopyCommand
+from midaslib.commands.kill import KillCommand
+from midaslib.commands.run import RunCommand
+from midaslib.commands.setup import SetupCommand
+from midaslib.commands.shutdown import ShutdownCommand
+from midaslib.commands.start import StartCommand
+from midaslib.commands.touch import TouchCommand
+from midaslib.commands.upload import UploadCommand
+from midaslib.commands.wlan import WlanCommand
+
+"""
+So I see you are interested in the midas sources. 
+Welcome. 
+
+This file is the central executable and does nothing else than defining all the ArgParsers.
+There is a central ArgParser which has subparsers for each command. All commands are registered in the 
+"commands"-list below.
+
+If you simply want to create a new command, then just copy a simple Command file (e.g commands/run.py) and
+then register it in the list below. Everything will be handled automatically.
+"""
+
+commands = [
+    TouchCommand,
+    CompileCommand,
+    RunCommand,
+    CopyCommand,
+    SetupCommand,
+    UploadCommand,
+    KillCommand,
+    StartCommand,
+    ShutdownCommand,
+    WlanCommand
+]
+
+
+class MidasParser(argparse.ArgumentParser):
+    def error(self, message):
+        sys.stderr.write('error: %s\n' % message)
+        self.print_help()
+        sys.exit(2)
+
+
+def main():
+    parser = MidasParser()
+    parser.add_argument('--verbose', '-v', action='count', default=0)
+    sub_parsers = parser.add_subparsers(title="Command", description="Which command to execute",
+                                        help="See individual helps (midas [command] -h) for more details")
+
+    logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.INFO)
+
+    # Here all commands are registered. Every command derives from the `Command` class.
+    # Through this derivation some fields are added.
+    #  * name: The name of the Parser
+    #  * aliases: The aliases of the Parser (this deserves some more attention, because it is added through a decorator)
+    #             Look at command.py for more details.
+    for command_class in commands:
+        inst = command_class()
+        cmd_parser = sub_parsers.add_parser(inst.name, aliases=inst.aliases, help=inst.help)
+        inst.parser(cmd_parser)
+
+    args = parser.parse_args()
+
+    # Set Logging Level
+    log_dict = {
+        0: logging.INFO,
+        1: logging.DEBUG
+    }
+    level = log_dict[args.verbose] if args.verbose in log_dict else log_dict[1]
+    logging.basicConfig(format='%(levelname)s:%(message)s', level=level)
+
+    # Execute Command
+    if "command" not in args:
+        parser.print_help()
+        exit(1)
+    args.command.handle(args)
+
+
+if __name__ == '__main__':
+    main()

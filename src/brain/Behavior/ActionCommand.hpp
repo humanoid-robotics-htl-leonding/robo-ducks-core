@@ -56,17 +56,15 @@ public:
      * @brief kick creates a kick action command for the body
      * @param ball_position the (relative) position where the kick should assume the ball to be
      * @param ball_target the (relative) position where the ball should end up
-     * @param kickType the type of kick
      * @return a kick action command for the body
      */
-    static Body kick(const Vector2f& ball_position, const Vector2f& ball_target,
-                     const KickType kickType)
+    static Body kick(const Vector2f& ball_position, const Vector2f& ball_target,const bool forceHammer)
     {
       Body body;
       body.type_ = MotionRequest::BodyMotion::KICK;
       body.ballPosition_ = ball_position;
       body.ballTarget_ = ball_target;
-      body.kickType_ = kickType;
+      body.forceHammer_ = forceHammer;
       return body;
     }
     /**
@@ -124,6 +122,10 @@ public:
       return type_;
     }
 
+    const Pose getTarget() const {
+    	return target_;
+    }
+
   private:
     /**
      * @brief Body creates an undefined body action command
@@ -141,8 +143,8 @@ public:
     Vector2f ballPosition_;
     /// the target ball position for a kick command
     Vector2f ballTarget_;
-    /// the KickType of a kick command
-    KickType kickType_;
+
+    bool forceHammer_;
     /// the type of the in walk kick
     InWalkKickType inWalkKickType_ = InWalkKickType::NONE;
     /// the foot used for in walk kicking
@@ -409,6 +411,15 @@ public:
     {
       return colors(1, 0.07f, 0.58f);
     }
+    /**
+     * @brief violet creates a violet action command for an EyeLED
+     * @return a violet action command for an EyeLed
+     */
+     static EyeLED violet()
+    {
+         return colors(1.0, 0.0, 1.0);
+    }
+
 
     static EyeLED rainbow()
     {
@@ -418,9 +429,6 @@ public:
     }
 
   private:
-    /**
-     * @brief EyeLED creates an undefined EyeLED action command
-     */
     EyeLED() = default;
     /// The eye mode
     EyeMode eyeMode_ = EyeMode::OFF;
@@ -687,10 +695,9 @@ public:
    * @param kickType the type of kick
    * @return a kick action command
    */
-  static ActionCommand kick(const Vector2f& ball_position, const Vector2f& ball_target,
-                            const KickType kickType)
+  static ActionCommand kick(const Vector2f& ball_position, const Vector2f& ball_target,const bool forceHammer = false)
   {
-    return ActionCommand(Body::kick(ball_position, ball_target, kickType), Arm::body(), Arm::body(),
+    return ActionCommand(Body::kick(ball_position, ball_target,forceHammer), Arm::body(), Arm::body(),
                          Head::body(), EyeLED::colors(), EyeLED::colors());
   }
   /**
@@ -744,6 +751,16 @@ public:
   {
     body_ = body;
     return *this;
+  }
+
+  ActionCommand& combineBodyWalkType(const WalkMode& mode){
+  	body_.walkingMode_ = mode;
+  	return *this;
+  }
+
+  ActionCommand& combineBodyWalkTargetOrientation(float orientation){
+  	body_.target_.orientation = orientation;
+  	return *this;
   }
   /**
    * @brief combineLeftArm replaces the left arm part of an action command
@@ -854,7 +871,7 @@ public:
     motion_request.walkStopData.gracefully = false;
     motion_request.kickData.ballSource = body_.ballPosition_;
     motion_request.kickData.ballDestination = body_.ballTarget_;
-    motion_request.kickData.kickType = body_.kickType_;
+    motion_request.kickData.forceHammer = body_.forceHammer_;
     motion_request.keeperData.keep = body_.keeperType_;
     if (!motion_request.usesArms())
     {

@@ -2,5 +2,5 @@
 
 mkdir build
 cd build
-cmake -DCMAKE_BUILD_TYPE=Release ..
-make
+cmake -DCMAKE_BUILD_TYPE=Release -DOpenGL_GL_PREFERENCE:STRING=GLVND ..
+make ${1:--j2}

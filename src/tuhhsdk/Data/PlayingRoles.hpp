@@ -5,9 +5,9 @@
 #include "Framework/DataType.hpp"
 
 
-/// Definition of playing roles. If one changes this, one alsa has to change the BHULKs Role enum
+/// Definition of playing roles. If one changes this, one also has to change the BHULKs Role enum
 /// and the BHULKsHelper
-enum class PlayingRole
+enum class PlayingRole : uint8_t
 {
   NONE = 0,
   KEEPER = 1,
@@ -15,7 +15,9 @@ enum class PlayingRole
   SUPPORT_STRIKER = 3,
   STRIKER = 4,
   BISHOP = 5,
-  REPLACEMENT_KEEPER = 6
+  REPLACEMENT_KEEPER = 6,
+
+  NUM_ROLES
 };
 
 inline void operator>>(const Uni::Value& in, PlayingRole& out)
@@ -27,7 +29,7 @@ inline void operator>>(const Uni::Value& in, PlayingRole& out)
 
 inline void operator<<(Uni::Value& out, const PlayingRole& in)
 {
-  out << static_cast<int>(in);
+  out << static_cast<uint8_t>(in);
 }
 
 class PlayingRoles : public DataType<PlayingRoles>

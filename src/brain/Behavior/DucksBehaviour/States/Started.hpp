@@ -1,5 +1,6 @@
 #pragma once
 
-ActionCommand started(const DataSet& d){
-  return ActionCommand::dead();
+DucksActionCommand started(const DucksDataSet &d)
+{
+	return DucksActionCommand::penalized();
 }

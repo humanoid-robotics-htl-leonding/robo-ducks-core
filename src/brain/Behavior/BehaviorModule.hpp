@@ -92,16 +92,13 @@ private:
 
     Production<MotionRequest> motionRequest_;
     Production<AudioRequest> audioRequest_;
-    Production<PlaybackData> playbackData_;
+    Production<PlaybackData<AudioInterface::numChannels>> playbackData_;
 
     Production<LEDRequest> ledRequest_;
 
     Production<ThoughtControlRequest> thoughtControlRequest_;
     /// the last action command that was computed by the behavior
     ActionCommand actionCommand_;
-    /// Thoughts
-    Thoughts thoughts_;
-    /// the data set/bundle that is passed to the behavior
     DataSet dataSet_;
     /// a thread-safe copy of the remote motion request
     MotionRequest actualRemoteMotionRequest_;

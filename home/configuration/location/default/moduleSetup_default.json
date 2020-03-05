@@ -1,17 +1,24 @@
 {
-  "AudioPlayer" : true,
+  "AudioPlayer" : false,
   "AudioReceiver" : true,
   "BallDetectionNeuralNet" : true,
   "BallFilter" : true,
-  "BallSearchMapManager" : true,
-  "BallSearchPositionProvider" : true,
-  "BehaviorModule" : true,
+  "BallSearchMapManager" : false,
+  "DucksBallSearchMapManager" : true,
+
+  "BallSearchPositionProvider" : false,
+  "DucksBallSearchPositionProvider" : true,
+
+  "BehaviorModule" : false,
+  "DucksBehaviorModule" : true,
+  "DucksDesperationProvider": true,
   "BishopPositionProvider" : true,
   "BodyDamageProvider" : true,
   "BodyPoseEstimation" : true,
   "CameraCalibration" : true,
   "CollisionDetector" : true,
-  "DefendingPositionProvider" : true,
+  "DefendingPositionProvider" : false,
+  "DucksDefenderActionProvider" : true,
   "FakeBallProvider" : false,
   "FakeImageReceiver" : false,
   "FakeRobotDetection" : false,
@@ -33,7 +40,10 @@
   "JointCalibrationProvider" : true,
   "JointCommandSender" : true,
   "Keeper" : true,
-  "KeeperActionProvider" : true,
+
+  "KeeperActionProvider" : false,
+  "DucksKeeperActionProvider" : true,
+
   "Kick" : true,
   "KickConfigurationProvider" : true,
   "Kneeler" : true,
@@ -51,7 +61,12 @@
   "PenaltyKeeperActionProvider" : true,
   "PenaltySpotDetection" : true,
   "PenaltyStrikerActionProvider" : true,
-  "PlayingRoleProvider" : true,
+
+  "PlayingRoleProvider" : false,
+  "DucksPlayingRoleProvider" : true,
+
+  "DucksBallPredictor": true,
+
   "Point" : true,
   "Poser" : true,
   "Projection" : true,
@@ -60,25 +75,37 @@
   "ReplayRecorder" : false,
   "RobotDetection" : true,
   "RobotProjectionProvider" : true,
-  "SPLMessageReceiver" : true,
-  "SPLMessageTransmitter" : true,
+
+  "DucksSPLMessageReceiver" : true,
+  "SPLMessageReceiver" : false,
+
+  "DucksSPLMessageTransmitter" : true,
+  "SPLMessageTransmitter" : false,
+
   "SPLNetworkService" : true,
   "SensorDataProvider" : true,
   "SetPositionProvider" : true,
   "SlidingWindowProvider" : false,
   "SonarFilter" : true,
   "StandUp" : true,
-  "StrikerActionProvider" : true,
+
+  "StrikerActionProvider" : false,
+  "DucksStrikerActionProvider" : true,
+
   "SupportingPositionProvider" : true,
   "TeamBallFilter" : true,
   "TeamObstacleFilter" : true,
   "TeamPlayersAugmenter" : true,
-  "TimeToReachBallProvider" : true,
+  "TimeToReachBallProvider" : false,
+  "DucksTimeToReachBallProvider" : true,
   "UKFPositionKnowledge" : true,
   "UNSW2014Generator" : true,
   "WalkManager" : true,
   "WalkingEngine" : false,
+
   "WhistleDetection" : true,
+  "FakeWhistleDetection" : false,
+
   "WhistleIntegration" : true,
   "WorldStateProvider" : true
 }

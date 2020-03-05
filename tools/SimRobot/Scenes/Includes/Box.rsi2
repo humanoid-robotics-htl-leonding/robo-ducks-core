@@ -1,0 +1,20 @@
+<Simulation>
+  <!-- Calibration texture - charuco pattern, -->
+  <Surface name="boxTexture" diffuseColor="rgb(100%, 100%, 100%)" specularColor="rgb(60%, 60%, 60%)" shininess="30" diffuseTexture="../Textures/fieldshadow.png"/>
+
+  <Material name="boxMaterial">
+    <Friction material="fieldCarpet" value="0.2"/>
+    <RollingFriction material="fieldCarpet" value="0.2"/>
+  </Material>
+
+  <Body name="box">
+    <BoxGeometry width="0.5" depth="0.5" height="0.5">
+      <Material ref="boxMaterial"/>
+    </BoxGeometry>
+    <BoxAppearance width="0.5" depth="0.5" height="0.5">
+      <Surface ref="boxTexture"/>
+    </BoxAppearance>
+    <BoxMass value="0.1" width="0.5" height="0.5" depth="0.5"/>
+  </Body>
+
+</Simulation>

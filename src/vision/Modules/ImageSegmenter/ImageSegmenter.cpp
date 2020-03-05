@@ -15,6 +15,7 @@ ImageSegmenter::ImageSegmenter(const ModuleManagerInterface& manager)
   , edgeThresholdHorizontal_(*this, "edgeThresholdHorizontal", [] {})
   , edgeThresholdVertical_(*this, "edgeThresholdVertical", [] {})
   , numScanlines_(*this, "numScanlines", [this] { updateScanlines_ = true; })
+  , samplePointDistance_(*this, "samplePointDistance", [] {})
   , drawEdges_(*this, "drawEdges", [] {})
   , imageData_(*this)
   , cameraMatrix_(*this)
@@ -46,8 +47,6 @@ void ImageSegmenter::calculateScanGrids()
   const KinematicMatrix& camera2ground_inv = camera2ground.invert();
   Vector2i pixel(imageData_->image422.size.x() / 2, 0);
   imageSegments_->scanGrids[camera].clear();
-  // Distance of the sample points in meter
-  const float samplePointDistance = 0.02f;
   for (int y = 0; y < imageData_->image422.size.y(); y++)
   {
     pixel.y() = y;
@@ -58,13 +57,13 @@ void ImageSegmenter::calculateScanGrids()
       continue;
     }
     Vector2i pixelX = Vector2i::Zero(), pixelY = Vector2i::Zero();
-    if (!cameraMatrix_->robotToPixel({robot.x() - samplePointDistance, robot.y()}, pixelY,
+    if (!cameraMatrix_->robotToPixel({robot.x() - samplePointDistance_(), robot.y()}, pixelY,
                                      camera2ground_inv))
     {
       imageSegments_->scanGrids[camera].emplace_back(1, 2);
       continue;
     }
-    if (!cameraMatrix_->robotToPixel({robot.x(), robot.y() - samplePointDistance}, pixelX,
+    if (!cameraMatrix_->robotToPixel({robot.x(), robot.y() - samplePointDistance_()}, pixelX,
                                      camera2ground_inv))
     {
       imageSegments_->scanGrids[camera].emplace_back(1, 2);

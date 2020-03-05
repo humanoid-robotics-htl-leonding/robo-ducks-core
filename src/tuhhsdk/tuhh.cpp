@@ -42,7 +42,7 @@ TUHH::TUHH(RobotInterface& robotInterface)
   tuhhprint::print("About to configure interface", LogLevel::FANCY);
   // At this point, all configuration specifiers (location, body name, head name) will be set
   // correctly.
-  interface_.configure(config_);
+  interface_.configure(config_, info);
 
   Poses::init(interface_.getFileRoot());
 
