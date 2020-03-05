@@ -131,25 +131,16 @@ public:
   void updateWithSetOfIntersections(const std::vector<LandmarkModel::Intersection>& intersections,
   		const KinematicMatrix& cam2ground);
 
-  void updateWithLLIntersections(const LandmarkModel::Intersection& intersection1,
+  void updateWithIntersectionPair(const LandmarkModel::Intersection& intersection1,
   		const LandmarkModel::Intersection& intersection2,
   		const KinematicMatrix& cam2ground);
 
-  	void updateWithLTIntersections(const LandmarkModel::Intersection& intersection1,
-  			const LandmarkModel::Intersection& intersection2,
+  	void updateWithIntersection(const LandmarkModel::Intersection& intersection,
+  			const LandmarkModel::Intersection& associated,
   			const KinematicMatrix& cam2ground);
 
-	void updateWithTTIntersections(const LandmarkModel::Intersection& intersection1,
-								   const LandmarkModel::Intersection& intersection2,
-								   const KinematicMatrix& cam2ground);
-
-	void updateWithTXIntersections(const LandmarkModel::Intersection& intersection1,
-								   const LandmarkModel::Intersection& intersection2,
-								   const KinematicMatrix& cam2ground);
-
-	void updateWithXXIntersections(const LandmarkModel::Intersection& intersection1,
-								   const LandmarkModel::Intersection& intersection2,
-								   const KinematicMatrix& cam2ground);
+	void updateWithGoal(const LandmarkModel::Goal& goal,
+			const KinematicMatrix& cam2ground);
 
   /**
    * @brief updateWithPenaltyArea updates this hypothesis with a penalty area. This will
@@ -314,4 +305,5 @@ protected:
    */
   bool computeCircleCenterFromCandidates(const std::vector<Vector2f>& centerPointCandidates_,
                                          Vector2f& result) const;
+
 };

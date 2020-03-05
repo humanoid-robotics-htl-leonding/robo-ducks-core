@@ -85,7 +85,7 @@ public:
    */
   Pose operator*(const Pose& other) const
   {
-    return Pose(*this * other.position, orientation + other.orientation);
+    return Pose(*this * other.position, Angle::normalized(orientation + other.orientation));
   }
   /**
    * @brief calculateGlobalOrientation rotates a Vector2 into global coordinates

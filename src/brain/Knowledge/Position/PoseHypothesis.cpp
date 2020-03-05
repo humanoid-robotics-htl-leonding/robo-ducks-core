@@ -297,18 +297,18 @@ void PoseHypothesis::updateWithCenterCircle(const LandmarkModel::CenterCircle& c
   if (centerCircle.hasOrientation)
   {
     // find the most plausible pose that explains the center circle observeration
-    const Pose observationPose1 =
+    const Pose observationOwn =
         Pose(centerCircle.position, Angle::normalized(centerCircle.orientation)).inverse();
-    const Pose observationPose2 =
-        Pose(-observationPose1.position, Angle::normalized(observationPose1.orientation + M_PI));
+    const Pose observationOpponent =
+			Pose(-centerCircle.position, Angle::normalized(centerCircle.orientation + M_PI)).inverse();
     // a pose update is performed with the observation pose, that differs less in orientation since
     // the orientation is very reliable thanks to the imu-sensorfusion
-    const auto update = Angle::angleDiff(observationPose1.orientation, stateMean_.z()) <
-                                Angle::angleDiff(observationPose2.orientation, stateMean_.z())
-                            ? Vector3f(observationPose1.position.x(), observationPose1.position.y(),
-                                       observationPose1.orientation)
-                            : Vector3f(observationPose2.position.x(), observationPose2.position.y(),
-                                       observationPose2.orientation);
+    const auto update = Angle::angleDiff(observationOwn.orientation, stateMean_.z()) <
+                                Angle::angleDiff(observationOpponent.orientation, stateMean_.z())
+                            ? Vector3f(observationOwn.position.x(), observationOwn.position.y(),
+									   observationOwn.orientation)
+                            : Vector3f(observationOpponent.position.x(), observationOpponent.position.y(),
+									   observationOpponent.orientation);
     // compute the covariance from the error model of the camera pose
     const auto cov =
         computePoseCovFromFullPoseFeature(centerCircle.position, update.z(), cam2ground);
@@ -329,22 +329,21 @@ void PoseHypothesis::updateWithPenaltyArea(const LandmarkModel::PenaltyArea& rel
 {
   if (relativePenaltyArea.hasOrientation)
   {
-    const auto opponentPenaltySpotPosition = Vector2f(
-        fieldDimensions_.fieldLength / 2 - fieldDimensions_.fieldPenaltyMarkerDistance, 0.f);
+    const Pose opponentPenaltySpot(fieldInfo_.opponentPenaltyArea.position, fieldInfo_.opponentPenaltyArea.orientation);
+    const Pose ownPenaltySpot(fieldInfo_.ownPenaltyArea.position, fieldInfo_.ownPenaltyArea.orientation);
     // find the most plausible pose that explains the penalty area observeration
-    const Pose observationPose1 =
-        Pose(opponentPenaltySpotPosition) *
+    const Pose observationOwn = ownPenaltySpot *
         Pose(relativePenaltyArea.position, relativePenaltyArea.orientation).inverse();
-    const Pose observationPose2 =
-        Pose(-observationPose1.position, Angle::normalized(observationPose1.orientation + M_PI));
+    const Pose observationOpponent = opponentPenaltySpot *
+									 Pose(relativePenaltyArea.position, relativePenaltyArea.orientation).inverse();
     // a pose update is performed with the observation pose, that differs less in orientation since
     // the orientation is very reliable thanks to the imu-sensorfusion
-    const auto update = Angle::angleDiff(observationPose1.orientation, stateMean_.z()) <
-                                Angle::angleDiff(observationPose2.orientation, stateMean_.z())
-                            ? Vector3f(observationPose1.position.x(), observationPose1.position.y(),
-                                       observationPose1.orientation)
-                            : Vector3f(observationPose2.position.x(), observationPose2.position.y(),
-                                       observationPose2.orientation);
+    const auto update = Angle::angleDiff(observationOwn.orientation, stateMean_.z()) <
+                                Angle::angleDiff(observationOpponent.orientation, stateMean_.z())
+                            ? Vector3f(observationOwn.position.x(), observationOwn.position.y(),
+									   observationOwn.orientation)
+                            : Vector3f(observationOpponent.position.x(), observationOpponent.position.y(),
+									   observationOpponent.orientation);
     // compute the covariance from the error model of the camera pose
     const auto cov =
         computePoseCovFromFullPoseFeature(relativePenaltyArea.position, update.z(), cam2ground);
@@ -356,12 +355,11 @@ void PoseHypothesis::updateWithPenaltyArea(const LandmarkModel::PenaltyArea& rel
     // the absolute position of the penalty spot when projected from the curren state mean
     Vector2f projectedPenaltySpot = getPoseMean() * relativePenaltySpot;
     // find out with penalty spot this was in the world
-    assert(fieldInfo_.penaltySpots.size() == 2);
     Vector2f associatedPenaltySpot =
-        (fieldInfo_.penaltySpots[0] - projectedPenaltySpot).squaredNorm() <
-                (fieldInfo_.penaltySpots[1] - projectedPenaltySpot).squaredNorm()
-            ? fieldInfo_.penaltySpots[0]
-            : fieldInfo_.penaltySpots[1];
+        (fieldInfo_.ownPenaltyArea.position - projectedPenaltySpot).squaredNorm() <
+                (fieldInfo_.opponentPenaltyArea.position - projectedPenaltySpot).squaredNorm()
+            ? fieldInfo_.ownPenaltyArea.position
+            : fieldInfo_.opponentPenaltyArea.position;
     // compute the covariance matrix of the point feature for the update
     const auto cov = projectionMeasurementModel_.computePointCovFromPositionFeature(
         relativePenaltySpot, cam2ground);
@@ -373,7 +371,6 @@ void PoseHypothesis::updateWithPenaltyArea(const LandmarkModel::PenaltyArea& rel
 
 void PoseHypothesis::updateWithSetOfIntersections(const std::vector<LandmarkModel::Intersection>& intersections,
 											const KinematicMatrix& cam2ground) {
-	cam2ground.invert();
 	if (intersections.size() > 1) {
 
 		auto it = intersections.begin();
@@ -382,396 +379,106 @@ void PoseHypothesis::updateWithSetOfIntersections(const std::vector<LandmarkMode
 			auto ti = std::next(it);
 			for (; ti != intersections.end(); ti++) {
 
-				auto intersection1 = *it;
-				auto intersection2 = *ti;
-				switch(intersection1.intersectionType) {
+				updateWithIntersectionPair(*it, *ti, cam2ground);
 
-					case LandmarkModel::Intersection::IntersectionType::LINTERSECTION:
-						switch(intersection2.intersectionType) {
+			}
 
-							case LandmarkModel::Intersection::IntersectionType::LINTERSECTION:
-								updateWithLLIntersections(intersection1, intersection2, cam2ground);
-								break;
+		}
 
-							case LandmarkModel::Intersection::IntersectionType::TINTERSECTION:
-								updateWithLTIntersections(intersection1, intersection2, cam2ground);
-								break;
+	}
+}
 
-							case LandmarkModel::Intersection::IntersectionType::XINTERSECTION:
-								break;
+void PoseHypothesis::updateWithIntersectionPair(const LandmarkModel::Intersection& intersection1,
+												const LandmarkModel::Intersection& intersection2,
+												const KinematicMatrix& cam2ground) {
+	float distance = (intersection1.position - intersection2.position).norm();
 
-							default:
-								break;
+	for (auto& candidate1 : fieldInfo_.intersections) {
+		if (candidate1.type == intersection1.type) {
+
+			for (auto& candidate2 : fieldInfo_.intersections) {
+				if (candidate2.type == intersection2.type) {
+
+					float candidateDistance = (candidate1.position - candidate2.position).norm();
+					if (abs(distance - candidateDistance) > intersectionDistanceThreshold_()) {
+						continue;
+					}
+
+					if (intersection1.hasOrientation && intersection2.hasOrientation && candidate1.hasOrientation && candidate2.hasOrientation) {
+						float orientationDiff = Angle::normalized(intersection1.orientation - intersection2.orientation);
+						float candidateOrientationDiff = Angle::normalized(candidate1.orientation - candidate2.orientation);
+
+						if (Angle::angleDiff(orientationDiff, candidateOrientationDiff) > intersectionOrientationThreshold_()) {
+							continue;
 						}
-						break;
+					}
 
-					case LandmarkModel::Intersection::IntersectionType::TINTERSECTION:
-						switch(intersection2.intersectionType) {
-
-							case LandmarkModel::Intersection::IntersectionType::LINTERSECTION:
-								updateWithLTIntersections(intersection2, intersection1, cam2ground);
-								break;
-
-							case LandmarkModel::Intersection::IntersectionType::TINTERSECTION:
-								updateWithTTIntersections(intersection1, intersection2, cam2ground);
-								break;
-
-							case LandmarkModel::Intersection::IntersectionType::XINTERSECTION:
-								updateWithTXIntersections(intersection1, intersection2, cam2ground);
-								break;
-
-							default:
-								break;
+					// special case: 1 X-Intersection
+					// position depends on non-X-Intersection
+					if (!intersection1.hasOrientation && intersection2.hasOrientation) {
+						const Pose observation1 = Pose(candidate2.position, candidate2.orientation) * Pose(intersection2.position, intersection2.orientation).inverse();
+						const Pose observation2 = Pose(-observation1.position, Angle::normalized(observation1.orientation + M_PI));
+						if (Angle::angleDiff(observation1.orientation, stateMean_.z()) > Angle::angleDiff(observation2.orientation, stateMean_.z())) {
+							continue;
 						}
-						break;
-
-					case LandmarkModel::Intersection::IntersectionType::XINTERSECTION:
-						switch(intersection2.intersectionType) {
-
-							case LandmarkModel::Intersection::IntersectionType::LINTERSECTION:
-								break;
-
-							case LandmarkModel::Intersection::IntersectionType::TINTERSECTION:
-								updateWithTXIntersections(intersection2, intersection1, cam2ground);
-								break;
-
-							case LandmarkModel::Intersection::IntersectionType::XINTERSECTION:
-								updateWithXXIntersections(intersection1, intersection2, cam2ground);
-								break;
-
-							default:
-								break;
+					}
+					else if (!intersection2.hasOrientation && intersection1.hasOrientation) {
+						const Pose observation1 = Pose(candidate1.position, candidate1.orientation) * Pose(intersection1.position, intersection1.orientation).inverse();
+						const Pose observation2 = Pose(-observation1.position, Angle::normalized(observation1.orientation + M_PI));
+						if (Angle::angleDiff(observation1.orientation, stateMean_.z()) > Angle::angleDiff(observation2.orientation, stateMean_.z())) {
+							continue;
 						}
-						break;
+					}
 
-					default:
-						break;
+					updateWithIntersection(intersection1, candidate1, cam2ground);
+					updateWithIntersection(intersection2, candidate2, cam2ground);
+					return;
+
 				}
-
 			}
 
 		}
-
 	}
 }
 
-void PoseHypothesis::updateWithLLIntersections(const LandmarkModel::Intersection& intersection1,
-		const LandmarkModel::Intersection& intersection2,
+void PoseHypothesis::updateWithIntersection(const LandmarkModel::Intersection& intersection,
+											const LandmarkModel::Intersection& associated,
+											const KinematicMatrix& cam2ground) {
+	if (intersection.hasOrientation && associated.hasOrientation) {
+		const Pose observation1 = Pose(associated.position, associated.orientation) * Pose(intersection.position, intersection.orientation).inverse();
+		const Pose observation2 = Pose(-observation1.position, Angle::normalized(observation1.orientation + M_PI));
+
+		const auto update = Angle::angleDiff(observation1.orientation, stateMean_.z()) <
+							Angle::angleDiff(observation2.orientation, stateMean_.z())
+							? Vector3f(observation1.position.x(), observation1.position.y(),
+									   observation1.orientation)
+							: Vector3f(observation2.position.x(), observation2.position.y(),
+									   observation2.orientation);
+		const auto cov = computePoseCovFromFullPoseFeature(intersection.position, update.z(), cam2ground);
+		poseSensorUpdate(update, cov);
+	}
+	else {
+		const auto cov = projectionMeasurementModel_.computePointCovFromPositionFeature(intersection.position, cam2ground);
+		fieldPointUpdate(intersection.position, associated.position, cov);
+	}
+}
+
+void PoseHypothesis::updateWithGoal(const LandmarkModel::Goal& goal,
 		const KinematicMatrix& cam2ground) {
-	float orientationDiff = Angle::angleDiff(intersection1.orientation,
-											 intersection2.orientation);
-	Pose associatedL1;
-	Pose associatedL2;
-	bool found = false;
-	float distance = (intersection1.position - intersection2.position).norm();
-	if (abs(orientationDiff - M_PI / 2) < intersectionOrientationThreshold_()) { 
-		if (abs(distance - fieldDimensions_.fieldPenaltyAreaWidth) < intersectionDistanceThreshold_()) {
-			if (Angle::normalized(intersection2.orientation - intersection1.orientation) > 0) {
-				// Outside of penalty area
-				associatedL1 = Pose(
-						fieldDimensions_.fieldLength / 2 - fieldDimensions_.fieldPenaltyAreaLength,
-						fieldDimensions_.fieldPenaltyAreaWidth / 2,
-						-M_PI / 4);
-				associatedL2 = Pose(associatedL1.position.x(), -associatedL1.position.y(), -associatedL1.orientation);
-			}
-			else {
-				// Inside of penalty area
-				associatedL1 = Pose(
-						fieldDimensions_.fieldLength / 2 - fieldDimensions_.fieldPenaltyAreaLength,
-						-fieldDimensions_.fieldPenaltyAreaWidth / 2,
-						M_PI / 4);
-				associatedL2 = Pose(associatedL1.position.x(), -associatedL1.position.y(),  -associatedL1.orientation);
-			}
-			found = true;
-		}
-	}
-	if (found) {
-		const Pose observationPose1L1 = associatedL1 * Pose(intersection1.position, intersection1.orientation).inverse();
-		const Pose observationPose2L1 = Pose(-observationPose1L1.position, Angle::normalized(observationPose1L1.orientation + M_PI));
-		const auto updateLL = Angle::angleDiff(observationPose1L1.orientation, stateMean_.z()) <
-							  Angle::angleDiff(observationPose2L1.orientation, stateMean_.z())
-							  ? Vector3f(observationPose1L1.position.x(), observationPose1L1.position.y(),
-										 observationPose1L1.orientation)
-							  : Vector3f(observationPose2L1.position.x(), observationPose2L1.position.y(),
-										 observationPose2L1.orientation);
-		const auto covLL =
-				computePoseCovFromFullPoseFeature(intersection1.position, updateLL.z(), cam2ground);
-		poseSensorUpdate(updateLL, covLL);
-		const Pose observationPose1L2 = associatedL2 * Pose(intersection2.position, intersection2.orientation).inverse();
-		const Pose observationPose2L2 = Pose(-observationPose1L2.position, Angle::normalized(observationPose1L2.orientation + M_PI));
-		const auto updateLR = Angle::angleDiff(observationPose1L2.orientation, stateMean_.z()) <
-							  Angle::angleDiff(observationPose2L2.orientation, stateMean_.z())
-							  ? Vector3f(observationPose1L2.position.x(), observationPose1L2.position.y(),
-										 observationPose1L2.orientation)
-							  : Vector3f(observationPose2L2.position.x(), observationPose2L2.position.y(),
-										 observationPose2L2.orientation);
-		const auto covT =
-				computePoseCovFromFullPoseFeature(intersection2.position, updateLR.z(), cam2ground);
-		poseSensorUpdate(updateLR, covT);
-	}
-}
-
-void PoseHypothesis::updateWithLTIntersections(const LandmarkModel::Intersection& LIntersection,
-											  const LandmarkModel::Intersection& TIntersection,
-											  const KinematicMatrix& cam2ground) {
-	float orientationDiff = Angle::angleDiff(LIntersection.orientation,
-											 TIntersection.orientation);
-	Pose associatedL;
-	Pose associatedT;
-	bool found = false;
-	float distance = (LIntersection.position - TIntersection.position).norm();
-	if (abs(orientationDiff - M_PI * 3 / 4) < intersectionOrientationThreshold_()) { 
-		// Penalty area
-		if (abs(distance - fieldDimensions_.fieldPenaltyAreaLength) < intersectionDistanceThreshold_()) {
-			if (Angle::normalized(TIntersection.orientation - LIntersection.orientation) > 0) {
-				// Right side of penalty area
-				associatedL = Pose(
-						fieldDimensions_.fieldLength / 2 - fieldDimensions_.fieldPenaltyAreaLength,
-						-fieldDimensions_.fieldPenaltyAreaWidth / 2,
-						M_PI / 4);
-				associatedT = Pose(fieldDimensions_.fieldLength / 2, associatedL.position.y(), M_PI);
-			}
-			else {
-				// Left side of penalty area
-				associatedL = Pose(
-						fieldDimensions_.fieldLength / 2 - fieldDimensions_.fieldPenaltyAreaLength,
-						fieldDimensions_.fieldPenaltyAreaWidth / 2,
-						-M_PI / 4);
-				associatedT = Pose(fieldDimensions_.fieldLength / 2, associatedL.position.y(), M_PI);
-			}
-			found = true;
-		}
-	} else if (abs(orientationDiff - M_PI / 4) < intersectionOrientationThreshold_()) {
-		// Side line or back line
-		if (abs(distance - fieldDimensions_.fieldLength / 2) < intersectionDistanceThreshold_()) {
-			// Side line
-			if (Angle::normalized(TIntersection.orientation - LIntersection.orientation) > 0) {
-				// Right side of goal
-				associatedL = Pose(
-						fieldDimensions_.fieldLength / 2,
-						-fieldDimensions_.fieldWidth / 2,
-						M_PI * 3 / 4);
-				associatedT = Pose(
-						0,
-						-fieldDimensions_.fieldPenaltyAreaWidth / 2,
-						M_PI / 2);
-			} else {
-				// Left side of goal
-				associatedL = Pose(
-						fieldDimensions_.fieldLength / 2,
-						fieldDimensions_.fieldWidth / 2,
-						-M_PI * 3 / 4);
-				associatedT = Pose(
-						0,
-						fieldDimensions_.fieldPenaltyAreaWidth / 2,
-						-M_PI / 2);
-			}
-			found = true;
-		} else if (abs(distance - (fieldDimensions_.fieldWidth / 2 - fieldDimensions_.fieldPenaltyAreaWidth / 2)) < intersectionDistanceThreshold_()) {
-			// Back line direct
-			if (Angle::normalized(TIntersection.orientation - LIntersection.orientation) > 0) {
-				// Right side of goal
-				associatedL = Pose(
-						fieldDimensions_.fieldLength / 2,
-						-fieldDimensions_.fieldWidth / 2,
-						M_PI * 3 / 4);
-				associatedT = Pose(
-						associatedL.position.x(),
-						-fieldDimensions_.fieldPenaltyAreaWidth / 2,
-						M_PI);
-			} else {
-				// Left side of goal
-				associatedL = Pose(
-						fieldDimensions_.fieldLength / 2,
-						fieldDimensions_.fieldWidth / 2,
-						-M_PI * 3 / 4);
-				associatedT = Pose(
-						associatedL.position.x(),
-						fieldDimensions_.fieldPenaltyAreaWidth / 2,
-						M_PI);
-			}
-			found = true;
-		} else if (abs(distance - (fieldDimensions_.fieldWidth / 2 + fieldDimensions_.fieldPenaltyAreaWidth / 2)) < intersectionDistanceThreshold_()) {
-			// Back line with T between
-			if (Angle::normalized(TIntersection.orientation - LIntersection.orientation) > 0) {
-				// Right side of goal
-				associatedL = Pose(
-						fieldDimensions_.fieldLength / 2,
-						-fieldDimensions_.fieldWidth / 2,
-						M_PI * 3 / 4);
-				associatedT = Pose(
-						associatedL.position.x(),
-						fieldDimensions_.fieldPenaltyAreaWidth / 2,
-						-M_PI);
-			} else {
-				// Left side of goal
-				associatedL = Pose(
-						fieldDimensions_.fieldLength / 2,
-						-fieldDimensions_.fieldWidth / 2,
-						-M_PI * 3 / 4);
-				associatedT = Pose(
-						associatedL.position.x(),
-						fieldDimensions_.fieldPenaltyAreaWidth / 2,
-						-M_PI);
-			}
-			found = true;
-		}
-	}
-	if (found) {
-		const Pose observationPose1L = associatedL * Pose(LIntersection.position, LIntersection.orientation).inverse();
-		const Pose observationPose2L = Pose(-observationPose1L.position, Angle::normalized(observationPose1L.orientation + M_PI));
-		const auto updateL = Angle::angleDiff(observationPose1L.orientation, stateMean_.z()) <
-							 Angle::angleDiff(observationPose2L.orientation, stateMean_.z())
-							 ? Vector3f(observationPose1L.position.x(), observationPose1L.position.y(),
-										observationPose1L.orientation)
-							 : Vector3f(observationPose2L.position.x(), observationPose2L.position.y(),
-										observationPose2L.orientation);
-		const auto covL =
-				computePoseCovFromFullPoseFeature(LIntersection.position, updateL.z(), cam2ground);
-		poseSensorUpdate(updateL, covL);
-		const Pose observationPose1T = associatedT * Pose(TIntersection.position, TIntersection.orientation).inverse();
-		const Pose observationPose2T = Pose(-observationPose1T.position, Angle::normalized(observationPose1T.orientation + M_PI));
-		const auto updateT = Angle::angleDiff(observationPose1T.orientation, stateMean_.z()) <
-							 Angle::angleDiff(observationPose2T.orientation, stateMean_.z())
-							 ? Vector3f(observationPose1T.position.x(), observationPose1T.position.y(),
-										observationPose1T.orientation)
-							 : Vector3f(observationPose2T.position.x(), observationPose2T.position.y(),
-										observationPose2T.orientation);
-		const auto covT =
-				computePoseCovFromFullPoseFeature(TIntersection.position, updateT.z(), cam2ground);
-		poseSensorUpdate(updateT, covT);
-	}
-}
-
-void PoseHypothesis::updateWithTTIntersections(const LandmarkModel::Intersection& intersection1,
-											   const LandmarkModel::Intersection& intersection2,
-											   const KinematicMatrix& cam2ground) {
-	float orientationDiff = Angle::angleDiff(intersection1.orientation,
-											 intersection2.orientation);
-	Pose associatedT1;
-	Pose associatedT2;
-	bool found = false;
-	float distance = (intersection1.position - intersection2.position).norm();
-	if (abs(orientationDiff) < intersectionOrientationThreshold_()) {
-		if (abs(distance - fieldDimensions_.fieldPenaltyAreaWidth) < intersectionDistanceThreshold_()) {
-			if (intersection1.position.y() > intersection2.position.y()) {
-				// Inside of field
-				associatedT1 = Pose(
-						fieldDimensions_.fieldLength / 2,
-						fieldDimensions_.fieldPenaltyAreaWidth / 2,
-						M_PI);
-				associatedT2 = Pose(associatedT1.position.x(), -associatedT1.position.y(), associatedT1.orientation);
-			}
-			else {
-				// Outside of field
-				associatedT1 = Pose(
-						fieldDimensions_.fieldLength / 2,
-						-fieldDimensions_.fieldPenaltyAreaWidth / 2,
-						M_PI);
-				associatedT2 = Pose(associatedT1.position.x(), -associatedT1.position.y(), associatedT1.orientation);
-			}
-			found = true;
-		}
-	}
-	if (found) {
-		const Pose observationPose1T1 = associatedT1 * Pose(intersection1.position, intersection1.orientation).inverse();
-		const Pose observationPose2T1 = Pose(-observationPose1T1.position, Angle::normalized(observationPose1T1.orientation + M_PI));
-		const auto updateTL = Angle::angleDiff(observationPose1T1.orientation, stateMean_.z()) <
-							  Angle::angleDiff(observationPose2T1.orientation, stateMean_.z())
-							  ? Vector3f(observationPose1T1.position.x(), observationPose1T1.position.y(),
-										 observationPose1T1.orientation)
-							  : Vector3f(observationPose2T1.position.x(), observationPose2T1.position.y(),
-										 observationPose2T1.orientation);
-		const auto covTL =
-				computePoseCovFromFullPoseFeature(intersection1.position, updateTL.z(), cam2ground);
-		poseSensorUpdate(updateTL, covTL);
-		const Pose observationPose1T2 = associatedT2 * Pose(intersection2.position, intersection2.orientation).inverse();
-		const Pose observationPose2T2 = Pose(-observationPose1T2.position, Angle::normalized(observationPose1T2.orientation + M_PI));
-		const auto updateTR = Angle::angleDiff(observationPose1T2.orientation, stateMean_.z()) <
-							  Angle::angleDiff(observationPose2T2.orientation, stateMean_.z())
-							  ? Vector3f(observationPose1T2.position.x(), observationPose1T2.position.y(),
-										 observationPose1T2.orientation)
-							  : Vector3f(observationPose2T2.position.x(), observationPose2T2.position.y(),
-										 observationPose2T2.orientation);
-		const auto covTR =
-				computePoseCovFromFullPoseFeature(intersection2.position, updateTR.z(), cam2ground);
-		poseSensorUpdate(updateTR, covTR);
-	}
-}
-
-void PoseHypothesis::updateWithTXIntersections(const LandmarkModel::Intersection& TIntersection,
-											   const LandmarkModel::Intersection& XIntersection,
-											   const KinematicMatrix& cam2ground) {
-	Pose associatedT;
-	Vector2f associatedX;
-	bool found = false;
-	float distance = (TIntersection.position - XIntersection.position).norm();
-	if (abs(distance - (fieldDimensions_.fieldWidth / 2 - fieldDimensions_.fieldCenterCircleDiameter / 2)) < intersectionDistanceThreshold_()) {
-		// Direct
-		associatedT = Pose(
-				0,
-				fieldDimensions_.fieldWidth / 2,
-				-M_PI / 2);
-		associatedX = Vector2f(
-				0,
-				-fieldDimensions_.fieldCenterCircleDiameter / 2);
-		found = true;
-	} else if (abs(distance - (fieldDimensions_.fieldWidth / 2 + fieldDimensions_.fieldCenterCircleDiameter / 2)) < intersectionDistanceThreshold_()) {
-		// X between
-		associatedT = Pose(
-				0,
-				fieldDimensions_.fieldWidth / 2,
-				-M_PI / 2);
-		associatedX = Vector2f(
-				0,
-				fieldDimensions_.fieldCenterCircleDiameter / 2);
-		found = true;
-	}
-	if (found) {
-		const Pose observationPose1T = associatedT * Pose(TIntersection.position, TIntersection.orientation).inverse();
-		const Pose observationPose2T = Pose(-observationPose1T.position, Angle::normalized(observationPose1T.orientation + M_PI));
-		const auto updateT = Angle::angleDiff(observationPose1T.orientation, stateMean_.z()) <
-							 Angle::angleDiff(observationPose2T.orientation, stateMean_.z())
-							 ? Vector3f(observationPose1T.position.x(), observationPose1T.position.y(),
-										observationPose1T.orientation)
-							 : Vector3f(observationPose2T.position.x(), observationPose2T.position.y(),
-										observationPose2T.orientation);
-		const auto covT =
-				computePoseCovFromFullPoseFeature(TIntersection.position, updateT.z(), cam2ground);
-		poseSensorUpdate(updateT, covT);
-		const auto covX =
-				projectionMeasurementModel_.computePointCovFromPositionFeature(XIntersection.position, cam2ground);
-		fieldPointUpdate(XIntersection.position, associatedX, covX);
-	}
-}
-
-void PoseHypothesis::updateWithXXIntersections(const LandmarkModel::Intersection& intersection1,
-											   const LandmarkModel::Intersection& intersection2,
-											   const KinematicMatrix& cam2ground) {
-	float distance = (intersection1.position - intersection2.position).norm();
-	if (abs(distance - fieldDimensions_.fieldCenterCircleDiameter) < intersectionDistanceThreshold_()) {
-		Vector2f associatedX1;
-		Vector2f associatedX2;
-		if ((abs(stateMean_.z()) <= M_PI / 2 && intersection1.position.y() > intersection1.position.y()) ||
-			(abs(stateMean_.z()) >= M_PI / 2 && intersection2.position.y() < intersection2.position.y())) {
-			associatedX1 = Vector2f(
-					0,
-					fieldDimensions_.fieldCenterCircleDiameter / 2);
-		} else {
-			associatedX1 = Vector2f(
-					0,
-					-fieldDimensions_.fieldCenterCircleDiameter / 2);
-		}
-		const auto covX1 =
-				projectionMeasurementModel_.computePointCovFromPositionFeature(intersection1.position, cam2ground);
-		fieldPointUpdate(intersection1.position, associatedX1, covX1);
-		associatedX2 = Vector2f(
-				0,
-				-associatedX1.y());
-		const auto covX2 =
-				projectionMeasurementModel_.computePointCovFromPositionFeature(intersection2.position, cam2ground);
-		fieldPointUpdate(intersection2.position, associatedX2, covX2);
-	}
+	const Pose ownGoal((fieldInfo_.ownGoal.left + fieldInfo_.ownGoal.right) / 2, fieldInfo_.ownGoal.orientation);
+	const Pose opponentGoal((fieldInfo_.opponentGoal.left + fieldInfo_.opponentGoal.right) / 2, fieldInfo_.opponentGoal.orientation);
+	Vector2f goalMid = (goal.left + goal.right) / 2;
+	const Pose observationOwn = ownGoal * Pose(goalMid, goal.orientation).inverse();
+	const Pose observationOpponent = opponentGoal * Pose(goalMid, goal.orientation).inverse();
+	const auto update = Angle::angleDiff(observationOwn.orientation, stateMean_.z()) <
+						 Angle::angleDiff(observationOpponent.orientation, stateMean_.z())
+						 ? Vector3f(observationOwn.position.x(), observationOwn.position.y(),
+									observationOwn.orientation)
+						 : Vector3f(observationOpponent.position.x(), observationOpponent.position.y(),
+									observationOpponent.orientation);
+	const auto cov =
+			computePoseCovFromFullPoseFeature(goalMid, update.z(), cam2ground);
+	poseSensorUpdate(update, cov);
 }
 
 void PoseHypothesis::lineSensorUpdate(const Line<float>& relativeLine, const Vector3f& refPose,

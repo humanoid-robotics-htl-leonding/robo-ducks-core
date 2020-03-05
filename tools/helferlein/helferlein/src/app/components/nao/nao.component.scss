@@ -1,0 +1,60 @@
+@import '~@angular/material/theming';
+
+$header-height: 48px;
+$connection-form-height: 7.5%;
+
+.connection-form{
+  height: $connection-form-height;
+  position: relative;
+  top: 0px;
+  left: 0px;
+}
+
+.nao-tab{
+  height: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.bottom-controls{
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  // height: 100px;
+  // width: 80px;
+  height: 150px;
+  width: 100px;
+  overflow: hidden;
+  transition: height linear 0.5s;
+  transition-delay: 0.2s;
+  z-index: 10;
+
+  &:hover{
+    overflow: visible;
+    height: 350px;
+    .bottom-fab{
+      right: 0%;
+    }
+  }
+}
+
+.bottom-fab{
+  position: absolute;
+  right: -60%;
+  height: auto;
+  width: auto;
+  bottom: 50px;
+  margin: 20px;
+  transition: right ease-out 0.3s;
+}
+
+.nao-content{
+  overflow: visible;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 100% - $connection-form-height;
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  grid-template-columns: repeat(10, 1fr);
+  gap: 10px;
+}
