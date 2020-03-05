@@ -14,13 +14,12 @@ DucksKeeperActionProvider::DucksKeeperActionProvider(const ModuleManagerInterfac
       , shadowCastSpeed_(*this, "shadowCastSpeed", []{})
       , shadowResolveSpeed_(*this, "shadowResolveSpeed", []{})
       , robotDiameter_(*this, "robotDiameter")
-      , keeperMaxX_(*this, "keeperMaxX", []{})
-      , keeperMinX_(*this, "keeperMinX", []{})
       , segmentCount_(*this, "segmentCount", [this]{
           goalShadow_.clear();
           goalShadow_.resize(segmentCount_());
       })
       , keeperBallKickDistance_(*this, "keeperBallKickDistance", []{})
+      , fieldZones_(*this)
       , cycleInfo_(*this)
       , ballState_(*this)
       , fieldDimensions_(*this)
@@ -53,7 +52,6 @@ void DucksKeeperActionProvider::cycle() {
     	return;
     }
 
-
     //=== 1 Cast shadows on the Goal (Ball is the light source and robots obstruct its light)
     float goalX = -fieldDimensions_->fieldLength / 2;
     auto goalLowerPost = -fieldDimensions_->goalInnerWidth / 2;
@@ -67,7 +65,6 @@ void DucksKeeperActionProvider::cycle() {
         }else{
             goalShadow_[i] = std::max(0.f, goalShadow_[i]-shadowResolveSpeed_());
         }
-
     }
 
     //=== 2 Filter out Segments where the goal is lit
@@ -104,38 +101,18 @@ void DucksKeeperActionProvider::cycle() {
 
     keeperAction_->action = KeeperAction::Action(KeeperAction::Type::BLOCK_GOAL, Pose(bestPosition->position, 0));
 
-    // === kick when ball in range
-    //todo:
-    // * add range to parameters
-    // * find fitting default maxDistanceToBall
-    // * kick ball in correct direction
-
     debug().update(mount_ + ".largestSegment", largestSegment);
     debug().update(mount_ + ".proposed", proposedPositions_);
     debug().update(mount_ + ".shadow", goalShadow_);
     debug().update(mount_ + ".largestSegmentBegin", largestSegmentBegin);
 }
 
-
-
-bool DucksKeeperActionProvider::aimingForMyGoal(float orientation){
-    if(orientation == 5.0){
-        return false;
-    }
-    return false;
-}
-
 bool DucksKeeperActionProvider::ballInKickRange(){
-    //todo:
-    // * ball in range
-    // * aiming for ball
+    float maxDistanceToBall = keeperBallKickDistance_();
+    Vector2f ballPos = teamBallModel_->position;
+    Vector2f playerPos = robotPosition_->pose.position;
 
-
-    auto maxDistanceToBall = keeperBallKickDistance_(); //float
-    auto ballPos = teamBallModel_->position; //Vector2f
-    auto playerPos = robotPosition_->pose.position; //Vector2f
-
-    auto distanceBetweenBallAndPlayer = (ballPos - playerPos).norm();
+    float distanceBetweenBallAndPlayer = (ballPos - playerPos).norm();
 
     debug().update(mount_+".distance", distanceBetweenBallAndPlayer);
     debug().update(mount_+".maxBall", maxDistanceToBall);
@@ -166,10 +143,12 @@ void DucksKeeperActionProvider::calculateBestKeeperPositionFor(const Vector2f &s
 
     Vector2f proposedPosition = ballToGoalieScaled + teamBallModel_->position;
 
-    if(proposedPosition.x() > keeperMaxX_()){
-        Geometry::getIntersectionWithVerticalLine(centerLine, keeperMaxX_(), proposedPosition);
-    }else if(proposedPosition.x() < keeperMinX_()){
-        Geometry::getIntersectionWithVerticalLine(centerLine, keeperMinX_(), proposedPosition);
+    Vector2f truePosition = {0, 0};
+    Vector2f nope = {0, 0};
+    int intersections = Geometry::getIntersection(fieldZones_->keeper, Line<float>(proposedPosition, Vector2f(fieldZones_->keeper.topLeft.x()+0.01, segmentMiddlePoint.y())), truePosition, nope);
+    if(intersections > 0){
+    	assert(intersections == 1);
+    	proposedPosition = truePosition;
     }
 
     proposedPositions_.emplace_back(proposedPosition, segmentWidth);

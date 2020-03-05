@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Data/PlayerConfiguration.hpp>
+#include <Data/FieldZones.hpp>
 #include "Data/BallState.hpp"
 #include "Data/CycleInfo.hpp"
 #include "Data/FieldDimensions.hpp"
@@ -36,11 +37,10 @@ private:
     const Parameter<float> shadowCastSpeed_;
     const Parameter<float> shadowResolveSpeed_;
     const Parameter<float> robotDiameter_;
-    const Parameter<float> keeperMaxX_;
-    const Parameter<float> keeperMinX_;
     const Parameter<int> segmentCount_;
     const Parameter<float> keeperBallKickDistance_;
 
+    const Dependency<FieldZones> fieldZones_;
     /// cycle info needed to check if team mate is aleady near the ball
     const Dependency<CycleInfo> cycleInfo_;
     /// a reference to the ball state
@@ -86,8 +86,6 @@ private:
     void calculateBestKeeperPositionFor(const Vector2f& segmentLowerPoint, const Vector2f& segmentMiddlePoint);
 
     bool robotIntersectsRayToSegment(const Vector2f& segment);
-
-    bool aimingForMyGoal(float orientation);
 
     bool ballInKickRange();
 };

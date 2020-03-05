@@ -45,11 +45,11 @@ class Nao6CompileTarget(CompileTarget):
     name = "Nao V6"
     id = "nao6"
     foldername = "nao6"
-    short = "5"
+    short = "6"
     setup_args = ["-DNAO_V6=ON",  f"-DTOOLCHAIN_DIR='{project_root_dir}/toolchain'"]
 
     def check_toolchain_installed(self):
-        hulks_toolchain = os.path.join(project_root_dir, "toolchain", "hulks-v5")
+        hulks_toolchain = os.path.join(project_root_dir, "toolchain", "hulks-v6")
         if not os.path.exists(hulks_toolchain):
             raise RuntimeError("For the compilation of v6 the hulks-toolchain"
                                " is needed but missing (has to be located in"
