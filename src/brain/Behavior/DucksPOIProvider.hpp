@@ -20,10 +20,28 @@ public:
 
 	void cycle() override;
 private:
+
+	struct POICooldown : public Uni::To{
+		POICooldown(const DucksPOI& poi, const TimePoint& doneAt) : Uni::To(), poi(poi), doneAt(doneAt){
+
+		}
+
+		DucksPOI poi;
+		TimePoint doneAt;
+
+		void toValue(Uni::Value &value) const override
+		{
+			value = Uni::Value(Uni::ValueType::OBJECT);
+			value["poi"] << poi;
+			value["doneAt"] << doneAt;
+		}
+	};
+
 	void gatherPOIs();
 	void votePOIs();
 	void updateMostInterestingPOI(const DucksPOI& newMostInterestingPOI);
 	void proposePosition(const Vector2f& position, DucksPOI::Type type, float proposedScore);
+	bool liesWithinCooldown(const Vector2f& position);
 
 	const Dependency<TeamBallModel> teamBallModel_;
 	const Dependency<Desperation> desperation_;
@@ -32,5 +50,16 @@ private:
 
 	Production<DucksPOI> interestingPOI_;
 
+	Vector2f oldPOIPosition_;
+	TimePoint startedLookingAtPOI_;
+
 	std::vector<DucksPOI> pois_;
+
+
+
+	DucksPOI currentPOI_;
+	TimePoint currentPOIDeath_;
+
+	std::vector<POICooldown> cooldowns_;
+
 };

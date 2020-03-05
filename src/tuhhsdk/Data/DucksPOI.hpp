@@ -1,7 +1,7 @@
 #include <utility>
 
-#define POI_KNOWN_INTEREST(innerScore) 300.f + (innerScore)
-#define POI_KNOWN_NEED(innerScore) 200.f + (innerScore)
+#define POI_KNOWN_NEED(innerScore) 300.f + (innerScore)
+#define POI_KNOWN_INTEREST(innerScore) 200.f + (innerScore)
 #define POI_GOOD_GUESS(innerScore) 100.f + (innerScore)
 #define POI_RANDOM_GUESS(innerScore) 0.f + (innerScore)
 

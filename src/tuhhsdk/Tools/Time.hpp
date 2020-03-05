@@ -114,6 +114,22 @@ public:
     }
 
     /**
+     * @author Erik Mayrhofer
+     * @return amount of ms since this time point has been created
+     */
+    uint32_t age() const {
+    	return TimePoint::getCurrentTime() - *this;
+    }
+
+    /**
+     * @author Erik Mayrhofer
+     * @return true if the TimePoint lies in the past
+     */
+    bool hasPassed() const {
+		return TimePoint::getCurrentTime() > *this;
+    }
+
+    /**
      * @brief default assignment operator
      * @param other the other object to assign
      * @return reference to the the timepoint object
