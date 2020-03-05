@@ -37,7 +37,7 @@ ParticlePositionKnowledge::ParticlePositionKnowledge(const ModuleManagerInterfac
   , imuSensorData_(*this)
   , jointSensorData_(*this)
   , robotPosition_(*this)
-  , fieldInfo_(*playerConfiguration_, *fieldDimensions_)
+  , fieldInfo_(*fieldDimensions_)
   , positionProvider_(*this, fieldInfo_, *gameControllerState_, *playerConfiguration_,
                       *landmarkModel_, *fieldDimensions_)
   , particles_()
@@ -572,19 +572,21 @@ void ParticlePositionKnowledge::updateWithLandMarkPosition(
   particle.weight *= weightByFieldMarkMeasurement;
 }
 
-void ParticlePositionKnowledge::updateWithGoalPosts(PositionParticle& particle,
-                                                    const VecVector2f& goalPosts)
+void ParticlePositionKnowledge::updateWithGoal(PositionParticle& particle,
+                                                    const std::vector<LandmarkModel::Goal>& goals)
 {
-  if (goalPosts.empty())
+  if (goals.empty())
   {
     return;
   }
 
-  for (auto& goalPost : goalPosts)
+  for (auto& goal : goals)
   {
-    Vector2f worldPost(particle.pose * goalPost);
+    LandmarkModel::Goal worldGoal;
+    worldGoal.left = particle.pose * goal.left;
+    worldGoal.right = particle.pose * goal.right;
 
-    particle.weight *= weightByGoalPost(worldPost);
+    particle.weight *= weightByGoal(worldGoal);
   }
 }
 
@@ -659,7 +661,7 @@ float ParticlePositionKnowledge::weightByLine(const Line<float>& line,
   return std::pow(weight, projectionWeight);
 }
 
-float ParticlePositionKnowledge::weightByGoalPost(const Vector2f& goalPost) const
+float ParticlePositionKnowledge::weightByGoal(const LandmarkModel::Goal& goal) const
 {
   /*
    * This code has the following effect:
@@ -670,13 +672,15 @@ float ParticlePositionKnowledge::weightByGoalPost(const Vector2f& goalPost) cons
    */
   const float maxConst = 0.5f;
   float minDistance = maxConst;
-  for (auto& fieldGoalPost : fieldInfo_.goalPosts)
-  {
-    float d = (goalPost - fieldGoalPost).norm();
-    if (d < minDistance)
-    {
-      minDistance = d;
-    }
-  }
+	float distance = ((goal.left + goal.right) / 2 - (fieldInfo_.ownGoal.left + fieldInfo_.ownGoal.right) / 2).norm();
+	if (distance < minDistance)
+	{
+		minDistance = distance;
+	}
+	distance = ((goal.left + goal.right) / 2 - (fieldInfo_.opponentGoal.left + fieldInfo_.opponentGoal.right) / 2).norm();
+	if (distance < minDistance)
+	{
+		minDistance = distance;
+	}
   return maxConst / (maxConst + 2 * minDistance);
 }

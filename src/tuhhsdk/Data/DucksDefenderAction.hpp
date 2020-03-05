@@ -38,11 +38,15 @@ public:
 		value = Uni::Value(Uni::ValueType::OBJECT);
 		value["valid"] << valid;
 		value["targetPose"] << targetPose;
+		value["type"] << static_cast<int>(type);
 	}
 
 	virtual void fromValue(const Uni::Value &value)
 	{
 		value["valid"] >> valid;
 		value["targetPose"] >> targetPose;
+		int readNumber = 0;
+		value["type"] >> readNumber;
+		type = static_cast<Type>(readNumber);
 	}
 };

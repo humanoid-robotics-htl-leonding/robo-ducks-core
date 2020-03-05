@@ -1,0 +1,62 @@
+@import '~@angular/material/theming';
+
+$header-height: 10%;
+
+%nao-element{
+  border-radius: 4px;
+  @include mat-elevation-transition;
+  @include mat-elevation(1);
+
+  // &:hover{
+  //   @include mat-elevation(8);
+  // }
+}
+
+.lg-nao-element{
+  @extend %nao-element;
+  height: 100%;
+  width: 100%;
+}
+
+.centered-button-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.centered-button{
+
+}
+
+.element-portal-container{
+  width: 100%;
+  height: 100%;
+  // display: grid;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.element-grid{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.element-portal{
+}
+
+.element-header{
+  height: 15px;
+}
+
+.close-element-button{
+  float: right;
+  padding-right: 4px;
+  width: 15px;
+  height: 15px;
+  box-sizing: content-box;
+  cursor: pointer;
+}

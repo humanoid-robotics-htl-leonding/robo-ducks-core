@@ -108,11 +108,11 @@ private:
                                   const float measurementVariance,
                                   const Vector2f& absoluteGroundTruthPosition);
   /**
-   * @brief updateWithGoalPosts: Each particle is updated with the goal posts by placing the
-   * recognized goal post in respect of the particles position
-   * @param goalPosts a vector of goal posts in robot coordinates as seen by the vision
+   * @brief updateWithGoal: Each particle is updated with the goal by placing the
+   * recognized goal in respect of the particles position
+   * @param goal a goal in robot coordinates as seen by the vision
    */
-  void updateWithGoalPosts(PositionParticle& particle, const VecVector2f& goalPosts);
+  void updateWithGoal(PositionParticle& particle, const std::vector<LandmarkModel::Goal>& goals);
   /**
    * @brief angleBetweenLineVectors calculates the smallest angle between two lines (range from 0 to
    * M_PI_2)
@@ -136,7 +136,7 @@ private:
    * @param goalPost the seen goal post in assumed field coordinates
    * @return a weight <= 1 that is higher the more the seen post matches a post on the field
    */
-  float weightByGoalPost(const Vector2f& goalPost) const;
+  float weightByGoal(const LandmarkModel::Goal& goal) const;
   /// standard deviation for resampling
   const Parameter<Vector3f> sigma_;
   /// standard deviation for prediction
