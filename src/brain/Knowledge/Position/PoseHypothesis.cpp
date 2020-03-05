@@ -458,12 +458,10 @@ void PoseHypothesis::updateWithIntersection(const LandmarkModel::Intersection& i
 									   observation2.orientation);
 		const auto cov = computePoseCovFromFullPoseFeature(intersection.position, update.z(), cam2ground);
 		poseSensorUpdate(update, cov);
-		std::cerr << update.x() << "/" << update.y() << "/" << update.z() << std::endl;
 	}
 	else {
 		const auto cov = projectionMeasurementModel_.computePointCovFromPositionFeature(intersection.position, cam2ground);
 		fieldPointUpdate(intersection.position, associated.position, cov);
-		std::cerr << associated.position.x() << "/" << associated.position.y() << std::endl;
 	}
 }
 
