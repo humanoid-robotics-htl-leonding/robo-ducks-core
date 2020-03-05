@@ -71,8 +71,8 @@ private:
     const Dependency<FieldBorder> fieldBorder_;
 	/// the detected goal posts for other modules
   	Production<GoalData> goalData_;
-  	/// goal point groups for debug purposes
-	std::vector<VecVector2i> debugGoalPostGroups_;
+  	/// goal post candidates for debug purposes
+	VecVector2i debugPoints_;
 	/// goal post points for debug purposes
 	VecVector2i debugGoalPoints_;
   	/// candidate points
