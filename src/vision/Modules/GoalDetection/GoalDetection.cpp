@@ -117,11 +117,12 @@ void GoalDetection::cycle()
 	}
 	{
 		Chronometer time(debug(), mount_ + "." + imageData_->identification + "_cycle_time");
-		detectGoalPoints();
-		bombermanMaxDistanceGrouping();
-		createGoalData();
+		//detectGoalPoints();
+		//bombermanMaxDistanceGrouping();
+		//createGoalData();
 	}
-	sendImagesForDebug();
+	//sendImagesForDebug();
+	goalData_->valid = false;
 }
 
 void GoalDetection::sendImagesForDebug()
