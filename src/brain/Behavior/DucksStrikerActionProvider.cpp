@@ -46,34 +46,22 @@ void DucksStrikerActionProvider::cycle()
             Vector2f robotToBall = teamBallModel_->position - robotPosition_->pose.position;
             strikerAction_->kickPose = Pose(Vector2f(robotPosition_->pose.position.x(), teamBallModel_->position.y()),
                                             std::atan2(robotToBall.y(), robotToBall.x()));
-            isSurrounded();
         }
-    }
-    else { // is in own half
+    } else {
         if (ballState_->found) {
             Vector2f robotToBall = teamBallModel_->position - robotPosition_->pose.position;
             float rotationDifference = robotPosition_->pose.orientation - std::atan2(robotToBall.y(), robotToBall.x());
-            isSurrounded();
 
             const int distanceToChangeAction = 1;
-            bool isInSecond = false;
-            bool isInFirst = false;
             if (!(robotToBall.norm() <= distanceToChangeAction && rotationDifference <= 0.5)) { // robotToBall.norm() >  1 || rotationDifference > 0.5
                 strikerAction_->kickPose = Pose(teamBallModel_->position, std::atan2(robotToBall.y(), robotToBall.x()));
                 strikerAction_->action = DucksStrikerAction::Action::WALK_TO_POS;
                 isSurrounded();
-                isInFirst = true;
             } else {
-//            if (robotToBall.norm() <= distanceToChangeAction && rotationDifference <= 0.5) {
-                //std::cout << "dribble to Goal" << std::endl;
                 strikerAction_->action = DucksStrikerAction::Action::DRIBBLE_TO_POS;
-                // Vector2f robotToGoal = Vector2f(fieldDimensions_->fieldLength / 2, 0) - robotPosition_->pose.position;
                 Vector2f goalPos = Vector2f(fieldDimensions_->fieldLength / 2, 0);
                 strikerAction_->kickPose = Pose(goalPos, 0);
-                isInSecond = true;
             }
-            if (isInFirst && isInSecond)
-                std::cout << "Hui in olle" << std::endl;
         }
     }
 }
@@ -81,8 +69,7 @@ bool DucksStrikerActionProvider::isSurrounded() {
     // TODO: retrun true if surrounded, return false if not
     for (auto teamObstacle : teamObstacleData_->obstacles) {
         if (teamObstacle.type == ObstacleType::HOSTILE_ROBOT || true) {
-            //std::cout << "teamObstaclePosition: " << teamObstacle.absolutePosition.x() << ";" << teamObstacle.absolutePosition.y() << std::endl << std::endl;
-        }
+>        }
     }
 
     return false;
