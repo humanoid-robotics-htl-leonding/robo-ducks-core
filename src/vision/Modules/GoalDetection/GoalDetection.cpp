@@ -1,7 +1,6 @@
 #include "GoalDetection.hpp"
 
 #include "Tools/Chronometer.hpp"
-#include "Tools/Math/Geometry.hpp"
 #include "Tools/Math/Random.hpp"
 
 #include "print.h"
@@ -33,16 +32,6 @@ void GoalDetection::detectGoalPoints()
 			}
         }
     }
-}
-
-bool GoalDetection::checkGroup(VecVector2i& group) {
-	if (goalPostGroup_.size() < minPointsInGroup_()) {
-		return false;
-	}
-	std::sort(group.begin(), group.end(),
-			  [](const Vector2i& p1, const Vector2i& p2) { return (p1.y() < p2.y()); });
-	float tilt = (group.front().x() - group.back().x()) / (double)(group.front().y() - group.back().y());
-	return tilt < maxTilt_() && tilt > -maxTilt_();
 }
 
 void GoalDetection::bombermanMaxDistanceGrouping() {
@@ -116,8 +105,7 @@ void GoalDetection::cycle()
 		debugGoalPostGroups_ = goalPostGroups_;
 		createGoalData();
 	}
-	//sendImagesForDebug();
-	goalData_->valid = false;
+	sendImagesForDebug();
 }
 
 void GoalDetection::sendImagesForDebug()

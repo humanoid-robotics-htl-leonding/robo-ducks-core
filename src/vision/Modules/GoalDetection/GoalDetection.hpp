@@ -20,12 +20,6 @@ public:
   void cycle();
 
 private:
-	/**
- 	 * @brief getGradient calculates the normalized gradient in the y channel
- 	 * @param p a point in pixel coordinates at which the gradient is computed
- 	 * @return the gradient
- 	 */
-	Vector2f getGradient(const Vector2i& p) const;
   	/**
   	 * @brief detectGoalPoints uses the scanline segments and detects points which could belong to a
   	 * goal post
@@ -79,7 +73,10 @@ private:
 	VecVector2i goalPoints_;
 	/// goal post point groups
 	std::vector<VecVector2i> goalPostGroups_;
-	/// current goal post group
+    /// goal post point groups for debug
+    std::vector<VecVector2i> debugGoalPostGroups_;
+    /// current goal post group
 	VecVector2i goalPostGroup_;
+
 
 };
