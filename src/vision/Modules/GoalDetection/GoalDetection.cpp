@@ -1,7 +1,6 @@
 #include "GoalDetection.hpp"
 
 #include "Tools/Chronometer.hpp"
-#include "Tools/Math/Geometry.hpp"
 #include "Tools/Math/Random.hpp"
 
 #include "print.h"
@@ -11,12 +10,11 @@ GoalDetection::GoalDetection(const ModuleManagerInterface& manager)
   	, maxDistanceOfNeighbors_(*this, "maxDistanceOfNeighbors", [] {})
   	, minPointsInGroup_(*this, "minPointsInGroup", [] {})
 	, minSegmentLength_(*this, "minSegmentLength", [] {})
-	, maxSegmentLength_(*this, "maxSegmentLength", [] {})
-	, maxTilt_(*this, "maxTilt", [] {})
   , imageData_(*this)
   , cameraMatrix_(*this)
-  , fieldBorder_(*this)
   , imageSegments_(*this)
+  , fieldDimensions_(*this)
+  , fieldBorder_(*this)
   , goalData_(*this)
 {
 }
@@ -24,34 +22,16 @@ GoalDetection::GoalDetection(const ModuleManagerInterface& manager)
 void GoalDetection::detectGoalPoints()
 {
 	goalPoints_.clear();
-	debugPoints_.clear();
-	auto shift = [](int c) { return c >> 1; };
-	for (const auto& scanline : imageSegments_->horizontalScanlines)
-	{
-		for (const auto& segment : scanline.segments) {
-			if (static_cast<unsigned int>(segment.scanPoints) <  minSegmentLength_() ||
-				static_cast<unsigned int>(segment.scanPoints) >  maxSegmentLength_() ||
-				segment.startEdgeType != EdgeType::RISING || segment.endEdgeType != EdgeType::FALLING)
-			{
-				continue;
+    for(const auto& scanline : imageSegments_->verticalScanlines){
+        for (const auto& segment : scanline.segments) {
+			if(segment.startEdgeType == EdgeType::BORDER && segment.endEdgeType == EdgeType::FALLING &&
+			    static_cast<unsigned int>(segment.scanPoints) > minSegmentLength_()){
+			    if(fieldBorder_->isInsideField(segment.end) && !fieldBorder_->isInsideField(segment.start)){
+                    goalPoints_.push_back(segment.end);
+			    }
 			}
-			goalPoints_.push_back((segment.start + segment.end).unaryExpr(shift));
-		}
-	}
-	debugPoints_ = goalPoints_;
-}
-
-bool GoalDetection::checkGroup(VecVector2i& group) {
-	if (goalPostGroup_.size() < minPointsInGroup_()) {
-		return false;
-	}
-	std::sort(group.begin(), group.end(),
-			  [](const Vector2i& p1, const Vector2i& p2) { return (p1.y() < p2.y()); });
-	if (fieldBorder_->isInsideField(group.front()) || !fieldBorder_->isInsideField(group.back())) {
-		return false;
-	}
-	float tilt = (group.front().x() - group.back().x()) / (double)(group.front().y() - group.back().y());
-	return tilt < maxTilt_() && tilt > -maxTilt_();
+        }
+    }
 }
 
 void GoalDetection::bombermanMaxDistanceGrouping() {
@@ -64,17 +44,17 @@ void GoalDetection::bombermanMaxDistanceGrouping() {
 		it--;
 		goalPoints_.erase(std::next(it));
 		bombermanExplodeRecursive(point);
-		if (checkGroup(goalPostGroup_)) {
+		if (goalPostGroup_.size() >= minPointsInGroup_()) {
 			goalPostGroups_.push_back(goalPostGroup_);
 		}
-		if (goalPoints_.size() == 0) {
+		if (goalPoints_.empty()) {
 			break;
 		}
 	}
 }
 
 void GoalDetection::bombermanExplodeRecursive(Vector2i point) {
-	if (goalPoints_.size() == 0) {
+	if (goalPoints_.empty()) {
 		return;
 	}
 	auto it = goalPoints_.begin();
@@ -86,7 +66,7 @@ void GoalDetection::bombermanExplodeRecursive(Vector2i point) {
 			it--;
 			goalPoints_.erase(std::next(it));
 			bombermanExplodeRecursive(next);
-			if (goalPoints_.size() == 0) {
+			if (goalPoints_.empty()) {
 				break;
 			}
 		}
@@ -96,14 +76,17 @@ void GoalDetection::bombermanExplodeRecursive(Vector2i point) {
 void GoalDetection::createGoalData() {
 	goalData_->posts.clear();
 	debugGoalPoints_.clear();
-	std::sort(goalPostGroups_.begin(), goalPostGroups_.end(),
-			  [](const VecVector2i& g1, const VecVector2i& g2) { return (g1.back().y() < g2.back().y()); });
-	Vector2f goalPost;
+	Vector2f goalPoint;
 	for (auto& group : goalPostGroups_) {
-		if (cameraMatrix_->pixelToRobot(group.back(), goalPost)) {
-			debugGoalPoints_.push_back(group.back());
-			goalData_->posts.push_back(goalPost);
-		}
+	    Vector2f sum (0,0);
+	    for(auto& groupPiece : group){
+            if (cameraMatrix_->pixelToRobot(groupPiece, goalPoint)) {
+                sum += goalPoint;
+            }
+	    }
+	    sum /= group.size();
+	    goalData_->posts.push_back(sum);
+	    sum = sum/sum.norm()*(sum.norm()+ fieldDimensions_->goalPostDiameter/2);
 	}
 	goalData_->timestamp = imageData_->timestamp;
 	goalData_->valid = true;
@@ -117,27 +100,36 @@ void GoalDetection::cycle()
 	}
 	{
 		Chronometer time(debug(), mount_ + "." + imageData_->identification + "_cycle_time");
-		//detectGoalPoints();
-		//bombermanMaxDistanceGrouping();
-		//createGoalData();
+		detectGoalPoints();
+		bombermanMaxDistanceGrouping();
+		debugGoalPostGroups_ = goalPostGroups_;
+		createGoalData();
 	}
-	//sendImagesForDebug();
-	goalData_->valid = false;
+	sendImagesForDebug();
 }
 
 void GoalDetection::sendImagesForDebug()
 {
+    Vector2i goalPixel;
 	auto mount = mount_ + "." + imageData_->identification + "_image_goals";
 	if (debug().isSubscribed(mount))
 	{
 		Image image(imageData_->image422.to444Image());
-		for (const auto& point : debugPoints_)
-		{
-			image.circle(Image422::get444From422Vector(point), 2, Color::RED);
-		}
-		for (const auto& point : debugGoalPoints_) {
-			image.cross(Image422::get444From422Vector(point), 5, Color::BLUE);
-		}
+
+        for (const auto& group : debugGoalPostGroups_)
+        {
+            for (const auto& point : group) {
+                image.circle(Image422::get444From422Vector(point), 2, Color::RED);
+            }
+        }
+
+        for (const auto& post : goalData_->posts) {
+            if (cameraMatrix_->robotToPixel(post, goalPixel)) {
+                image.cross(Image422::get444From422Vector(goalPixel), 5, Color::BLUE);
+            }
+        }
 		debug().sendImage(mount_ + "." + imageData_->identification + "_image_goals", image);
 	}
 }
+
+
