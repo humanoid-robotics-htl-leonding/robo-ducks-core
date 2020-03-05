@@ -35,11 +35,7 @@ void DucksStrikerActionProvider::cycle()
             strikerAction_->kickable = BallUtils::LEFT;
             strikerAction_->target = goal;
             strikerAction_->action = DucksStrikerAction::Action::KICK_INTO_GOAL;
-        }
-        else if (isSurrounded()) {
-            // TODO: shoots to the nearest teammate
-        }
-        else {
+        } else {
             strikerAction_->valid = true;
             strikerAction_->action = DucksStrikerAction::Action::WAITING_FOR_BALL;
             strikerAction_->kickType = DucksStrikerAction::KickType::NONE;
@@ -53,10 +49,9 @@ void DucksStrikerActionProvider::cycle()
             float rotationDifference = robotPosition_->pose.orientation - std::atan2(robotToBall.y(), robotToBall.x());
 
             const int distanceToChangeAction = 1;
-            if (!(robotToBall.norm() <= distanceToChangeAction && rotationDifference <= 0.5)) { // robotToBall.norm() >  1 || rotationDifference > 0.5
+            if (!(robotToBall.norm() <= distanceToChangeAction && rotationDifference <= 0.5)) {
                 strikerAction_->kickPose = Pose(teamBallModel_->position, std::atan2(robotToBall.y(), robotToBall.x()));
                 strikerAction_->action = DucksStrikerAction::Action::WALK_TO_POS;
-                isSurrounded();
             } else {
                 strikerAction_->action = DucksStrikerAction::Action::DRIBBLE_TO_POS;
                 Vector2f goalPos = Vector2f(fieldDimensions_->fieldLength / 2, 0);
@@ -64,13 +59,4 @@ void DucksStrikerActionProvider::cycle()
             }
         }
     }
-}
-bool DucksStrikerActionProvider::isSurrounded() {
-    // TODO: retrun true if surrounded, return false if not
-    for (auto teamObstacle : teamObstacleData_->obstacles) {
-        if (teamObstacle.type == ObstacleType::HOSTILE_ROBOT || true) {
->        }
-    }
-
-    return false;
 }
