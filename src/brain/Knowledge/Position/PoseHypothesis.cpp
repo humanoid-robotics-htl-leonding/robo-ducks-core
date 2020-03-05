@@ -332,7 +332,7 @@ void PoseHypothesis::updateWithPenaltyArea(const LandmarkModel::PenaltyArea& rel
     const Pose opponentPenaltySpot(fieldInfo_.opponentPenaltyArea.position, fieldInfo_.opponentPenaltyArea.orientation);
     const Pose ownPenaltySpot(fieldInfo_.ownPenaltyArea.position, fieldInfo_.ownPenaltyArea.orientation);
     // find the most plausible pose that explains the penalty area observeration
-    const Pose observationOwn = opponentPenaltySpot *
+    const Pose observationOwn = ownPenaltySpot *
         Pose(relativePenaltyArea.position, relativePenaltyArea.orientation).inverse();
     const Pose observationOpponent = opponentPenaltySpot *
 									 Pose(relativePenaltyArea.position, relativePenaltyArea.orientation).inverse();
@@ -392,8 +392,6 @@ void PoseHypothesis::updateWithIntersectionPair(const LandmarkModel::Intersectio
 												const LandmarkModel::Intersection& intersection2,
 												const KinematicMatrix& cam2ground) {
 	float distance = (intersection1.position - intersection2.position).norm();
-	Pose associated1;
-	Pose associated2;
 
 	for (auto& candidate1 : fieldInfo_.intersections) {
 		if (candidate1.type == intersection1.type) {
