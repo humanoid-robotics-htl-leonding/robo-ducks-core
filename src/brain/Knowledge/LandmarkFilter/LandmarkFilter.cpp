@@ -202,14 +202,20 @@ void LandmarkFilter::assembleGoals()
       float dist = (post1->position - post2->position).norm();
       if (std::abs(dist - optimalGoalPostDistance_) < maxGoalPostDistanceDeviation_())
       {
+      	Vector2f leftPost;
+      	Vector2f rightPost;
         if (post1->position.y() > post2->position.y())
         {
-          landmarkModel_->goals.emplace_back(post1->position, post2->position);
+        	leftPost = post1->position;
+        	rightPost = post2->position;
         }
         else
         {
-          landmarkModel_->goals.emplace_back(post2->position, post1->position);
+        	leftPost = post2->position;
+        	rightPost = post1->position;
         }
+		float orientation = std::atan2(leftPost.x() - rightPost.x(), rightPost.y() - leftPost.y());
+        landmarkModel_->goals.emplace_back(leftPost, rightPost, true, orientation);
       }
     }
   }
@@ -556,7 +562,7 @@ LandmarkFilter::findOrthogonalLines(const std::vector<LineInfo>& linesWithMetaDa
 std::vector<LandmarkModel::Intersection> LandmarkFilter::constructIntersections(
     const std::vector<std::pair<const LineInfo&, const LineInfo&>> orthogonalLinePairs)
 {
-  using IntersectionType = LandmarkModel::Intersection::IntersectionType;
+  using IntersectionType = LandmarkModel::Intersection::Type;
 
   std::vector<LandmarkModel::Intersection> intersections;
   intersections.reserve(orthogonalLinePairs.size());
@@ -589,21 +595,21 @@ std::vector<LandmarkModel::Intersection> LandmarkFilter::constructIntersections(
       dotProductLine2 = line2vec1.dot(line2vec2);
 
       // if dotProductLine is negative the intersection point lies on the line
-      intersection.intersectionOnLine1 = (dotProductLine1 < 0.f);
-      intersection.intersectionOnLine2 = (dotProductLine2 < 0.f);
+      intersection.onLine1 = (dotProductLine1 < 0.f);
+      intersection.onLine2 = (dotProductLine2 < 0.f);
 
       // define the type of intersection
-      if (intersection.intersectionOnLine1 && intersection.intersectionOnLine2)
+      if (intersection.onLine1 && intersection.onLine2)
       {
-        intersection.intersectionType = IntersectionType::XINTERSECTION;
+        intersection.type = IntersectionType::X;
       }
-      else if (intersection.intersectionOnLine1 || intersection.intersectionOnLine2)
+      else if (intersection.onLine1 || intersection.onLine2)
       {
-        intersection.intersectionType = IntersectionType::TINTERSECTION;
+        intersection.type = IntersectionType::T;
       }
       else
       {
-        intersection.intersectionType = IntersectionType::LINTERSECTION;
+        intersection.type = IntersectionType::L;
       }
 
       // save used lineIds
@@ -629,7 +635,7 @@ std::vector<LandmarkModel::Intersection> LandmarkFilter::constructIntersections(
 
 bool LandmarkFilter::checkIntersection(LandmarkModel::Intersection& intersection)
 {
-  using IntersectionType = LandmarkModel::Intersection::IntersectionType;
+  using IntersectionType = LandmarkModel::Intersection::Type;
 
   auto& line1 = lineData_->lines[intersection.usedLineIds.front()];
   auto& line2 = lineData_->lines[intersection.usedLineIds.back()];
@@ -641,53 +647,53 @@ bool LandmarkFilter::checkIntersection(LandmarkModel::Intersection& intersection
                                        (intersectionPoint - line2.p2).squaredNorm());
 
   // check if the there is enough overlap for an X intersection
-  if (intersection.intersectionType == IntersectionType::XINTERSECTION)
+  if (intersection.type == IntersectionType::X)
   {
     // degrade to T intersection if necessary
     if (minDistSquaredLine1 < squaredMinIntersectionOverlap_)
     {
-      intersection.intersectionType = IntersectionType::TINTERSECTION;
-      intersection.intersectionOnLine1 = false;
+      intersection.type = IntersectionType::T;
+      intersection.onLine1 = false;
     }
     else if (minDistSquaredLine2 < squaredMinIntersectionOverlap_)
     {
-      intersection.intersectionType = IntersectionType::TINTERSECTION;
-      intersection.intersectionOnLine2 = false;
+      intersection.type = IntersectionType::T;
+      intersection.onLine2 = false;
     }
   }
 
   // check if there is enough overlap for a T section
-  if (intersection.intersectionType == IntersectionType::TINTERSECTION)
+  if (intersection.type == IntersectionType::T)
   {
-    if (intersection.intersectionOnLine1)
+    if (intersection.onLine1)
     {
       // degrade to L intersection
       if (minDistSquaredLine1 < squaredMinIntersectionOverlap_)
       {
-        intersection.intersectionType = IntersectionType::LINTERSECTION;
-        intersection.intersectionOnLine1 = false;
+        intersection.type = IntersectionType::L;
+        intersection.onLine1 = false;
       }
     }
-    else if (intersection.intersectionOnLine2)
+    else if (intersection.onLine2)
     {
       // degrade to L intersection
       if (minDistSquaredLine2 < squaredMinIntersectionOverlap_)
       {
-        intersection.intersectionType = IntersectionType::LINTERSECTION;
-        intersection.intersectionOnLine2 = false;
+        intersection.type = IntersectionType::L;
+        intersection.onLine2 = false;
       }
     }
   }
 
   // check the length between the line ends and the intersection point
-  if (!intersection.intersectionOnLine1)
+  if (!intersection.onLine1)
   {
     if (minDistSquaredLine1 > squaredMaxIntersectionDistance_)
     {
       return false;
     }
   }
-  if (!intersection.intersectionOnLine2)
+  if (!intersection.onLine2)
   {
     if (minDistSquaredLine2 > squaredMaxIntersectionDistance_)
     {
@@ -701,7 +707,7 @@ bool LandmarkFilter::checkIntersection(LandmarkModel::Intersection& intersection
 std::tuple<bool, float>
 LandmarkFilter::findIntersectionOrientation(const LandmarkModel::Intersection& intersection)
 {
-  using IntersectionType = LandmarkModel::Intersection::IntersectionType;
+  using IntersectionType = LandmarkModel::Intersection::Type;
 
   Vector2f orientationVec(0.f, 0.f);
   float orientation = 0.f;
@@ -710,10 +716,10 @@ LandmarkFilter::findIntersectionOrientation(const LandmarkModel::Intersection& i
   auto& line1 = lineData_->lines[intersection.usedLineIds.front()];
   auto& line2 = lineData_->lines[intersection.usedLineIds.back()];
 
-  switch (intersection.intersectionType)
+  switch (intersection.type)
   {
     // not possible to define an orientation
-    case IntersectionType::XINTERSECTION:
+    case IntersectionType::X:
       break;
 
     /* orientation defined by the lower line of the T
@@ -722,8 +728,8 @@ LandmarkFilter::findIntersectionOrientation(const LandmarkModel::Intersection& i
      *     |
      *     | <- orientation vector
      */
-    case IntersectionType::TINTERSECTION:
-      if (intersection.intersectionOnLine1)
+    case IntersectionType::T:
+      if (intersection.onLine1)
       {
         if ((intersection.position - line2.p1).squaredNorm() >
             (intersection.position - line2.p2).squaredNorm())
@@ -735,7 +741,7 @@ LandmarkFilter::findIntersectionOrientation(const LandmarkModel::Intersection& i
           orientationVec = line2.p2 - line2.p1;
         }
       }
-      else if (intersection.intersectionOnLine2)
+      else if (intersection.onLine2)
       {
         if ((intersection.position - line1.p1).squaredNorm() >
             (intersection.position - line1.p2).squaredNorm())
@@ -757,7 +763,7 @@ LandmarkFilter::findIntersectionOrientation(const LandmarkModel::Intersection& i
      *  | \
      *  |  \<- orientation vector
      */
-    case IntersectionType::LINTERSECTION:
+    case IntersectionType::L:
     {
       // calculate line vectors so they point away from the intersection
       Vector2f line1Vec;
@@ -849,6 +855,8 @@ void LandmarkFilter::sendDebugImage()
     Vector2i pixelCoordsLineP1;
     Vector2i pixelCoordsLineP2;
     Vector2i pixelCoordsIntersection;
+    Vector2i pixelCoordsLeftPost;
+    Vector2i pixelCoordsRightPost;
 
     // draw center circle
     for (auto& centerCircle : landmarkModel_->centerCircles)
@@ -890,15 +898,15 @@ void LandmarkFilter::sendDebugImage()
       auto& line2 = lineData_->lines[intersection.usedLineIds.back()];
       auto color = Color::BLACK;
 
-      switch (intersection.intersectionType)
+      switch (intersection.type)
       {
-        case LandmarkModel::Intersection::IntersectionType::LINTERSECTION:
+        case LandmarkModel::Intersection::Type::L:
           color = Color::BLUE;
           break;
-        case LandmarkModel::Intersection::IntersectionType::XINTERSECTION:
+        case LandmarkModel::Intersection::Type::X:
           color = Color::RED;
           break;
-        case LandmarkModel::Intersection::IntersectionType::TINTERSECTION:
+        case LandmarkModel::Intersection::Type::T:
           color = Color::ORANGE;
           break;
         default:
@@ -921,6 +929,16 @@ void LandmarkFilter::sendDebugImage()
       pixelCoordsIntersection = Image422::get444From422Vector(pixelCoordsIntersection);
       image.cross(pixelCoordsIntersection, 5, Color::BLUE);
     }
+
+	  // draw goal posts
+	  for (auto& goal : landmarkModel_->goals) {
+		  cameraMatrix_->robotToPixel(goal.left, pixelCoordsLeftPost);
+		  cameraMatrix_->robotToPixel(goal.right, pixelCoordsRightPost);
+		  pixelCoordsLeftPost = Image422::get444From422Vector(pixelCoordsLeftPost);
+		  pixelCoordsRightPost = Image422::get444From422Vector(pixelCoordsRightPost);
+		  image.line(pixelCoordsLeftPost, pixelCoordsRightPost, Color::RED);
+	  }
+
     debug().sendImage(mount_ + "." + imageData_->identification + "_image", image);
   }
 }
