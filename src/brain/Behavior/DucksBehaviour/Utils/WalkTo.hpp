@@ -7,7 +7,7 @@ DucksActionCommand walkTo(const Pose &fieldPose, const DucksDataSet &d, const Wa
 {
 	auto localPose = d.robotPosition.fieldToRobot(fieldPose);
 	if (!d.robotPosition.pose.isNear(fieldPose)) { //todo HYSCHTEREESSCHHEEE
-		return DucksActionCommand::walk(localPose, mode, Velocity(1.0, 1.0, true));
+		return DucksActionCommand::walk(localPose, mode, Velocity(1.0, 1.0, true), InWalkKickType::FORWARD);
 	}
 	else {
 		return DucksActionCommand::stand();
