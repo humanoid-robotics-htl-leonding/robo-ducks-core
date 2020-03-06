@@ -27,7 +27,7 @@ void DucksStrikerActionProvider::cycle()
     auto absoluteBallPosition = teamBallModel_->position;
     strikerAction_->valid = true;
 
-    if (robotPosition_->pose.position.x() >= 0 && false) { // is in enemy half
+    if (robotPosition_->pose.position.x() >= 0) { // is in enemy half
         if (absoluteBallPosition.x() >= 0 && teamBallModel_->found) {
             Vector2f goal = Vector2f(fieldDimensions_->fieldLength / 2, 0);
 
@@ -45,20 +45,9 @@ void DucksStrikerActionProvider::cycle()
         }
     } else {
         if (ballState_->found) {
-            Vector2f robotToBall = teamBallModel_->position - robotPosition_->pose.position;
-            Vector2f goal = Vector2f(fieldDimensions_->fieldLength / 2, 0);
-            Vector2f goalToBall = ballState_->position - goal;
-            Vector2f ballToGoal = -goalToBall;
-
-            const double distanceToChangeAction = 0.2;
-            if (robotToBall.norm() > distanceToChangeAction) {
-                strikerAction_->kickPose = Pose(teamBallModel_->position, std::atan2(ballToGoal.y(), ballToGoal.x()));
-                strikerAction_->action = DucksStrikerAction::Action::WALK_TO_POS;
-            } else {
-                strikerAction_->action = DucksStrikerAction::Action::DRIBBLE_TO_POS;
-                Vector2f goalPos = Vector2f(fieldDimensions_->fieldLength / 2, 0);
-                strikerAction_->kickPose = Pose(goalPos, 0);
-            }
+            strikerAction_->action = DucksStrikerAction::Action::DRIBBLE_TO_POS;
+            Vector2f goalPos = Vector2f(fieldDimensions_->fieldLength / 2, 0);
+            strikerAction_->kickPose = Pose(goalPos, 0);
         }
     }
 }
