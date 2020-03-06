@@ -27,7 +27,6 @@ void DucksStrikerActionProvider::cycle()
             Vector2f goal = Vector2f(fieldDimensions_->fieldLength / 2, 0);
 
             strikerAction_->kickType = DucksStrikerAction::KickType::KICK;
-            strikerAction_->kickable = BallUtils::LEFT;
             strikerAction_->target = goal;
             strikerAction_->action = DucksStrikerAction::Action::KICK_INTO_GOAL;
         } else {

@@ -44,8 +44,7 @@ public:
   KickType kickType;
   /// target where we want the robot to be
   Pose walkTarget;
-  /// if ball is kickable at the moment and how
-  BallUtils::Kickable kickable = BallUtils::Kickable::NOT;
+
   /**
    * @brief reset does nothing
    */
@@ -62,7 +61,6 @@ public:
     value["target"] << target;
     value["kickType"] << static_cast<int>(kickType);
     value["walkTarget"] << walkTarget;
-    value["kickable"] << static_cast<int>(kickable);
   }
   void fromValue(const Uni::Value& value) override
   {
@@ -74,7 +72,5 @@ public:
     value["kickType"] >> readNumber;
     kickType = static_cast<KickType>(readNumber);
     value["walkTarget"] >> walkTarget;
-    value["kickable"] >> readNumber;
-    kickable = static_cast<BallUtils::Kickable>(readNumber);
   }
 };
