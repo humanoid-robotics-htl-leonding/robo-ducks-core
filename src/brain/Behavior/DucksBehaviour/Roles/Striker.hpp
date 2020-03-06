@@ -1,11 +1,5 @@
 #pragma once
 
-DucksActionCommand kickBall(const DucksDataSet &d, const DucksStrikerAction &sa)
-{
-    return kick(d, //ballState.position is not good here, a new StrikerAction.kickSource or something like that would be useful, rotated like StrikerAction.target
-                               sa.target);  // TODO Wrong Kick Type (use SA)
-}
-
 DucksActionCommand roleStriker(const DucksDataSet &d)
 {
     if (d.strikerAction.valid) {
@@ -13,7 +7,9 @@ DucksActionCommand roleStriker(const DucksDataSet &d)
             case DucksStrikerAction::Action::WALK_TO_POS:
                 return walkTo(d.strikerAction.walkTarget, d);
             case DucksStrikerAction::Action::KICK_INTO_GOAL:
-                return kickBall(d, d.strikerAction);
+                //ballState.position is not good here, a new StrikerAction.kickSource or something like that would be useful, rotated like StrikerAction.target
+                // TODO Wrong Kick Type (use SA)
+                return kick(d, d.strikerAction.target);
             case DucksStrikerAction::Action::WAITING_FOR_BALL:
                 return walkTo(d.strikerAction.walkTarget, d);
             case DucksStrikerAction::Action::DRIBBLE_TO_POS:
