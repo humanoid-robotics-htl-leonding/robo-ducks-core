@@ -25,7 +25,8 @@ import { NaoTextComponent } from '../elements/nao-text/nao-text.component';
 })
 export class NaoComponent implements OnInit {
 
-  @Input() connector: NaoConnector;
+  @Input() id: number;
+  connector: NaoConnector;
   @Output() addTab = new EventEmitter();
   @Output() closeTab = new EventEmitter();
   toggleForm = false;
@@ -36,10 +37,11 @@ export class NaoComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.elements.push(this.getGridElement(1,1,5,7));
-    this.elements.push(this.getGridElement(1,7,4,11));
-    this.elements.push(this.getGridElement(5,1,7,7));
-    this.elements.push(this.getGridElement(4,7,7,11));
+    this.connector = this.naoService.tabs.find(t => t.id == this.id).connector;
+    this.elements.push(this.getGridElement(1, 1, 5, 7));
+    this.elements.push(this.getGridElement(1, 7, 4, 11));
+    this.elements.push(this.getGridElement(5, 1, 7, 7));
+    this.elements.push(this.getGridElement(4, 7, 7, 11));
   }
 
   connectToNao() {
@@ -52,10 +54,6 @@ export class NaoComponent implements OnInit {
 
   send() {
     this.connector.sendString(DebugMessageType.DM_REQUEST_LIST, this.message);
-  }
-
-  doAction(event) {
-    console.log(event);
   }
 
   addElement(type: string) {
@@ -79,7 +77,7 @@ export class NaoComponent implements OnInit {
     }
   }
 
-  getGridElement(rowStart,colStart,rowEnd,colEnd): NaoGridElement{
+  getGridElement(rowStart, colStart, rowEnd, colEnd): NaoGridElement {
     return {
       id: null,
       type: null,
@@ -87,7 +85,7 @@ export class NaoComponent implements OnInit {
       colStart,
       rowEnd,
       colEnd,
-      component: new NaoElementComponent(this.injector)
+      component: new NaoElementComponent(this.naoService, this.injector)
     };
   }
 
