@@ -12,15 +12,9 @@
     <button mat-raised-button (click)="send()" color="primary">Send</button>
 
     <div *ngIf="connector.client">
-      <p>
-        Connecting: {{connector.client.connecting}}
-      </p>
-      <p>
-        Destroyed: {{connector.client.destroyed}}
-      </p>
-      <p>
-        Address: {{connector.client.remoteAddress}}
-      </p>
+      Connecting: {{connector.client.connecting}}
+      Destroyed: {{connector.client.destroyed}}
+      Address: {{connector.client.remoteAddress}}
     </div>
   </div>
 
