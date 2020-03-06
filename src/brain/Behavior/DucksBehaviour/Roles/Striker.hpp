@@ -11,13 +11,13 @@ DucksActionCommand roleStriker(const DucksDataSet &d)
     if (d.strikerAction.valid) {
         switch (d.strikerAction.action) {
             case DucksStrikerAction::Action::WALK_TO_POS:
-                return walkTo(d.strikerAction.kickPose, d);
+                return walkTo(d.strikerAction.walkTarget, d);
             case DucksStrikerAction::Action::KICK_INTO_GOAL:
                 return kickBall(d, d.strikerAction);
             case DucksStrikerAction::Action::WAITING_FOR_BALL:
-                return walkTo(d.strikerAction.kickPose, d);
+                return walkTo(d.strikerAction.walkTarget, d);
             case DucksStrikerAction::Action::DRIBBLE_TO_POS:
-                return walkTo(d.strikerAction.kickPose, d, WalkMode::DRIBBLE, InWalkKickType::FORWARD);
+                return walkTo(d.strikerAction.walkTarget, d, WalkMode::DRIBBLE, InWalkKickType::FORWARD);
             default:
                 Log(LogLevel::WARNING) << "Invalid Striker Action";
         }

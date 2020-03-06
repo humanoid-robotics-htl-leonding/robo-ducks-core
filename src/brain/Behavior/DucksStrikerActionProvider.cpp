@@ -35,14 +35,14 @@ void DucksStrikerActionProvider::cycle()
             strikerAction_->action = DucksStrikerAction::Action::WAITING_FOR_BALL;
             strikerAction_->kickType = DucksStrikerAction::KickType::NONE;
             Vector2f robotToBall = teamBallModel_->position - robotPosition_->pose.position;
-            strikerAction_->kickPose = Pose(Vector2f(robotPosition_->pose.position.x(), teamBallModel_->position.y()),
+            strikerAction_->walkTarget = Pose(Vector2f(robotPosition_->pose.position.x(), teamBallModel_->position.y()),
                                             std::atan2(robotToBall.y(), robotToBall.x()));
         }
     } else {
         if (ballState_->found) {
             strikerAction_->action = DucksStrikerAction::Action::DRIBBLE_TO_POS;
             Vector2f goalPos = Vector2f(fieldDimensions_->fieldLength / 2, 0);
-            strikerAction_->kickPose = Pose(goalPos, 0);
+            strikerAction_->walkTarget = Pose(goalPos, 0);
         }
     }
 

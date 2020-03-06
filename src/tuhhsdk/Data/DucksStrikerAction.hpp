@@ -43,7 +43,7 @@ public:
   /// type of kick we want to do
   KickType kickType;
   /// the relative pose from where we want to kick from
-  Pose kickPose;
+  Pose walkTarget;
   /// if ball is kickable at the moment and how
   BallUtils::Kickable kickable = BallUtils::Kickable::NOT;
   /**
@@ -61,7 +61,7 @@ public:
     value["action"] << static_cast<int>(action);
     value["target"] << target;
     value["kickType"] << static_cast<int>(kickType);
-    value["kickPose"] << kickPose;
+    value["walkTarget"] << walkTarget;
     value["kickable"] << static_cast<int>(kickable);
   }
   void fromValue(const Uni::Value& value) override
@@ -73,7 +73,7 @@ public:
     value["target"] >> target;
     value["kickType"] >> readNumber;
     kickType = static_cast<KickType>(readNumber);
-    value["kickPose"] >> kickPose;
+    value["walkTarget"] >> walkTarget;
     value["kickable"] >> readNumber;
     kickable = static_cast<BallUtils::Kickable>(readNumber);
   }
