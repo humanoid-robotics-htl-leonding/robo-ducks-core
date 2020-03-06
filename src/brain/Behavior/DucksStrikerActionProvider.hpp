@@ -25,6 +25,9 @@ public:
 	explicit DucksStrikerActionProvider(const ModuleManagerInterface& manager);
 
 	void cycle() override;
+	void dribble(const Vector2f& target);
+	void kick(const Vector2f& target);
+	void wait();
 	
 private:
 	const Dependency<FieldDimensions> fieldDimensions_;
