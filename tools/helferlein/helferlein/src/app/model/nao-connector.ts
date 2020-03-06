@@ -127,7 +127,6 @@ export class NaoConnector {
 
   defaultOnConnect() {
     console.log('Connected to ' + this.address);
-    console.log(this);
     this.status = this.address;
   }
 

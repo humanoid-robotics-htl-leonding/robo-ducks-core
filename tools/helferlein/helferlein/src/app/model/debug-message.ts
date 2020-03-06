@@ -61,8 +61,6 @@ export class DebugMessage {
       this.msgType = sink.view.getUint8(5);
       this.padding_ = sink.view.getUint16(6,true);
       this.msgLength = sink.view.getInt32(8,true);
-      console.log('MsgLength');
-      console.log(sink.view.getUint8(8),sink.view.getUint8(9),sink.view.getUint8(10),sink.view.getUint8(11))
       this.padding = sink.view.getUint32(12,true);
     }
   }
