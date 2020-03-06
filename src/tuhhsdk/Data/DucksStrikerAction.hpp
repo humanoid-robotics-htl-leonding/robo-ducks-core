@@ -42,7 +42,7 @@ public:
   Vector2f target = Vector2f::Zero();
   /// type of kick we want to do
   KickType kickType;
-  /// the relative pose from where we want to kick from
+  /// target where we want the robot to be
   Pose walkTarget;
   /// if ball is kickable at the moment and how
   BallUtils::Kickable kickable = BallUtils::Kickable::NOT;
