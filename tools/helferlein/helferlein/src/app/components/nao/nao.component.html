@@ -11,11 +11,16 @@
     <input matInput placeholder="Message" [(ngModel)]="message">
     <button mat-raised-button (click)="send()" color="primary">Send</button>
 
-    <input matInput [(ngModel)]="connector.status">
     <div *ngIf="connector.client">
-      Connecting: {{connector.client.connecting}}
-      Destroyed: {{connector.client.destroyed}}
-      Address: {{connector.client.remoteAddress}}
+      <p>
+        Connecting: {{connector.client.connecting}}
+      </p>
+      <p>
+        Destroyed: {{connector.client.destroyed}}
+      </p>
+      <p>
+        Address: {{connector.client.remoteAddress}}
+      </p>
     </div>
   </div>
 
