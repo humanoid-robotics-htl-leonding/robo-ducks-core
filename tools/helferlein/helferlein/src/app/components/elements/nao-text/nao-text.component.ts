@@ -10,12 +10,12 @@ import { NaoService } from 'src/app/service/nao.service';
 })
 export class NaoTextComponent implements OnInit {
 
-  @Inject(CONTAINER_DATA) public id: number;
   connector: NaoConnector;
 
-  constructor(private naoService: NaoService) { }
+  constructor(private naoService: NaoService, @Inject(CONTAINER_DATA) public id: number) { }
 
   ngOnInit(): void {
+    console.log('Text: ',this.id);
     this.connector = this.naoService.tabs.find(t => t.id == this.id).connector;
   }
 
