@@ -19,11 +19,6 @@ DucksStrikerActionProvider::DucksStrikerActionProvider(const ModuleManagerInterf
 
 void DucksStrikerActionProvider::cycle()
 {
-    if (desperation_->lookAtBallUrgency >= 1) {
-        strikerAction_->valid = false;
-        return;
-    }
-
     auto absoluteBallPosition = teamBallModel_->position;
     strikerAction_->valid = true;
 
@@ -49,5 +44,10 @@ void DucksStrikerActionProvider::cycle()
             Vector2f goalPos = Vector2f(fieldDimensions_->fieldLength / 2, 0);
             strikerAction_->kickPose = Pose(goalPos, 0);
         }
+    }
+
+    if (desperation_->lookAtBallUrgency >= 1) {
+        strikerAction_->valid = false;
+        return;
     }
 }
