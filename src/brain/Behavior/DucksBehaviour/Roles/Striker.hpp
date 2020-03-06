@@ -17,7 +17,7 @@ DucksActionCommand roleStriker(const DucksDataSet &d)
             case DucksStrikerAction::Action::WAITING_FOR_BALL:
                 return walkTo(d.strikerAction.kickPose, d);
             case DucksStrikerAction::Action::DRIBBLE_TO_POS:
-                return walkTo(d.strikerAction.kickPose, d, WalkMode::DRIBBLE);
+                return walkTo(d.strikerAction.kickPose, d, WalkMode::DRIBBLE, InWalkKickType::FORWARD);
             default:
                 Log(LogLevel::WARNING) << "Invalid Striker Action";
         }
