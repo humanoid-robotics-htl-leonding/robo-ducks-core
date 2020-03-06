@@ -13,7 +13,6 @@
 #include "Data/FieldDimensions.hpp"
 #include "Data/CircleData.hpp"
 
-
 #ifndef TUHHNAO_MIDDLECIRCLEDETECTION_HPP
 #define TUHHNAO_MIDDLECIRCLEDETECTION_HPP
 
@@ -81,4 +80,5 @@ private:
     VecVector2f circleBorderPoints_;
 
     double point2PointDistance(Vector2i first, Vector2i second);
+
 };
