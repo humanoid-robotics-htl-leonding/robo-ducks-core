@@ -81,6 +81,16 @@ private:
 	// Maximum value of lookAtBallUrgency to allow decisions without turning
 	Parameter<float> minTurnUrgency_;
 
+	//How long can we stand still until we need to look around
+	Parameter<int> adhdCooldown_;
+	//How long the ADHD-Lookaround should last
+	Parameter<int> adhdDuration_;
+	//Minimum distance for the ballSearchPosition to move to count as a new position and therefore reset stillness
+	Parameter<float> stillnessThreshold_;
+
+	Parameter<float> lookaroundPeriodDuration_;
+	Parameter<float> lookaroundAmplitude_;
+
 	/// The position to look for a ball.
 	Production<DuckBallSearchPosition> searchPosition_;
 
@@ -103,4 +113,8 @@ private:
     bool policyTeamModel(DuckBallSearchPosition& position);
     bool policyBallSearchMap(DuckBallSearchPosition& position);
     bool policyLookAround(DuckBallSearchPosition& position);
+
+    TimePoint lastChange_;
+    Vector2f lastPosition_;
+    TimePoint stopLookingAround_;
 };

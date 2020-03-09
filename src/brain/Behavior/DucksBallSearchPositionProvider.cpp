@@ -36,6 +36,11 @@ DucksBallSearchPositionProvider::DucksBallSearchPositionProvider(const ModuleMan
 	  minProbability_(*this, "minProbability"),
 	  minUncomfortableUrgency_(*this, "minUncomfortableUrgency"),
 	  minTurnUrgency_(*this, "minTurnUrgency"),
+	  adhdCooldown_(*this, "adhdCooldown"),
+	  adhdDuration_(*this, "adhdDuration"),
+	  stillnessThreshold_(*this, "stillnessThreshold"),
+	  lookaroundPeriodDuration_(*this, "lookaroundPeriodduration"),
+	  lookaroundAmplitude_(*this, "lookaroundAmplitude"),
 	  searchPosition_(*this),
 	  fieldLength_(fieldDimensions_->fieldLength),
 	  fieldWidth_(fieldDimensions_->fieldWidth),
@@ -56,12 +61,31 @@ void DucksBallSearchPositionProvider::cycle()
 	bool valid = generateBallSearchPositionWithPolicies(pos);
 	if(!valid) Log(LogLevel::WARNING) << "Could not generate valid BallSearchPosition";
 
+	// Prevent stationarism
+	// Update stillness
+	if((searchPosition_->searchPosition - lastPosition_).norm() > stillnessThreshold_() || pos.reason == DuckBallSearchPosition::OWN_CAMERA){
+		lastPosition_ = searchPosition_->searchPosition;
+		lastChange_ = TimePoint::getCurrentTime();
+	}
+	debug().update(mount_+".stillSince", (TimePoint::getCurrentTime() - lastChange_));
+	debug().update(mount_+".lookingAroundFor", (stopLookingAround_ - TimePoint::getCurrentTime()));
+	if((TimePoint::getCurrentTime() - lastChange_) > adhdCooldown_()){
+		stopLookingAround_ = TimePoint::getCurrentTime() + adhdDuration_();
+	}
+	if(!stopLookingAround_.hasPassed()){
+		policyLookAround(pos);
+	}
+
+
+	//Check Comfortability
 	if(desperation_->lookAtBallUrgency < minUncomfortableUrgency_()){ //Don't allow incomfortable Decisions
 		if(!iWantToLookAt(pos.searchPosition)){ // But this position is uncomfortable
 			Log(LogLevel::WARNING) << "LookAtBallUrgency is not high enough to allow uncomfortable positions, but this position was uncomfortable";
 		}
 	}
 
+
+	//Accept Position
 	searchPosition_->ownSearchPoseValid = valid;
 	if(valid){
 		searchPosition_->pose = pos.pose;
@@ -69,13 +93,11 @@ void DucksBallSearchPositionProvider::cycle()
 		searchPosition_->searchPosition = pos.searchPosition;
 	}
 
-
-
+	//Update Pose
 	searchPosition_->pose = robotPosition_->pose;
 	auto searchPoseToPos = searchPosition_->searchPosition - searchPosition_->pose.position;
 	auto searchPoseToPosAngle = std::atan2(searchPoseToPos.y(), searchPoseToPos.x());
 	searchPosition_->pose.orientation = Angle::normalized(searchPoseToPosAngle);
-
 
 
 	auto robotOrientation = robotPosition_->pose.orientation;
@@ -85,35 +107,6 @@ void DucksBallSearchPositionProvider::cycle()
 	debug().update(mount_+".angle", angleDiff);
 
 
-
-
-	//2. === If ball rolls to the side, then turn (if walking... so that if we are already walking, we dont look at death)
-//	if(searchPosition_->reason != DuckBallSearchPosition::Reason::SEARCH_WALK){
-//		auto localSearchPosition = robotPosition_->fieldToRobot(searchPosition_->searchPosition);
-//		auto angleToSearchPosition = std::atan2(localSearchPosition.y(), localSearchPosition.x());
-//		if(std::abs(angleToSearchPosition) > maxSideAngle_()) {
-//			Vector2f posToRobot = searchPosition_->searchPosition - robotPosition_->pose.position;
-//			auto angle = Angle::normalized(std::atan2(posToRobot.y(), posToRobot.x()));
-//
-//			searchPosition_->pose = Pose(robotPosition_->pose.position, angle);
-//			searchPosition_->reason = DuckBallSearchPosition::Reason::SEARCH_TURN;
-//		}
-//	}
-
-	//2. === Step Back
-//	auto distVec = teamBallModel_->position - robotPosition_->pose.position;
-//	auto dist = distVec.norm();
-//	auto distAlert = dist < stepBackThreshold_() && !teamBallModel_->seen;
-//
-//	if(distAlert || standingOnCooldown_ > 0){
-//		standingOnCooldown_ -= cycleInfo_->cycleTime;
-//		if(distAlert){
-//			standingOnCooldown_ = 1;
-//		}
-//		searchPosition_->ownSearchPoseValid = true;
-//		searchPosition_->reason = DuckBallSearchPosition::Reason::I_AM_ON_IT;
-//		searchPosition_->pose = robotPosition_->robotToField(Pose(stepBackValue_(), 0));
-//	}
 }
 
 bool DucksBallSearchPositionProvider::iWantToLookAt(const Vector2f &point) {
@@ -248,8 +241,8 @@ bool DucksBallSearchPositionProvider::policyBallSearchMap(DuckBallSearchPosition
 bool DucksBallSearchPositionProvider::policyLookAround(DuckBallSearchPosition &position)
 {
 	position.reason = DuckBallSearchPosition::Reason::LOOK_AROUND;
-	double periodDuration = 2000.0;
-	double amplitude = 40*TO_RAD;
+	double periodDuration = lookaroundPeriodDuration_();
+	double amplitude = lookaroundAmplitude_()*TO_RAD;
 	double distance = 0.5;
 	double time = ((double) TimePoint::getCurrentTime())/periodDuration*2*M_PI;
 	double angle = sin(time)*amplitude;

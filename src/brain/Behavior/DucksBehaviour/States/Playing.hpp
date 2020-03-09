@@ -32,7 +32,7 @@ DucksActionCommand playing(const DucksDataSet &d)
 //				d.ballSearchPosition.reason == DuckBallSearchPosition::SEARCH_WALK ||
 //				d.ballSearchPosition.reason == DuckBallSearchPosition::I_AM_ON_IT
 //				){
-			std::cout << "Walking to other Pose" << std::endl;
+//			std::cout << "Walking to other Pose" << std::endl;
 			command = walkTo(d.ballSearchPosition.pose, d);
 //			}else if(d.ballSearchPosition.reason == DuckBallSearchPosition::SEARCH_TURN){
 //				command = walkTo(d.robotPosition.pose.oriented(d.ballSearchPosition.pose.orientation), d)

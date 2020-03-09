@@ -23,5 +23,11 @@
 	"minTurnUrgency": 0.8,
 	"desperationThreshold": 5,
 	"desperationReduction": 10,
-	"desperationMax": 30
+	"desperationMax": 30,
+
+	"adhdDuration": 2000,
+	"adhdCooldown": 3000,
+	"stillnessThreshold": 0.1,
+	"lookaroundPeriodduration": 2000,
+	"lookaroundAmplitude": 40
 }
