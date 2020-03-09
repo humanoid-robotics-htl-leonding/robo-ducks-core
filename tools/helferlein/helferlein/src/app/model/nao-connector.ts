@@ -85,7 +85,7 @@ export class NaoConnector {
   }
 
   defaultOnData(chunk: Uint8Array) {
-    if(this.message.isCompleted()){
+    if(!this.message || this.message.isCompleted()){
       this.receivedData.emit(this.message);
       this.message = new DebugMessage();
     }

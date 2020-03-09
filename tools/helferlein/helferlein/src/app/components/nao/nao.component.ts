@@ -40,7 +40,7 @@ export class NaoComponent implements OnInit {
 
   connectToNao() {
     this.connector.connect();
-    this.connector.sendString(DebugMessageType.DM_REQUEST_LIST,'');
+    this.connector.connected.subscribe(() => this.connector.sendString(DebugMessageType.DM_REQUEST_LIST,''));
   }
 
   send() {
