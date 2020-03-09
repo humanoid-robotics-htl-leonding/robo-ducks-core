@@ -252,7 +252,7 @@ MiddleCircle::MiddleCircle(float aa, float bb, float rr)
 }
 
 
-Circle<float> CircleFitByHyper(Data &data)
+Circle<float> circleFitByHyper(Data &data)
 /*
       Circle fit to a given set of data points (in 2D)
 
@@ -386,7 +386,7 @@ void MiddleCircleDetection::initCorrectCircle() {
     VecVector2f planePoints;
     Vector2f planePoint;
 
-    PixelToRobot(middleCirclePoints_, planePoints);
+    pixelToRobot(middleCirclePoints_, planePoints);
 
     /*int iterations = circleFitter_.circleFit(planePoints.size(), planePoints, &centerX, &centerY, &radius);
     Circle<float> candidateCircle(Vector2<float>(centerX, centerY), radius);*/
@@ -401,16 +401,16 @@ void MiddleCircleDetection::initCorrectCircle() {
     }
 
     Data currentData(planePoints.size(),xData, yData);
-    Circle<float> candidateCircle = CircleFitByHyper(currentData);
+    Circle<float> candidateCircle = circleFitByHyper(currentData);
     int iterations = 200;
     double amount;
 
 
-    if (CircleIsValid(iterations, candidateCircle) && (amount=ControlCircleBorder(candidateCircle)) > 0.9){
+    if (circleIsValid(iterations, candidateCircle) && (amount= controlCircleBorder(candidateCircle)) > 0.9){
         foundCircleData.circle.center = candidateCircle.center;
             foundCircleData.circle.radius = candidateCircle.radius;
 
-            GenerateCircleSurroundPoints(candidateCircle);
+        generateCircleSurroundPoints(candidateCircle);
 
     }
     else{
@@ -419,7 +419,7 @@ void MiddleCircleDetection::initCorrectCircle() {
 }
 
 
-bool MiddleCircleDetection::CircleIsValid(int iterationAmount, Circle<float> circle) {
+bool MiddleCircleDetection::circleIsValid(int iterationAmount, Circle<float> circle) {
     const double RADIUS_TOLERANCE = 0.2;
     const int MIN_DETECT_POINTS_AMOUNT = 10;
 
@@ -443,13 +443,13 @@ bool MiddleCircleDetection::CircleIsValid(int iterationAmount, Circle<float> cir
 
 }
 
-double MiddleCircleDetection::ControlCircleBorder(Circle<float> circle) {
+double MiddleCircleDetection::controlCircleBorder(Circle<float> circle) {
     const double RADIUS_TOLERANCE = 0.15;
     double amount = 0;
     VecVector2f planePoints;
-    PixelToRobot(middleCirclePoints_, planePoints);
+    pixelToRobot(middleCirclePoints_, planePoints);
     for(Vector2f point : planePoints){
-        double dist = GetVectorDistanceff(circle.center, point);
+        double dist = getVectorDistanceff(circle.center, point);
 
         if(!(dist < circle.radius-(circle.radius*RADIUS_TOLERANCE) || dist > circle.radius+(circle.radius*RADIUS_TOLERANCE)) ){
             amount++;
@@ -458,14 +458,14 @@ double MiddleCircleDetection::ControlCircleBorder(Circle<float> circle) {
     return amount/planePoints.size();
 }
 
-double MiddleCircleDetection::GetVectorDistancefi(Vector2f firstVec, Vector2i secondVec){
+double MiddleCircleDetection::getVectorDistancefi(Vector2f firstVec, Vector2i secondVec){
     double xDif = secondVec.x() - firstVec.x();
     double yDif = secondVec.y() - firstVec.y();
 
     return abs(sqrt((xDif*xDif)+(yDif*yDif)));
 }
 
-double MiddleCircleDetection::GetVectorDistanceff(Vector2f firstVec, Vector2f secondVec){
+double MiddleCircleDetection::getVectorDistanceff(Vector2f firstVec, Vector2f secondVec){
     double xDif = secondVec.x() - firstVec.x();
     double yDif = secondVec.y() - firstVec.y();
 
@@ -477,7 +477,7 @@ double MiddleCircleDetection::GetVectorDistanceff(Vector2f firstVec, Vector2f se
  * points to draw on screen for the
  * circle appearance
  */
-void MiddleCircleDetection::GenerateCircleSurroundPoints(Circle<float> circle) {
+void MiddleCircleDetection::generateCircleSurroundPoints(Circle<float> circle) {
     circleBorderPoints_.clear();
 
     for (double angle = -180; angle < 181; angle++) {
@@ -488,7 +488,7 @@ void MiddleCircleDetection::GenerateCircleSurroundPoints(Circle<float> circle) {
     }
 }
 
-void MiddleCircleDetection::PixelToRobot(VecVector2i screenPoints, VecVector2f &planePoints){
+void MiddleCircleDetection::pixelToRobot(VecVector2i screenPoints, VecVector2f &planePoints){
     Vector2f planePoint;
 
     for(Vector2i point : screenPoints){

@@ -66,16 +66,16 @@ private:
     CircleFitter circleFitter_;
     void initCorrectCircle();
 
-    bool CircleIsValid(int iterationAmount, Circle<float> circle);
+    bool circleIsValid(int iterationAmount, Circle<float> circle);
 
-    double GetVectorDistancefi(Vector2f firstVec, Vector2i secondVec);
-    double GetVectorDistanceff(Vector2f firstVec, Vector2f secondVec);
+    double getVectorDistancefi(Vector2f firstVec, Vector2i secondVec);
+    double getVectorDistanceff(Vector2f firstVec, Vector2f secondVec);
 
-    double ControlCircleBorder(Circle<float> circle);
+    double controlCircleBorder(Circle<float> circle);
 
-    void GenerateCircleSurroundPoints(Circle<float> circle);
+    void generateCircleSurroundPoints(Circle<float> circle);
 
-    void PixelToRobot(VecVector2i screenPoints, VecVector2f &planePoints);
+    void pixelToRobot(VecVector2i screenPoints, VecVector2f &planePoints);
 
     VecVector2f circleBorderPoints_;
 
