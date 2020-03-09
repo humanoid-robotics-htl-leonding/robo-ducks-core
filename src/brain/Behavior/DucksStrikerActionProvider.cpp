@@ -35,7 +35,6 @@ void DucksStrikerActionProvider::cycle()
     }
 
     auto strikerUrgency = getStrikerUrgency();
-    std::cout << strikerUrgency << std::endl;
     if (strikerUrgency >= 0.8) {
         strikerAction_->valid = false;
         return;
