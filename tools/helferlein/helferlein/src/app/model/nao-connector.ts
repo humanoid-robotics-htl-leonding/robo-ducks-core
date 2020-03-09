@@ -14,6 +14,7 @@ export class NaoConnector {
   status = 'New';
   client: Socket;
   message: DebugMessage;
+  keys: any;
   onData: (chunk) => void = this.defaultOnData;
   onEnd: () => void = this.defaultOnEnd;
   onConnect: () => void = this.defaultOnConnect;
@@ -24,7 +25,7 @@ export class NaoConnector {
   @Output() connected = new EventEmitter();
   @Output() connectionError = new EventEmitter();
 
-  constructor(){}
+  constructor() {}
 
   connect() {
     if (!this.client) {
@@ -72,7 +73,7 @@ export class NaoConnector {
   send(message: Uint8Array) {
     if (this.client && !this.client.destroyed) {
       if (message && message.length >= 16) {
-        console.log('Sent: ',message);
+        console.log('Sent: ', message);
         this.client.write(message);
       }
     }
@@ -85,16 +86,24 @@ export class NaoConnector {
   }
 
   defaultOnData(chunk: Uint8Array) {
-    if(!this.message || this.message.isCompleted()){
-      this.receivedData.emit(this.message);
+    if (!this.message || this.message.isCompleted()) {
+      if (this.message) {
+        console.log(this.message);
+        this.receivedData.emit(this.message);
+      }
       this.message = new DebugMessage();
     }
-    if(this.message.headerIncomplete()){
-      this.message.parseHeader(chunk.subarray(0,16));
+    if (this.message.headerIncomplete()) {
+      this.message.parseHeader(chunk.subarray(0, 16));
+      let saveChunk = chunk.subarray(16);
+      chunk = new Uint8Array(chunk.length-16);
+      chunk.set(saveChunk);
     }
-    if(!this.message.isCompleted()){
-      this.message.appendMessage(chunk.subarray(16));
+    if (!this.message.isCompleted()) {
+      this.message.appendMessage(chunk);
     }
+    console.log('MsgLen',this.message.msg.length);
+    console.log('Msg',this.message);
   }
 
   defaultOnEnd() {
