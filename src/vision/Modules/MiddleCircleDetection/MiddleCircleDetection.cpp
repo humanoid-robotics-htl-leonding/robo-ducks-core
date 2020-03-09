@@ -14,7 +14,7 @@ MiddleCircleDetection::MiddleCircleDetection(const ModuleManagerInterface &manag
         , minSegmentLength_(*this, "minSegmentLength", [] {})
         , maxSegmentLength_(*this, "maxSegmentLength", [] {})
         , imageData_(*this)
-        ,fieldDimensions_(*this)
+        , fieldDimensions_(*this)
         , cameraMatrix_(*this)
         , circleData_(*this)
 {
@@ -349,7 +349,7 @@ Circle<float> circleFitByHyper(Data &data)
     {
         Dy = A1 + x*(A22 + 16.*x*x);
         xnew = x - y/Dy;
-        if ((xnew == x)||(!isfinite(xnew))) break;
+        if ((xnew == x)||(!finite(xnew))) break;
         ynew = A0 + xnew*(A1 + xnew*(A2 + 4.0*xnew*xnew));
         if (abs(ynew)>=abs(y))  break;
         x = xnew;  y = ynew;

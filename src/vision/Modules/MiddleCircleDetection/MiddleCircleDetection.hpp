@@ -2,9 +2,10 @@
 // Created by marc on 2/11/20.
 //
 
+#pragma once
+
 #include <Framework/Module.hpp>
 #include <Tools/Math/Circle.hpp>
-#include <Tools/Math/CircleFitter.cpp>
 
 #include "Data/CameraMatrix.hpp"
 #include "Data/FilteredSegments.hpp"
@@ -12,11 +13,6 @@
 #include "Data/ImageData.hpp"
 #include "Data/FieldDimensions.hpp"
 #include "Data/CircleData.hpp"
-
-#ifndef TUHHNAO_MIDDLECIRCLEDETECTION_HPP
-#define TUHHNAO_MIDDLECIRCLEDETECTION_HPP
-
-#endif //TUHHNAO_MIDDLECIRCLEDETECTION_HPP
 
 class Brain;
 
@@ -63,7 +59,6 @@ private:
 
     void createCircleData();
 
-    CircleFitter circleFitter_;
     void initCorrectCircle();
 
     bool circleIsValid(int iterationAmount, Circle<float> circle);
