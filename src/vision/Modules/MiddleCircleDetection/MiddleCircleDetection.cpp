@@ -24,136 +24,51 @@ class Data
 {
 public:
 
-    int n;
-    float *X;		//space is allocated in the constructors
-    float *Y;		//space is allocated in the constructors
-    float meanX, meanY;
+    VecVector2f data;
+    Vector2f mean;
 
-    // constructors
-    Data();
-    Data(int N);
-    Data(int N, float X[], float Y[]);
+
+    Data(VecVector2f dataXY);
 
     // routines
-    void means(void);
-    void center(void);
-    void scale(void);
-    void print(void);
+    void means();
+    void center();
 
-    // destructors
-    ~Data();
 };
 
 
 /************************************************************************
 			BODY OF THE MEMBER ROUTINES
 ************************************************************************/
-// Default constructor
-Data::Data()
+
+Data::Data(VecVector2f dataXY)
 {
-    n=0;
-    X = new float[n];
-    Y = new float[n];
-    for (int i=0; i<n; i++)
-    {
-        X[i]=0.;
-        Y[i]=0.;
-    }
-}
-
-// Constructor with assignment of the field N
-Data::Data(int N)
-{
-    n=N;
-    X = new float[n];
-    Y = new float[n];
-
-    for (int i=0; i<n; i++)
-    {
-        X[i]=0.;
-        Y[i]=0.;
-    }
-}
-
-// Constructor with assignment of each field
-Data::Data(int N, float dataX[], float dataY[])
-{
-    n=N;
-    X = new float[n];
-    Y = new float[n];
-
-    for (int i=0; i<n; i++)
-    {
-        X[i]=dataX[i];
-        Y[i]=dataY[i];
-    }
+    data = dataXY;
 }
 
 // Routine that computes the x- and y- sample means (the coordinates of the centeroid)
-
-void Data::means(void)
+void Data::means()
 {
-    meanX=0.; meanY=0.;
+    mean = {0, 0};
 
-    for (int i=0; i<n; i++)
-    {
-        meanX += X[i];
-        meanY += Y[i];
+    for (auto d : data) {
+    	mean += d;
     }
-    meanX /= n;
-    meanY /= n;
+
+    mean /= data.size();
 }
 
 // Routine that centers the data set (shifts the coordinates to the centeroid)
-
-void Data::center(void)
+void Data::center()
 {
-    float sX=0.,sY=0.;
-    int i;
+    means();
 
-    for (i=0; i<n; i++)
+    for (auto d : data)
     {
-        sX += X[i];
-        sY += Y[i];
+        d -= mean;
     }
-    sX /= n;
-    sY /= n;
 
-    for (i=0; i<n; i++)
-    {
-        X[i] -= sX;
-        Y[i] -= sY;
-    }
-    meanX = 0.;
-    meanY = 0.;
-}
-
-// Routine that scales the coordinates (makes them of order one)
-
-void Data::scale(void)
-{
-    float sXX=0.,sYY=0.,scaling;
-    int i;
-
-    for (i=0; i<n; i++)
-    {
-        sXX += X[i]*X[i];
-        sYY += Y[i]*Y[i];
-    }
-    scaling = sqrt((sXX+sYY)/n/2.0);
-
-    for (i=0; i<n; i++)
-    {
-        X[i] /= scaling;
-        Y[i] /= scaling;
-    }
-}
-
-// Destructor
-Data::~Data()
-{
-    delete[] X;
-    delete[] Y;
+    mean = {0, 0};
 }
 
 void MiddleCircleDetection::detectMiddleCirclePoints() {
@@ -168,45 +83,18 @@ void MiddleCircleDetection::detectMiddleCirclePoints() {
         }
         middleCirclePoints_.push_back((segment->start+segment->end).unaryExpr(shift));
     }
-
-    /*
-    // Check Neighbours
-    const double RADIUS_TOLERANCE = 0.2;
-    for(auto it = middleCirclePoints_.begin(); it!=middleCirclePoints_.end(); it++)
-    {
-        bool isValid = true;
-        auto firstPoint = *it;
-        for(const auto secondPoint: middleCirclePoints_)
-        {
-            float squaredDistance = (firstPoint-secondPoint).squaredNorm();
-                if(squaredDistance > (fieldDimensions_->fieldCenterCircleDiameter *(1- RADIUS_TOLERANCE)) &&
-               squaredDistance < (fieldDimensions_->fieldCenterCircleDiameter  * (1+RADIUS_TOLERANCE)))
-            {
-                isValid=false;
-                break;
-            }
-        }
-        if(!isValid){
-            // remove point
-            it--;
-            middleCirclePoints_.erase(std::next(it));
-        }
-    }*/
 }
 
 void MiddleCircleDetection::cycle() {
-    if (!filteredSegments_->valid) {
-        return;
-    } else {
+
+    if (filteredSegments_->valid) {
         detectMiddleCirclePoints();
         debugMiddleCirclePoints_ = middleCirclePoints_;
         printf("SizePoint: %zu\n",debugMiddleCirclePoints_.size());
         initCorrectCircle();
     }
 
-
     sendImagesForDebug();
-
 }
 
 class MiddleCircle
@@ -225,12 +113,6 @@ public:
 
     // constructors
     MiddleCircle();
-    MiddleCircle(float aa, float bb, float rr);
-
-    // routines
-    void print(void);
-
-    // no destructor we didn't allocate memory by hand.
 };
 
 
@@ -244,60 +126,14 @@ MiddleCircle::MiddleCircle()
     a=0.; b=0.; r=1.; s=0.; i=0; j=0;
 }
 
-// Constructor with assignment of the circle parameters only
-
-MiddleCircle::MiddleCircle(float aa, float bb, float rr)
-{
-    a=aa; b=bb; r=rr;
-}
-
 
 Circle<float> circleFitByHyper(Data &data)
-/*
-      Circle fit to a given set of data points (in 2D)
-
-      This is an algebraic fit based on the journal article
-
-      A. Al-Sharadqah and N. Chernov, "Error analysis for circle fitting algorithms",
-      Electronic Journal of Statistics, Vol. 3, pages 886-911, (2009)
-
-      It is an algebraic circle fit with "hyperaccuracy" (with zero essential bias).
-      The term "hyperaccuracy" first appeared in papers by Kenichi Kanatani around 2006
-
-      Input:  data     - the class of data (contains the given points):
-
-	      data.n   - the number of data points
-	      data.X[] - the array of X-coordinates
-	      data.Y[] - the array of Y-coordinates
-
-     Output:
-               circle - parameters of the fitting circle:
-
-	       circle.a - the X-coordinate of the center of the fitting circle
-	       circle.b - the Y-coordinate of the center of the fitting circle
- 	       circle.r - the radius of the fitting circle
- 	       circle.s - the root mean square error (the estimate of sigma)
- 	       circle.j - the total number of iterations
-
-     This method combines the Pratt and Taubin fits to eliminate the essential bias.
-
-     It works well whether data points are sampled along an entire circle or
-     along a small arc.
-
-     Its statistical accuracy is theoretically higher than that of the Pratt fit
-     and Taubin fit, but practically they all return almost identical circles
-     (unlike the Kasa fit that may be grossly inaccurate).
-
-     It provides a very good initial guess for a subsequent geometric fit.
-
-       Nikolai Chernov  (September 2012)
-
-*/
 {
-    int i,iter,IterMAX=99;
+    int iter,IterMAX=99;
 
-    float Xi,Yi,Zi;
-    float Mz,Mxy,Mxx,Myy,Mxz,Myz,Mzz,Cov_xy,Var_z;
+    Vector3f i;
+    Eigen::Matrix<float, 2, 3> M;
+    float Mz,Cov_xy,Var_z;
     float A0,A1,A2,A22;
     float Dy,xnew,x,ynew,y;
     float DET,Xcenter,Ycenter;
@@ -308,37 +144,30 @@ Circle<float> circleFitByHyper(Data &data)
 
 //     computing moments
 
-    Mxx=Myy=Mxy=Mxz=Myz=Mzz=0.;
-
-    for (i=0; i<data.n; i++)
+    for (auto d : data.data)
     {
-        Xi = data.X[i] - data.meanX;   //  centered x-coordinates
-        Yi = data.Y[i] - data.meanY;   //  centered y-coordinates
-        Zi = Xi*Xi + Yi*Yi;
+    	i.x() = d.x() - data.mean.x();
+    	i.y() = d.y() - data.mean.y();
+    	i.z() = i.x() * i.x() + i.y() * i.y();
 
-        Mxy += Xi*Yi;
-        Mxx += Xi*Xi;
-        Myy += Yi*Yi;
-        Mxz += Xi*Zi;
-        Myz += Yi*Zi;
-        Mzz += Zi*Zi;
+    	M(0, 0) += i.x() * i.x();
+    	M(0, 1) += i.x() * i.y();
+    	M(0, 2) += i.x() * i.z();
+    	M(1, 0) += i.y() * i.y();
+    	M(1, 1) += i.y() * i.z();
+    	M(1, 2) += i.z() * i.z();
     }
-    Mxx /= data.n;
-    Myy /= data.n;
-    Mxy /= data.n;
-    Mxz /= data.n;
-    Myz /= data.n;
-    Mzz /= data.n;
+   	M /= data.data.size();
 
 //    computing the coefficients of the characteristic polynomial
 
-    Mz = Mxx + Myy;
-    Cov_xy = Mxx*Myy - Mxy*Mxy;
-    Var_z = Mzz - Mz*Mz;
+    Mz = M(0, 0) + M(1, 0);
+    Cov_xy = M(0, 0) * M(1, 0) - M(0, 1) * M(0, 1);
+    Var_z = M(1, 2) - Mz * Mz;
 
-    A2 = 4.0*Cov_xy - 3.0*Mz*Mz - Mzz;
-    A1 = Var_z*Mz + 4.0*Cov_xy*Mz - Mxz*Mxz - Myz*Myz;
-    A0 = Mxz*(Mxz*Myy - Myz*Mxy) + Myz*(Myz*Mxx - Mxz*Mxy) - Var_z*Cov_xy;
+    A2 = 4.0*Cov_xy - 3.0*Mz*Mz - M(1, 2);
+    A1 = Var_z*Mz + 4.0*Cov_xy*Mz - M(0, 2) * M(0, 2) - M(1, 1) * M(1, 1);
+    A0 = M(0, 2) *(M(0, 2) * M(1, 0) - M(1, 1) * M(0, 0)) + M(1, 1) * (M(1, 1) * M(0, 0) - M(0, 2) * M(0, 1)) - Var_z*Cov_xy;
     A22 = A2 + A2;
 
 //    finding the root of the characteristic polynomial
@@ -358,13 +187,13 @@ Circle<float> circleFitByHyper(Data &data)
 //    computing paramters of the fitting circle
 
     DET = x*x - x*Mz + Cov_xy;
-    Xcenter = (Mxz*(Myy - x) - Myz*Mxy)/DET/2.0;
-    Ycenter = (Myz*(Mxx - x) - Mxz*Mxy)/DET/2.0;
+    Xcenter = (M(0, 2) * (M(1, 0) - x) - M(1, 1) * M(0, 1))/DET/2.0;
+    Ycenter = (M(1, 1) * (M(0, 0) - x) - M(0, 2) * M(0, 1))/DET/2.0;
 
 //       assembling the output
 
-    circle.a = Xcenter + data.meanX;
-    circle.b = Ycenter + data.meanY;
+    circle.a = Xcenter + data.mean.x();
+    circle.b = Ycenter + data.mean.y();
     circle.r = sqrt(Xcenter*Xcenter + Ycenter*Ycenter + Mz - x - x);
     //circle.s = Sigma(data,circle);
     circle.i = 0;
@@ -377,36 +206,17 @@ Circle<float> circleFitByHyper(Data &data)
 
 
 void MiddleCircleDetection::initCorrectCircle() {
-    /*double centerX;
-    double centerY;
-    double radius;*/
-
-
-
     VecVector2f planePoints;
     Vector2f planePoint;
 
     pixelToRobot(middleCirclePoints_, planePoints);
 
-    /*int iterations = circleFitter_.circleFit(planePoints.size(), planePoints, &centerX, &centerY, &radius);
-    Circle<float> candidateCircle(Vector2<float>(centerX, centerY), radius);*/
-
-    float xData[1000];
-    float yData[1000];
-    Vector2f currentPoint;
-    for (int i = 0; i < (int)planePoints.size(); ++i) {
-        currentPoint=planePoints.at(i);
-        xData[i]=currentPoint.x();
-        yData[i]=currentPoint.y();
-    }
-
-    Data currentData(planePoints.size(),xData, yData);
+    Data currentData(planePoints);
     Circle<float> candidateCircle = circleFitByHyper(currentData);
     int iterations = 200;
-    double amount;
 
 
-    if (circleIsValid(iterations, candidateCircle) && (amount= controlCircleBorder(candidateCircle)) > 0.9){
+    if (circleIsValid(iterations, candidateCircle) && controlCircleBorder(candidateCircle) > 0.9){
         foundCircleData.circle.center = candidateCircle.center;
             foundCircleData.circle.radius = candidateCircle.radius;
 
