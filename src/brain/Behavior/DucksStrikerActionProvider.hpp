@@ -38,4 +38,6 @@ private:
 	const Dependency<BallState> ballState_;
 
 	Production<DucksStrikerAction> strikerAction_;
+
+    double getStrikerUrgency();
 };
