@@ -6,7 +6,7 @@ DucksActionCommand roleStriker(const DucksDataSet &d)
         switch (d.strikerAction.action) {
             case DucksStrikerAction::Action::WALK_TO_POS:
                 return walkTo(d.strikerAction.walkTarget, d);
-            case DucksStrikerAction::Action::KICK_INTO_GOAL:
+            case DucksStrikerAction::Action::KICK_TO_POS:
                 //ballState.position is not good here, a new StrikerAction.kickSource or something like that would be useful, rotated like StrikerAction.target
                 // TODO Wrong Kick Type (use SA)
                 return kick(d, d.strikerAction.target);

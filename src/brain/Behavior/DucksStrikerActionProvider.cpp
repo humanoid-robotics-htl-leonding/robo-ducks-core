@@ -47,8 +47,7 @@ void DucksStrikerActionProvider::dribble(const Vector2f& target) {
 }
 
 void DucksStrikerActionProvider::kick(const Vector2f& target) {
-    strikerAction_->action = DucksStrikerAction::Action::KICK_INTO_GOAL;
-    strikerAction_->kickType = DucksStrikerAction::KickType::NONE;
+    strikerAction_->action = DucksStrikerAction::Action::KICK_TO_POS;
     strikerAction_->target = target;
     strikerAction_->valid = true;
 }
@@ -56,7 +55,6 @@ void DucksStrikerActionProvider::kick(const Vector2f& target) {
 void DucksStrikerActionProvider::wait() {
     Vector2f robotToBall = teamBallModel_->position - robotPosition_->pose.position;
     strikerAction_->action = DucksStrikerAction::Action::WAITING_FOR_BALL;
-    strikerAction_->kickType = DucksStrikerAction::KickType::NONE;
     strikerAction_->walkTarget = Pose(Vector2f(robotPosition_->pose.position.x(),
             teamBallModel_->position.y()), std::atan2(robotToBall.y(), robotToBall.x()));
     strikerAction_->valid = false;
