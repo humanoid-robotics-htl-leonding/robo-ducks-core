@@ -16,59 +16,7 @@ MiddleCircleDetection::MiddleCircleDetection(const ModuleManagerInterface &manag
         , imageData_(*this)
         , fieldDimensions_(*this)
         , cameraMatrix_(*this)
-        , circleData_(*this)
-{
-}
-
-class Data
-{
-public:
-
-    VecVector2f data;
-    Vector2f mean;
-
-
-    Data(VecVector2f dataXY);
-
-    // routines
-    void means();
-    void center();
-
-};
-
-
-/************************************************************************
-			BODY OF THE MEMBER ROUTINES
-************************************************************************/
-
-Data::Data(VecVector2f dataXY)
-{
-    data = dataXY;
-}
-
-// Routine that computes the x- and y- sample means (the coordinates of the centeroid)
-void Data::means()
-{
-    mean = {0, 0};
-
-    for (auto d : data) {
-    	mean += d;
-    }
-
-    mean /= data.size();
-}
-
-// Routine that centers the data set (shifts the coordinates to the centeroid)
-void Data::center()
-{
-    means();
-
-    for (auto d : data)
-    {
-        d -= mean;
-    }
-
-    mean = {0, 0};
+        , circleData_(*this) {
 }
 
 void MiddleCircleDetection::detectMiddleCirclePoints() {
@@ -127,7 +75,7 @@ MiddleCircle::MiddleCircle()
 }
 
 
-Circle<float> circleFitByHyper(Data &data)
+Circle<float> circleFitByHyper(VecVector2f points)
 {
     int iter,IterMAX=99;
 
@@ -140,14 +88,21 @@ Circle<float> circleFitByHyper(Data &data)
 
     MiddleCircle circle;
 
-    data.means();   // Compute x- and y- sample means (via a function in the class "data")
+    // Compute x- and y- sample means
+	Vector2f mean = {0, 0};
+
+	for (auto point : points) {
+		mean += point;
+	}
+
+	mean /= points.size();
 
 //     computing moments
 
-    for (auto d : data.data)
+    for (auto point : points)
     {
-    	i.x() = d.x() - data.mean.x();
-    	i.y() = d.y() - data.mean.y();
+    	i.x() = point.x() - mean.x();
+    	i.y() = point.y() - mean.y();
     	i.z() = i.x() * i.x() + i.y() * i.y();
 
     	M(0, 0) += i.x() * i.x();
@@ -157,7 +112,7 @@ Circle<float> circleFitByHyper(Data &data)
     	M(1, 1) += i.y() * i.z();
     	M(1, 2) += i.z() * i.z();
     }
-   	M /= data.data.size();
+   	M /= points.size();
 
 //    computing the coefficients of the characteristic polynomial
 
@@ -192,8 +147,8 @@ Circle<float> circleFitByHyper(Data &data)
 
 //       assembling the output
 
-    circle.a = Xcenter + data.mean.x();
-    circle.b = Ycenter + data.mean.y();
+    circle.a = Xcenter + mean.x();
+    circle.b = Ycenter + mean.y();
     circle.r = sqrt(Xcenter*Xcenter + Ycenter*Ycenter + Mz - x - x);
     //circle.s = Sigma(data,circle);
     circle.i = 0;
@@ -211,12 +166,9 @@ void MiddleCircleDetection::initCorrectCircle() {
 
     pixelToRobot(middleCirclePoints_, planePoints);
 
-    Data currentData(planePoints);
-    Circle<float> candidateCircle = circleFitByHyper(currentData);
-    int iterations = 200;
+    Circle<float> candidateCircle = circleFitByHyper(planePoints);
 
-
-    if (circleIsValid(iterations, candidateCircle) && controlCircleBorder(candidateCircle) > 0.9){
+    if (circleIsValid(candidateCircle) && controlCircleBorder(candidateCircle) > 0.9){
         foundCircleData.circle.center = candidateCircle.center;
             foundCircleData.circle.radius = candidateCircle.radius;
 
@@ -229,16 +181,15 @@ void MiddleCircleDetection::initCorrectCircle() {
 }
 
 
-bool MiddleCircleDetection::circleIsValid(int iterationAmount, Circle<float> circle) {
+bool MiddleCircleDetection::circleIsValid(Circle<float> circle) {
     const double RADIUS_TOLERANCE = 0.2;
     const int MIN_DETECT_POINTS_AMOUNT = 10;
 
-    if(iterationAmount == -1 ||
-       circle.radius < (fieldDimensions_->fieldCenterCircleDiameter / 2 - fieldDimensions_->fieldCenterCircleDiameter / 2 * RADIUS_TOLERANCE) ||
+    if(circle.radius < (fieldDimensions_->fieldCenterCircleDiameter / 2 - fieldDimensions_->fieldCenterCircleDiameter / 2 * RADIUS_TOLERANCE) ||
        circle.radius > (fieldDimensions_->fieldCenterCircleDiameter / 2 + fieldDimensions_->fieldCenterCircleDiameter / 2 * RADIUS_TOLERANCE) ||
        middleCirclePoints_.size() < MIN_DETECT_POINTS_AMOUNT
     ){
-        printf("Iterations:%d\nAmount:%zu \nRadius:%f\n",iterationAmount,middleCirclePoints_.size(),circle.radius);
+        printf("Amount:%zu \nRadius:%f\n",middleCirclePoints_.size(),circle.radius);
         return false;
     }
 
@@ -298,10 +249,10 @@ void MiddleCircleDetection::generateCircleSurroundPoints(Circle<float> circle) {
     }
 }
 
-void MiddleCircleDetection::pixelToRobot(VecVector2i screenPoints, VecVector2f &planePoints){
+void MiddleCircleDetection::pixelToRobot(const VecVector2i screenPoints, VecVector2f &planePoints) const {
     Vector2f planePoint;
 
-    for(Vector2i point : screenPoints){
+    for(auto& point : screenPoints){
         if (cameraMatrix_->pixelToRobot(point, planePoint)){
             planePoints.push_back(planePoint);
         }
@@ -329,7 +280,7 @@ void MiddleCircleDetection::sendImagesForDebug()
 
             /// Draw circleBorderPoints_
             Vector2i pixelCoords;
-            for (Vector2f point : circleBorderPoints_) {
+            for (const Vector2f point : circleBorderPoints_) {
                 // both (x,y) and (x,-y) are points on the half-circle
                 Vector2f circlePoint(point);
                 if (cameraMatrix_->robotToPixel(circlePoint, pixelCoords)) {

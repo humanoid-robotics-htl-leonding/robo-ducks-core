@@ -61,7 +61,7 @@ private:
 
     void initCorrectCircle();
 
-    bool circleIsValid(int iterationAmount, Circle<float> circle);
+    bool circleIsValid(Circle<float> circle);
 
     double getVectorDistancefi(Vector2f firstVec, Vector2i secondVec);
     double getVectorDistanceff(Vector2f firstVec, Vector2f secondVec);
@@ -70,7 +70,7 @@ private:
 
     void generateCircleSurroundPoints(Circle<float> circle);
 
-    void pixelToRobot(VecVector2i screenPoints, VecVector2f &planePoints);
+    void pixelToRobot(const VecVector2i screenPoints, VecVector2f &planePoints) const;
 
     VecVector2f circleBorderPoints_;
 
