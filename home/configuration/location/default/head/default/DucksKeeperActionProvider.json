@@ -1,0 +1,7 @@
+{
+  "robotDiameter": 0.3,
+  "segmentCount": 20,
+  "shadowCastSpeed": 0.005,
+  "shadowResolveSpeed": 0.05,
+  "keeperBallKickDistance": 0.4
+}

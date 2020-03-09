@@ -1,6 +1,7 @@
 #include <stdexcept>
 
 #include "Data/FieldDimensions.hpp"
+#include "Data/FieldZones.hpp"
 #include "Framework/Module.hpp"
 
 #include "print.hpp"
@@ -13,6 +14,8 @@ Motion::Motion(const std::vector<Sender*>& senders, const std::vector<Receiver*>
 {
   getDatabase().get<FieldDimensions>().init(configuration());
   getDatabase().produce(typeid(FieldDimensions));
+  getDatabase().get<FieldZones>().init(configuration());
+  getDatabase().produce(typeid(FieldZones));
 
   if (!sortModules<Motion>())
   {

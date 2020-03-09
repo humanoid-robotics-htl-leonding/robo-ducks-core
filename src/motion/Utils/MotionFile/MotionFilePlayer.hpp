@@ -9,7 +9,6 @@
 
 #include "MotionFile.hpp"
 
-
 class MotionFilePlayer : private MotionFile
 {
 public:

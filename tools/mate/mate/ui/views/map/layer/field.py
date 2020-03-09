@@ -26,18 +26,18 @@ class Field(Layer):
         pen.setJoinStyle(qtc.Qt.MiterJoin)
 
         # green background
-        painter.setBrush(qtc.Qt.darkGreen)
-        painter.setPen(qtc.Qt.NoPen)
-        painter.drawRectF(
-            -self.field_settings["length"] / 2 -
-            self.field_settings["borderStripWidth"],
-            -self.field_settings["width"] / 2 -
-            self.field_settings["borderStripWidth"],
-            self.field_settings["length"] +
-            self.field_settings["borderStripWidth"] * 2,
-            self.field_settings["width"] +
-            self.field_settings["borderStripWidth"] * 2
-        )
+        # painter.setBrush(qtc.Qt.darkGreen)
+        # painter.setPen(qtc.Qt.NoPen)
+        # painter.drawRectF(
+        #     -self.field_settings["length"] / 2 -
+        #     self.field_settings["borderStripWidth"],
+        #     -self.field_settings["width"] / 2 -
+        #     self.field_settings["borderStripWidth"],
+        #     self.field_settings["length"] +
+        #     self.field_settings["borderStripWidth"] * 2,
+        #     self.field_settings["width"] +
+        #     self.field_settings["borderStripWidth"] * 2
+        # )
 
         # white pen
         painter.setPen(pen)

@@ -3,25 +3,31 @@
 #include <vector>
 
 #include "Data/FieldDimensions.hpp"
-#include "Data/PlayerConfiguration.hpp"
+#include "Data/LandmarkModel.hpp"
 #include "Tools/Math/Eigen.hpp"
 #include "Tools/Math/Line.hpp"
+#include "Tools/Math/Pose.hpp"
 
 class FieldInfo
 {
 public:
   /**
    * @brief FieldInfo constructs an array of lines and goalPosts from the dimensions stored in the FieldDimensions
-   * @param playerConfiguration a reference to the player configuration
    * @param fieldDimensions a reference to the field dimensions
    */
-  FieldInfo(const PlayerConfiguration& playerConfiguration, const FieldDimensions& fieldDimensions);
+  FieldInfo(const FieldDimensions& fieldDimensions);
   /// contains all the lines on the field
   std::vector<Line<float>> lines;
-  /// contains all the goal posts on the field
-  VecVector2f goalPosts;
-  /// the absolute position of the penalty spots
-  VecVector2f penaltySpots;
+  /// contains all the intersections on the field
+  std::vector<LandmarkModel::Intersection> intersections;
+  /// contains the own goal
+  LandmarkModel::Goal ownGoal;
+  /// contains the opponent goal
+  LandmarkModel::Goal opponentGoal;
+  /// contains the own penalty area
+  LandmarkModel::PenaltyArea ownPenaltyArea;
+  /// contains the opponent penalty area
+  LandmarkModel::PenaltyArea opponentPenaltyArea;
 
 private:
   /**
@@ -30,6 +36,4 @@ private:
    * @return a vector in cartesian coordinates (x, y)
    */
   Vector2f polar2cartesian(const Vector2f& polar) const;
-  /// a reference to the player configuration
-  const PlayerConfiguration& playerConfiguration_;
 };

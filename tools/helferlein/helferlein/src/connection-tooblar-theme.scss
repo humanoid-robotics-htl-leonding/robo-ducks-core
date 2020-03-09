@@ -1,0 +1,21 @@
+@import '~@angular/material/theming';
+@include mat-core()
+
+@mixin connection-toolbar-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+
+  .connection-toolbar {
+    background-color: mat-color($primary);
+  }
+}
+
+@mixin connection-toolbar-typography($config) {
+  .connection-toolbar{
+    font: {
+      family: mat-font-family($config, body-1);
+      size: mat-font-size($config, body-1);
+      weight: mat-font-weight($config, body-1);
+    }
+  }
+}
