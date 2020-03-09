@@ -77,35 +77,40 @@ void DucksBishopActionProvider::patrol()
 }
 bool DucksBishopActionProvider::shouldEvadeLiberationStrike()
 {
+    //defender or keeper are kicking ball away
     return false;
 }
 void DucksBishopActionProvider::evadeLiberationStrike()
 {
-
+    //go out of kickPath
+    //go where passing or kicking is then achieved faster
 }
 bool DucksBishopActionProvider::shouldPass()
 {
+    //check if striker is in front and easy to pass to
     return false;
 }
 void DucksBishopActionProvider::pass()
 {
-
+    // pass to location near striker - better between center and striker
 }
 bool DucksBishopActionProvider::shouldShadowBall()
 {
+    //striker is near ball in front of enemy goal
     return false;
 }
 void DucksBishopActionProvider::shadowBall()
 {
-
+    //go to block ray-shaded segment that is biggest when casting rays from ball around
 }
 bool DucksBishopActionProvider::shouldStrike()
 {
+    //check if kicking ball into goal is possible
     return false;
 }
 void DucksBishopActionProvider::strike()
 {
-
+    //kick ball into enemy goal
 }
 float DucksBishopActionProvider::getZoneCornerPatrolOrientation(Vector2f corner,Rectangle<float> zone)
 {
