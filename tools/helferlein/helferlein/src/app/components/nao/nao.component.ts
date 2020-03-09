@@ -28,7 +28,7 @@ export class NaoComponent implements OnInit {
 
   ngOnInit() {
     this.connector = this.naoService.tabs.find(t => t.id == this.id).connector;
-    this.connector.receivedData.subscribe(this.onData);
+    this.connector.receivedData.subscribe((event) => {this.onData(event)});
     this.elements.push(this.getGridElement(1, 1, 5, 7));
     this.elements.push(this.getGridElement(1, 7, 4, 11));
     this.elements.push(this.getGridElement(5, 1, 7, 7));
@@ -42,27 +42,6 @@ export class NaoComponent implements OnInit {
 
   send() {
     this.connector.sendString(this.messageType, this.message);
-  }
-
-  addElement() {
-
-  }
-
-  getComponentPortal(element: NaoGridElement) {
-    switch (element.type) {
-      case 'image': {
-        return new ComponentPortal(NaoImageComponent);
-      }
-      case 'map': {
-        return new ComponentPortal(NaoMapComponent);
-      }
-      case 'config': {
-        return new ComponentPortal(NaoConfigComponent);
-      }
-      case 'text': {
-        return new ComponentPortal(NaoTextComponent);
-      }
-    }
   }
 
   getGridElement(rowStart, colStart, rowEnd, colEnd): NaoGridElement {
