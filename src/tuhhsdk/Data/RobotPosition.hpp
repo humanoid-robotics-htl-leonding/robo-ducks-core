@@ -52,6 +52,7 @@ public:
   {
     return pose * robotPose;
   }
+
   /**
    * @brief reset invalidates the position
    */

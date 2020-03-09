@@ -1,11 +1,13 @@
 #pragma once
 
+
 #include "Framework/Module.hpp"
 
 #include "Data/CameraMatrix.hpp"
-#include "Data/FilteredSegments.hpp"
+#include "Data/ImageSegments.hpp"
 #include "Data/ImageData.hpp"
 #include "Data/FieldDimensions.hpp"
+#include "Data/FieldBorder.hpp"
 #include "Data/GoalData.hpp"
 
 class Brain;
@@ -18,22 +20,12 @@ public:
   void cycle();
 
 private:
-	/**
- 	 * @brief getGradient calculates the normalized gradient in the y channel
- 	 * @param p a point in pixel coordinates at which the gradient is computed
- 	 * @return the gradient
- 	 */
-	Vector2f getGradient(const Vector2i& p) const;
   	/**
   	 * @brief detectGoalPoints uses the scanline segments and detects points which could belong to a
   	 * goal post
   	 */
   	void detectGoalPoints();
-  	/**
-  	 * @brief checkGroup returns true if the points match the minimum requited amount and if the points form a vertical
-  	 * line that is tilted less than maxTilt
-  	 */
-  	bool checkGroup(VecVector2i& group);
+
   	/**
    	 * @brief bombermanMaxDistanceGrouping is a grouping algorithm that groups points that are close to any existing
    	 * member of a group.
@@ -61,28 +53,30 @@ private:
 	const Parameter<unsigned int> minPointsInGroup_;
 	/// the minimum number of points in a goal post segment
 	const Parameter<unsigned int> minSegmentLength_;
-	/// the maximum number of points in a goal post segment
-	const Parameter<unsigned int> maxSegmentLength_;
-	/// the maximum tilt from of a goal post group in x / y
-	const Parameter<float> maxTilt_;
   	/// a reference to the image
 	const Dependency<ImageData> imageData_;
 	/// a reference to the camera matrix
 	const Dependency<CameraMatrix> cameraMatrix_;
-  	/// a reference to the filtered segments
-	const Dependency<FilteredSegments> filteredSegments_;
+  	/// a reference to the image segments
+	const Dependency<ImageSegments> imageSegments_;
   	/// a reference to the field dimensions
 	const Dependency<FieldDimensions> fieldDimensions_;
+	/// a reference to the field border
+    const Dependency<FieldBorder> fieldBorder_;
 	/// the detected goal posts for other modules
   	Production<GoalData> goalData_;
-  	/// goal point groups for debug purposes
-	std::vector<VecVector2i> debugGoalPostGroups_;
+  	/// goal post candidates for debug purposes
+	VecVector2i debugPoints_;
 	/// goal post points for debug purposes
 	VecVector2i debugGoalPoints_;
   	/// candidate points
 	VecVector2i goalPoints_;
 	/// goal post point groups
 	std::vector<VecVector2i> goalPostGroups_;
-	/// current goal post group
+    /// goal post point groups for debug
+    std::vector<VecVector2i> debugGoalPostGroups_;
+    /// current goal post group
 	VecVector2i goalPostGroup_;
+
+
 };

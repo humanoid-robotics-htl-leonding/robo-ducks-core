@@ -1,5 +1,5 @@
 {
-  "ballFocalPointDepth": 0.5,
-  "maxDeflectBallDistance": 0.5,
-  "ballFocalPointYShift": 0
+  "doubleDefenderFocalY": 1.0,
+  "guardY": 0.5,
+  "dribbleThreshold": 0.1
 }

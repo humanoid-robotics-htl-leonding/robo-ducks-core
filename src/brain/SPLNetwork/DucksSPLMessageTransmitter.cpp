@@ -18,7 +18,7 @@ DucksSPLMessageTransmitter::DucksSPLMessageTransmitter(const ModuleManagerInterf
   , playingRoles_(*this)
   , motionRequest_(*this)
   , ntpData_(*this)
-  , strikerAction_(*this)
+  , ducksStrikerAction_(*this)
   , keeperAction_(*this)
   , whistleData_(*this)
   , timeToReachBall_(*this)
@@ -106,10 +106,11 @@ void DucksSPLMessageTransmitter::cycle()
     dsmsg.kingIsPlayingBall = true;
   }
 
-  if (playingRoles_->role == PlayingRole::STRIKER && strikerAction_->valid &&
-      strikerAction_->type == StrikerAction::PASS)
+  if (playingRoles_->role == PlayingRole::STRIKER && ducksStrikerAction_->valid &&
+      ducksStrikerAction_->action == DucksStrikerAction::Action::PASS)
   {
-    dsmsg.passTarget = strikerAction_->passTarget;
+    // dsmsg.passTarget = strikerAction_->passTarget;
+    // TODO: implement Pass Target for Message Transmitter
   }
   // The default initialization of both times is a timepoint that is as far in the future as
   // possible.

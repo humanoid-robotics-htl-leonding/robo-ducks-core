@@ -8,7 +8,10 @@ DucksStrikerActionProvider::DucksStrikerActionProvider(const ModuleManagerInterf
 	: Module(manager)
 	, fieldDimensions_(*this)
 	, robotPosition_(*this)
-	, ballState_(*this)
+	, teamBallModel_(*this)
+    , teamObstacleData_(*this)
+    , desperation_(*this)
+    , ballState_(*this)
 	, strikerAction_(*this)
 {
 
@@ -16,22 +19,35 @@ DucksStrikerActionProvider::DucksStrikerActionProvider(const ModuleManagerInterf
 
 void DucksStrikerActionProvider::cycle()
 {
-	auto goalPos = Vector2f (fieldDimensions_->fieldLength/2, 0);
-	auto ballPos = robotPosition_->robotToField(ballState_->position);
+    auto absoluteBallPosition = teamBallModel_->position;
+    strikerAction_->valid = true;
 
-	auto goalToBall = (ballPos - goalPos).normalized();
+    if (robotPosition_->pose.position.x() >= 0) { // is in enemy half
+        if (absoluteBallPosition.x() >= 0 && teamBallModel_->found) {
+            Vector2f goal = Vector2f(fieldDimensions_->fieldLength / 2, 0);
 
-	auto targetPos = ballPos + (goalToBall * 0.1);
-	auto orientation = acos(goalToBall.dot(Vector2f(1.0, 0)));
+            strikerAction_->kickType = DucksStrikerAction::KickType::KICK;
+            strikerAction_->kickable = BallUtils::LEFT;
+            strikerAction_->target = goal;
+            strikerAction_->action = DucksStrikerAction::Action::KICK_INTO_GOAL;
+        } else {
+            strikerAction_->valid = true;
+            strikerAction_->action = DucksStrikerAction::Action::WAITING_FOR_BALL;
+            strikerAction_->kickType = DucksStrikerAction::KickType::NONE;
+            Vector2f robotToBall = teamBallModel_->position - robotPosition_->pose.position;
+            strikerAction_->kickPose = Pose(Vector2f(robotPosition_->pose.position.x(), teamBallModel_->position.y()),
+                                            std::atan2(robotToBall.y(), robotToBall.x()));
+        }
+    } else {
+        if (ballState_->found) {
+            strikerAction_->action = DucksStrikerAction::Action::DRIBBLE_TO_POS;
+            Vector2f goalPos = Vector2f(fieldDimensions_->fieldLength / 2, 0);
+            strikerAction_->kickPose = Pose(goalPos, 0);
+        }
+    }
 
-	debug().update(mount_+ ".yeet", Pose(targetPos, M_PI+orientation));
-	debug().update(mount_+ ".goalPos", Pose(goalPos, orientation));
-	debug().update(mount_+ ".ballPos", Pose(ballPos, orientation));
-
-	strikerAction_->kickable = BallUtils::Kickable::NOT;
-	strikerAction_->kickPose = robotPosition_->fieldToRobot(Pose(targetPos, orientation));
-	strikerAction_->type = StrikerAction::Type::KICK_INTO_GOAL;
-	strikerAction_->passTarget = 0;
-	strikerAction_->target = Vector2f(0, 0);
-	strikerAction_->valid = true;
+    if (desperation_->lookAtBallUrgency >= 1) {
+        strikerAction_->valid = false;
+        return;
+    }
 }

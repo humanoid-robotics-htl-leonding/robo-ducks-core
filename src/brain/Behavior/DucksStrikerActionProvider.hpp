@@ -5,10 +5,13 @@
 #pragma once
 
 #include <Brain.hpp>
-#include <Data/StrikerAction.hpp>
+#include <Data/DucksStrikerAction.hpp>
 #include <Data/RobotPosition.hpp>
 #include <Data/BallData.hpp>
 #include <Data/FieldDimensions.hpp>
+#include <Data/TeamObstacleData.hpp>
+#include <Data/TeamBallModel.hpp>
+#include <Data/Desperation.hpp>
 
 class DucksStrikerActionProvider : public Module<DucksStrikerActionProvider, Brain>
 {
@@ -22,11 +25,14 @@ public:
 	explicit DucksStrikerActionProvider(const ModuleManagerInterface& manager);
 
 	void cycle() override;
-
+	
 private:
 	const Dependency<FieldDimensions> fieldDimensions_;
 	const Dependency<RobotPosition> robotPosition_;
+	const Dependency<TeamBallModel> teamBallModel_;
+	const Dependency<TeamObstacleData> teamObstacleData_;
+	const Dependency<Desperation> desperation_;
 	const Dependency<BallState> ballState_;
 
-	Production<StrikerAction> strikerAction_;
+	Production<DucksStrikerAction> strikerAction_;
 };

@@ -3,8 +3,8 @@
 //
 #pragma once
 
-#include "ActionCommand.hpp"
-#include "DuckDataSet.hpp"
+#include "DucksActionCommand.hpp"
+#include "DucksDataSet.hpp"
 
 #ifdef __clang__
 #pragma clang diagnostic push
@@ -17,6 +17,7 @@
 namespace ducks
 {
 #include "Behavior/DucksBehaviour/Utils/WalkTo.hpp"
+#include "Behavior/DucksBehaviour/Utils/KickBall.hpp"
 #include "DucksBehaviour/Roles/None.hpp"
 #include "DucksBehaviour/Roles/Striker.hpp"
 #include "DucksBehaviour/Roles/Keeper.hpp"

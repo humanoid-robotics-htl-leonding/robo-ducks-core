@@ -1,7 +1,7 @@
 #pragma once
 
 
-DucksActionCommand ready(const DuckDataSet &d)
+DucksActionCommand ready(const DucksDataSet &d)
 {
 	auto targetPos = d.setPosition.position;
 
