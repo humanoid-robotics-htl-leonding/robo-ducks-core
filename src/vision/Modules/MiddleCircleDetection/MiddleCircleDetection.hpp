@@ -63,9 +63,6 @@ private:
 
     bool circleIsValid(const Circle<float>& circle);
 
-    double getVectorDistancefi(Vector2f firstVec, Vector2i secondVec);
-    double getVectorDistanceff(Vector2f firstVec, Vector2f secondVec);
-
     double controlCircleBorder(const Circle<float>& circle);
 
     void generateCircleSurroundPoints(const Circle<float>& circle);

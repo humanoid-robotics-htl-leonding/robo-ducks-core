@@ -210,27 +210,13 @@ double MiddleCircleDetection::controlCircleBorder(const Circle<float>& circle) {
     VecVector2f planePoints;
     pixelToRobot(middleCirclePoints_, planePoints);
     for(auto& point : planePoints){
-        double dist = getVectorDistanceff(circle.center, point);
+        double dist = (point - circle.center).norm();
 
         if(!(dist < circle.radius-(circle.radius*RADIUS_TOLERANCE) || dist > circle.radius+(circle.radius*RADIUS_TOLERANCE)) ){
             amount++;
         }
     }
     return amount/planePoints.size();
-}
-
-double MiddleCircleDetection::getVectorDistancefi(Vector2f firstVec, Vector2i secondVec){
-    double xDif = secondVec.x() - firstVec.x();
-    double yDif = secondVec.y() - firstVec.y();
-
-    return abs(sqrt((xDif*xDif)+(yDif*yDif)));
-}
-
-double MiddleCircleDetection::getVectorDistanceff(Vector2f firstVec, Vector2f secondVec){
-    double xDif = secondVec.x() - firstVec.x();
-    double yDif = secondVec.y() - firstVec.y();
-
-    return abs(sqrt((xDif*xDif)+(yDif*yDif)));
 }
 
 /*
