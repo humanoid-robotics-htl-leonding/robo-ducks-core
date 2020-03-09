@@ -413,66 +413,63 @@ void PoseHypothesis::updateWithIntersectionPair(const LandmarkModel::Intersectio
 						}
 					}
 
-					// special case: a T-Intersection that shares a line with another intersection
-					// check whether this shared line is valid
-					if (intersection1.type == LandmarkModel::Intersection::Type::T || intersection2.type == LandmarkModel::Intersection::Type::T) {
-						bool sharedIntersectionLine = false;
-						bool sharedLineOnIntersection1 = false;
-						bool sharedLineOnIntersection2 = false;
-						if (intersection1.usedLineIds[0] == intersection2.usedLineIds[0]) {
-							sharedIntersectionLine = true;
-							sharedLineOnIntersection1 = intersection1.onLine1;
-							sharedLineOnIntersection2 = intersection2.onLine1;
+					// check whether a shared line is valid
+					bool sharedIntersectionLine = false;
+					bool sharedLineOnIntersection1 = false;
+					bool sharedLineOnIntersection2 = false;
+					if (intersection1.usedLineIds[0] == intersection2.usedLineIds[0]) {
+						sharedIntersectionLine = true;
+						sharedLineOnIntersection1 = intersection1.onLine1;
+						sharedLineOnIntersection2 = intersection2.onLine1;
+					}
+					else if (intersection1.usedLineIds[1] == intersection2.usedLineIds[0]) {
+						sharedIntersectionLine = true;
+						sharedLineOnIntersection1 = intersection1.onLine2;
+						sharedLineOnIntersection2 = intersection2.onLine1;
+					}
+					else if (intersection1.usedLineIds[0] == intersection2.usedLineIds[1]) {
+						sharedIntersectionLine = true;
+						sharedLineOnIntersection1 = intersection1.onLine1;
+						sharedLineOnIntersection2 = intersection2.onLine2;
+					}
+					else if (intersection1.usedLineIds[1] == intersection2.usedLineIds[1]) {
+						sharedIntersectionLine = true;
+						sharedLineOnIntersection1 = intersection1.onLine2;
+						sharedLineOnIntersection2 = intersection2.onLine2;
+					}
+
+					if (sharedIntersectionLine) {
+						bool sharedCandidateLine = false;
+						bool sharedLineOnCandidate1 = false;
+						bool sharedLineOnCandidate2 = false;
+						if (candidate1.usedLineIds[0] == candidate2.usedLineIds[0]) {
+							sharedCandidateLine = true;
+							sharedLineOnCandidate1 = candidate1.onLine1;
+							sharedLineOnCandidate2 = candidate2.onLine1;
 						}
-						else if (intersection1.usedLineIds[1] == intersection2.usedLineIds[0]) {
-							sharedIntersectionLine = true;
-							sharedLineOnIntersection1 = intersection1.onLine2;
-							sharedLineOnIntersection2 = intersection2.onLine1;
+						else if (candidate1.usedLineIds[1] == candidate2.usedLineIds[0]) {
+							sharedCandidateLine = true;
+							sharedLineOnCandidate1 = candidate1.onLine2;
+							sharedLineOnCandidate2 = candidate2.onLine1;
 						}
-						else if (intersection1.usedLineIds[0] == intersection2.usedLineIds[1]) {
-							sharedIntersectionLine = true;
-							sharedLineOnIntersection1 = intersection1.onLine1;
-							sharedLineOnIntersection2 = intersection2.onLine2;
+						else if (candidate1.usedLineIds[0] == candidate2.usedLineIds[1]) {
+							sharedCandidateLine = true;
+							sharedLineOnCandidate1 = candidate1.onLine1;
+							sharedLineOnCandidate2 = candidate2.onLine2;
 						}
-						else if (intersection1.usedLineIds[1] == intersection2.usedLineIds[1]) {
-							sharedIntersectionLine = true;
-							sharedLineOnIntersection1 = intersection1.onLine2;
-							sharedLineOnIntersection2 = intersection2.onLine2;
+						else if (candidate1.usedLineIds[1] == candidate2.usedLineIds[1]) {
+							sharedCandidateLine = true;
+							sharedLineOnCandidate1 = candidate1.onLine2;
+							sharedLineOnCandidate2 = candidate2.onLine2;
 						}
 
-						if (sharedIntersectionLine) {
-							bool sharedCandidateLine = false;
-							bool sharedLineOnCandidate1 = false;
-							bool sharedLineOnCandidate2 = false;
-							if (candidate1.usedLineIds[0] == candidate2.usedLineIds[0]) {
-								sharedCandidateLine = true;
-								sharedLineOnCandidate1 = candidate1.onLine1;
-								sharedLineOnCandidate2 = candidate2.onLine1;
-							}
-							else if (candidate1.usedLineIds[1] == candidate2.usedLineIds[0]) {
-								sharedCandidateLine = true;
-								sharedLineOnCandidate1 = candidate1.onLine2;
-								sharedLineOnCandidate2 = candidate2.onLine1;
-							}
-							else if (candidate1.usedLineIds[0] == candidate2.usedLineIds[1]) {
-								sharedCandidateLine = true;
-								sharedLineOnCandidate1 = candidate1.onLine1;
-								sharedLineOnCandidate2 = candidate2.onLine2;
-							}
-							else if (candidate1.usedLineIds[1] == candidate2.usedLineIds[1]) {
-								sharedCandidateLine = true;
-								sharedLineOnCandidate1 = candidate1.onLine2;
-								sharedLineOnCandidate2 = candidate2.onLine2;
-							}
+						if (!sharedCandidateLine) {
+							continue;
+						}
 
-							if (!sharedCandidateLine) {
-								continue;
-							}
-
-							if ((sharedLineOnIntersection1 && !sharedLineOnCandidate1) || (!sharedLineOnIntersection1 && sharedLineOnCandidate1) ||
-									(sharedLineOnIntersection2 && !sharedLineOnCandidate2) || (!sharedLineOnIntersection2 && sharedLineOnCandidate2)) {
-								continue;
-							}
+						if ((sharedLineOnIntersection1 && !sharedLineOnCandidate1) || (!sharedLineOnIntersection1 && sharedLineOnCandidate1) ||
+							(sharedLineOnIntersection2 && !sharedLineOnCandidate2) || (!sharedLineOnIntersection2 && sharedLineOnCandidate2)) {
+							continue;
 						}
 					}
 
