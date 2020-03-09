@@ -6,10 +6,10 @@
         {{tab.connector.status}}
       </div>
       <button mat-icon-button (click)="closeTab(tab.id)">
-        <mat-icon>delete</mat-icon>
+        <mat-icon>close</mat-icon>
       </button>
     </ng-template>
-    <app-nao [connector]="tab.connector" (addTab)="openTab()" (closeTab)="closeTab(index)"></app-nao>
+    <app-nao [id]="tab.id" (addTab)="openTab()" (closeTab)="closeTab(index)"></app-nao>
   </mat-tab>
   <mat-tab [disabled]="true">
     <ng-template mat-tab-label>

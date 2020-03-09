@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { NaoConnector } from 'src/app/model/nao-connector';
 import { CONTAINER_DATA } from 'src/app/app.component';
+import { NaoService } from 'src/app/service/nao.service';
 
 @Component({
   selector: 'app-nao-text',
@@ -9,12 +10,12 @@ import { CONTAINER_DATA } from 'src/app/app.component';
 })
 export class NaoTextComponent implements OnInit {
 
-  @Inject(CONTAINER_DATA) public connector: NaoConnector;
+  connector: NaoConnector;
 
-  constructor() { }
+  constructor(private naoService: NaoService, @Inject(CONTAINER_DATA) public id: number) { }
 
   ngOnInit(): void {
-
+    this.connector = this.naoService.tabs.find(t => t.id == this.id).connector;
   }
 
 }

@@ -6,6 +6,7 @@ import { NaoMapComponent } from '../nao-map/nao-map.component';
 import { NaoConfigComponent } from '../nao-config/nao-config.component';
 import { NaoConnector } from 'src/app/model/nao-connector';
 import { CONTAINER_DATA } from 'src/app/app.component';
+import { NaoService } from 'src/app/service/nao.service';
 
 @Component({
   selector: 'nao-element',
@@ -15,12 +16,14 @@ import { CONTAINER_DATA } from 'src/app/app.component';
 export class NaoElementComponent implements OnInit {
 
   @Input() type = null;
-  @Input() connector: NaoConnector;
+  @Input() id: number;
+  connector: NaoConnector;
   portal;
 
-  constructor(private injector: Injector) { }
+  constructor(private naoService: NaoService, private injector: Injector) { }
 
   ngOnInit(): void {
+    this.connector = this.naoService.tabs.find(t => t.id == this.id).connector;
     if(this.type){
       this.summonElement(this.type);
     }
@@ -28,7 +31,7 @@ export class NaoElementComponent implements OnInit {
 
   getElementInjector(): PortalInjector {
     const injectorTokens = new WeakMap();
-    injectorTokens.set(CONTAINER_DATA, this.connector);
+    injectorTokens.set(CONTAINER_DATA, this.id);
     return new PortalInjector(this.injector, injectorTokens);
   }
 

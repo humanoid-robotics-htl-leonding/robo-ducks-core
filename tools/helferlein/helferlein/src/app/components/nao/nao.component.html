@@ -11,7 +11,6 @@
     <input matInput placeholder="Message" [(ngModel)]="message">
     <button mat-raised-button (click)="send()" color="primary">Send</button>
 
-    <input matInput [(ngModel)]="connector.status">
     <div *ngIf="connector.client">
       Connecting: {{connector.client.connecting}}
       Destroyed: {{connector.client.destroyed}}
@@ -29,7 +28,7 @@
     </mat-grid-list> -->
 
     <nao-element *ngFor="let element of elements" [type]="element.type"
-      [connector]="connector"
+      [id]="id"
       [style.grid-row-start]="element.rowStart"
       [style.grid-row-end]="element.rowEnd"
       [style.grid-column-start]="element.colStart"
@@ -38,34 +37,34 @@
     ></nao-element>
   </div>
 
-  <div class="bottom-controls"
+  <!-- <div class="bottom-controls"
   (mouseenter)="addFab.open=true" (mouseleave)="addFab.open=false">
     <div class="bottom-fab">
       <eco-fab-speed-dial #addFab direction="up">
         <eco-fab-speed-dial-trigger spin="true">
-          <button mat-fab color="primary" (click)="doAction('trigger')">
+          <button mat-fab color="primary">
             <mat-icon class="spin180">add</mat-icon>
           </button>
         </eco-fab-speed-dial-trigger>
         <eco-fab-speed-dial-actions>
-          <button mat-mini-fab (click)="doAction('text')"
+          <button mat-mini-fab
           matTooltip="Text" [matTooltipPosition]="'left'">
             <mat-icon>subject</mat-icon>
           </button>
-          <button mat-mini-fab (click)="doAction('map')"
+          <button mat-mini-fab
           matTooltip="Map" [matTooltipPosition]="'left'">
             <mat-icon>map</mat-icon>
           </button>
-          <button mat-mini-fab (click)="doAction('config')"
+          <button mat-mini-fab
           matTooltip="Config" [matTooltipPosition]="'left'">
             <mat-icon>settings</mat-icon>
           </button>
-          <button mat-mini-fab (click)="doAction('image')"
+          <button mat-mini-fab
           matTooltip="Image" [matTooltipPosition]="'left'">
             <mat-icon>image</mat-icon>
           </button>
         </eco-fab-speed-dial-actions>
       </eco-fab-speed-dial>
     </div>
-  </div>
+  </div> -->
 </div>

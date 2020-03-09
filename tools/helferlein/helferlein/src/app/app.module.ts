@@ -18,6 +18,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
+import {ClipboardModule} from '@angular/cdk/clipboard';
 
 import { NaoComponent } from './components/nao/nao.component';
 import { NaoTabComponent } from './components/nao-tab/nao-tab.component';
@@ -59,7 +60,8 @@ import { NaoConfigComponent } from './components/elements/nao-config/nao-config.
     MatSlideToggleModule,
     MatTooltipModule,
     MatGridListModule,
-    MatMenuModule
+    MatMenuModule,
+    ClipboardModule
   ],
   providers: [],
   bootstrap: [AppComponent]

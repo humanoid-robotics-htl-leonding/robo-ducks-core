@@ -57,7 +57,6 @@ export class HomeComponent implements OnInit {
     this.naoService.addTab();
     this.loadTabs();
     this.selectTab(this.tabs.length - 1);
-    console.log(this.tabs);
   }
 
   closeTab(id: number) {
@@ -76,14 +75,11 @@ export class HomeComponent implements OnInit {
   }
 
   selectTab(index) {
-    console.log('Index', index);
     if (index >= this.tabs.length) {
       this.selected.setValue(this.tabs.length - 1);
     } else {
       this.selected.setValue(index);
     }
-    console.log('Selected', this.selected);
-    console.log(this.tabs);
   }
 
   // async delay(ms: number) {
