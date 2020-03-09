@@ -3,13 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { NaoService } from 'src/app/service/nao.service';
 import { DebugMessageType } from 'src/app/model/message-type.enum';
 import { NaoConnector } from 'src/app/model/nao-connector';
-import { ComponentPortal } from '@angular/cdk/portal';
 import { NaoElementComponent } from '../elements/nao-element/nao-element.component';
-import { NaoImageComponent } from '../elements/nao-image/nao-image.component';
 import { NaoGridElement } from 'src/app/model/nao-grid-element';
-import { NaoMapComponent } from '../elements/nao-map/nao-map.component';
-import { NaoConfigComponent } from '../elements/nao-config/nao-config.component';
-import { NaoTextComponent } from '../elements/nao-text/nao-text.component';
+import { DebugMessage } from 'src/app/model/debug-message';
 
 @Component({
   selector: 'app-nao',
@@ -23,7 +19,7 @@ export class NaoComponent implements OnInit {
   @Output() addTab = new EventEmitter();
   @Output() closeTab = new EventEmitter();
   toggleForm = false;
-  messageType: DebugMessageType;
+  messageType: DebugMessageType = DebugMessageType.DM_REQUEST_LIST;
   message = '';
   elements: NaoGridElement[] = [];
 
@@ -32,6 +28,7 @@ export class NaoComponent implements OnInit {
 
   ngOnInit() {
     this.connector = this.naoService.tabs.find(t => t.id == this.id).connector;
+    this.connector.receivedData.subscribe(this.onData);
     this.elements.push(this.getGridElement(1, 1, 5, 7));
     this.elements.push(this.getGridElement(1, 7, 4, 11));
     this.elements.push(this.getGridElement(5, 1, 7, 7));
@@ -80,4 +77,10 @@ export class NaoComponent implements OnInit {
     };
   }
 
+  onData(event: DebugMessage){
+    console.log(event);
+    if(event.msgType == DebugMessageType.DM_LIST){
+      this.connector.keys = JSON.parse(event.msg).keys;
+    }
+  }
 }
