@@ -1,6 +1,6 @@
-<div *ngIf="connector && connector.messages.length > 0">
-  <button mat-icon-button [cdkCopyToClipboard]="connector.messages[connector.messages.length-1].msg">
+<div *ngIf="connector && connector.message">
+  <button mat-icon-button [cdkCopyToClipboard]="connector.message.msg">
     <mat-icon>file_copy</mat-icon>
   </button>
-  {{connector.messages[connector.messages.length-1]}}
+  {{connector.message.msg}}
 </div>
