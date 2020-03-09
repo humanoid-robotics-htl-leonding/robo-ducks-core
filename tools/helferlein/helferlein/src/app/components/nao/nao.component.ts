@@ -31,7 +31,6 @@ export class NaoComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('Nao: ',this.id);
     this.connector = this.naoService.tabs.find(t => t.id == this.id).connector;
     this.elements.push(this.getGridElement(1, 1, 5, 7));
     this.elements.push(this.getGridElement(1, 7, 4, 11));

@@ -23,7 +23,6 @@ export class NaoElementComponent implements OnInit {
   constructor(private naoService: NaoService, private injector: Injector) { }
 
   ngOnInit(): void {
-    console.log('Element: ',this.id);
     this.connector = this.naoService.tabs.find(t => t.id == this.id).connector;
     if(this.type){
       this.summonElement(this.type);
