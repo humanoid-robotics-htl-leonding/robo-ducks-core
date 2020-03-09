@@ -25,9 +25,7 @@ public:
 	explicit DucksStrikerActionProvider(const ModuleManagerInterface& manager);
 
 	void cycle() override;
-
-	bool isSurrounded();
-
+	
 private:
 	const Dependency<FieldDimensions> fieldDimensions_;
 	const Dependency<RobotPosition> robotPosition_;

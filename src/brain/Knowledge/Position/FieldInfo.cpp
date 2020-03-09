@@ -15,131 +15,195 @@ FieldInfo::FieldInfo(const FieldDimensions& fieldDimensions)
   const float penaltyAreaBorder = fieldLength * 0.5f - penaltyAreaLength;
 
   // field border
-  lines.push_back({{-fieldLength / 2, fieldWidth / 2}, {fieldLength / 2, fieldWidth / 2}});
-  lines.push_back({{-fieldLength / 2, -fieldWidth / 2}, {fieldLength / 2, -fieldWidth / 2}});
-  lines.push_back({{-fieldLength / 2, fieldWidth / 2}, {-fieldLength / 2, -fieldWidth / 2}});
-  lines.push_back({{fieldLength / 2, fieldWidth / 2}, {fieldLength / 2, -fieldWidth / 2}});
+  lines.push_back({{-fieldLength / 2, fieldWidth / 2}, {fieldLength / 2, fieldWidth / 2}}); // top, ID: 1
+  lines.push_back({{-fieldLength / 2, -fieldWidth / 2}, {fieldLength / 2, -fieldWidth / 2}}); // bottom, ID: 2
+  lines.push_back({{-fieldLength / 2, fieldWidth / 2}, {-fieldLength / 2, -fieldWidth / 2}}); // left,  ID: 3
+  lines.push_back({{fieldLength / 2, fieldWidth / 2}, {fieldLength / 2, -fieldWidth / 2}}); // right, ID: 4
 
   // center line
-  lines.push_back({{0, fieldWidth / 2}, {0, -fieldWidth / 2}});
+  lines.push_back({{0, fieldWidth / 2}, {0, -fieldWidth / 2}}); // ID: 5
 
   // center circle as polygon
   for (int i = 0; i < 16; i++)// phi < 2 * M_PI; phi += M_PI / 8)
   {
   	float phi = M_PI * i / 8;
-    lines.emplace_back(polar2cartesian({centerCircleRadius, phi}), polar2cartesian({centerCircleRadius, phi + static_cast<float>(M_PI / 8)}));
+    lines.emplace_back(polar2cartesian({centerCircleRadius, phi}), polar2cartesian({centerCircleRadius, phi + static_cast<float>(M_PI / 8)})); // ID: 0
   }
 
   // own penalty area
-  lines.push_back({{-fieldLength / 2, penaltyAreaWidth / 2}, {-penaltyAreaBorder, penaltyAreaWidth / 2}});
-  lines.push_back({{-fieldLength / 2, -penaltyAreaWidth / 2}, {-penaltyAreaBorder, -penaltyAreaWidth / 2}});
-  lines.push_back({{-penaltyAreaBorder, penaltyAreaWidth / 2}, {-penaltyAreaBorder, -penaltyAreaWidth / 2}});
+  lines.push_back({{-fieldLength / 2, penaltyAreaWidth / 2}, {-penaltyAreaBorder, penaltyAreaWidth / 2}}); // top, ID: 6
+  lines.push_back({{-fieldLength / 2, -penaltyAreaWidth / 2}, {-penaltyAreaBorder, -penaltyAreaWidth / 2}}); // bottom, ID: 7
+  lines.push_back({{-penaltyAreaBorder, penaltyAreaWidth / 2}, {-penaltyAreaBorder, -penaltyAreaWidth / 2}}); // right, ID: 8
 
   // opponent penalty area
-  lines.push_back({{fieldLength / 2, penaltyAreaWidth / 2}, {penaltyAreaBorder, penaltyAreaWidth / 2}});
-  lines.push_back({{fieldLength / 2, -penaltyAreaWidth / 2}, {penaltyAreaBorder, -penaltyAreaWidth / 2}});
-  lines.push_back({{penaltyAreaBorder, penaltyAreaWidth / 2}, {penaltyAreaBorder, -penaltyAreaWidth / 2}});
+  lines.push_back({{fieldLength / 2, penaltyAreaWidth / 2}, {penaltyAreaBorder, penaltyAreaWidth / 2}}); // top, ID: 9
+  lines.push_back({{fieldLength / 2, -penaltyAreaWidth / 2}, {penaltyAreaBorder, -penaltyAreaWidth / 2}}); // bottom, ID 10
+  lines.push_back({{penaltyAreaBorder, penaltyAreaWidth / 2}, {penaltyAreaBorder, -penaltyAreaWidth / 2}}); // left, ID: 11
 
 	// intersections
 	LandmarkModel::Intersection intersection;
 
 	// center circle
+	// top
 	intersection.type = LandmarkModel::Intersection::Type::X;
 	intersection.position = Vector2f(0, centerCircleRadius);
 	intersection.hasOrientation = false;
+	intersection.onLine1 = true;
+	intersection.onLine2 = true;
+	intersection.usedLineIds = {0, 5};
 	intersections.push_back(intersection);
 
+	//bottom
 	intersection.type = LandmarkModel::Intersection::Type::X;
 	intersection.position = Vector2f(0, -centerCircleRadius);
 	intersection.hasOrientation = false;
+	intersection.onLine1 = true;
+	intersection.onLine2 = true;
+	intersection.usedLineIds = {0, 5};
 	intersections.push_back(intersection);
 
 	// middle line
+	// top
 	intersection.type = LandmarkModel::Intersection::Type::T;
 	intersection.position = Vector2f(0, fieldWidth / 2);
 	intersection.hasOrientation = true;
 	intersection.orientation = -M_PI / 2;
+	intersection.onLine1 = true;
+	intersection.onLine2 = false;
+	intersection.usedLineIds = {1, 5};
 	intersections.push_back(intersection);
 
+	// bottom
 	intersection.type = LandmarkModel::Intersection::Type::T;
 	intersection.position = Vector2f(0, -fieldWidth / 2);
 	intersection.hasOrientation = true;
 	intersection.orientation = M_PI / 2;
+	intersection.onLine1 = true;
+	intersection.onLine2 = false;
+	intersection.usedLineIds = {2, 5};
 	intersections.push_back(intersection);
 
 	// corners
+	// top left
 	intersection.type = LandmarkModel::Intersection::Type::L;
 	intersection.position = Vector2f(-fieldLength / 2, fieldWidth / 2);
 	intersection.hasOrientation = true;
 	intersection.orientation = -M_PI * 1 / 4;
+	intersection.onLine1 = false;
+	intersection.onLine2 = false;
+	intersection.usedLineIds = {1, 3};
 	intersections.push_back(intersection);
 
+	// top right
 	intersection.type = LandmarkModel::Intersection::Type::L;
 	intersection.position = Vector2f(fieldLength / 2, fieldWidth / 2);
 	intersection.hasOrientation = true;
 	intersection.orientation = -M_PI * 3 / 4;
+	intersection.onLine1 = false;
+	intersection.onLine2 = false;
+	intersection.usedLineIds = {1, 4};
 	intersections.push_back(intersection);
 
+	// bottom right
 	intersection.type = LandmarkModel::Intersection::Type::L;
 	intersection.position = Vector2f(fieldLength / 2, -fieldWidth / 2);
 	intersection.hasOrientation = true;
 	intersection.orientation = M_PI * 3 / 4;
+	intersection.onLine1 = false;
+	intersection.onLine2 = false;
+	intersection.usedLineIds = {2, 4};
 	intersections.push_back(intersection);
 
+	// bottom left
 	intersection.type = LandmarkModel::Intersection::Type::L;
 	intersection.position = Vector2f(-fieldLength / 2, -fieldWidth / 2);
 	intersection.hasOrientation = true;
 	intersection.orientation = M_PI * 1 / 4;
+	intersection.onLine1 = false;
+	intersection.onLine2 = false;
+	intersection.usedLineIds = {2, 3};
 	intersections.push_back(intersection);
 
 	// own penalty area
+	// top left
 	intersection.type = LandmarkModel::Intersection::Type::T;
 	intersection.position = Vector2f(-fieldLength / 2, penaltyAreaWidth / 2);
 	intersection.hasOrientation = true;
 	intersection.orientation = 0;
+	intersection.onLine1 = true;
+	intersection.onLine2 = false;
+	intersection.usedLineIds = {3, 6};
 	intersections.push_back(intersection);
 
+	// bottom left
 	intersection.type = LandmarkModel::Intersection::Type::T;
 	intersection.position = Vector2f(-fieldLength / 2, -penaltyAreaWidth / 2);
 	intersection.hasOrientation = true;
 	intersection.orientation = 0;
+	intersection.onLine1 = true;
+	intersection.onLine2 = false;
+	intersection.usedLineIds = {3, 7};
 	intersections.push_back(intersection);
 
+	// top right
 	intersection.type = LandmarkModel::Intersection::Type::L;
 	intersection.position = Vector2f(-penaltyAreaBorder, penaltyAreaWidth / 2);
 	intersection.hasOrientation = true;
 	intersection.orientation = -M_PI * 3 / 4;
+	intersection.onLine1 = false;
+	intersection.onLine2 = false;
+	intersection.usedLineIds = {6, 8};
 	intersections.push_back(intersection);
 
+	// bottom right
 	intersection.type = LandmarkModel::Intersection::Type::L;
 	intersection.position = Vector2f(-penaltyAreaBorder, -penaltyAreaWidth / 2);
 	intersection.hasOrientation = true;
 	intersection.orientation = M_PI * 3 / 4;
+	intersection.onLine1 = false;
+	intersection.onLine2 = false;
+	intersection.usedLineIds = {7, 8};
 	intersections.push_back(intersection);
 
 	// opponent penalty area
+	// top right
 	intersection.type = LandmarkModel::Intersection::Type::T;
 	intersection.position = Vector2f(fieldLength / 2, penaltyAreaWidth / 2);
 	intersection.hasOrientation = true;
 	intersection.orientation = M_PI;
+	intersection.onLine1 = true;
+	intersection.onLine2 = false;
+	intersection.usedLineIds = {4, 9};
 	intersections.push_back(intersection);
 
+	// bottom right
 	intersection.type = LandmarkModel::Intersection::Type::T;
 	intersection.position = Vector2f(fieldLength / 2, -penaltyAreaWidth / 2);
 	intersection.hasOrientation = true;
 	intersection.orientation = M_PI;
+	intersection.onLine1 = true;
+	intersection.onLine2 = false;
+	intersection.usedLineIds = {4, 10};
 	intersections.push_back(intersection);
 
+	// top left
 	intersection.type = LandmarkModel::Intersection::Type::L;
 	intersection.position = Vector2f(penaltyAreaBorder, penaltyAreaWidth / 2);
 	intersection.hasOrientation = true;
 	intersection.orientation = -M_PI * 1 / 4;
+	intersection.onLine1 = false;
+	intersection.onLine2 = false;
+	intersection.usedLineIds = {9, 11};
 	intersections.push_back(intersection);
 
+	// bottom left
 	intersection.type = LandmarkModel::Intersection::Type::L;
 	intersection.position = Vector2f(penaltyAreaBorder, -penaltyAreaWidth / 2);
 	intersection.hasOrientation = true;
 	intersection.orientation = M_PI * 1 / 4;
+	intersection.onLine1 = false;
+	intersection.onLine2 = false;
+	intersection.usedLineIds = {10, 11};
 	intersections.push_back(intersection);
 
   // own goal
