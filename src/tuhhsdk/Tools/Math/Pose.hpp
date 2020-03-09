@@ -47,7 +47,7 @@ public:
    * @param angleThreshold Maxmium angle between orientations [exclusive]
    * @return true if the distances between the angles and positions are within the respecitve thresholds
    */
-  bool isNear(const Pose& other, float threshold = 0.1, float angleThreshold = 5 * TO_RAD) const {
+  bool isNear(const Pose& other, float threshold = 0.1, float angleThreshold = 5.0 * TO_RAD) const {
     return (this->position - other.position).norm() < threshold && std::abs(Angle::angleDiff(this->orientation, other.orientation)) < angleThreshold;
   }
 

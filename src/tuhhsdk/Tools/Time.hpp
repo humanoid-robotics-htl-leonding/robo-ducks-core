@@ -60,6 +60,10 @@ public:
      */
     TimePoint(const TimePoint& other) = default;
 
+    bool hasPassed() const{
+    	return TimePoint::getCurrentTime() > *this;
+    }
+
     /**
      * @brief Returns the time set as base for all TimePoints (boot time).
      * @return the base time in ms
