@@ -83,7 +83,7 @@ private:
 	const Dependency<CycleInfo> cycleInfo_;
 	const Dependency<SetPosition> setPosition_;
 	const Dependency<DucksDefenderAction> defendingPosition_;
-	const Dependency<BishopPosition> bishopPosition_;
+	const Dependency<DucksBishopAction> bishopPosition_;
 	const Dependency<SupportingPosition> supportingPosition_;
 	const Dependency<ReplacementKeeperAction> replacementKeeperAction_;
 	const Dependency<ButtonData> buttonData_;

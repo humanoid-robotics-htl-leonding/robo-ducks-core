@@ -28,5 +28,35 @@
       -1.80,
       -1.0
     ]
+  },
+  "bishopPatrolRight": {
+    "from": [
+      -0.4,
+      -0.1
+    ],
+    "to": [
+      1,
+      -1.6
+    ]
+  },
+  "bishopPatrolLeft": {
+    "from": [
+      -0.4,
+      1.6
+    ],
+    "to": [
+      1,
+      0.1
+    ]
+  },
+  "bishopShadowBall": {
+    "from": [
+      1,
+      1.69
+    ],
+    "to": [
+      1.7,
+      -1.69
+    ]
   }
 }

@@ -18,8 +18,14 @@ public:
 	Rectangle<float> defenderDribble;
 	/// the keeper zone
 	Rectangle<float> keeper;
+    /// the bishop patroling left zone
+    Rectangle<float> bishopPatrolLeft;
+/// the bishop patroling left zone
+    Rectangle<float> bishopPatrolRight;
+    ///the bishop shadowing ball zone
+    Rectangle<float> bishopShadowBall;
 
-	/**
+    /**
 	 * @brief reset does nothing
 	 */
 	void reset()
@@ -37,7 +43,30 @@ public:
 			position.y() >= zone.topLeft.y() && position.y() <= zone.bottomRight.y();
 	}
 
+    Vector2f nearestCorner(const Vector2f& position, const Rectangle<float>& zone) const
+    {
+	    Vector2f nearestCorner;
+        float distanceToTopLeft = abs((position-zone.topLeft).norm());
+        Vector2f bottomLeft = Vector2f(zone.topLeft.x(),zone.bottomRight.y());
+        float distanceToBottomLeft = abs((position-bottomLeft).norm());
+        float distanceToBottomRight = abs((position-zone.bottomRight).norm());
+        Vector2f topRight = Vector2f(zone.bottomRight.x(),zone.topLeft.y());
+        float distanceToTopRight = abs((position-topRight).norm());
 
+        float minDistance = std::min({distanceToBottomLeft, distanceToBottomRight, distanceToTopLeft,distanceToTopRight});
+        if(minDistance == distanceToBottomLeft){
+            return bottomLeft;
+        }
+        else if(minDistance == distanceToBottomRight){
+            return zone.bottomRight;
+        }
+        else if(minDistance == distanceToTopLeft){
+            return zone.topLeft;
+        }
+        else {
+            return topRight;
+        }
+    }
 
 	virtual void toValue(Uni::Value& value) const
 	{
@@ -83,6 +112,24 @@ public:
 		group["from"] >> from;
 		group["to"] >> to;
 		keeper = Rectangle<float>(from, to);
+
+        group = config.get("tuhhSDK.FieldZones", "bishopPatrolRight");
+
+        group["from"] >> from;
+        group["to"] >> to;
+        bishopPatrolRight = Rectangle<float>(from, to);
+
+        group = config.get("tuhhSDK.FieldZones", "bishopPatrolLeft");
+
+        group["from"] >> from;
+        group["to"] >> to;
+        bishopPatrolLeft = Rectangle<float>(from, to);
+
+        group = config.get("tuhhSDK.FieldZones", "bishopShadowBall");
+
+        group["from"] >> from;
+        group["to"] >> to;
+        bishopShadowBall = Rectangle<float>(from, to);
 	}
 };
 
