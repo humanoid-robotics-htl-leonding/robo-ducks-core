@@ -39,6 +39,8 @@ DucksActionCommand playing(const DucksDataSet &d)
 			}else{
 //				command = DucksActionCommand::stand();
 			}
+
+			command.combineRightEarLED(DucksActionCommand::EarLED::brightness(1.0));
 		}
 
 		command.combineHead(DucksActionCommand::Head::lookAt(robotSpacePos, 1.0, 1.0));
@@ -57,7 +59,7 @@ DucksActionCommand playing(const DucksDataSet &d)
 				command.combineLeftLED(DucksActionCommand::EyeLED::lightblue());
 				break;
 			case DuckBallSearchPosition::SEARCH_TURN:
-				command.combineLeftLED(DucksActionCommand::EyeLED::blue());
+				command.combineLeftLED(DucksActionCommand::EyeLED::lightblue());
 				break;
 			case DuckBallSearchPosition::I_AM_ON_IT:
 				command.combineLeftLED(DucksActionCommand::EyeLED::yellow());

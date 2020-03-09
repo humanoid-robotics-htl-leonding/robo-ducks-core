@@ -69,14 +69,23 @@ void DucksBallSearchPositionProvider::cycle()
 		searchPosition_->searchPosition = pos.searchPosition;
 	}
 
+
+
+	searchPosition_->pose = robotPosition_->pose;
+	auto searchPoseToPos = searchPosition_->searchPosition - searchPosition_->pose.position;
+	auto searchPoseToPosAngle = std::atan2(searchPoseToPos.y(), searchPoseToPos.x());
+	searchPosition_->pose.orientation = Angle::normalized(searchPoseToPosAngle);
+
+
+
 	auto robotOrientation = robotPosition_->pose.orientation;
-	auto robotToPointAngle = std::atan2(robotPosition_->pose.position.y(), robotPosition_->pose.position.x());
+	auto robotToPoint = searchPosition_->searchPosition - robotPosition_->pose.position;
+	auto robotToPointAngle = std::atan2(robotToPoint.y(), robotToPoint.x());
 	float angleDiff = std::abs(Angle::angleDiff(robotOrientation, robotToPointAngle));
 	debug().update(mount_+".angle", angleDiff);
 
-	if(desperation_->lookAtBallUrgency > minTurnUrgency_){
-		
-	}
+
+
 
 	//2. === If ball rolls to the side, then turn (if walking... so that if we are already walking, we dont look at death)
 //	if(searchPosition_->reason != DuckBallSearchPosition::Reason::SEARCH_WALK){
@@ -111,7 +120,7 @@ bool DucksBallSearchPositionProvider::iWantToLookAt(const Vector2f &point) {
 
     if(desperation_->lookAtBallUrgency < minUncomfortableUrgency_()) { // Comfortable mode
         return this->robotPosition_->pose.frustrumContainsPoint(point, comfortableSideAngle_());
-    }else if (desperation_->lookAtBallUrgency < maxNoTurnUrgency_()) { // Hard mode
+    }else if (desperation_->lookAtBallUrgency < minTurnUrgency_()) { // Hard mode
         return this->robotPosition_->pose.frustrumContainsPoint(point, maxSideAngle_());
     }else{ //Panic Mode
         return true;
