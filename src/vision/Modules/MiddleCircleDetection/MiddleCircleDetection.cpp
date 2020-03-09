@@ -75,7 +75,7 @@ MiddleCircle::MiddleCircle()
 }
 
 
-Circle<float> circleFitByHyper(VecVector2f points)
+Circle<float> circleFitByHyper(const VecVector2f& points)
 {
     int iter,IterMAX=99;
 
@@ -181,7 +181,7 @@ void MiddleCircleDetection::initCorrectCircle() {
 }
 
 
-bool MiddleCircleDetection::circleIsValid(Circle<float> circle) {
+bool MiddleCircleDetection::circleIsValid(const Circle<float>& circle) {
     const double RADIUS_TOLERANCE = 0.2;
     const int MIN_DETECT_POINTS_AMOUNT = 10;
 
@@ -204,12 +204,12 @@ bool MiddleCircleDetection::circleIsValid(Circle<float> circle) {
 
 }
 
-double MiddleCircleDetection::controlCircleBorder(Circle<float> circle) {
+double MiddleCircleDetection::controlCircleBorder(const Circle<float>& circle) {
     const double RADIUS_TOLERANCE = 0.15;
     double amount = 0;
     VecVector2f planePoints;
     pixelToRobot(middleCirclePoints_, planePoints);
-    for(Vector2f point : planePoints){
+    for(auto& point : planePoints){
         double dist = getVectorDistanceff(circle.center, point);
 
         if(!(dist < circle.radius-(circle.radius*RADIUS_TOLERANCE) || dist > circle.radius+(circle.radius*RADIUS_TOLERANCE)) ){
@@ -238,18 +238,18 @@ double MiddleCircleDetection::getVectorDistanceff(Vector2f firstVec, Vector2f se
  * points to draw on screen for the
  * circle appearance
  */
-void MiddleCircleDetection::generateCircleSurroundPoints(Circle<float> circle) {
+void MiddleCircleDetection::generateCircleSurroundPoints(const Circle<float>& circle) {
     circleBorderPoints_.clear();
 
-    for (double angle = -180; angle < 181; angle++) {
-        float x = circle.radius*cos(angle* M_PI/180) + foundCircleData.circle.center.x();
-        float y = circle.radius*sin(angle* M_PI/180) + foundCircleData.circle.center.y();
+    for (int angle = -180; angle < 181; angle++) {
+        float x = circle.radius*cos(angle * M_PI / 180) + foundCircleData.circle.center.x();
+        float y = circle.radius*sin(angle * M_PI / 180) + foundCircleData.circle.center.y();
 
         circleBorderPoints_.push_back(Vector2f(x,y));
     }
 }
 
-void MiddleCircleDetection::pixelToRobot(const VecVector2i screenPoints, VecVector2f &planePoints) const {
+void MiddleCircleDetection::pixelToRobot(const VecVector2i& screenPoints, VecVector2f &planePoints) const {
     Vector2f planePoint;
 
     for(auto& point : screenPoints){
@@ -258,9 +258,6 @@ void MiddleCircleDetection::pixelToRobot(const VecVector2i screenPoints, VecVect
         }
     }
 }
-
-
-
 
 void MiddleCircleDetection::sendImagesForDebug()
 {
@@ -282,8 +279,7 @@ void MiddleCircleDetection::sendImagesForDebug()
             Vector2i pixelCoords;
             for (const Vector2f point : circleBorderPoints_) {
                 // both (x,y) and (x,-y) are points on the half-circle
-                Vector2f circlePoint(point);
-                if (cameraMatrix_->robotToPixel(circlePoint, pixelCoords)) {
+                if (cameraMatrix_->robotToPixel(point, pixelCoords)) {
                     image.circle(Image422::get444From422Vector(pixelCoords), 5, Color::RED);
                 }
             }
