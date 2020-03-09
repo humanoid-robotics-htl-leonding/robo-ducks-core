@@ -29,6 +29,7 @@
 #include "Framework/Module.hpp"
 
 #include "DucksActionCommand.hpp"
+#include "BehaviourState.hpp"
 #include "BehaviorParameters.hpp"
 
 class Thoughts;
@@ -74,7 +75,7 @@ struct DucksDataSet
 			   const DucksDefenderAction& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
 			   const ReplacementKeeperAction& rk, const ButtonData& bd, const WorldState& ws,
 			   const KickConfigurationData& kcd, const DuckBallSearchPosition& bsp, const HeadPositionData& hpd,
-			   Thoughts& thdat,
+			   Thoughts& thdat, BehaviourState& state,
 
 			   const DucksActionCommand& lac)
     : parameters(module)
@@ -106,6 +107,7 @@ struct DucksDataSet
     , kickConfigurationData(kcd)
     , lastActionCommand(lac)
     , thoughts(thdat)
+    , state(state)
   {
   }
   /// struct to hold parameters of the behavior
@@ -166,4 +168,6 @@ struct DucksDataSet
   const DucksActionCommand& lastActionCommand;
 
   Thoughts& thoughts;
+
+  BehaviourState& state;
 };

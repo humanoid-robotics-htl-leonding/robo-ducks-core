@@ -100,6 +100,9 @@ private:
 	DucksActionCommand actionCommand_;
 	/// Thoughts
 	Thoughts thoughts_;
+	///State
+	BehaviourState state_;
+
 	/// the data set/bundle that is passed to the behavior
 	DucksDataSet dataSet_;
 	/// a thread-safe copy of the remote motion request

@@ -49,13 +49,14 @@ DucksBehaviorModule::DucksBehaviorModule(const ModuleManagerInterface &manager)
 	  thoughtControlRequest_(*this),
 	  actionCommand_(DucksActionCommand::dead()),
 	  thoughts_(),
+	  state_(),
 	  dataSet_(*this, *gameControllerState_, *ballState_, *robotPosition_, *bodyPose_,
 			   *playerConfiguration_, *playingRoles_, *motionState_, *headMotionOutput_,
 			   *teamBallModel_, *teamPlayers_, *fieldDimensions_, *strikerAction_,
 			   *penaltyStrikerAction_, *keeperAction_, *penaltyKeeperAction_, *cycleInfo_,
 			   *setPosition_, *defendingPosition_, *bishopPosition_, *supportingPosition_,
 			   *replacementKeeperAction_, *buttonData_, *worldState_, *kickConfigurationData_,
-			   *ballSearchPosition_, *headPositionData_, thoughts_, actionCommand_)
+			   *ballSearchPosition_, *headPositionData_, thoughts_, state_, actionCommand_)
 {
 	{
 		// This is needed because callbacks are called asynchronously and a MotionRequest is large
