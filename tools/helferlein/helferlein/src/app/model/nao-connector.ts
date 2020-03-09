@@ -86,11 +86,7 @@ export class NaoConnector {
   }
 
   defaultOnData(chunk: Uint8Array) {
-    if (!this.message || this.message.isCompleted()) {
-      if (this.message) {
-        console.log(this.message);
-        this.receivedData.emit(this.message);
-      }
+    if (!this.message) {
       this.message = new DebugMessage();
     }
     if (this.message.headerIncomplete()) {
@@ -102,8 +98,10 @@ export class NaoConnector {
     if (!this.message.isCompleted()) {
       this.message.appendMessage(chunk);
     }
-    console.log('MsgLen',this.message.msg.length);
-    console.log('Msg',this.message);
+    if (this.message.isCompleted()){
+      this.receivedData.emit(this.message);
+      this.message = new DebugMessage();
+    }
   }
 
   defaultOnEnd() {
