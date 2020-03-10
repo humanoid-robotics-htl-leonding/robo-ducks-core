@@ -65,4 +65,13 @@ public:
     this->radius = other.radius;
     return *this;
   }
+    std::vector<float> getXIntersections(float yValue)
+    {
+      float shiftedYValue = yValue - center.y();
+      if(radius*radius-shiftedYValue*shiftedYValue >=0){
+          float xdiff = std::sqrt(radius*radius-shiftedYValue*shiftedYValue);
+          return std::vector<float>(center.x()-xdiff,center.x()+xdiff);
+      }
+      return std::vector<float>();
+    }
 };

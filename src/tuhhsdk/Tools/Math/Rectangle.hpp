@@ -132,4 +132,11 @@ public:
     value.at(0) << topLeft;
     value.at(1) << bottomRight;
   }
+  Vector2<T> topRight() const{
+        return Vector2<T>(bottomRight.x(),topLeft.y());
+  }
+
+  Vector2<T> bottomLeft() const{
+        return Vector2<T>(topLeft.x(),bottomRight.y());
+    }
 };

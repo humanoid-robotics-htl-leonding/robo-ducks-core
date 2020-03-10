@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Data/DucksBishopAction.hpp>
 #include "Data/DuckBallSearchPosition.hpp"
 #include "Data/BallState.hpp"
 #include "Data/BishopPosition.hpp"
@@ -71,7 +72,7 @@ struct DucksDataSet
 			   const TeamBallModel& tbm, const TeamPlayers& tps, const FieldDimensions& fd,
 			   const DucksStrikerAction& sa, const PenaltyStrikerAction& ps, const KeeperAction& ka,
 			   const PenaltyKeeperAction& pa, const CycleInfo& ci, const SetPosition& sp,
-			   const DucksDefenderAction& dp, const BishopPosition& bp2, const SupportingPosition& sp2,
+			   const DucksDefenderAction& dp, const DucksBishopAction& bp2, const SupportingPosition& sp2,
 			   const ReplacementKeeperAction& rk, const ButtonData& bd, const WorldState& ws,
 			   const KickConfigurationData& kcd, const DuckBallSearchPosition& bsp, const HeadPositionData& hpd,
 			   Thoughts& thdat,
@@ -149,7 +150,7 @@ struct DucksDataSet
   /// a reference to the defending position
   const DucksDefenderAction& defendingPosition;
   /// a reference to the bishop position
-  const BishopPosition& bishopPosition;
+  const DucksBishopAction& bishopPosition;
   /// a reference to the supporting position
   const SupportingPosition& supportingPosition;
   /// a reference to the replacement keeper action
