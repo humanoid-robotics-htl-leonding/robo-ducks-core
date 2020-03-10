@@ -35,8 +35,6 @@ void DucksStrikerActionProvider::cycle()
 
 
     auto strikerUrgency = getStrikerUrgency();
-    std::cout << "lookAtBallUrgency: " << desperation_->lookAtBallUrgency << std::endl;
-    std::cout << "strikerUrgency: " << strikerUrgency << std::endl;
     if (desperation_->lookAtBallUrgency > strikerUrgency) {
         strikerAction_->valid = false;
         return;
