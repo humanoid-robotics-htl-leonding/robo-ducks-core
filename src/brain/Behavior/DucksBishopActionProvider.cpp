@@ -21,6 +21,7 @@ DucksBishopActionProvider::DucksBishopActionProvider(const ModuleManagerInterfac
       desperation_(*this),
       teamPlayers_(*this),
       fieldDimensions_(*this),
+      obstacleData_(*this),
       bishopAction_(*this),
       currentlyDoingPassingAction(false)
 {
@@ -64,8 +65,8 @@ void DucksBishopActionProvider::patrol()
         bishopAction_->type= DucksBishopAction::Type::PATROL_AREA;
         //get nearest Zone if not already inside one
         Vector2f robotPosition = robotPosition_->pose.position;
-        if(!fieldZones_->isInside(robotPosition,fieldZones_->bishopPatrolLeft) &&
-        !fieldZones_->isInside(robotPosition,fieldZones_->bishopPatrolRight)){
+        if(!fieldZones_->isInside(robotPosition,fieldZones_->bishopPatrolLeft,0.01) &&
+        !fieldZones_->isInside(robotPosition,fieldZones_->bishopPatrolRight,0.01)){
             Vector2f nearestCorner;
             Vector2f nearestCornerLeftZone = fieldZones_->nearestCorner(robotPosition_->pose.position,fieldZones_->bishopPatrolLeft);
             Vector2f nearestCornerRightZone = fieldZones_->nearestCorner(robotPosition_->pose.position,fieldZones_->bishopPatrolRight);
@@ -133,10 +134,17 @@ bool DucksBishopActionProvider::shouldPass()
             if(!(striker->pose.position.x() >= strikerIsOffensiveLine_())){
                 return false;
             }
+            Vector2f sidedPassOffset;
             //check if Passtarget is easily kicked to
             //get all raySegments facing the ball along the maxPassCircle
-            int strikerIsLeft = (striker->pose.position.y() >=0) ? 1:-1;
-            Vector2f proposedPassTarget = striker->pose.position + passOffset_() * strikerIsLeft;
+            if(striker->pose.position.y()>=0){
+                sidedPassOffset= Vector2f(passOffset_().x(),-passOffset_().y());
+            }
+            else {
+                sidedPassOffset= passOffset_();
+
+            }
+            Vector2f proposedPassTarget = striker->pose.position + sidedPassOffset;
             Vector2f ballPosition = teamBallModel_->position;
             Circle<float> passCircle = Circle<float>(proposedPassTarget,maxPassDistance_());
             std::vector<Vector2f> raySegmentCenters = std::vector<Vector2f>();
@@ -164,9 +172,9 @@ bool DucksBishopActionProvider::shouldPass()
 
             }while(foundIntersection);
 
-            //check if a segment is not blocked s
+            //check if a segment is not blocked
             for (int i =0;i<(int)raySegmentCenters.size();i++){
-                if(segmentToBallIsIntersected(raySegmentCenters.at(i))){
+                if(positionToPositionIsIntersected(raySegmentCenters.at(i),proposedPassTarget)){
                     passBallSource = raySegmentCenters.at(i);
                     passBallTarget = proposedPassTarget;
                     currentlyDoingPassingAction = true;
@@ -252,9 +260,17 @@ void DucksBishopActionProvider::findStriker(const TeamPlayer *&pPlayer)
         }
     }
 }
-bool DucksBishopActionProvider::segmentToBallIsIntersected(const Vector2f &segment) {
-    Line<float> ballRay(teamBallModel_->position, segment);
-
+bool DucksBishopActionProvider::positionToPositionIsIntersected(const Vector2f &segment,const Vector2f position) {
+    Line<float> ray(position, segment);
+    //TODO talk with Erck about Obstacles and Syncronisation
+    /*for(const auto& obstacle : obstacleData_->obstacles){
+        if(obstacle.relativePosition < teamBallModel_->position.x()){
+            auto distance = Geometry::distPointToLineSegment(ballRay, robot.pose.position);
+            if(distance < robotDiameter_()/2){
+                return true;
+            }
+        }
+    }*/
     /*for(const auto& robot : teamPlayers_->players){
         if(robot.playerNumber == playerConfiguration_->playerNumber) continue;
 

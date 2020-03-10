@@ -8,6 +8,7 @@
 #include <Data/TeamBallModel.hpp>
 #include <Data/Desperation.hpp>
 #include <Data/FieldDimensions.hpp>
+#include <Data/ObstacleData.hpp>
 #include "Framework/Module.hpp"
 #include "Data/DucksBishopAction.hpp"
 
@@ -41,6 +42,7 @@ private:
     const Dependency<Desperation> desperation_;
     const Dependency<TeamPlayers> teamPlayers_;
     const Dependency<FieldDimensions> fieldDimensions_;
+    const Dependency<ObstacleData> obstacleData_;
 
 
     Production<DucksBishopAction> bishopAction_;
@@ -58,7 +60,7 @@ private:
     float getZoneCornerPatrolOrientation(Vector2f corner,Rectangle<float> zone);
     Pose patrolTarget;
     void findStriker(const TeamPlayer *&pPlayer);
-    bool segmentToBallIsIntersected(const Vector2f &segment);
+    bool positionToPositionIsIntersected(const Vector2f &segment,Vector2f position);
     bool currentlyDoingPassingAction;
     Vector2f passBallSource;
     Vector2f passBallTarget;
