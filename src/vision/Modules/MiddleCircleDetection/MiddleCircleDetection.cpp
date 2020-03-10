@@ -179,8 +179,6 @@ void MiddleCircleDetection::initCorrectCircle() {
     else{
         foundCircleData.circle.radius = -1;
     }
-
-	generateCircleSurroundPoints(candidateCircle);
 }
 
 
@@ -218,22 +216,6 @@ bool MiddleCircleDetection::controlCircleBorder(const Circle<float>& circle) {
     return amount >= absolutePointsNearCircle_() && amount / middleCirclePoints_.size() >= relativePointsNearCircle_();
 }
 
-/*
- * This Method creates the
- * points to draw on screen for the
- * circle appearance
- */
-void MiddleCircleDetection::generateCircleSurroundPoints(const Circle<float>& circle) {
-    circleBorderPoints_.clear();
-
-    for (int angle = -180; angle < 181; angle++) {
-        float x = circle.radius*cos(angle * M_PI / 180) + foundCircleData.circle.center.x();
-        float y = circle.radius*sin(angle * M_PI / 180) + foundCircleData.circle.center.y();
-
-        circleBorderPoints_.push_back(Vector2f(x,y));
-    }
-}
-
 void MiddleCircleDetection::pixelToRobot(const VecVector2i& screenPoints, VecVector2f &planePoints) const {
 	Vector2f planePoint;
 
@@ -261,12 +243,23 @@ void MiddleCircleDetection::sendImagesForDebug()
 
             /// Draw border
             Vector2i pixelCoords;
-            for (const Vector2f& point : circleBorderPoints_) {
-                // both (x,y) and (x,-y) are points on the half-circle
-                if (cameraMatrix_->robotToPixel(point, pixelCoords)) {
-                    image.circle(Image422::get444From422Vector(pixelCoords), 2, Color::GREEN);
-                }
-            }
+            Vector2i last;
+            bool lastValid = false;
+			for (int angle = -180; angle < 181; angle++) {
+				float x = foundCircleData.circle.radius * cos(angle * M_PI / 180) + foundCircleData.circle.center.x();
+				float y = foundCircleData.circle.radius * sin(angle * M_PI / 180) + foundCircleData.circle.center.y();
+				if (cameraMatrix_->robotToPixel(Vector2f(x, y), pixelCoords)) {
+					pixelCoords = imageData_->image422.get444From422Vector(pixelCoords);
+					if (lastValid) {
+						image.line(last, pixelCoords, Color::GREEN);
+					}
+					lastValid = true;
+				}
+				else {
+					lastValid = false;
+				}
+				last = pixelCoords;
+			}
 
             /// Draw points near border
 			for (const Vector2i& point : debugCorrectMiddleCirclePoints_) {
@@ -282,11 +275,22 @@ void MiddleCircleDetection::sendImagesForDebug()
         else{
 			/// Draw border
 			Vector2i pixelCoords;
-			for (const Vector2f& point : circleBorderPoints_) {
-				// both (x,y) and (x,-y) are points on the half-circle
-				if (cameraMatrix_->robotToPixel(point, pixelCoords)) {
-					image.circle(Image422::get444From422Vector(pixelCoords), 2, Color::RED);
+			Vector2i last;
+			bool lastValid = false;
+			for (int angle = -180; angle < 181; angle++) {
+				float x = foundCircleData.circle.radius * cos(angle * TO_RAD) + foundCircleData.circle.center.x();
+				float y = foundCircleData.circle.radius * sin(angle * TO_RAD) + foundCircleData.circle.center.y();
+				if (cameraMatrix_->robotToPixel(Vector2f(x, y), pixelCoords)) {
+					pixelCoords = imageData_->image422.get444From422Vector(pixelCoords);
+					if (lastValid) {
+						image.line(last, pixelCoords, Color::RED);
+					}
+					lastValid = true;
 				}
+				else {
+					lastValid = false;
+				}
+				last = pixelCoords;
 			}
         }
         debug().sendImage(mount_ + "." + imageData_->identification + "_image_circle", image);

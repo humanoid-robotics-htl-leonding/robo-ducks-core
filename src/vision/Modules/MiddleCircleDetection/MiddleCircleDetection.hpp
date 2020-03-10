@@ -72,8 +72,6 @@ private:
 
     bool controlCircleBorder(const Circle<float>& circle);
 
-    void generateCircleSurroundPoints(const Circle<float>& circle);
-
 	void pixelToRobot(const VecVector2i& screenPoints, VecVector2f &planePoints) const;
 
 	VecVector2f circleBorderPoints_;
