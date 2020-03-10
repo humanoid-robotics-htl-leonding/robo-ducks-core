@@ -44,7 +44,7 @@ void DucksBishopActionProvider::cycle()
 }
 bool DucksBishopActionProvider::shouldPatrol()
 {
-    return teamBallModel_->position.x() < fieldZones_->bishopPatrolLeft.topLeft.x();
+    return teamBallModel_->position.x() < fieldZones_->bishopPatrolLeft.topLeft.x() && !shouldEvadeLiberationStrike();
 }
 void DucksBishopActionProvider::patrol()
 {
@@ -70,7 +70,24 @@ void DucksBishopActionProvider::patrol()
         }
         else {
             Rectangle<float> insideZone = (fieldZones_->isInside(robotPosition,fieldZones_->bishopPatrolRight)) ?fieldZones_->bishopPatrolRight :fieldZones_->bishopPatrolLeft;
+            bishopAction_->zone = insideZone;
+            if(robotPosition_->pose.isNear(Pose(insideZone.topLeft,getZoneCornerPatrolOrientation(insideZone.topLeft,insideZone)))){
+                patrolTarget = Pose(insideZone.topRight(),getZoneCornerPatrolOrientation(insideZone.topRight(),insideZone));
+            }
+            if(robotPosition_->pose.isNear(Pose(insideZone.topRight(),getZoneCornerPatrolOrientation(insideZone.topRight(),insideZone)))){
+                patrolTarget = Pose(insideZone.bottomRight,getZoneCornerPatrolOrientation(insideZone.bottomRight,insideZone));
+            }
+            if(robotPosition_->pose.isNear(Pose(insideZone.bottomRight,getZoneCornerPatrolOrientation(insideZone.bottomRight,insideZone)))){
+                patrolTarget = Pose(insideZone.bottomLeft(),getZoneCornerPatrolOrientation(insideZone.bottomLeft(),insideZone));
+            }
+            if(robotPosition_->pose.isNear(Pose(insideZone.bottomLeft(),getZoneCornerPatrolOrientation(insideZone.bottomLeft(),insideZone)))){
+                patrolTarget = Pose(insideZone.topLeft,getZoneCornerPatrolOrientation(insideZone.topLeft,insideZone));
+            }
 
+
+
+
+            bishopAction_->targetPose = patrolTarget;
             //when reaching a corner, go to the next one
         }
 
@@ -83,7 +100,7 @@ bool DucksBishopActionProvider::shouldEvadeLiberationStrike()
 void DucksBishopActionProvider::evadeLiberationStrike()
 {
     //go out of kickPath
-    //go where passing or kicking is then achieved faster
+    //go where passing to striker or kicking is then achieved faster
 }
 bool DucksBishopActionProvider::shouldPass()
 {
@@ -114,7 +131,16 @@ void DucksBishopActionProvider::strike()
 }
 float DucksBishopActionProvider::getZoneCornerPatrolOrientation(Vector2f corner,Rectangle<float> zone)
 {
-    corner.x();
-    zone.topLeft.x();
-    return 0;
+    if(corner == zone.topLeft){
+        return 0.0;
+    }
+    else if (corner ==zone.topRight()){
+        return -M_PI/2.0;
+    }
+    else if(corner ==zone.bottomRight){
+        return M_PI;
+    }
+    else{
+        return M_PI/2.0;
+    }
 }

@@ -46,4 +46,5 @@ private:
     bool shouldStrike();
     void strike();
     float getZoneCornerPatrolOrientation(Vector2f corner,Rectangle<float> zone);
+    Pose patrolTarget;
 };

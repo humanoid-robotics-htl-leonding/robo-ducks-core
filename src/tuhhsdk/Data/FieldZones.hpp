@@ -43,19 +43,23 @@ public:
 			position.y() >= zone.topLeft.y() && position.y() <= zone.bottomRight.y();
 	}
 
+	/**
+	 * @brief gets the nearest corner of a zone to a given position
+	 * @param position
+	 * @param zone
+	 * @return
+	 */
     Vector2f nearestCorner(const Vector2f& position, const Rectangle<float>& zone) const
     {
 	    Vector2f nearestCorner;
-        float distanceToTopLeft = abs((position-zone.topLeft).norm());
-        Vector2f bottomLeft = Vector2f(zone.topLeft.x(),zone.bottomRight.y());
-        float distanceToBottomLeft = abs((position-bottomLeft).norm());
-        float distanceToBottomRight = abs((position-zone.bottomRight).norm());
-        Vector2f topRight = Vector2f(zone.bottomRight.x(),zone.topLeft.y());
-        float distanceToTopRight = abs((position-topRight).norm());
+        float distanceToTopLeft = (position-zone.topLeft).norm();
+        float distanceToBottomLeft = (position-zone.bottomLeft()).norm();
+        float distanceToBottomRight = (position-zone.bottomRight).norm();
+        float distanceToTopRight = (position-zone.topRight()).norm();
 
         float minDistance = std::min({distanceToBottomLeft, distanceToBottomRight, distanceToTopLeft,distanceToTopRight});
         if(minDistance == distanceToBottomLeft){
-            return bottomLeft;
+            return zone.bottomLeft();
         }
         else if(minDistance == distanceToBottomRight){
             return zone.bottomRight;
@@ -64,7 +68,7 @@ public:
             return zone.topLeft;
         }
         else {
-            return topRight;
+            return zone.topRight();
         }
     }
 

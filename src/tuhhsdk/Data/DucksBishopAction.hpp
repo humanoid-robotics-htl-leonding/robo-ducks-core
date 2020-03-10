@@ -4,6 +4,7 @@
 
 #include "Framework/DataType.hpp"
 #include "Tools/Math/Pose.hpp"
+#include "Tools/Math/Rectangle.hpp"
 
 class DucksBishopAction: public DataType<DucksBishopAction>
 {
@@ -24,6 +25,7 @@ public:
     bool valid = false;
     Type type = Type::PATROL_AREA;
     Pose targetPose;
+    Rectangle<float> zone;
     /**
      * @brief invalidates the position
      */
@@ -38,6 +40,7 @@ public:
         value["valid"] << valid;
         value["type"] << static_cast<int>(type);
         value["targetPose"]<<targetPose;
+        value["zone"] <<zone;
     }
 
     virtual void fromValue(const Uni::Value &value)
@@ -47,5 +50,6 @@ public:
         value["type"] >> readNumber;
         type = static_cast<Type>(readNumber);
         value["targetPose"] >> targetPose;
+        value["zone"]>>zone;
     }
 };
