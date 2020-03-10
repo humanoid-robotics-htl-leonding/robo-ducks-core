@@ -1,5 +1,7 @@
 {
   "minSegmentLength": 3,
   "maxSegmentLength": 15,
-  "radiusTolerance": 0.2
+  "radiusTolerance": 0.1,
+  "relativePointsNearCircle": 0.5,
+  "absolutePointsNearCircle": 20
 }

@@ -14,6 +14,8 @@ MiddleCircleDetection::MiddleCircleDetection(const ModuleManagerInterface &manag
         , minSegmentLength_(*this, "minSegmentLength", [] {})
         , maxSegmentLength_(*this, "maxSegmentLength", [] {})
         , radiusTolerance_(*this, "radiusTolerance", [] {})
+        , relativePointsNearCircle_(*this, "relativePointsNearCircle", [] {})
+        , absolutePointsNearCircle_(*this, "absolutePointsNearCircle", [] {})
         , imageData_(*this)
         , fieldDimensions_(*this)
         , cameraMatrix_(*this)
@@ -169,54 +171,51 @@ void MiddleCircleDetection::initCorrectCircle() {
 
     Circle<float> candidateCircle = circleFitByHyper(planePoints);
 
-    if (circleIsValid(candidateCircle) && controlCircleBorder(candidateCircle) > 0.75){
+    if (circleIsValid(candidateCircle)){
         foundCircleData.circle.center = candidateCircle.center;
-            foundCircleData.circle.radius = candidateCircle.radius;
-
-        generateCircleSurroundPoints(candidateCircle);
-
+        foundCircleData.circle.radius = candidateCircle.radius;
+		std::cerr << candidateCircle.center.x() << "/" << candidateCircle.center.y() << "/" << candidateCircle.radius << std::endl;
     }
     else{
         foundCircleData.circle.radius = -1;
     }
+
+	generateCircleSurroundPoints(candidateCircle);
 }
 
 
 bool MiddleCircleDetection::circleIsValid(const Circle<float>& circle) {
-    const int MIN_DETECT_POINTS_AMOUNT = 10;
-
-    if(circle.radius < (fieldDimensions_->fieldCenterCircleDiameter / 2 - fieldDimensions_->fieldCenterCircleDiameter / 2 * radiusTolerance_()) ||
-       circle.radius > (fieldDimensions_->fieldCenterCircleDiameter / 2 + fieldDimensions_->fieldCenterCircleDiameter / 2 * radiusTolerance_()) ||
-       middleCirclePoints_.size() < MIN_DETECT_POINTS_AMOUNT
-    ){
+    if(abs(circle.radius - fieldDimensions_->fieldCenterCircleDiameter / 2) > radiusTolerance_())
+    {
         return false;
     }
 
     Vector2i pixelCoordsCenter;
-    if(!(cameraMatrix_->robotToPixel(circle.center, pixelCoordsCenter))){
-        foundCircleData.circle.radius=-1;
-        return false;
+    if(cameraMatrix_->robotToPixel(circle.center, pixelCoordsCenter)){
+		Segment segment;
+		if (!(imageSegments_->verticalSegmentAt(pixelCoordsCenter, segment) && segment.startEdgeType == EdgeType::RISING && segment.endEdgeType == EdgeType::FALLING)) {
+			return false;
+		}
     }
-    Segment segment;
-    if (imageSegments_->verticalSegmentAt(pixelCoordsCenter, segment)) {
-    	return segment.startEdgeType == EdgeType::RISING && segment.endEdgeType == EdgeType::FALLING;
-    }
-    return true;
+    return controlCircleBorder(circle);
 
 }
 
-double MiddleCircleDetection::controlCircleBorder(const Circle<float>& circle) {
+bool MiddleCircleDetection::controlCircleBorder(const Circle<float>& circle) {
+	debugCorrectMiddleCirclePoints_.clear();
     double amount = 0;
-    VecVector2f planePoints;
-    pixelToRobot(middleCirclePoints_, planePoints);
-    for(auto& point : planePoints){
-        double dist = (point - circle.center).norm();
+    for(auto& point : middleCirclePoints_){
+    	Vector2f planePoint;
+    	if (cameraMatrix_->pixelToRobot(point, planePoint)) {
+			double dist = (planePoint - circle.center).norm();
 
-        if(!(dist < circle.radius-(circle.radius*radiusTolerance_()) || dist > circle.radius+(circle.radius*radiusTolerance_())) ){
-            amount++;
-        }
+			if(abs(circle.radius - dist) <= radiusTolerance_()){
+				amount++;
+				debugCorrectMiddleCirclePoints_.push_back(point);
+			}
+    	}
     }
-    return amount/planePoints.size();
+    return amount >= absolutePointsNearCircle_() && amount / middleCirclePoints_.size() >= relativePointsNearCircle_();
 }
 
 /*
@@ -236,13 +235,13 @@ void MiddleCircleDetection::generateCircleSurroundPoints(const Circle<float>& ci
 }
 
 void MiddleCircleDetection::pixelToRobot(const VecVector2i& screenPoints, VecVector2f &planePoints) const {
-    Vector2f planePoint;
+	Vector2f planePoint;
 
-    for(auto& point : screenPoints){
-        if (cameraMatrix_->pixelToRobot(point, planePoint)){
-            planePoints.push_back(planePoint);
-        }
-    }
+	for(auto& point : screenPoints){
+		if (cameraMatrix_->pixelToRobot(point, planePoint)){
+			planePoints.push_back(planePoint);
+		}
+	}
 }
 
 void MiddleCircleDetection::sendImagesForDebug()
@@ -254,21 +253,25 @@ void MiddleCircleDetection::sendImagesForDebug()
 
         /// Draw found Points
         for (const auto &point : debugMiddleCirclePoints_) {
-            image.circle(Image422::get444From422Vector(point), 5, Color::ORANGE);
+            image.circle(Image422::get444From422Vector(point), 3, Color::ORANGE);
         }
 
         /// Draw Circle
         if (foundCircleData.circle.radius != -1) {
 
-
-            /// Draw circleBorderPoints_
+            /// Draw border
             Vector2i pixelCoords;
-            for (const Vector2f point : circleBorderPoints_) {
+            for (const Vector2f& point : circleBorderPoints_) {
                 // both (x,y) and (x,-y) are points on the half-circle
                 if (cameraMatrix_->robotToPixel(point, pixelCoords)) {
-                    image.circle(Image422::get444From422Vector(pixelCoords), 5, Color::RED);
+                    image.circle(Image422::get444From422Vector(pixelCoords), 2, Color::GREEN);
                 }
             }
+
+            /// Draw points near border
+			for (const Vector2i& point : debugCorrectMiddleCirclePoints_) {
+				image.circle(Image422::get444From422Vector(point), 3, Color::BLUE);
+			}
 
             /// Draw middle Point
             Vector2f centerPoint(foundCircleData.circle.center);
@@ -277,6 +280,14 @@ void MiddleCircleDetection::sendImagesForDebug()
             }
         }
         else{
+			/// Draw border
+			Vector2i pixelCoords;
+			for (const Vector2f& point : circleBorderPoints_) {
+				// both (x,y) and (x,-y) are points on the half-circle
+				if (cameraMatrix_->robotToPixel(point, pixelCoords)) {
+					image.circle(Image422::get444From422Vector(pixelCoords), 2, Color::RED);
+				}
+			}
         }
         debug().sendImage(mount_ + "." + imageData_->identification + "_image_circle", image);
 

@@ -36,14 +36,19 @@ private:
     const Parameter<unsigned int> minSegmentLength_;
     /// the maximum number of points in a middle circle segment
     const Parameter<unsigned int> maxSegmentLength_;
-	/// the maximum number of points in a middle circle segment
+	/// the tolerance of the circles' radius
 	const Parameter<float> radiusTolerance_;
+	/// the tolerance of the circles' radius
+	const Parameter<float> relativePointsNearCircle_;
+	/// the tolerance of the circles' radius
+	const Parameter<int> absolutePointsNearCircle_;
     /// a reference to the image without debug points
     const Dependency<ImageData> imageData_;
     /// field Dimensions
     const Dependency<FieldDimensions> fieldDimensions_;
     /// goal post points for debug purposes
     VecVector2i debugMiddleCirclePoints_;
+    VecVector2i debugCorrectMiddleCirclePoints_;
 
     /// detected lines
     std::vector<Circle<int>> middleCircles_;
@@ -65,12 +70,12 @@ private:
 
     bool circleIsValid(const Circle<float>& circle);
 
-    double controlCircleBorder(const Circle<float>& circle);
+    bool controlCircleBorder(const Circle<float>& circle);
 
     void generateCircleSurroundPoints(const Circle<float>& circle);
 
-    void pixelToRobot(const VecVector2i& screenPoints, VecVector2f &planePoints) const;
+	void pixelToRobot(const VecVector2i& screenPoints, VecVector2f &planePoints) const;
 
-    VecVector2f circleBorderPoints_;
+	VecVector2f circleBorderPoints_;
 
 };
