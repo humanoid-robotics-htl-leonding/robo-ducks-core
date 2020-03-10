@@ -17,6 +17,7 @@ public:
     {
         PATROL_AREA,
         EVADE_LIBERATION_STRIKE,
+        GO_TO_BALL_POSITION,
         DRIBBLE_TO_KICK_LOCATION,
         PASS,
         STRIKE,

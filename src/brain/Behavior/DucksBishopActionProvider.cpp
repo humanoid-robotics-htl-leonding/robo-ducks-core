@@ -188,8 +188,13 @@ bool DucksBishopActionProvider::shouldPass()
 }
 void DucksBishopActionProvider::pass()
 {
+    //go to ball
+    if(!robotPosition_->pose.isNear(Pose(teamBallModel_->position,std::atan((passBallTarget.y()-passBallSource.y())/(passBallTarget.x()-passBallSource.x()))))){
+        bishopAction_->targetPose = Pose(teamBallModel_->position,std::atan((passBallTarget.y()-passBallSource.y())/(passBallTarget.x()-passBallSource.x())));
+        bishopAction_->type = DucksBishopAction::Type::GO_TO_BALL_POSITION;
+    }
     //dribble to passing Location
-    if(!robotPosition_->pose.isNear(Pose(passBallSource,std::atan((passBallTarget.y()-passBallSource.y())/(passBallTarget.x()-passBallSource.x()))))){
+    else if(!robotPosition_->pose.isNear(Pose(passBallSource,std::atan((passBallTarget.y()-passBallSource.y())/(passBallTarget.x()-passBallSource.x()))))){
         bishopAction_->targetPose = Pose(passBallSource,std::atan((passBallTarget.y()-passBallSource.y())/(passBallTarget.x()-passBallSource.x())));
         bishopAction_->type = DucksBishopAction::Type::DRIBBLE_TO_KICK_LOCATION;
     }
@@ -221,7 +226,10 @@ void DucksBishopActionProvider::shadowBall()
 
 bool DucksBishopActionProvider::shouldStrike()
 {
-    //check if kicking ball into goal is possible
+    //check if kicking ball into goal is possible and should be done
+
+    //ball is in zones of bishop
+        //striker is not offensive
     return false;
 }
 void DucksBishopActionProvider::strike()
