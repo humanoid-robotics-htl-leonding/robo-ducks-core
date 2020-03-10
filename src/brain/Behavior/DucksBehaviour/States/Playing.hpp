@@ -28,17 +28,20 @@ DucksActionCommand playing(const DucksDataSet &d)
 		auto robotPose = d.robotPosition.fieldToRobot(d.ballSearchPosition.pose);
 		auto robotSpacePos = Vector3f(robotPos.x(), robotPos.y(), 0.0);
 		if(!command.body().valid()){
-			if(
-				d.ballSearchPosition.reason == DuckBallSearchPosition::SEARCH_WALK ||
-				d.ballSearchPosition.reason == DuckBallSearchPosition::I_AM_ON_IT
-				){
-				command = walkTo(d.ballSearchPosition.pose, d);
-			}else if(d.ballSearchPosition.reason == DuckBallSearchPosition::SEARCH_TURN){
-				command = walkTo(d.robotPosition.pose.oriented(d.ballSearchPosition.pose.orientation), d)
-					.combineBodyWalkType(WalkMode::DIRECT_WITH_ORIENTATION);
-			}else{
-//				command = DucksActionCommand::stand();
-			}
+//			if(
+//				d.ballSearchPosition.reason == DuckBallSearchPosition::SEARCH_WALK ||
+//				d.ballSearchPosition.reason == DuckBallSearchPosition::I_AM_ON_IT
+//				){
+//			std::cout << "Walking to other Pose" << std::endl;
+			command = walkTo(d.ballSearchPosition.pose, d);
+//			}else if(d.ballSearchPosition.reason == DuckBallSearchPosition::SEARCH_TURN){
+//				command = walkTo(d.robotPosition.pose.oriented(d.ballSearchPosition.pose.orientation), d)
+//					.combineBodyWalkType(WalkMode::DIRECT_WITH_ORIENTATION);
+//			}else{
+////				command = DucksActionCommand::stand();
+//			}
+
+			command.combineRightEarLED(DucksActionCommand::EarLED::brightness(1.0));
 		}
 
 		command.combineHead(DucksActionCommand::Head::lookAt(robotSpacePos, 1.0, 1.0));
@@ -57,11 +60,13 @@ DucksActionCommand playing(const DucksDataSet &d)
 				command.combineLeftLED(DucksActionCommand::EyeLED::lightblue());
 				break;
 			case DuckBallSearchPosition::SEARCH_TURN:
-				command.combineLeftLED(DucksActionCommand::EyeLED::blue());
+				command.combineLeftLED(DucksActionCommand::EyeLED::lightblue());
 				break;
 			case DuckBallSearchPosition::I_AM_ON_IT:
 				command.combineLeftLED(DucksActionCommand::EyeLED::yellow());
 				break;
+			case DuckBallSearchPosition::LOOK_AROUND:
+				command.combineLeftLED(DucksActionCommand::EyeLED::green());
 			default: break;
 		}
 

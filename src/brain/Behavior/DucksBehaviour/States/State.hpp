@@ -29,7 +29,7 @@ DucksActionCommand chooseState(const DucksDataSet &d)
 	switch (d.gameControllerState.gameState) {
 		case GameState::INITIAL:
 			if (d.gameControllerState.chestButtonWasPressedInInitial) {
-				return initial(d).combineChestLED(DucksActionCommand::ChestLED::pink());
+				return initial(d).combineChestLED(DucksActionCommand::ChestLED::off());
 			}
 			else {
 				return started(d)
@@ -44,7 +44,7 @@ DucksActionCommand chooseState(const DucksDataSet &d)
 		case GameState::READY: return ready(d).combineChestLED(DucksActionCommand::ChestLED::blue());
 		case GameState::SET: return set(d).combineChestLED(DucksActionCommand::ChestLED::yellow());
 		case GameState::PLAYING: return playing(d).combineChestLED(DucksActionCommand::ChestLED::green());
-		case GameState::FINISHED: return started(d).combineChestLED(DucksActionCommand::ChestLED::white());
+		case GameState::FINISHED: return started(d).combineChestLED(DucksActionCommand::ChestLED::off());
 		default: return DucksActionCommand::penalized();
 	}
 }

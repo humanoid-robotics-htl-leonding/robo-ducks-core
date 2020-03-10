@@ -1,6 +1,6 @@
 {
    "exposure" : 4000,
-   "gain" : 120,
+   "gain" : 80,
    "autoExposure" : 1,
    "autoFocus" : 0,
    "autoHue" : 1,
