@@ -19,15 +19,19 @@ public:
   float fieldLineWidth = 0.f;
   /// the size of the penalty marker (D) [m]
   float fieldPenaltyMarkerSize = 0.f;
-  /// the length of the penalty area (E) [m]
+  /// the length of the goalBox (E) [m]
+  float fieldGoalBoxAreaLength = 0.f;
+  /// the width of the goal box (F) [m]
+  float fieldGoalBoxAreaWidth = 0.f;
+  /// the length of the penalty area (G) [m]
   float fieldPenaltyAreaLength = 0.f;
-  /// the width of the penalty area (F) [m]
+  /// the width of the penalty area (H) [m]
   float fieldPenaltyAreaWidth = 0.f;
-  /// the distance of the penalty marker to the end of the field (G) [m]
+  /// the distance of the penalty marker to the end of the field (I) [m]
   float fieldPenaltyMarkerDistance = 0.f;
-  /// the diameter of the center circle (H) [m]
+  /// the diameter of the center circle (J) [m]
   float fieldCenterCircleDiameter = 0.f;
-  /// the width of the border strip (I) [m]
+  /// the width of the border strip (K) [m]
   float fieldBorderStripWidth = 0.f;
   /// the diameter of each goal post [m]
   float goalPostDiameter = 0.f;
@@ -78,6 +82,8 @@ public:
     value["fieldWidth"] << fieldWidth;
     value["fieldLineWidth"] << fieldLineWidth;
     value["fieldPenaltyMarkerSize"] << fieldPenaltyMarkerSize;
+    value["fieldGoalBoxAreaLength"] << fieldGoalBoxAreaLength;
+    value["fieldGoalBoxAreaWidth"] << fieldGoalBoxAreaWidth;
     value["fieldPenaltyAreaLength"] << fieldPenaltyAreaLength;
     value["fieldPenaltyAreaWidth"] << fieldPenaltyAreaWidth;
     value["fieldPenaltyMarkerDistance"] << fieldPenaltyMarkerDistance;
@@ -98,6 +104,8 @@ public:
     value["fieldWidth"] >> fieldWidth;
     value["fieldLineWidth"] >> fieldLineWidth;
     value["fieldPenaltyMarkerSize"] >> fieldPenaltyMarkerSize;
+    value["fieldGoalBoxAreaLength"] >> fieldGoalBoxAreaLength;
+    value["fieldGoalBoxAreaWidth"] >> fieldGoalBoxAreaWidth;
     value["fieldPenaltyAreaLength"] >> fieldPenaltyAreaLength;
     value["fieldPenaltyAreaWidth"] >> fieldPenaltyAreaWidth;
     value["fieldPenaltyMarkerDistance"] >> fieldPenaltyMarkerDistance;
@@ -127,6 +135,8 @@ public:
     group["width"] >> fieldWidth;
     group["lineWidth"] >> fieldLineWidth;
     group["penaltyMarkerSize"] >> fieldPenaltyMarkerSize;
+    group["goalBoxAreaLength"] >> fieldGoalBoxAreaLength;
+    group["goalBoxAreaWidth"] >> fieldGoalBoxAreaWidth;
     group["penaltyAreaLength"] >> fieldPenaltyAreaLength;
     group["penaltyAreaWidth"] >> fieldPenaltyAreaWidth;
     group["penaltyMarkerDistance"] >> fieldPenaltyMarkerDistance;
