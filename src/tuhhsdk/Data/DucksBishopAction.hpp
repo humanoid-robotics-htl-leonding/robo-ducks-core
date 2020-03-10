@@ -17,6 +17,7 @@ public:
     {
         PATROL_AREA,
         EVADE_LIBERATION_STRIKE,
+        DRIBBLE_TO_KICK_LOCATION,
         PASS,
         STRIKE,
         SHADOW_BALL
@@ -25,7 +26,7 @@ public:
     bool valid = false;
     Type type = Type::PATROL_AREA;
     Pose targetPose;
-    Rectangle<float> zone;
+    Vector2f kickTarget;
     /**
      * @brief invalidates the position
      */
@@ -40,7 +41,8 @@ public:
         value["valid"] << valid;
         value["type"] << static_cast<int>(type);
         value["targetPose"]<<targetPose;
-        value["zone"] <<zone;
+        value["kickTarget"] <<kickTarget;
+
     }
 
     virtual void fromValue(const Uni::Value &value)
@@ -50,6 +52,7 @@ public:
         value["type"] >> readNumber;
         type = static_cast<Type>(readNumber);
         value["targetPose"] >> targetPose;
-        value["zone"]>>zone;
+        value["kickTarget"] >> kickTarget;
+
     }
 };

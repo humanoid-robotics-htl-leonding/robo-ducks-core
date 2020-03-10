@@ -49,6 +49,17 @@
       0.2
     ]
   },
+  "bishopPass": {
+    "from": [
+      -0.4,
+      1.6
+    ],
+    "to": [
+      0.4,
+      -1.6
+    ]
+  },
+
   "bishopShadowBall": {
     "from": [
       1,

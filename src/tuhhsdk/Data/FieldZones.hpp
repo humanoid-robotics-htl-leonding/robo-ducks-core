@@ -25,6 +25,8 @@ public:
     ///the bishop shadowing ball zone
     Rectangle<float> bishopShadowBall;
 
+    Rectangle<float> bishopPass;
+
     /**
 	 * @brief reset does nothing
 	 */
@@ -78,13 +80,22 @@ public:
 		value["defenderKick"] << defenderKick;
 		value["defenderDribble"] << defenderDribble;
 		value["keeper"] << keeper;
-	}
+        value["bishopPass"] << bishopPass;
+        value["bishopShadowBall"] << bishopShadowBall;
+        value["bishopPatrolRight"] << bishopPatrolRight;
+        value["bishopPatrolLeft"] << bishopPatrolLeft;
+
+    }
 
 	virtual void fromValue(const Uni::Value& value)
 	{
 		value["defenderKick"] >> defenderKick;
 		value["defenderDribble"] >> defenderDribble;
 		value["keeper"] >> keeper;
+        value["bishopPass"] >> bishopPass;
+        value["bishopShadowBall"] >> bishopShadowBall;
+        value["bishopPatrolRight"] >> bishopPatrolRight;
+        value["bishopPatrolLeft"] >> bishopPatrolLeft;
 	}
 
 	/**
@@ -134,6 +145,12 @@ public:
         group["from"] >> from;
         group["to"] >> to;
         bishopShadowBall = Rectangle<float>(from, to);
+
+        group = config.get("tuhhSDK.FieldZones", "bishopPass");
+
+        group["from"] >> from;
+        group["to"] >> to;
+        bishopPass = Rectangle<float>(from, to);
 	}
 };
 
