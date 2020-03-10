@@ -32,10 +32,10 @@ public:
 	 * @param threshold "rounding error" countermeasure
 	 * @return true if the position is in the defender kick zone
 	 */
-	bool isInside(const Vector2f& position, const Rectangle<float>& zone,const float threshold = 0.0) const
+	bool isInside(const Vector2f& position, const Rectangle<float>& zone, const float threshold = 0.0) const
 	{
-		return position.x() +threshold>= zone.topLeft.x() && position.x() <= zone.bottomRight.x() +threshold&&
-			position.y() +threshold >= zone.topLeft.y()  && position.y() <= threshold + zone.bottomRight.y();
+		return position.x() + threshold >= zone.topLeft.x() && position.x() <= zone.bottomRight.x() + threshold&&
+			position.y() + threshold >= zone.topLeft.y() && position.y() <= threshold + zone.bottomRight.y();
 	}
 
 
