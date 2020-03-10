@@ -141,20 +141,12 @@ void CameraCalibration::projectCenterCircleOnImages() {
 	center.x() = fieldWidth / 2;
 	center.y() = 0;
 
-	left.x() = fieldWidth / 2;
-	left.y() = -centerCircleRadius;
-
-	right.x() = fieldWidth / 2;
-	right.y() = centerCircleRadius;
-
 	cut.x() = fieldWidth / 2 - centerCircleRadius;
 	cut.y() = 0;
 
-	Vector2i pz, pcc, pl, pr, pct;
+	Vector2i pz, pcc, pct;
 	if (!camera_matrix_->robotToPixel(zero, pz) ||
 		!camera_matrix_->robotToPixel(center, pcc) ||
-		!camera_matrix_->robotToPixel(left, pl) ||
-		!camera_matrix_->robotToPixel(right, pr) ||
 		!camera_matrix_->robotToPixel(cut, pct))
 	{
 		Log(LogLevel::WARNING) << "The projection is outside of the observable image!";
@@ -163,18 +155,31 @@ void CameraCalibration::projectCenterCircleOnImages() {
 
 	pz = image_data_->image422.get444From422Vector(pz);
 	pcc = image_data_->image422.get444From422Vector(pcc);
-	pl = image_data_->image422.get444From422Vector(pl);
-	pr = image_data_->image422.get444From422Vector(pr);
 	pct = image_data_->image422.get444From422Vector(pct);
 
 	calibImage_.cross(pcc, 8, Color::RED);
-	calibImage_.cross(pl, 8, Color::RED);
-	calibImage_.cross(pr, 8, Color::RED);
 	calibImage_.cross(pct, 8, Color::RED);
 
 	calibImage_.line(pz, pcc, Color::PINK);
-	calibImage_.line(pct, pl, Color::PINK);
-	calibImage_.line(pct, pr, Color::PINK);
+
+	Vector2i last;
+	Vector2i curr;
+	bool lastValid = false;
+	for (int angle = -180; angle < 181; angle++) {
+		float x = centerCircleRadius * cos(angle * TO_RAD) + center.x();
+		float y = centerCircleRadius * sin(angle * TO_RAD) + center.y();
+		if (camera_matrix_->robotToPixel(Vector2f(x, y), curr)) {
+			curr = image_data_->image422.get444From422Vector(curr);
+			if (lastValid) {
+				calibImage_.line(last, curr, Color::PINK);
+			}
+			lastValid = true;
+		}
+		else {
+			lastValid = false;
+		}
+		last = curr;
+	}
 }
 
 void CameraCalibration::sendImageForCalibration() {
