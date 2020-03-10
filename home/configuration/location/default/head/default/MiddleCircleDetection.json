@@ -1,5 +1,5 @@
 {
   "minSegmentLength": 3,
-  "maxSegmentLength": 10,
+  "maxSegmentLength": 15,
   "radiusTolerance": 0.2
 }

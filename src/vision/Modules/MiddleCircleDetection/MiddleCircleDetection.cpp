@@ -39,7 +39,6 @@ void MiddleCircleDetection::cycle() {
     if (filteredSegments_->valid) {
         detectMiddleCirclePoints();
         debugMiddleCirclePoints_ = middleCirclePoints_;
-        printf("SizePoint: %zu\n",debugMiddleCirclePoints_.size());
         initCorrectCircle();
     }
 
@@ -82,6 +81,7 @@ Circle<float> circleFitByHyper(const VecVector2f& points)
 
     Vector3f i;
     Eigen::Matrix<float, 2, 3> M;
+    M.fill(0);
     float Mz,Cov_xy,Var_z;
     float A0,A1,A2,A22;
     float Dy,xnew,x,ynew,y;
@@ -123,7 +123,7 @@ Circle<float> circleFitByHyper(const VecVector2f& points)
 
     A2 = 4.0*Cov_xy - 3.0*Mz*Mz - M(1, 2);
     A1 = Var_z*Mz + 4.0*Cov_xy*Mz - M(0, 2) * M(0, 2) - M(1, 1) * M(1, 1);
-    A0 = M(0, 2) *(M(0, 2) * M(1, 0) - M(1, 1) * M(0, 0)) + M(1, 1) * (M(1, 1) * M(0, 0) - M(0, 2) * M(0, 1)) - Var_z*Cov_xy;
+    A0 = M(0, 2) *(M(0, 2) * M(1, 0) - M(1, 1) * M(0, 1)) + M(1, 1) * (M(1, 1) * M(0, 0) - M(0, 2) * M(0, 1)) - Var_z*Cov_xy;
     A22 = A2 + A2;
 
 //    finding the root of the characteristic polynomial
@@ -134,7 +134,7 @@ Circle<float> circleFitByHyper(const VecVector2f& points)
     {
         Dy = A1 + x*(A22 + 16.*x*x);
         xnew = x - y/Dy;
-        if ((xnew == x)||(!finite(xnew))) break;
+        if (xnew == x || !finite(xnew)) break;
         ynew = A0 + xnew*(A1 + xnew*(A2 + 4.0*xnew*xnew));
         if (abs(ynew)>=abs(y))  break;
         x = xnew;  y = ynew;
@@ -169,7 +169,7 @@ void MiddleCircleDetection::initCorrectCircle() {
 
     Circle<float> candidateCircle = circleFitByHyper(planePoints);
 
-    if (circleIsValid(candidateCircle) && controlCircleBorder(candidateCircle) > 0.9){
+    if (circleIsValid(candidateCircle) && controlCircleBorder(candidateCircle) > 0.75){
         foundCircleData.circle.center = candidateCircle.center;
             foundCircleData.circle.radius = candidateCircle.radius;
 
@@ -189,18 +189,19 @@ bool MiddleCircleDetection::circleIsValid(const Circle<float>& circle) {
        circle.radius > (fieldDimensions_->fieldCenterCircleDiameter / 2 + fieldDimensions_->fieldCenterCircleDiameter / 2 * radiusTolerance_()) ||
        middleCirclePoints_.size() < MIN_DETECT_POINTS_AMOUNT
     ){
-        printf("Amount:%zu \nRadius:%f\n",middleCirclePoints_.size(),circle.radius);
         return false;
     }
 
     Vector2i pixelCoordsCenter;
     if(!(cameraMatrix_->robotToPixel(circle.center, pixelCoordsCenter))){
         foundCircleData.circle.radius=-1;
-        printf("2\n");
         return false;
     }
     Segment segment;
-    return imageSegments_->verticalSegmentAt(pixelCoordsCenter, segment) && !(segment.startEdgeType != EdgeType::RISING || segment.endEdgeType != EdgeType::FALLING);
+    if (imageSegments_->verticalSegmentAt(pixelCoordsCenter, segment)) {
+    	return segment.startEdgeType == EdgeType::RISING && segment.endEdgeType == EdgeType::FALLING;
+    }
+    return true;
 
 }
 
