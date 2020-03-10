@@ -23,15 +23,13 @@ void DucksStrikerActionProvider::cycle()
     Vector2f goal = Vector2f(fieldDimensions_->fieldLength / 2, 0);
 
     if (robotPosition_->pose.position.x() >= 0) { // is in enemy half
-        if (absoluteBallPosition.x() >= 0 && teamBallModel_->found) {
+        if (absoluteBallPosition.x() >= 0) {
             kick(goal);
         } else {
             wait();
         }
     } else {
-        if (ballState_->found) {
             dribble(goal);
-        }
     }
 
 
