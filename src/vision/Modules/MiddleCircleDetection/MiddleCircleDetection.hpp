@@ -36,6 +36,8 @@ private:
     const Parameter<unsigned int> minSegmentLength_;
     /// the maximum number of points in a middle circle segment
     const Parameter<unsigned int> maxSegmentLength_;
+	/// the maximum number of points in a middle circle segment
+	const Parameter<float> radiusTolerance_;
     /// a reference to the image without debug points
     const Dependency<ImageData> imageData_;
     /// field Dimensions

@@ -13,6 +13,7 @@ MiddleCircleDetection::MiddleCircleDetection(const ModuleManagerInterface &manag
         , imageSegments_(*this)
         , minSegmentLength_(*this, "minSegmentLength", [] {})
         , maxSegmentLength_(*this, "maxSegmentLength", [] {})
+        , radiusTolerance_(*this, "radiusTolerance", [] {})
         , imageData_(*this)
         , fieldDimensions_(*this)
         , cameraMatrix_(*this)
@@ -182,11 +183,10 @@ void MiddleCircleDetection::initCorrectCircle() {
 
 
 bool MiddleCircleDetection::circleIsValid(const Circle<float>& circle) {
-    const double RADIUS_TOLERANCE = 0.2;
     const int MIN_DETECT_POINTS_AMOUNT = 10;
 
-    if(circle.radius < (fieldDimensions_->fieldCenterCircleDiameter / 2 - fieldDimensions_->fieldCenterCircleDiameter / 2 * RADIUS_TOLERANCE) ||
-       circle.radius > (fieldDimensions_->fieldCenterCircleDiameter / 2 + fieldDimensions_->fieldCenterCircleDiameter / 2 * RADIUS_TOLERANCE) ||
+    if(circle.radius < (fieldDimensions_->fieldCenterCircleDiameter / 2 - fieldDimensions_->fieldCenterCircleDiameter / 2 * radiusTolerance_()) ||
+       circle.radius > (fieldDimensions_->fieldCenterCircleDiameter / 2 + fieldDimensions_->fieldCenterCircleDiameter / 2 * radiusTolerance_()) ||
        middleCirclePoints_.size() < MIN_DETECT_POINTS_AMOUNT
     ){
         printf("Amount:%zu \nRadius:%f\n",middleCirclePoints_.size(),circle.radius);
@@ -205,14 +205,13 @@ bool MiddleCircleDetection::circleIsValid(const Circle<float>& circle) {
 }
 
 double MiddleCircleDetection::controlCircleBorder(const Circle<float>& circle) {
-    const double RADIUS_TOLERANCE = 0.15;
     double amount = 0;
     VecVector2f planePoints;
     pixelToRobot(middleCirclePoints_, planePoints);
     for(auto& point : planePoints){
         double dist = (point - circle.center).norm();
 
-        if(!(dist < circle.radius-(circle.radius*RADIUS_TOLERANCE) || dist > circle.radius+(circle.radius*RADIUS_TOLERANCE)) ){
+        if(!(dist < circle.radius-(circle.radius*radiusTolerance_()) || dist > circle.radius+(circle.radius*radiusTolerance_())) ){
             amount++;
         }
     }
