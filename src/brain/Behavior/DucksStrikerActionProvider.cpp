@@ -34,8 +34,12 @@ void DucksStrikerActionProvider::cycle()
         }
     }
 
+
+
     auto strikerUrgency = getStrikerUrgency();
-    if (strikerUrgency >= 0.8) {
+    std::cout << "lookAtBallUrgency: " << desperation_->lookAtBallUrgency << std::endl;
+    std::cout << "strikerUrgency: " << strikerUrgency << std::endl;
+    if (desperation_->lookAtBallUrgency > strikerUrgency) {
         strikerAction_->valid = false;
         return;
     }
@@ -65,8 +69,7 @@ void DucksStrikerActionProvider::wait() {
 
 double DucksStrikerActionProvider::getStrikerUrgency() {
     Vector2f robotToGoal = robotPosition_->pose.position - Vector2f(fieldDimensions_->fieldLength / 2, 0);
-    double distancePercent = robotToGoal.norm() / fieldDimensions_->fieldLength;
-    double strikerUrgency = (distancePercent + desperation_->lookAtBallUrgency) / 2;
+    double strikerUrgency = 1 - (robotToGoal.norm() / fieldDimensions_->fieldLength);
 
     return strikerUrgency;
 }
