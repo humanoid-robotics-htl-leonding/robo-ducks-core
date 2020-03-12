@@ -15,10 +15,10 @@ import { Observable } from 'rxjs';
 export class NaoTextComponent implements OnInit {
 
   connector: NaoConnector;
-  
 
   myControl = new FormControl();
   filteredOptions: Observable<string[]>;
+  values: Observable<string[]>;
 
 
   constructor(private naoService: NaoService, @Inject(CONTAINER_DATA) public id: number) { }
@@ -32,13 +32,29 @@ export class NaoTextComponent implements OnInit {
       map(value => this._filter(value))
     );
 
+    this.values = this.myControl.valueChanges
+    .pipe(
+      startWith(''),
+      map(value => this._keyFilter(value))
+    );
+
+  }
+  _keyFilter(value: string): string[] {
+
+    const filterKey = value;
+
+    console.log("Help " + this.connector.keys.find(k => k.key.toLowerCase() == filterKey.toLowerCase()).value);
+
+    return this.connector.keys.find(k => k.key.toLowerCase() == filterKey.toLowerCase()).value;
+
+    //return this.connector.keys.map(v => v.value).filter(value => value.toString().toLowerCase().includes(filterKey));
+
   }
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-
-
-    return this.connector.keys.filter(key => key.toString().toLowerCase().includes(filterValue));
+  
+    return this.connector.keys.map(k => k.key).filter(key => key.toString().toLowerCase().includes(filterValue));
 
  //   return this.options.filter(option => option.toLowerCase().includes(filterValue));
 
