@@ -40,20 +40,35 @@ void HeadPositionProvider::fillInterestingLocalizationPoints()
   // the center point
   absolutePOIs_.emplace_back(0.f, 0.f, 1.f);
 
-  // the own penalty box
+  // the own penalty area
   absolutePOIs_.emplace_back(-fieldDimensions_->fieldLength * 0.5f +
                                  fieldDimensions_->fieldPenaltyAreaLength,
                              fieldDimensions_->fieldPenaltyAreaWidth * 0.5, 1.f);
   absolutePOIs_.emplace_back(-fieldDimensions_->fieldLength * 0.5f +
                                  fieldDimensions_->fieldPenaltyAreaLength,
                              -fieldDimensions_->fieldPenaltyAreaWidth * 0.5, 1.f);
-  // the opponents penalty box
+  // the opponents penalty area
   absolutePOIs_.emplace_back(fieldDimensions_->fieldLength * 0.5f -
                                  fieldDimensions_->fieldPenaltyAreaLength,
                              fieldDimensions_->fieldPenaltyAreaWidth * 0.5, 1.f);
   absolutePOIs_.emplace_back(fieldDimensions_->fieldLength * 0.5f -
                                  fieldDimensions_->fieldPenaltyAreaLength,
                              -fieldDimensions_->fieldPenaltyAreaWidth * 0.5, 1.f);
+
+    // the own goal box
+    absolutePOIs_.emplace_back(-fieldDimensions_->fieldLength * 0.5f +
+                               fieldDimensions_->fieldGoalBoxLength,
+                               fieldDimensions_->fieldGoalBoxWidth * 0.5, 1.f);
+    absolutePOIs_.emplace_back(-fieldDimensions_->fieldLength * 0.5f +
+                               fieldDimensions_->fieldGoalBoxLength,
+                               -fieldDimensions_->fieldGoalBoxWidth * 0.5, 1.f);
+    // the opponents goal box
+    absolutePOIs_.emplace_back(fieldDimensions_->fieldLength * 0.5f -
+                               fieldDimensions_->fieldGoalBoxLength,
+                               fieldDimensions_->fieldGoalBoxWidth * 0.5, 1.f);
+    absolutePOIs_.emplace_back(fieldDimensions_->fieldLength * 0.5f -
+                               fieldDimensions_->fieldGoalBoxLength,
+                               -fieldDimensions_->fieldGoalBoxWidth * 0.5, 1.f);
   // T intersection
   absolutePOIs_.emplace_back(0, fieldDimensions_->fieldWidth * 0.5f, 1.f);
   absolutePOIs_.emplace_back(0, -fieldDimensions_->fieldWidth * 0.5f, 1.f);

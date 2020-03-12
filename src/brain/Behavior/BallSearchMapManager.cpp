@@ -128,7 +128,7 @@ void BallSearchMapManager::updateMap()
     ProbCell* cell;
     cell = &ballSearchMap_->cellFromPosition(Vector2f(
         side * (fieldDimensions_->fieldLength / 2.f - fieldDimensions_->fieldPenaltyMarkerDistance),
-        std::copysign(fieldDimensions_->fieldPenaltyAreaWidth / 2.f, absoluteOwnBall.y())));
+        std::copysign(fieldDimensions_->fieldGoalBoxWidth / 2.f, absoluteOwnBall.y())));
     cell->probability =
         std::max(minProbOnUpvote_(), cell->probability * confidentBallMultiplier_());
     Vector2f p = Vector2f(cell->position.x(), cell->position.y() * -1);

@@ -24,7 +24,7 @@ DefendingPositionProvider::DefendingPositionProvider(const ModuleManagerInterfac
                                  (float) std::fmax(fieldDimensions_->fieldPenaltyMarkerDistance - 0.3f, 0.5f)) // Little bit of a hacky solution to deal with small field sizes.
   , neutralDefenseLineX_(passiveDefenseLineX_ + 1.f)
   , aggressiveDefenseLineX_(neutralDefenseLineX_ + 1.f)
-  , passiveDefenseLineY_(fieldDimensions_->fieldPenaltyAreaWidth / 2 + 0.4f)
+  , passiveDefenseLineY_(fieldDimensions_->fieldGoalBoxWidth / 2 + 0.4f)
   , iAmFar_(false)
   , otherIsFar_(false)
   , iAmLeftOfOther_(true)

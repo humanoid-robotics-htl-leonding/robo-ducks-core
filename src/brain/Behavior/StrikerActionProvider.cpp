@@ -115,7 +115,7 @@ void StrikerActionProvider::cycle()
   // is ball near to own goal?
   if (isBallNearOwnGoal())
   {
-    if (worldState_->ballInPenaltyArea)
+    if (worldState_->ballInGoalBox)
     {
       const Vector2f interpolatedDirection(getInterpolatedDirection());
       const Vector2f robotToBall(absBallPosition - robotPosition_->pose.position);
@@ -236,7 +236,7 @@ void StrikerActionProvider::cycle()
   }
   else if (isBallNearOpponentGoal())
   {
-    if (worldState_->ballInPenaltyArea)
+    if (worldState_->ballInGoalBox)
     {
       // use side kick?
       if (useSideKickParam_() && useSideKick())
