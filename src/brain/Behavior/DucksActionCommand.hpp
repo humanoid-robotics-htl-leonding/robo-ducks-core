@@ -820,7 +820,7 @@ public:
 	 * @return a kick action command
 	 */
 	static DucksActionCommand kick(const Vector2f &ball_position, const Vector2f &ball_target,
-								   const bool forceHammer = false)
+								   const bool forceHammer)
 	{
 		return DucksActionCommand(Body::kick(ball_position, ball_target, forceHammer), Arm::body(), Arm::body(),
 								  Head::body(), EyeLED::colors(), EyeLED::colors());

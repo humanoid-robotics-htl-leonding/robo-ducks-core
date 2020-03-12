@@ -65,4 +65,7 @@ private:
     Vector2f passBallSource;
     Vector2f passBallTarget;
 
+    bool currentlyDoingStrikingAction;
+    Vector2f strikeSource;
+    Vector2f strikeTarget;
 };

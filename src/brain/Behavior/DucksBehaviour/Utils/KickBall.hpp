@@ -7,7 +7,7 @@
  * @param targetPos Where to kick to (absolute coordinates)
  * @return
  */
-DucksActionCommand kick(const DucksDataSet& d, const Vector2f& targetPos){
+DucksActionCommand kick(const DucksDataSet& d, const Vector2f& targetPos,const bool forceHammer = false){
 
 	//TODO USE BALLSTATE HERE INSTEAD OF TEAMBALLMODEL
 	Vector2f goalToBall = d.teamBallModel.position - targetPos;
@@ -29,7 +29,7 @@ DucksActionCommand kick(const DucksDataSet& d, const Vector2f& targetPos){
 
 	if(currentRobotPosition.isNear(globalTargetRobotPosition, 0.045)) {
 		return DucksActionCommand::kick(d.robotPosition.fieldToRobot(d.teamBallModel.position),
-										d.robotPosition.fieldToRobot(targetPos)).combineLeftEarLED(DucksActionCommand::EarLED::brightness(1.0));
+										d.robotPosition.fieldToRobot(targetPos),forceHammer).combineLeftEarLED(DucksActionCommand::EarLED::brightness(1.0));
 	}else{
 		return DucksActionCommand::walk(
 			d.robotPosition.fieldToRobot(globalTargetRobotPosition),

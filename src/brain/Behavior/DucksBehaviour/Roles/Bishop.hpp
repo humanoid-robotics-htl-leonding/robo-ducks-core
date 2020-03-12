@@ -19,5 +19,9 @@ DucksActionCommand roleBishop(const DucksDataSet &d)
     {
         return kick(d,bishopAction.kickTarget);
     }
+    if(bishopAction.type == DucksBishopAction::Type::STRIKE)
+    {
+        return kick(d,bishopAction.kickTarget,true);
+    }
 	return DucksActionCommand::stand().invalidate();
 }

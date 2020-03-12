@@ -44,7 +44,7 @@ void DucksBishopActionProvider::cycle()
             evadeLiberationStrike();
         } else if (shouldPass() || currentlyDoingPassingAction) {
             pass();
-        } else if (shouldShadowBall()) {
+        } else if (shouldShadowBall() || currentlyDoingStrikingAction) {
             shadowBall();
         } else if (shouldStrike()) {
             strike();
@@ -131,6 +131,7 @@ bool DucksBishopActionProvider::shouldPass()
         const TeamPlayer *striker = nullptr;
         findStriker(striker);
         if (striker != nullptr) {
+            //TODO maybe striker zone
             if(!(striker->pose.position.x() >= strikerIsOffensiveLine_())){
                 return false;
             }
@@ -160,10 +161,10 @@ bool DucksBishopActionProvider::shouldPass()
                         raySegmentCenters.emplace_back(intersections.at(0),ballPosition.y()+jump);
                     }
                 }
-                if(jump == 0){
+                if(jump == 0.0){
                     jump = 0.5;
                 }
-                if(jump >0){
+                if(jump >0.0){
                     jump *=-1.0;
                 }
                 else {
@@ -173,9 +174,9 @@ bool DucksBishopActionProvider::shouldPass()
             }while(foundIntersection);
 
             //check if a segment is not blocked
-            for (int i =0;i<(int)raySegmentCenters.size();i++){
-                if(positionToPositionIsIntersected(raySegmentCenters.at(i),proposedPassTarget)){
-                    passBallSource = raySegmentCenters.at(i);
+            for (const auto & raySegmentCenter : raySegmentCenters){
+                if(!positionToPositionIsIntersected(raySegmentCenter,proposedPassTarget)){
+                    passBallSource = raySegmentCenter;
                     passBallTarget = proposedPassTarget;
                     currentlyDoingPassingAction = true;
                     return true;
@@ -227,17 +228,51 @@ void DucksBishopActionProvider::shadowBall()
 bool DucksBishopActionProvider::shouldStrike()
 {
     //check if kicking ball into goal is possible and should be done
-
+    if(fieldZones_->isInside(teamBallModel_->position,fieldZones_->bishopPass) ||fieldZones_->isInside(teamBallModel_->position,fieldZones_->bishopShadowBall)){
+        const TeamPlayer *striker = nullptr;
+        findStriker(striker);
+        if (striker != nullptr) {
+            //TODO maybe striker zone
+            if (striker->pose.position.x() >= strikerIsOffensiveLine_()) {
+                return false;
+            }
+        }
+        currentlyDoingStrikingAction = true;
+        strikeSource = Vector2f(1,(teamBallModel_->position.y()>0)?2:-2);
+        strikeTarget = Vector2f(fieldDimensions_->fieldLength/2.0,( (rand() % 2) * 2 - 1)*0.5);
+        return true;
+    }
     //ball is in zones of bishop
         //striker is not offensive
+
+            //find good striking position
     return false;
 }
 void DucksBishopActionProvider::strike()
 {
+    //go to ball
+    //dribble to kickSource
+    //kick into goal
     //kick ball into enemy goal
+    if(!robotPosition_->pose.isNear(Pose(teamBallModel_->position,std::atan((passBallTarget.y()-passBallSource.y())/(passBallTarget.x()-passBallSource.x()))))){
+        bishopAction_->targetPose = Pose(teamBallModel_->position,std::atan((passBallTarget.y()-passBallSource.y())/(passBallTarget.x()-passBallSource.x())));
+        bishopAction_->type = DucksBishopAction::Type::GO_TO_BALL_POSITION;
+    }
+        //dribble to passing Location
+    else if(!robotPosition_->pose.isNear(Pose(passBallSource,std::atan((passBallTarget.y()-passBallSource.y())/(passBallTarget.x()-passBallSource.x()))))){
+        bishopAction_->targetPose = Pose(strikeSource,std::atan((passBallTarget.y()-passBallSource.y())/(passBallTarget.x()-passBallSource.x())));
+        bishopAction_->type = DucksBishopAction::Type::DRIBBLE_TO_KICK_LOCATION;
+    }
+    else {
+        bishopAction_->type = DucksBishopAction::Type::STRIKE;
+        bishopAction_->kickTarget = strikeTarget;
+        currentlyDoingStrikingAction = false;
+    }
 }
 
 //endregion
+
+//region utils
 
 float DucksBishopActionProvider::getZoneCornerPatrolOrientation(Vector2f corner,Rectangle<float> zone)
 {
@@ -269,8 +304,8 @@ void DucksBishopActionProvider::findStriker(const TeamPlayer *&pPlayer)
     }
 }
 bool DucksBishopActionProvider::positionToPositionIsIntersected(const Vector2f &segment,const Vector2f position) {
+    //TODO talk with Erik about Obstacles and Syncronisation
     Line<float> ray(position, segment);
-    //TODO talk with Erck about Obstacles and Syncronisation
     /*for(const auto& obstacle : obstacleData_->obstacles){
         if(obstacle.relativePosition < teamBallModel_->position.x()){
             auto distance = Geometry::distPointToLineSegment(ballRay, robot.pose.position);
@@ -291,3 +326,5 @@ bool DucksBishopActionProvider::positionToPositionIsIntersected(const Vector2f &
     }*/
     return false;
 }
+
+//endregion
