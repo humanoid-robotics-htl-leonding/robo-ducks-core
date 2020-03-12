@@ -17,6 +17,7 @@ public:
   bool ballIsFree = false;
   bool ballInCorner = false;
   bool ballInPenaltyArea = false;
+  bool ballInGoalBox = false;
   bool ballIsToMyLeft = false;
   bool ballInCenterCircle = false;
 
@@ -38,6 +39,7 @@ public:
     value["ballIsFree"] << ballIsFree;
     value["ballInCorner"] << ballInCorner;
     value["ballInPenaltyArea"] << ballInPenaltyArea;
+    value["ballInGoalBox"] << ballInGoalBox;
     value["ballIsToMyLeft"] << ballIsToMyLeft;
     value["ballInCenterCircle"] << ballInCenterCircle;
   }
@@ -53,6 +55,7 @@ public:
     value["ballIsFree"] >> ballIsFree;
     value["ballInCorner"] >> ballInCorner;
     value["ballInPenaltyArea"] >> ballInPenaltyArea;
+    value["ballInGoalBox"] >> ballInGoalBox;
     value["ballIsToMyLeft"] >> ballIsToMyLeft;
     value["ballInCenterCircle"] >> ballInCenterCircle;
   }
