@@ -51,54 +51,74 @@ void CameraCalibration::cycle()
 
   calibImage_ = image_data_->image422.to444Image();
   if (image_data_->camera == Camera::TOP) {
-	  projectPenaltyAreaOnImages();
+	  projectTopCamera();
   }
   else {
-	  projectCenterCircleOnImages();
+	  projectBottomCamera();
   }
   sendImageForCalibration();
 }
 
-void CameraCalibration::projectPenaltyAreaOnImages()
+void CameraCalibration::projectTopCamera()
 {
-  Vector2f penaltyTopLeft, penalty_top_right, penalty_bottom_left, penalty_bottom_right,
-      corner_left, corner_right;
+  Vector2f penaltyAreaTopLeft, penaltyAreaTopRight, penaltyAreaBottomLeft, penaltyAreaBottomRight,
+  	goalBoxTopLeft, goalBoxTopRight, goalBoxBottomLeft, goalBoxBottomRight,
+      cornerLeft, cornerRight;
   // Retrieve the field dimensions in meters
   float fieldLength = field_dimensions_->fieldLength;
   float fieldWidth = field_dimensions_->fieldWidth;
-  float penaltyLength = field_dimensions_->fieldPenaltyAreaLength;
-  float penaltyWidth = field_dimensions_->fieldPenaltyAreaWidth;
+  float penaltyAreaLength = field_dimensions_->fieldPenaltyAreaLength;
+  float penaltyAreaWidth = field_dimensions_->fieldPenaltyAreaWidth;
+  float goalBoxLength = field_dimensions_->fieldGoalBoxLength;
+  float goalBoxWidth = field_dimensions_->fieldGoalBoxWidth;
 
   // Calculate positions of the penalty area corner points first
   // Top left penalty area point
-  penaltyTopLeft.x() = fieldLength / 2;
-  penaltyTopLeft.y() = penaltyWidth / 2;
+  penaltyAreaTopLeft.x() = fieldLength / 2;
+  penaltyAreaTopLeft.y() = penaltyAreaWidth / 2;
   // Top right penalty area point
-  penalty_top_right.x() = penaltyTopLeft.x();
-  penalty_top_right.y() = -penaltyTopLeft.y();
+  penaltyAreaTopRight.x() = fieldLength / 2;
+	penaltyAreaTopRight.y() = -penaltyAreaWidth / 2;
   // bottom left penalty area point
-  penalty_bottom_left.x() = penaltyTopLeft.x() - penaltyLength;
-  penalty_bottom_left.y() = penaltyTopLeft.y();
+	penaltyAreaBottomLeft.x() = fieldLength / 2 - penaltyAreaLength;
+	penaltyAreaBottomLeft.y() = penaltyAreaWidth / 2;
   // bottom right penalty area point
-  penalty_bottom_right.x() = penalty_bottom_left.x();
-  penalty_bottom_right.y() = penalty_top_right.y();
+	penaltyAreaBottomRight.x() = fieldLength / 2 - penaltyAreaLength;
+	penaltyAreaBottomRight.y() = -penaltyAreaWidth / 2;
+	// Calculate positions of the goal box corner points first
+	// Top left penalty area point
+	goalBoxTopLeft.x() = fieldLength / 2;
+	goalBoxTopLeft.y() = goalBoxWidth / 2;
+	// Top right penalty area point
+	goalBoxTopRight.x() = fieldLength / 2;
+	goalBoxTopRight.y() = -goalBoxWidth / 2;
+	// bottom left penalty area point
+	goalBoxBottomLeft.x() = fieldLength / 2 - goalBoxLength;
+	goalBoxBottomLeft.y() = goalBoxWidth / 2;
+	// bottom right penalty area point
+	goalBoxBottomRight.x() = fieldLength / 2 - goalBoxLength;
+	goalBoxBottomRight.y() = -goalBoxWidth / 2;
   // Calculate positions of the field corners
   // Top left field corner
-  corner_left.x() = penaltyTopLeft.x();
-  corner_left.y() = fieldWidth / 2;
+	cornerLeft.x() = fieldLength / 2;
+	cornerLeft.y() = fieldWidth / 2;
   // Top right field corner
-  corner_right.x() = penaltyTopLeft.x();
-  corner_right.y() = -corner_left.y();
+	cornerRight.x() = fieldLength / 2;
+	cornerRight.y() = -fieldWidth / 2;
 
   // Get the pixel positions of the points on the 2D camera image
-  Vector2i ptl, ptr, pbl, pbr, cl, cr;
+  Vector2i ptl, ptr, pbl, pbr, gtl, gtr, gbl, gbr, cl, cr;
   // Check if all projection points lie outside of the image frame.
-  if (!camera_matrix_->robotToPixel(penaltyTopLeft, ptl) ||
-      !camera_matrix_->robotToPixel(penalty_top_right, ptr) ||
-      !camera_matrix_->robotToPixel(penalty_bottom_left, pbl) ||
-      !camera_matrix_->robotToPixel(penalty_bottom_right, pbr) ||
-      !camera_matrix_->robotToPixel(corner_left, cl) ||
-      !camera_matrix_->robotToPixel(corner_right, cr))
+  if (!camera_matrix_->robotToPixel(penaltyAreaTopLeft, ptl) ||
+      !camera_matrix_->robotToPixel(penaltyAreaTopRight, ptr) ||
+      !camera_matrix_->robotToPixel(penaltyAreaBottomLeft, pbl) ||
+      !camera_matrix_->robotToPixel(penaltyAreaBottomRight, pbr) ||
+		  !camera_matrix_->robotToPixel(goalBoxTopLeft, gtl) ||
+		  !camera_matrix_->robotToPixel(goalBoxTopRight, gtr) ||
+		  !camera_matrix_->robotToPixel(goalBoxBottomLeft, gbl) ||
+		  !camera_matrix_->robotToPixel(goalBoxBottomRight, gbr) ||
+      !camera_matrix_->robotToPixel(cornerLeft, cl) ||
+      !camera_matrix_->robotToPixel(cornerRight, cr))
   {
     Log(LogLevel::WARNING) << "The penalty area projection is outside of the observable image!";
     return;
@@ -108,12 +128,16 @@ void CameraCalibration::projectPenaltyAreaOnImages()
   ptr = image_data_->image422.get444From422Vector(ptr);
   pbl = image_data_->image422.get444From422Vector(pbl);
   pbr = image_data_->image422.get444From422Vector(pbr);
+	gtl = image_data_->image422.get444From422Vector(gtl);
+	gtr = image_data_->image422.get444From422Vector(gtr);
+	gbl = image_data_->image422.get444From422Vector(gbl);
+	gbr = image_data_->image422.get444From422Vector(gbr);
   cl = image_data_->image422.get444From422Vector(cl);
   cr = image_data_->image422.get444From422Vector(cr);
 
   // Draw lines for the penalty area on the camera image.
-  calibImage_.cross((ptl + ptr) / 2, 8, Color::RED); // middle of penalty line.
-  calibImage_.cross((pbl + pbr) / 2, 8, Color::RED); // middle of penalty_box? line.
+  calibImage_.cross((ptl + ptr) / 2, 8, Color::RED); // middle of penalty area line.
+  calibImage_.cross((pbl + pbr) / 2, 8, Color::RED); // middle of penalty area line.
   calibImage_.cross(ptl, 8, Color::RED);
   calibImage_.cross(ptr, 8, Color::RED);
   calibImage_.cross(pbl, 8, Color::RED);
@@ -122,64 +146,58 @@ void CameraCalibration::projectPenaltyAreaOnImages()
   calibImage_.line(pbl, pbr, Color::PINK);
   calibImage_.line(pbl, ptl, Color::PINK);
   calibImage_.line(pbr, ptr, Color::PINK);
+	// Draw lines for the goal box on the camera image.
+	calibImage_.cross((gtl + gtr) / 2, 8, Color::RED); // middle of goal box line.
+	calibImage_.cross((gbl + gbr) / 2, 8, Color::RED); // middle of goal box line.
+	calibImage_.cross(gtl, 8, Color::RED);
+	calibImage_.cross(gtr, 8, Color::RED);
+	calibImage_.cross(gbl, 8, Color::RED);
+	calibImage_.cross(gbr, 8, Color::RED);
+	calibImage_.line(gtl, gtr, Color::PINK);
+	calibImage_.line(gbl, gbr, Color::PINK);
+	calibImage_.line(gbl, gtl, Color::PINK);
+	calibImage_.line(gbr, gtr, Color::PINK);
   // Draw the line between the field corners and mark them with crosses
   calibImage_.line(cl, cr, Color::PINK);
   calibImage_.cross(cl, 8, Color::RED);
   calibImage_.cross(cr, 8, Color::RED);
 }
 
-void CameraCalibration::projectCenterCircleOnImages() {
-	Vector2f zero, center, left, right, cut;
+void CameraCalibration::projectBottomCamera() {
+	Vector2f goalBoxTopLeft, goalBoxTopRight, penaltySpot;
 
 	// Retrieve the field dimensions in meters
-	float fieldWidth = field_dimensions_->fieldWidth;
-	float centerCircleRadius = field_dimensions_->fieldCenterCircleDiameter / 2;
+	float goalBoxLength = field_dimensions_->fieldGoalBoxLength;
+	float goalBoxWidth = field_dimensions_->fieldGoalBoxWidth;
+	float penaltySpotDistance = field_dimensions_->fieldPenaltyMarkerDistance;
 
-	zero.x() = 0;
-	zero.y() = 0;
+	goalBoxTopLeft.x() = goalBoxLength;
+	goalBoxTopLeft.y() = goalBoxWidth;
 
-	center.x() = fieldWidth / 2;
-	center.y() = 0;
+	goalBoxTopRight.x() = goalBoxLength;
+	goalBoxTopRight.y() = -goalBoxWidth;
 
-	cut.x() = fieldWidth / 2 - centerCircleRadius;
-	cut.y() = 0;
+	penaltySpot.x() = penaltySpotDistance;
+	penaltySpot.y() = 0;
 
-	Vector2i pz, pcc, pct;
-	if (!camera_matrix_->robotToPixel(zero, pz) ||
-		!camera_matrix_->robotToPixel(center, pcc) ||
-		!camera_matrix_->robotToPixel(cut, pct))
+	Vector2i gtl, gtr, ps;
+	if (!camera_matrix_->robotToPixel(goalBoxTopLeft, gtl) ||
+		!camera_matrix_->robotToPixel(goalBoxTopRight, gtr) ||
+		!camera_matrix_->robotToPixel(penaltySpot, ps))
 	{
 		Log(LogLevel::WARNING) << "The projection is outside of the observable image!";
 		return;
 	}
 
-	pz = image_data_->image422.get444From422Vector(pz);
-	pcc = image_data_->image422.get444From422Vector(pcc);
-	pct = image_data_->image422.get444From422Vector(pct);
+	gtl = image_data_->image422.get444From422Vector(gtl);
+	gtr = image_data_->image422.get444From422Vector(gtr);
+	ps = image_data_->image422.get444From422Vector(ps);
 
-	calibImage_.cross(pcc, 8, Color::RED);
-	calibImage_.cross(pct, 8, Color::RED);
+	calibImage_.cross(gtl, 8, Color::RED);
+	calibImage_.cross(gtr, 8, Color::RED);
+	calibImage_.line(gtl, gtr, Color::PINK);
 
-	calibImage_.line(pz, pcc, Color::PINK);
-
-	Vector2i last;
-	Vector2i curr;
-	bool lastValid = false;
-	for (int angle = -180; angle < 181; angle++) {
-		float x = centerCircleRadius * cos(angle * TO_RAD) + center.x();
-		float y = centerCircleRadius * sin(angle * TO_RAD) + center.y();
-		if (camera_matrix_->robotToPixel(Vector2f(x, y), curr)) {
-			curr = image_data_->image422.get444From422Vector(curr);
-			if (lastValid) {
-				calibImage_.line(last, curr, Color::PINK);
-			}
-			lastValid = true;
-		}
-		else {
-			lastValid = false;
-		}
-		last = curr;
-	}
+	calibImage_.cross(ps, 16, Color::RED);
 }
 
 void CameraCalibration::sendImageForCalibration() {
