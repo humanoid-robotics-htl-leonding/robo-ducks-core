@@ -77,10 +77,10 @@ void WorldStateProvider::cycle()
                                              ballInGoalBox_) &&
         Hysteresis<float>::greaterThan(std::abs(teamBallModel_->position.x()),
                                              fieldDimensions_->fieldLength / 2 -
-                                             fieldDimensions_->fieldgoalBoxLength - hysteresis_,
+                                             fieldDimensions_->fieldGoalBoxLength - hysteresis_,
                                              hysteresis_, ballInGoalBox_) &&
         Hysteresis<float>::smallerThan(std::abs(teamBallModel_->position.y()),
-                                             fieldDimensions_->fieldgoalBoxWidth / 2 + hysteresis_,
+                                             fieldDimensions_->fieldGoalBoxWidth / 2 + hysteresis_,
                                              hysteresis_, ballInGoalBox_);
     ballIsToMyLeft_ = Hysteresis<float>::greaterThan(teamBallModel_->position.y(),
                                                      robotPosition_->pose.position.y(), hysteresis_,

@@ -207,10 +207,10 @@ PoseHypothesis::findAssociatedLine(const Line<float>& relativeLine, const Vector
   // penalty area width is used since here we have lines that are very close together. Lines longer
   // then the penalty area are always far away from eachother. Thus they can be associated over a
   // longer distance.
-  const bool isLongLine = lineLength > std::pow(0.2f + fieldDimensions_.fieldgoalBoxWidth, 2);
+  const bool isLongLine = lineLength > std::pow(0.2f + fieldDimensions_.fieldGoalBoxWidth, 2);
   // an associated line should be not too far away from the projected position (fp-rejection)
   const float badDistanceThreshold = (isLongLine ? 0.25f * fieldDimensions_.fieldLength
-                                                 : fieldDimensions_.fieldgoalBoxLength) +
+                                                 : fieldDimensions_.fieldGoalBoxLength) +
                                      std::sqrt(std::max(stateCov_(0, 0), stateCov_(1, 1)));
 
   AssociatedLine associatedLine;
