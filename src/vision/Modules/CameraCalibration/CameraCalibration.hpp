@@ -40,8 +40,8 @@ private:
    *
    * @author Thomas Schattschneider
    */
-  void projectPenaltyAreaOnImages();
-  void projectCenterCircleOnImages();
+  void projectTopCamera();
+  void projectBottomCamera();
   void sendImageForCalibration();
   /// a reference to the image of the cycle
   const Dependency<ImageData> image_data_;
