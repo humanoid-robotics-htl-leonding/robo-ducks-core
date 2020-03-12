@@ -127,5 +127,8 @@
       }
     }
   },
-  "defaultProject": "helferlein"
+  "defaultProject": "helferlein",
+  "cli": {
+    "analytics": "800ed6ce-b133-464b-86de-1a4172add83f"
+  }
 }

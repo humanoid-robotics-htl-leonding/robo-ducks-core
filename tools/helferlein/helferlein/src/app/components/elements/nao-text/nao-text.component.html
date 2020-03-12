@@ -1,6 +1,23 @@
-<div>
+<!-- <div>
   <button mat-icon-button [cdkCopyToClipboard]="connector.message.msg">
     <mat-icon>file_copy</mat-icon>
   </button>
 </div>
-{{connector.keys}}
+{{connector.keys}} -->
+<div class="text-form">
+  <mat-form-field class="text-full-width">
+    <input type="text"
+           placeholder="Key"
+           aria-label="Number"
+           matInput
+           [formControl]="myControl"
+           [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let connector of filteredOptions | async" [value]="connector">
+        {{connector}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</div>
+
+

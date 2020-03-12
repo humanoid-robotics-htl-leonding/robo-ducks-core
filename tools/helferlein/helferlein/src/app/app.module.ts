@@ -19,6 +19,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
 import {ClipboardModule} from '@angular/cdk/clipboard';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {ReactiveFormsModule} from '@angular/forms';
 
 import { NaoComponent } from './components/nao/nao.component';
 import { NaoTabComponent } from './components/nao-tab/nao-tab.component';
@@ -61,7 +63,9 @@ import { NaoConfigComponent } from './components/elements/nao-config/nao-config.
     MatTooltipModule,
     MatGridListModule,
     MatMenuModule,
-    ClipboardModule
+    ClipboardModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

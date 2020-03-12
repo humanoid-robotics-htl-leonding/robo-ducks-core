@@ -3,17 +3,33 @@
 $header-height: 48px;
 $connection-form-height: 7.5%;
 
+.nao-tab{
+  height: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
 .connection-form{
   height: $connection-form-height;
   position: relative;
   top: 0px;
   left: 0px;
-}
+  margin-left: 2%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
 
-.nao-tab{
-  height: 100%;
-  padding: 5px;
-  box-sizing: border-box;
+  }
+
+  .nao-adress-input, .message-input{
+    font-size: 90%;
+    height: 90%;
+  }
+
+.send-button{
+  height: 110%;
+  margin-left: 5%;
+  vertical-align: middle;
 }
 
 .bottom-controls{

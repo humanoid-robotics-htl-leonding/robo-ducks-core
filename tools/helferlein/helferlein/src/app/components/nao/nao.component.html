@@ -1,15 +1,18 @@
 <div class="nao-tab">
   <div class="connection-form">
-    <input matInput placeholder="Nao Address" [(ngModel)]="connector.address">
+    <mat-form-field class="nao-adress-input">
+      <input matInput placeholder="Nao Address" [(ngModel)]="connector.address">
+    </mat-form-field>
     <!-- <div *ngIf="this.naoService.client != null">
       Connecting: {{this.naoService.client.connecting}}
     </div> -->
-    <button mat-button
-      [disabled]="connector.address.length==0"
-      (click)="connectToNao()">Connect</button>
+    <button mat-button [disabled]="connector.address.length==0" (click)="connectToNao()">Connect</button>
 
-    <input matInput placeholder="Message" [(ngModel)]="message">
-    <button mat-raised-button (click)="send()" color="primary">Send</button>
+    <mat-form-field class="message-input">
+      <input matInput placeholder="Message" [(ngModel)]="message">
+    </mat-form-field>
+
+    <button class="send-button" mat-raised-button (click)="send()" color="primary">Send</button>
 
     <div *ngIf="connector.client">
       Connecting: {{connector.client.connecting}}
@@ -27,14 +30,10 @@
       </mat-grid-tile>
     </mat-grid-list> -->
 
-    <nao-element *ngFor="let element of elements" [type]="element.type"
-      [id]="id"
-      [style.grid-row-start]="element.rowStart"
-      [style.grid-row-end]="element.rowEnd"
-      [style.grid-column-start]="element.colStart"
-      [style.grid-column-end]="element.colEnd"
-      style="width: 100%; height: 100%;"
-    ></nao-element>
+    <nao-element *ngFor="let element of elements" [type]="element.type" [id]="id"
+      [style.grid-row-start]="element.rowStart" [style.grid-row-end]="element.rowEnd"
+      [style.grid-column-start]="element.colStart" [style.grid-column-end]="element.colEnd"
+      style="width: 100%; height: 100%;"></nao-element>
   </div>
 
   <!-- <div class="bottom-controls"
