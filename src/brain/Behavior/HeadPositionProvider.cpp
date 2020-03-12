@@ -57,18 +57,18 @@ void HeadPositionProvider::fillInterestingLocalizationPoints()
 
     // the own goal box
     absolutePOIs_.emplace_back(-fieldDimensions_->fieldLength * 0.5f +
-                               fieldDimensions_->fieldGoalBoxAreaLength,
-                               fieldDimensions_->fieldGoalBoxAreaWidth * 0.5, 1.f);
+                               fieldDimensions_->fieldgoalBoxLength,
+                               fieldDimensions_->fieldgoalBoxWidth * 0.5, 1.f);
     absolutePOIs_.emplace_back(-fieldDimensions_->fieldLength * 0.5f +
-                               fieldDimensions_->fieldGoalBoxAreaLength,
-                               -fieldDimensions_->fieldGoalBoxAreaWidth * 0.5, 1.f);
+                               fieldDimensions_->fieldgoalBoxLength,
+                               -fieldDimensions_->fieldgoalBoxWidth * 0.5, 1.f);
     // the opponents goal box
     absolutePOIs_.emplace_back(fieldDimensions_->fieldLength * 0.5f -
-                               fieldDimensions_->fieldGoalBoxAreaLength,
-                               fieldDimensions_->fieldGoalBoxAreaWidth * 0.5, 1.f);
+                               fieldDimensions_->fieldgoalBoxLength,
+                               fieldDimensions_->fieldgoalBoxWidth * 0.5, 1.f);
     absolutePOIs_.emplace_back(fieldDimensions_->fieldLength * 0.5f -
-                               fieldDimensions_->fieldGoalBoxAreaLength,
-                               -fieldDimensions_->fieldGoalBoxAreaWidth * 0.5, 1.f);
+                               fieldDimensions_->fieldgoalBoxLength,
+                               -fieldDimensions_->fieldgoalBoxWidth * 0.5, 1.f);
   // T intersection
   absolutePOIs_.emplace_back(0, fieldDimensions_->fieldWidth * 0.5f, 1.f);
   absolutePOIs_.emplace_back(0, -fieldDimensions_->fieldWidth * 0.5f, 1.f);

@@ -9,8 +9,8 @@ FieldInfo::FieldInfo(const FieldDimensions& fieldDimensions)
   const float fieldWidth = fieldDimensions.fieldWidth;
   const float penaltyAreaWidth = fieldDimensions.fieldPenaltyAreaWidth;
   const float penaltyAreaLength = fieldDimensions.fieldPenaltyAreaLength;
-  const float goalBoxWidth = fieldDimensions.fieldGoalBoxAreaWidth;
-  const float goalBoxLength = fieldDimensions.fieldGoalBoxAreaLength;
+  const float goalBoxWidth = fieldDimensions.fieldgoalBoxWidth;
+  const float goalBoxLength = fieldDimensions.fieldgoalBoxLength;
   const float centerCircleRadius = fieldDimensions.fieldCenterCircleDiameter * 0.5f;
   // The goal post position is assumed to be in the center of the post, thus two goal post radii have to be added (a.k.a one diameter).
   const float goalPostDistance = fieldDimensions.goalInnerWidth + fieldDimensions.goalPostDiameter;
