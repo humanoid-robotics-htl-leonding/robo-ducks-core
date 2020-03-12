@@ -45,7 +45,7 @@ FieldInfo::FieldInfo(const FieldDimensions& fieldDimensions)
 
   // own penalty area
   lines.push_back({{-fieldLength / 2, penaltyAreaWidth / 2}, {-penaltyAreaBorder, penaltyAreaWidth / 2}}); // top, ID: 12
-  lines.push_back({{-fieldLength / 2, -penaltyAreaBorder / 2}, {-penaltyAreaBorder, -penaltyAreaWidth / 2}}); // bottom, ID: 13
+  lines.push_back({{-fieldLength / 2, -penaltyAreaWidth / 2}, {-penaltyAreaBorder, -penaltyAreaWidth / 2}}); // bottom, ID: 13
   lines.push_back({{-penaltyAreaBorder, penaltyAreaWidth / 2}, {-penaltyAreaBorder, -penaltyAreaWidth / 2}}); // right, ID: 14
 
   // opponent penalty area
