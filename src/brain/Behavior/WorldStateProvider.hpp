@@ -36,6 +36,7 @@ private:
   bool ballInLeftHalf_;
   bool ballInCorner_;
   bool ballInPenaltyArea_;
+  bool ballInGoalBox_;
   bool ballIsToMyLeft_;
   bool ballInCenterCircle_;
   bool robotInOwnHalf_;

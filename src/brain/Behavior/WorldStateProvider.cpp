@@ -17,6 +17,7 @@ WorldStateProvider::WorldStateProvider(const ModuleManagerInterface& manager)
   , ballInLeftHalf_(true)
   , ballInCorner_(false)
   , ballInPenaltyArea_(false)
+  , ballInGoalBox_(false)
   , ballIsToMyLeft_(true)
   , ballInCenterCircle_(true)
   , robotInOwnHalf_(true)
@@ -70,6 +71,17 @@ void WorldStateProvider::cycle()
         Hysteresis<float>::smallerThan(std::abs(teamBallModel_->position.y()),
                                        fieldDimensions_->fieldPenaltyAreaWidth / 2 + hysteresis_,
                                        hysteresis_, ballInPenaltyArea_);
+    ballInGoalBox_ =
+        Hysteresis<float>::smallerThan(std::abs(teamBallModel_->position.x()),
+                                             fieldDimensions_->fieldLength / 2 + hysteresis_, hysteresis_,
+                                             ballInGoalBox_) &&
+        Hysteresis<float>::greaterThan(std::abs(teamBallModel_->position.x()),
+                                             fieldDimensions_->fieldLength / 2 -
+                                             fieldDimensions_->fieldGoalBoxAreaLength - hysteresis_,
+                                             hysteresis_, ballInGoalBox_) &&
+        Hysteresis<float>::smallerThan(std::abs(teamBallModel_->position.y()),
+                                             fieldDimensions_->fieldGoalBoxAreaWidth / 2 + hysteresis_,
+                                             hysteresis_, ballInGoalBox_);
     ballIsToMyLeft_ = Hysteresis<float>::greaterThan(teamBallModel_->position.y(),
                                                      robotPosition_->pose.position.y(), hysteresis_,
                                                      ballIsToMyLeft_);
@@ -78,6 +90,7 @@ void WorldStateProvider::cycle()
     worldState_->ballInLeftHalf = ballInLeftHalf_;
     worldState_->ballInCorner = ballInCorner_;
     worldState_->ballInPenaltyArea = ballInPenaltyArea_;
+    worldState_->ballInGoalBox = ballInGoalBox_;
     worldState_->ballIsToMyLeft = ballIsToMyLeft_;
     worldState_->ballInCenterCircle = ballInCenterCircle_;
     worldState_->ballValid = true;
