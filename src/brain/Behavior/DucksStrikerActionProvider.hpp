@@ -25,6 +25,9 @@ public:
 	explicit DucksStrikerActionProvider(const ModuleManagerInterface& manager);
 
 	void cycle() override;
+	void dribble(const Vector2f& target);
+	void kick(const Vector2f& target);
+	void wait();
 	
 private:
 	const Dependency<FieldDimensions> fieldDimensions_;
@@ -35,4 +38,6 @@ private:
 	const Dependency<BallState> ballState_;
 
 	Production<DucksStrikerAction> strikerAction_;
+
+    double getStrikerUrgency();
 };
