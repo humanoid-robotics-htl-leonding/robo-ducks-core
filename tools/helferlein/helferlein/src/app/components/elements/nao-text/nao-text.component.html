@@ -13,14 +13,17 @@
            [formControl]="myControl"
            [matAutocomplete]="auto">
     <mat-autocomplete #auto="matAutocomplete">
-      <mat-option *ngFor="let connector of filteredOptions | async" [value]="connector">
-        {{connector}}
+      <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+        {{option}}
       </mat-option>
     </mat-autocomplete>
   </mat-form-field>
 </div>
-<div class="value-output" *ngIf="values">
-  Key: {{values}}
+<div class="value-output">
+  <p class="key">Key:</p>
+  <mat-option *ngFor="let val of values | async" [value]="val">
+     {{val}}
+  </mat-option>
 </div>
 
 

@@ -18,7 +18,7 @@ $connection-form-height: 7.5%;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
-
+  padding-bottom: 1%;
   }
 
   .nao-adress-input, .message-input{
@@ -68,7 +68,7 @@ $connection-form-height: 7.5%;
   overflow: visible;
   padding: 10px;
   box-sizing: border-box;
-  height: 100% - $connection-form-height;
+  height: 100% - $connection-form-height - 1%; /* -1% weil diese beim connection form benötigt werden*/  
   display: grid;
   grid-template-rows: repeat(6, 1fr);
   grid-template-columns: repeat(10, 1fr);
