@@ -1,5 +1,41 @@
 = RoboDucks
 
+link:http://roboducks.htl-leonding.ac.at/[Roboducks on HTL-Leonding]
+
+The `RoboDucks` are a team consisting of mainly 3rd- to 5th-grade Students from the HTL-Leonding developing software to participate in the link:https://spl.robocup.org/[Robocup Standard Platform League].
+
+Even tough we are building on code provided by the link:https://hulks.de[HULKs Team] from the Hamburg Univserity of Technology, we create most of our code on our own and try to enhance existing Algorithms and try out new and innovative Approaches.
+
+We would have taken part in the 2020 link:https://robocupgermanopen.de/en/major/spl[RoboCup German Open] but that was rendered impossible by the COVID-19-Pandemic.
+
+== Team
+
+.Supervisors
+- link:https://github.com/Bauepete[Prof. Peter Bauer]
+
+.Initial
+- Viktoria Streibl
+- Melanie Mühleder
+- Sabine Woswasih
+
+.2018ers
+- link:https://github.com/JanNeuburger[Jan Neuburger]
+- link:https://github.com/Bauepete[Florian Schwarcz]
+- link:https://github.com/Maxwahl[Maximilian Wahl]
+- link:https://github.com/ErikMayrhofer[Erik Mayrhofer]
+
+.2020ers
+- link:https://github.com/EminaSljivic[Emina Sljivic]
+- link:https://github.com/Marc-Kruiss[Marc Kruiss]
+- link:https://github.com/MathiasBal[Mathias Bal]
+- link:https://github.com/PhilippEdlinger[Edlinger Philipp]
+- link:https://github.com/QuirinEcker[Quirin Ecker]
+- link:https://github.com/robertFreiseisen[Robert Freiseisen]
+- link:https://github.com/simonholzapfel[Simon Holzapfel]
+- link:https://github.com/Primetzvan[Vanessa Primetzhofer]
+
+= Quickstart
+
 == Usage of `Midas`
 The central tool when developing RoboDucks-Code is the midas-script.
 
@@ -50,7 +86,7 @@ NOTE: If you are annoyed by having to type in your *password* every time, simply
 with the `midas touch` script.
 
 NOTE: If you have any questions regarding midas or think that the tool is not documented enough,
-please consult Erik Mayrhofer.
+please consult link:https://github.com/ErikMayrhofer[Erik Mayrhofer] or link:https://github.com/EminaSljivic[Emina Sljivic].
 
 == Hulks
 We build on top of code from the hulks-team.
