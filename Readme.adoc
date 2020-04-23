@@ -16,7 +16,7 @@ We would have taken part in the 2020 link:https://robocupgermanopen.de/en/major/
 .Initial
 - Viktoria Streibl
 - Melanie Mühleder
-- Sabine Woswasih
+- Sabina Brantner
 
 .2018ers
 - link:https://github.com/JanNeuburger[Jan Neuburger]
