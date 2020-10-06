@@ -17,7 +17,7 @@ public:
   enum Action
   {
       /// kicks the ball into the goal
-      KICK_INTO_GOAL,
+      KICK_TO_POS,
       /// passes the ball to coordinates
       PASS,
       /// waiting for the ball to reach the opposite side
@@ -27,25 +27,16 @@ public:
       // dribble to position
       DRIBBLE_TO_POS
   };
-  enum KickType
-  {
-      /// kicks the ball
-      KICK = 0,
-      /// don't kick
-      NONE = 1,
-  };
+
   /// true if this struct is valid
   bool valid = false;
   /// the type of the action
   Action action = Action::WAITING_FOR_BALL;
   /// the field coordinates of the ball target
   Vector2f target = Vector2f::Zero();
-  /// type of kick we want to do
-  KickType kickType;
-  /// the relative pose from where we want to kick from
-  Pose kickPose;
-  /// if ball is kickable at the moment and how
-  BallUtils::Kickable kickable = BallUtils::Kickable::NOT;
+  /// target where we want the robot to be
+  Pose walkTarget;
+
   /**
    * @brief reset does nothing
    */
@@ -60,9 +51,7 @@ public:
     value["valid"] << valid;
     value["action"] << static_cast<int>(action);
     value["target"] << target;
-    value["kickType"] << static_cast<int>(kickType);
-    value["kickPose"] << kickPose;
-    value["kickable"] << static_cast<int>(kickable);
+    value["walkTarget"] << walkTarget;
   }
   void fromValue(const Uni::Value& value) override
   {
@@ -71,10 +60,6 @@ public:
     value["action"] >> readNumber;
     action = static_cast<Action>(readNumber);
     value["target"] >> target;
-    value["kickType"] >> readNumber;
-    kickType = static_cast<KickType>(readNumber);
-    value["kickPose"] >> kickPose;
-    value["kickable"] >> readNumber;
-    kickable = static_cast<BallUtils::Kickable>(readNumber);
+    value["walkTarget"] >> walkTarget;
   }
 };

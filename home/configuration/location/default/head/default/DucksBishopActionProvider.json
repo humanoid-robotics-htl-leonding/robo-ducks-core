@@ -1,0 +1,5 @@
+{
+  "strikerIsOffensiveLine": 2.0,
+  "passOffset": [0.3,0.5],
+  "maxPassDistance": 4.0
+}
