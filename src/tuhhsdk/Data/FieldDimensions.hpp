@@ -9,6 +9,14 @@
 class FieldDimensions : public DataType<FieldDimensions>
 {
 public:
+
+  enum FieldType {
+    // field size of the official 2020 SPL
+    FIELD_2020 = 0,
+    // small robo ducks field
+    FIELD_SMALL_ROBODUCKS = 1
+  };
+
   /// the name of this DataType
   DataTypeName name = "FieldDimensions";
   /// the length of the field (A) [m]
@@ -47,6 +55,11 @@ public:
   float fieldThrowInLineLength = 0.f;
   /// the spacing of the imaginary throw in line from the side lines [m] (as of 3.7 of the SPL rules 2018 (draft))
   float fieldThrowInLineSpacing = 0.f;
+  /// the type of the field
+  FieldType fieldType;
+
+
+
   /**
    * @brief reset does nothing
    */
@@ -126,7 +139,11 @@ public:
    */
   void init(Configuration& config)
   {
-    config.mount("tuhhSDK.FieldDimensions", "map.json", ConfigurationType::HEAD);
+    config.mount("tuhhSDK.FieldType", "map.json", ConfigurationType::HEAD);
+
+    auto fieldTypeConfig = config.get("tuhhSDK.FieldType");
+    config.mount("tuhhSDK.FieldDimensions", fieldTypeConfig["fieldType"].asString() + ".json", ConfigurationType::HEAD);
+    std::cout << "FieldJsonFile: " << fieldTypeConfig["fieldType"].asString() + ".json" << std::endl;
 
     // read field parameters
     auto group = config.get("tuhhSDK.FieldDimensions", "field");
