@@ -1,1 +1,25 @@
-<p>nao-config works!</p>
+<div class="config-form">
+    <mat-form-field class="config-full-width">
+      <input type="text"
+             placeholder="Key"
+             aria-label="Number"
+             matInput
+             [formControl]="myControl"
+             [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+          {{option}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+  <div class="value-output">
+    <p class="key">Key:</p>
+    <input matInput placeholder="val" value="hallo">
+    <mat-option *ngFor="let val of values | async" [value]="val">
+        <mat-form-field class="example-full-width">
+            <mat-label>Values</mat-label>
+            <input matInput placeholder="val" value={{val}}>
+        </mat-form-field>
+    </mat-option>
+  </div>
