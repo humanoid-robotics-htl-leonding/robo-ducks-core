@@ -51,7 +51,10 @@ export class NaoConnector {
     }
 
     if (this.client.destroyed || !this.client.connecting) {
-      this.client.connect(this.port, this.address);
+      if(this.address.includes("/"))
+        this.client.connect(this.address);
+      else
+        this.client.connect(this.port, this.address);
     }
 
     this.client.setKeepAlive(true);

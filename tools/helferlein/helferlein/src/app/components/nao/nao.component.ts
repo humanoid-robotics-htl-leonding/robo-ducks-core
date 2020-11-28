@@ -6,6 +6,7 @@ import { NaoConnector } from 'src/app/model/nao-connector';
 import { NaoElementComponent } from '../elements/nao-element/nao-element.component';
 import { NaoGridElement } from 'src/app/model/nao-grid-element';
 import { DebugMessage } from 'src/app/model/debug-message';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-nao',
@@ -22,6 +23,7 @@ export class NaoComponent implements OnInit {
   messageType: DebugMessageType = DebugMessageType.DM_REQUEST_LIST;
   message = '';
   elements: NaoGridElement[] = [];
+  addressSugestions = ['/tmp/simrobot/robot3/debug']
 
   constructor(public dialog: MatDialog, private naoService: NaoService, private injector: Injector) {
   }
