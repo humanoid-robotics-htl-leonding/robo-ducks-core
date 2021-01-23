@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, PipeTransform, Pipe } from '@angular/core';
 import { NaoConnector } from 'src/app/model/nao-connector';
 import { CONTAINER_DATA } from 'src/app/app.component';
 import { NaoService } from 'src/app/service/nao.service';
@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'app-nao-text',
   templateUrl: './nao-text.component.html',
-  styleUrls: ['./nao-text.component.scss']
+  styleUrls: ['./nao-text.component.scss'],
 })
 export class NaoTextComponent implements OnInit {
 
@@ -42,10 +42,11 @@ export class NaoTextComponent implements OnInit {
   _keyFilter(value: string): string[] {
 
     const filterKey = value;
+    const respObj = this.connector.keys.find(k => k.key.toLowerCase() == filterKey.toLowerCase());
 
-    console.log("Help " + this.connector.keys.find(k => k.key.toLowerCase() == filterKey.toLowerCase()).value);
+    //console.log("Help " + this.connector.keys.find(k => k.key.toLowerCase() == filterKey.toLowerCase()).value);
 
-    return this.connector.keys.find(k => k.key.toLowerCase() == filterKey.toLowerCase()).value;
+    return respObj == undefined ? undefined : Array.of(JSON.stringify(respObj.value, undefined, 3).replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;'));
 
     //return this.connector.keys.map(v => v.value).filter(value => value.toString().toLowerCase().includes(filterKey));
 

@@ -21,9 +21,9 @@
 </div>
 <div class="value-output">
   <p class="key">Key:</p>
-  <mat-option *ngFor="let val of values | async" [value]="val">
-     {{val}}
-  </mat-option>
+  <div class="value" *ngFor="let val of values | async">
+    <span [innerHTML]="val"></span>
+  </div>
 </div>
 
 
