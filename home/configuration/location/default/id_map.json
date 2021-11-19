@@ -59,6 +59,11 @@
 			"bodyid": "P0000073A07S94J00014",
 			"headid": "P0000074A05S94J00009",
 			"name": "Linus"
+		},
+		{
+			"bodyid": "P0000073A10S98G00047",
+			"headid": "P0000074A05S98G00041",
+			"name": "Adele"
 		}
 	]
 }
