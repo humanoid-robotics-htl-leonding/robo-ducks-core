@@ -9,6 +9,14 @@
 class FieldDimensions : public DataType<FieldDimensions>
 {
 public:
+
+  enum FieldType {
+    // field size of the official 2020 SPL
+    FIELD_2020 = 0,
+    // small robo ducks field
+    FIELD_SMALL_ROBODUCKS = 1
+  };
+
   /// the name of this DataType
   DataTypeName name = "FieldDimensions";
   /// the length of the field (A) [m]
@@ -47,6 +55,11 @@ public:
   float fieldThrowInLineLength = 0.f;
   /// the spacing of the imaginary throw in line from the side lines [m] (as of 3.7 of the SPL rules 2018 (draft))
   float fieldThrowInLineSpacing = 0.f;
+  /// the type of the field
+  FieldType fieldType;
+
+
+
   /**
    * @brief reset does nothing
    */
@@ -100,24 +113,24 @@ public:
 
   virtual void fromValue(const Uni::Value& value)
   {
-    value["fieldLength"] >> fieldLength;
-    value["fieldWidth"] >> fieldWidth;
-    value["fieldLineWidth"] >> fieldLineWidth;
-    value["fieldPenaltyMarkerSize"] >> fieldPenaltyMarkerSize;
-    value["fieldGoalBoxLength"] >> fieldGoalBoxLength;
-    value["fieldGoalBoxWidth"] >> fieldGoalBoxWidth;
-    value["fieldPenaltyAreaLength"] >> fieldPenaltyAreaLength;
-    value["fieldPenaltyAreaWidth"] >> fieldPenaltyAreaWidth;
-    value["fieldPenaltyMarkerDistance"] >> fieldPenaltyMarkerDistance;
-    value["fieldCenterCircleDiameter"] >> fieldCenterCircleDiameter;
-    value["fieldBorderStripWidth"] >> fieldBorderStripWidth;
-    value["goalPostDiameter"] >> goalPostDiameter;
-    value["goalHeight"] >> goalHeight;
-    value["goalInnerWidth"] >> goalInnerWidth;
-    value["goalDepth"] >> goalDepth;
-    value["ballDiameter"] >> ballDiameter;
-    value["throwInLineLength"] >> fieldThrowInLineLength;
-    value["throwInLineSpacing"] >> fieldThrowInLineSpacing;
+    getValueOrPanic(value, "fieldLength") >> fieldLength;
+    getValueOrPanic(value, "fieldWidth") >> fieldWidth;
+    getValueOrPanic(value, "fieldLineWidth") >> fieldLineWidth;
+    getValueOrPanic(value, "fieldPenaltyMarkerSize") >> fieldPenaltyMarkerSize;
+    getValueOrPanic(value, "fieldGoalBoxLength") >> fieldGoalBoxLength;
+    getValueOrPanic(value, "fieldGoalBoxWidth") >> fieldGoalBoxWidth;
+    getValueOrPanic(value, "fieldPenaltyAreaLength") >> fieldPenaltyAreaLength;
+    getValueOrPanic(value, "fieldPenaltyAreaWidth") >> fieldPenaltyAreaWidth;
+    getValueOrPanic(value, "fieldPenaltyMarkerDistance") >> fieldPenaltyMarkerDistance;
+    getValueOrPanic(value, "fieldCenterCircleDiameter") >> fieldCenterCircleDiameter;
+    getValueOrPanic(value, "fieldBorderStripWidth") >> fieldBorderStripWidth;
+    getValueOrPanic(value, "goalPostDiameter") >> goalPostDiameter;
+    getValueOrPanic(value, "goalHeight") >> goalHeight;
+    getValueOrPanic(value, "goalInnerWidth") >> goalInnerWidth;
+    getValueOrPanic(value, "goalDepth") >> goalDepth;
+    getValueOrPanic(value, "ballDiameter") >> ballDiameter;
+    getValueOrPanic(value, "throwInLineLength") >> fieldThrowInLineLength;
+    getValueOrPanic(value, "throwInLineSpacing") >> fieldThrowInLineSpacing;
   }
 
   /**
@@ -126,36 +139,81 @@ public:
    */
   void init(Configuration& config)
   {
-    config.mount("tuhhSDK.FieldDimensions", "map.json", ConfigurationType::HEAD);
+    config.mount("tuhhSDK.FieldType", "map.json", ConfigurationType::HEAD);
+
+    auto fieldTypeConfig = config.get("tuhhSDK.FieldType");
+    config.mount("tuhhSDK.FieldDimensions", fieldTypeConfig["fieldType"].asString() + ".json", ConfigurationType::HEAD);
+    std::cout << "FieldJsonFile: " << fieldTypeConfig["fieldType"].asString() + ".json" << std::endl;
 
     // read field parameters
     auto group = config.get("tuhhSDK.FieldDimensions", "field");
 
-    group["length"] >> fieldLength;
-    group["width"] >> fieldWidth;
-    group["lineWidth"] >> fieldLineWidth;
-    group["penaltyMarkerSize"] >> fieldPenaltyMarkerSize;
-    group["goalBoxLength"] >> fieldGoalBoxLength;
-    group["goalBoxWidth"] >> fieldGoalBoxWidth;
-    group["penaltyAreaLength"] >> fieldPenaltyAreaLength;
-    group["penaltyAreaWidth"] >> fieldPenaltyAreaWidth;
-    group["penaltyMarkerDistance"] >> fieldPenaltyMarkerDistance;
-    group["centerCircleDiameter"] >> fieldCenterCircleDiameter;
-    group["borderStripWidth"] >> fieldBorderStripWidth;
-    group["throwInLineLength"] >> fieldThrowInLineLength;
-    group["throwInLineSpacing"] >> fieldThrowInLineSpacing;
+    getValueOrPanic(group, "length") >> fieldLength;
+    getValueOrPanic(group, "width") >> fieldWidth;
+    getValueOrPanic(group, "lineWidth") >> fieldLineWidth;
+    getValueOrPanic(group, "penaltyMarkerSize") >> fieldPenaltyMarkerSize;
+    getValueOrPanic(group, "goalBoxLength") >> fieldGoalBoxLength;
+    getValueOrPanic(group, "goalBoxWidth") >> fieldGoalBoxWidth;
+    getValueOrPanic(group, "penaltyAreaLength") >> fieldPenaltyAreaLength;
+    getValueOrPanic(group, "penaltyAreaWidth") >> fieldPenaltyAreaWidth;
+    getValueOrPanic(group, "penaltyMarkerDistance") >> fieldPenaltyMarkerDistance;
+    getValueOrPanic(group, "centerCircleDiameter") >> fieldCenterCircleDiameter;
+    getValueOrPanic(group, "borderStripWidth") >> fieldBorderStripWidth;
+    getValueOrPanic(group, "throwInLineLength") >> fieldThrowInLineLength;
+    getValueOrPanic(group, "throwInLineSpacing") >> fieldThrowInLineSpacing;
 
     // read goal parameters
     group = config.get("tuhhSDK.FieldDimensions", "goal");
 
-    group["postDiameter"] >> goalPostDiameter;
-    group["height"] >> goalHeight;
-    group["innerWidth"] >> goalInnerWidth;
-    group["depth"] >> goalDepth;
+    getValueOrPanic(group, "postDiameter") >> goalPostDiameter;
+    getValueOrPanic(group, "height") >> goalHeight;
+    getValueOrPanic(group, "innerWidth") >> goalInnerWidth;
+    getValueOrPanic(group, "depth") >> goalDepth;
 
     // read ball parameters
     group = config.get("tuhhSDK.FieldDimensions", "ball");
-    group["diameter"] >> ballDiameter;
+    getValueOrPanic(group, "diameter") >> ballDiameter;
+  }
+
+private:
+  /**
+   * @brief getValueOrPanic accesses a given json map with the given key. Throws exception if key does not exist.
+   * @param group UniValue object containing a map.
+   * @param key String containing the key to be accessed.
+   * @return Uni::Value read from the map with the specified key.
+   */
+  Uni::Value getValueOrPanic(Uni::Value& group, const char* key){
+    if (group.type() != Uni::ValueType::OBJECT)
+    {
+      throw std::runtime_error("Field Dimensions - Json Map Object given, is invalid!");
+    }
+
+    if (!group.hasProperty(key))
+    {
+      throw std::runtime_error("Field Dimensions - Key: '" + std::string(key) + "' is missing in json map.");
+    }
+
+    return group[key];
+  }
+
+  /**
+   * @brief getValueOrPanic accesses a given json map with the given key. Throws exception if key does not exist.
+   * @param group UniValue object containing a map.
+   * @param key String containing the key to be accessed.
+   * @return Uni::Value read from the map with the specified key.
+   */
+  const Uni::Value getValueOrPanic(const Uni::Value& group, const char* key){
+    if (group.type() != Uni::ValueType::OBJECT)
+    {
+      throw std::runtime_error("Field Dimensions - Given json map object is invalid!");
+    }
+
+    if (!group.hasProperty(key))
+    {
+      throw std::runtime_error("Field Dimensions - Key: '" + std::string(key) + "' is missing in json map.");
+    }
+
+    return group[key];
   }
 };
 
