@@ -1,0 +1,26 @@
+{
+    "field": {
+        "length": 5.24,
+        "width": 3.38,
+        "lineWidth": 0.06,
+        "penaltyMarkerSize": 0.06,
+        "penaltyMarkerDistance": 0.73,
+        "goalBoxLength": 1.5,
+        "goalBoxWidth": 2.38,
+        "penaltyAreaLength": 1.5,
+        "penaltyAreaWidth": 2.38,
+        "centerCircleDiameter": 0.8,
+        "borderStripWidth": 0.28,
+        "throwInLineLength": 4.0,
+        "throwInLineSpacing": 0.26
+    },
+    "goal": {
+        "postDiameter": 0.1,
+        "height": 0.8,
+        "innerWidth": 1.45,
+        "depth": 0.5
+    },
+    "ball": {
+        "diameter": 0.1
+    }
+}
