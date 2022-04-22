@@ -1,8 +1,8 @@
 {
-  "keeperPosition": [ -4.2, 0 ],
-  "defensivePositions": [ [ -1.25, 0 ], [ -3.5, 0.5 ], [ -3.5, -0.5 ], [ -2.5, 1.5 ], [ -2.5, -1.5 ] ],
-  "offensivePositions": [ [ -0.5, 0 ], [ -3.5, 0.5 ], [ -1, -1.5 ], [ -3.5, -0.5 ], [ -1, 1.5 ] ],
-  "considerRole": false,
+  "keeperPosition": [ -2.2, 0 ],
+  "defensivePositions": [ [ -0.7, 0 ], [ -2, 0.3 ], [ -2, -0.3 ], [ -1.45, 0.85 ], [ -1.45, -0.85 ] ],
+  "offensivePositions": [ [ -0.3, 0 ], [ -2, 0.3 ], [ -0.6, -0.85 ], [ -2, -0.3 ], [ -0.6, 0.85 ] ],
+  "considerRole": true,
   "enableDribbleAroundOpponentAtKickoff": true,
   "dribbleAngle": 20
 }
